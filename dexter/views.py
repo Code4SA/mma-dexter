@@ -8,7 +8,7 @@ from .models import (
     )
 
 
-@view_config(route_name='home', renderer='templates/mytemplate.pt')
+@view_config(route_name='home', renderer='home.haml')
 def my_view(request):
     return {'one': None, 'project': 'dexter'}
 

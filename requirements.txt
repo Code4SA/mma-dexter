@@ -1,0 +1,25 @@
+Chameleon==2.14
+Mako==0.9.1
+MarkupSafe==0.18
+PasteDeploy==1.5.2
+PyHAML==1.0.1
+Pygments==1.6
+SQLAlchemy==0.9.1
+WebOb==1.3.1
+## !! Could not determine repository location
+dexter==0.0
+pyramid==1.5a3
+pyramid-chameleon==0.1
+pyramid-debugtoolbar==1.0.9
+pyramid-mako==0.3.1
+pyramid-tm==0.7
+repoze.lru==0.6
+six==1.5.2
+transaction==1.4.1
+translationstring==1.1
+venusian==1.0a8
+waitress==0.8.8
+wsgiref==0.1.2
+zope.deprecation==4.1.0
+zope.interface==4.0.5
+zope.sqlalchemy==0.7.4

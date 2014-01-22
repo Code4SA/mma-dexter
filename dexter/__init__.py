@@ -8,6 +8,8 @@ def main(global_config, **settings):
 
     config = Configurator(settings=settings)
 
+    config.add_mako_renderer('.haml')
+
     setup_routes(config)
 
     config.scan()
@@ -15,8 +17,6 @@ def main(global_config, **settings):
 
 
 def setup_routes(config):
-    # TODO: do this correctly
-    config.include('pyramid_chameleon')
     config.add_static_view('static', 'static', cache_max_age=3600)
     config.add_route('home', '/')
 
