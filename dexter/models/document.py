@@ -40,9 +40,24 @@ class Document(Base):
     # TODO: author
 
     # Associations
-    entities    = relationship("DocumentEntity", backref=backref('document'))
+    entities    = relationship("DocumentEntity", backref=backref('document'), order_by="desc(DocumentEntity.relevance)")
     utterances  = relationship("Utterance", backref=backref('document'))
-    keywords    = relationship("DocumentKeyword", backref=backref('document'))
+    keywords    = relationship("DocumentKeyword", backref=backref('document'), order_by="desc(DocumentKeyword.relevance)")
+
+
+    PLACE_ENTITY_GROUPS = set(['city', 'province_or_state', 'region'])
+
+    def people(self):
+        return [e for e in self.entities if e.entity.group == 'person']
+
+
+    def organisations(self):
+        return [e for e in self.entities if e.entity.group == 'organization']
+
+
+    def places(self):
+        return [e for e in self.entities if e.entity.group in Document.PLACE_ENTITY_GROUPS]
+
 
     def __str__(self):
         return "<Document url_hash=%s>" % (self.url_hash)
@@ -85,7 +100,7 @@ class DocumentEntity(Base):
     # Document Offsets
 
     # Associations
-    entity    = relationship("Entity")
+    entity    = relationship("Entity", lazy=False)
 
     def __str__(self):
         return "<DocumentEntity doc=%s, entity=%s, relevance=%f, count=%d>" % (
@@ -111,7 +126,7 @@ class Utterance(Base):
     updated_at   = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.current_timestamp())
 
     # Associations
-    entity    = relationship("Entity")
+    entity    = relationship("Entity", lazy=False)
 
     def __str__(self):
         return "<Utterance doc=%s, entity=%s, quote=\"%s\">" % (
