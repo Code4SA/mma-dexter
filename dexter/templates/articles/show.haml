@@ -2,6 +2,8 @@
 %%block(name="title")
   &= document.title
 
+- from dexter.helpers import format_paragraphs
+
 #show-document
   %article
     %section.heading
@@ -35,7 +37,7 @@
                 Keywords
                 %span.badge &= len(document.keywords)
 
-        .col-sm-10
+        .col-sm-6
           .tab-content
             #people-tab.tab-pane.active
               %h3 People
@@ -78,3 +80,7 @@
                     %td&= kw.keyword
                     %td&= kw.relevance
 
+        .col-sm-4
+          .article-text
+            %p
+              = format_paragraphs(document.text.decode('utf-8'))
