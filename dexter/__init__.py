@@ -35,8 +35,22 @@ def setup_database(settings):
     Base.metadata.bind = engine
 
 def setup_assets(config):
-    css = Bundle('css/app.scss',
-            filters='scss',
-            output='css/app.%(version)s.css')
+    env = config.get_webassets_env()
+    # force this to be a list
+    env.load_path = list(env.load_path)
 
-    config.add_webasset('css', css)
+    config.add_webasset('css', 
+            Bundle(
+                'css/bootstrap-3.0.3.min.css',
+                'css/bootstrap-3.0.3-theme.min.css',
+                Bundle(
+                    'css/*.scss',
+                    filters='scss',
+                    output='css/app.%(version)s.css'),
+                output='css/all.%(version)s.css'))
+
+    config.add_webasset('js', 
+            Bundle(
+                'js/jquery-1.10.2.min.js',
+                'js/bootstrap-3.0.3.min.js',
+                output='js/app.%(version)s.js'))
