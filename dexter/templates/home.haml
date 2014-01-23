@@ -1,4 +1,8 @@
 %%inherit(file="layout.haml")
 
-%p
-  hi
+%table.table.table-striped.table-condensed
+  - for doc in documents:
+    %tr
+      %td
+        %a(href=request.route_url('show_article', id=doc.id))&= doc.title
+      %td&= doc.published_at.strftime('%Y-%m-%d')
