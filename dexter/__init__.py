@@ -18,7 +18,11 @@ def main(global_config, **settings):
 
 def setup_routes(config):
     config.add_static_view('static', 'static', cache_max_age=3600)
+
     config.add_route('home', '/')
+
+    # articles
+    config.add_route('show_article', '/articles/{id}', request_method='GET')
 
 
 def setup_database(settings):
