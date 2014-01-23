@@ -1,4 +1,5 @@
 from pyramid.config import Configurator
+from webassets import Bundle
 
 
 def main(global_config, **settings):
@@ -17,7 +18,7 @@ def main(global_config, **settings):
 
 
 def setup_routes(config):
-    config.add_static_view('static', 'static', cache_max_age=3600)
+    setup_assets(config)
 
     config.add_route('home', '/')
 
@@ -32,3 +33,10 @@ def setup_database(settings):
     engine = engine_from_config(settings, 'sqlalchemy.')
     DBSession.configure(bind=engine)
     Base.metadata.bind = engine
+
+def setup_assets(config):
+    css = Bundle('css/app.scss',
+            filters='scss',
+            output='css/app.%(version)s.css')
+
+    config.add_webasset('css', css)
