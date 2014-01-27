@@ -9,6 +9,7 @@ with open(os.path.join(here, 'CHANGES.txt')) as f:
     CHANGES = f.read()
 
 requires = [
+    'gunicorn',
     'Mako==0.9.1',
     'MySQL-python==1.2.5',
     'PyHAML==1.0.1',
