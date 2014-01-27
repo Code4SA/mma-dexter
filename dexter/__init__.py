@@ -1,3 +1,4 @@
+import os
 from pyramid.config import Configurator
 from webassets import Bundle
 
@@ -29,6 +30,9 @@ def setup_routes(config):
 def setup_database(settings):
     from sqlalchemy import engine_from_config
     from .models import DBSession, Base
+
+    # load URL from env variable, falling back to the ini setting
+    settings['sqlalchemy.url'] = os.environ.get('SQLALCHEMY_URL', settings.get('sqlalchemy.url'))
 
     engine = engine_from_config(settings, 'sqlalchemy.')
     DBSession.configure(bind=engine)
