@@ -10,7 +10,7 @@ with open(os.path.join(here, 'CHANGES.txt')) as f:
 
 requires = [
     'Mako==0.9.1',
-    'MySQL-python==1.5.2',
+    'MySQL-python==1.2.5',
     'PyHAML==1.0.1',
     'pyramid',
     'pyramid_chameleon',
