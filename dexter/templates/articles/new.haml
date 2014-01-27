@@ -1,0 +1,19 @@
+%%inherit(file="../layout.haml")
+%%block(name="title")
+  Add article
+
+#new-document
+  %article
+    %section
+      %h2 Add a new article
+
+      %form.form-horizontal(action=request.route_path('new_article'), method='POST')
+        .form-group
+          %label.col-sm-2.control-label(for_="url")
+            URL
+          .col-sm-10
+            %input.form-control#url(type='url', name='url', placeholder='Enter a URL...', value=(url or ''))
+        .form-group
+          .col-sm-10.col-sm-offset-2
+            %input.btn.btn-primary(type='submit', value="Add article")
+

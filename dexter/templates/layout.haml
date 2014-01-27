@@ -19,6 +19,18 @@
               Dexter
 
     .container
+      - for msg in request.session.pop_flash(''):
+        .alert.alert-info
+          &= msg
+
+      - for msg in request.session.pop_flash('warning'):
+        .alert.alert-warning
+          &= msg
+
+      - for msg in request.session.pop_flash('error'):
+        .alert.alert-danger
+          &= msg
+
       ${self.body()}
 
     %footer

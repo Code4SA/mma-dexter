@@ -1,5 +1,6 @@
 import os
 from pyramid.config import Configurator
+from pyramid.session import UnencryptedCookieSessionFactoryConfig
 from webassets import Bundle
 
 
@@ -8,7 +9,8 @@ def main(global_config, **settings):
     """
     setup_database(settings)
 
-    config = Configurator(settings=settings)
+    session = UnencryptedCookieSessionFactoryConfig(os.environ.get('PYRAMID_SESSION_SECRET', settings.get('sessions.secret')))
+    config = Configurator(settings=settings, session_factory=session)
 
     config.add_mako_renderer('.haml')
 
@@ -24,6 +26,8 @@ def setup_routes(config):
     config.add_route('home', '/')
 
     # articles
+    config.add_route('add_article', 'articles/new', request_method='GET')
+    config.add_route('new_article', 'articles/new', request_method='POST')
     config.add_route('show_article', '/articles/{id}', request_method='GET')
 
 
