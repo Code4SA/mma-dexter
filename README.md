@@ -32,11 +32,50 @@ initialize_dexter_db development.ini
 
 or restore it from a backup.
 
-To start the server,
+### nginx
 
-```bash
-pserve production.ini
+Install nginx:
+
+`sudo apt-get install nginx`
+
+Link in the dexter config:
+
+`sudo ln -s /home/mma/mma-dexter/resources/nginx/dexter.conf /etc/nginx/sites-enabled/`
+
+And restart nginx:
+
+`sudo service nginx restart`
+
+### upstart
+
+Tell upstart about the dexter gunicorn server:
+
 ```
+sudo ln -s /home/mma/mma-dexter/resources/upstart/dexter.conf /etc/init/`
+sudo initctl reload-configuration
+```
+
+And start it:
+
+``sudo start dexter``
+
+### Logging
+
+nginx's production logs are in ``~mma/log/access.log``
+
+The dexter application logs are in ``~mma/log/dexter.log``
+
+### Deploying changes
+
+To deploy changes to the service,
+
+* make the changes elsewhere and commit to git
+* `git pull` on the production server
+* tell upstart to restart marley: `sudo restart dexter`
+
+If you have made changes to the nginx config, you'll need to restart nginx too:
+
+`sudo service nginx restart`
 
 ## Database
 
