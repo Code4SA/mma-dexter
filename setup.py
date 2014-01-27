@@ -17,6 +17,7 @@ requires = [
     'pyramid_debugtoolbar',
     'pyramid_tm',
     'pyramid-webassets==0.7.1',
+    'pyscss==1.2.0.post3'
     'SQLAlchemy==0.9.1',
     'transaction',
     'zope.sqlalchemy',

@@ -49,7 +49,7 @@ def setup_assets(config):
                 'css/bootstrap-3.0.3-theme.min.css',
                 Bundle(
                     'css/*.scss',
-                    filters='scss',
+                    filters='pyscss',
                     output='css/app.%(version)s.css'),
                 output='css/all.%(version)s.css'))
 
