@@ -15,3 +15,9 @@ The app is a [Pyramid web app](http://www.pylonsproject.org/) that uses [SQLAlch
 ## Production
 
 TODO
+
+## Database
+
+The server expects MySQL 5.6 because it uses the CURRENT_TIMESTAMP default value
+on a DATETIME column, [as described here](http://shankargopal.blogspot.com/2013/03/mysql-566-timestamp-columns-and-default.html).
+This means on some systems you'll need to upgrade from 5.5 to 5.6.
