@@ -14,7 +14,29 @@ The app is a [Pyramid web app](http://www.pylonsproject.org/) that uses [SQLAlch
 
 ## Production
 
-TODO
+* clone the repo
+* install a virtual env and activate it: `virtualenv --system-site-packages env; source env/bin/activate`
+* install egg in dev mode: `python setup.py develop`
+
+Setup the database. Set the database URL as an environment variable:
+
+```bash
+export SQLALCHEMY_URL=mysql://mma:PASSWORD@localhost/mma
+```
+
+To create the db from scratch, run
+
+```
+initialize_dexter_db development.ini
+```
+
+or restore it from a backup.
+
+To start the server,
+
+```bash
+pserve production.ini
+```
 
 ## Database
 

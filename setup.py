@@ -20,7 +20,9 @@ requires = [
     'SQLAlchemy==0.9.1',
     'transaction',
     'zope.sqlalchemy',
+    'zope.interface==4.0.5',
     'waitress',
+    'WebHelpers==1.3',
     ]
 
 setup(name='dexter',
