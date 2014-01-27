@@ -1,0 +1,84 @@
+%%inherit(file="../layout.haml")
+%%block(name="title")
+  &= document.title
+
+- from dexter.helpers import format_paragraphs
+
+#show-document
+  %article
+    %section.heading
+      %h2&= document.title
+      .timestamp&= document.published_at.strftime('%Y-%m-%d')
+      .url
+        %a(href=document.url, target='_blank')&= document.url
+
+    %section.tabs
+      .row
+        .col-sm-5
+          .article-text
+            %p
+              = format_paragraphs(document.text.decode('utf-8'))
+        .col-sm-7
+          %ul.nav.nav-tabs
+            %li.active
+              %a(href="#people-tab", dataToggle="tab")
+                People
+                %span.badge&= len(document.people())
+            %li
+              %a(href="#orgs-tab", dataToggle="tab")
+                Organisations
+                %span.badge&= len(document.organisations())
+            %li
+              %a(href="#quotations-tab", dataToggle="tab")
+                Quotations
+                %span.badge&= len(document.utterances)
+            %li
+              %a(href="#places-tab", dataToggle="tab")
+                Places
+                %span.badge&= len(document.places())
+            %li
+              %a(href="#keywords-tab", dataToggle="tab")
+                Keywords
+                %span.badge&= len(document.keywords)
+
+          .tab-content
+            #people-tab.tab-pane.active
+              %h3 People
+              %table.table.table-striped.table-condensed
+                - for dp in document.people():
+                  %tr
+                    %td&= dp.entity.name
+                    %td&= dp.relevance
+
+            #orgs-tab.tab-pane
+              %h3 Organisations
+              %table.table.table-striped.table-condensed
+                - for org in document.organisations():
+                  %tr
+                    %td&= org.entity.name
+                    %td&= org.relevance
+
+            #quotations-tab.tab-pane
+              %h3 Quotations
+              %table.table.table-striped.table-condensed
+                - for q in document.utterances:
+                  %tr
+                    %td&= q.entity.name
+                    %td&= q.quote
+
+            #places-tab.tab-pane
+              %h3 Places
+              %table.table.table-striped.table-condensed
+                - for p in document.places():
+                  %tr
+                    %td&= p.entity.name
+                    %td&= p.entity.group
+                    %td&= p.relevance
+
+            #keywords-tab.tab-pane
+              %h3 Keywords
+              %table.table.table-striped.table-condensed
+                - for kw in document.keywords:
+                  %tr
+                    %td&= kw.keyword
+                    %td&= kw.relevance

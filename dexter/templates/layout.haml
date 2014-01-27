@@ -1,0 +1,28 @@
+!!! 5
+%html
+  %head
+    %meta(charset="utf-8")
+    %meta(httpEquiv="X-UA-Compatible", content="IE=edge,chrome=1")
+    %title
+      %%block(name="title")
+      \- Dexter
+    %meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    - for url in webassets(request, 'css'):
+      %link(rel="stylesheet", href=url)
+
+  %body
+    %header
+      .navbar.navbar-default
+        .container
+          .navbar-header
+            %a.navbar-brand(href="/")
+              Dexter
+
+    .container
+      ${self.body()}
+
+    %footer
+      .container
+
+    - for url in webassets(request, 'js'):
+      %script(src=url)
