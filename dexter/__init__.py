@@ -41,7 +41,7 @@ def setup_database(settings):
 def setup_assets(config):
     env = config.get_webassets_env()
     # force this to be a list
-    env.load_path = list(env.load_path)
+    env.load_path = env.load_path.split()
 
     config.add_webasset('css', 
             Bundle(
