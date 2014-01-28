@@ -14,6 +14,9 @@ from .support import Base
 class Utterance(Base):
     """
     A quotation by an entity in a document.
+
+    Two instances are equal if they are from the same entity and have the same
+    quotation.
     """
     __tablename__ = "utterances"
 
@@ -29,6 +32,10 @@ class Utterance(Base):
 
     # Associations
     entity    = relationship("Entity", lazy=False)
+
+    def __eq__(self, other):
+        return isinstance(other, Utterance) and other.entity == self.entity and \
+                other.quote == self.quote
 
     def __str__(self):
         return "<Utterance doc=%s, entity=%s, quote=\"%s\">" % (

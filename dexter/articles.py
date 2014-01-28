@@ -49,7 +49,7 @@ def new_article(request):
                     try:
                         doc = DocumentProcessor().process(url)
                     except Exception as e:
-                        request.session.flash("There was a problem importing the document, try again or type out the contents manually.", 'error')
+                        request.session.flash("There was a problem processing the article, try again or type out the contents manually.", 'error')
                         doc = None
 
         else:

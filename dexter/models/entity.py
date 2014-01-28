@@ -15,6 +15,8 @@ from .support import Base
 class Entity(Base):
     """
     An entity (person, place etc.) mentioned or quoted in a document.
+
+    Two instances are equal if they have the same name and group.
     """
     __tablename__ = "entities"
 
@@ -24,6 +26,10 @@ class Entity(Base):
 
     created_at   = Column(DateTime(timezone=True), index=True, unique=False, nullable=False, server_default=func.now())
     updated_at   = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.current_timestamp())
+
+    def __eq__(self, other):
+        return isinstance(other, Entity) and self.group == other.group \
+            and self.name == other.name
 
     def __str__(self):
         return "<Entity group=\"%s\", name=\"%s\">" % (self.group, self.name)

@@ -1,11 +1,12 @@
 from ..models import Document
 
 from .crawlers import MGCrawler
+from .extractors import AlchemyExtractor
 
 class DocumentProcessor:
     def __init__(self):
         self.crawlers = [MGCrawler()]
-        self.extractors = [] #[AlchemyExtractor()]
+        self.extractors = [AlchemyExtractor()]
 
 
     def valid_url(self, url):
@@ -43,3 +44,5 @@ class DocumentProcessor:
 
     def extract(self, doc):
         """ Run extraction routines on a document. """
+        for extractor in self.extractors:
+            extractor.extract(doc)

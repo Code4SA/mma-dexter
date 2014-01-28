@@ -61,6 +61,33 @@ class Document(Base):
         return [e for e in self.entities if e.entity.group in Document.PLACE_ENTITY_GROUPS]
 
 
+    def add_entity(self, doc_entity):
+        """ Add a new DocumentEntity to this document, but only
+        if the entity doesn't already exist on it."""
+        if any(de.entity == doc_entity.entity for de in self.entities):
+            return False
+
+        self.entities.append(doc_entity)
+        return True
+
+    def add_utterance(self, utterance):
+        """ Add a new Utterance, but only if the same one doesn't already
+        exist. """
+        if any(u == utterance for u in self.utterances):
+            return False
+
+        self.utterances.append(utterance)
+        return True
+
+    def add_keyword(self, keyword):
+        """ Add a new keyword, but only if it's not already there. """
+        if any(k.keyword == keyword.keyword for k in self.keywords):
+            return False
+
+        self.keywords.append(keyword)
+        return True
+
+
     def __str__(self):
         return "<Document url=%s>" % (self.url)
 

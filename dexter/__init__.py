@@ -15,14 +15,14 @@ def main(global_config, **settings):
     config.add_mako_renderer('.haml')
 
     setup_routes(config)
+    setup_assets(config)
+    setup_extraction(config)
 
     config.scan()
     return config.make_wsgi_app()
 
 
 def setup_routes(config):
-    setup_assets(config)
-
     config.add_route('home', '/')
 
     # articles
@@ -62,3 +62,10 @@ def setup_assets(config):
                 'js/jquery-1.10.2.min.js',
                 'js/bootstrap-3.0.3.min.js',
                 output='js/app.%(version)s.js'))
+
+def setup_extraction(config):
+    from .processing.extractors.alchemy import AlchemyExtractor
+
+    # try env, then fall back to settings
+    AlchemyExtractor.API_KEY = os.environ.get('ALCHEMY_API_KEY',
+        config.get_settings().get('alchemy.api_key'))
