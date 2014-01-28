@@ -28,6 +28,7 @@ requires = [
     'zope.interface==4.0.5',
     'waitress',
     'WebHelpers==1.3',
+    'wtforms==1.0.5',
     ]
 
 setup(name='dexter',

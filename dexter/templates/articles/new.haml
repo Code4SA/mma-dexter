@@ -1,4 +1,6 @@
 %%inherit(file="../layout.haml")
+%%namespace(file="../bootstrap_wtf.haml", **{'import': '*'})
+
 %%block(name="title")
   Add article
 
@@ -7,13 +9,20 @@
     %section
       %h2 Add a new article
 
+      %h3 By fetching a webpage
+
       %form.form-horizontal(action=request.route_path('new_article'), method='POST')
-        .form-group
-          %label.col-sm-2.control-label(for_="url")
-            URL
-          .col-sm-10
-            %input.form-control#url(type='url', name='url', placeholder='Enter a URL...', value=(url or ''))
-        .form-group
+        = field(form.url, placeholder='URL')
+        .row
           .col-sm-10.col-sm-offset-2
-            %input.btn.btn-primary(type='submit', value="Add article")
+            %input.btn.btn-primary(type='submit', value="Fetch and add article")
+
+      %h3 Or by typing it in
+      %form.form-horizontal(action=request.route_path('new_article'), method='POST')
+        = field(form.title, placeholder='Article headline')
+        = field(form.url, placeholder='URL')
+        = field(form.text, rows=15, placeholder='The text of the article')
+        .row
+          .col-sm-10.col-sm-offset-2
+            %input.btn.btn-primary(type='submit', value='Add new article')
 

@@ -11,6 +11,7 @@ from .models import (
     DBSession,
     Document,
     )
+from .models.document import DocumentForm
 
 from .processing import DocumentProcessor
 
@@ -22,37 +23,43 @@ def show_article(request):
     return {"document": document}
  
 
-@view_config(route_name='add_article', renderer='articles/new.haml')
-def add_article(request):
-    url = request.params.get('url')
-    return {"url": url}
-
-
 @view_config(route_name='new_article', renderer='articles/new.haml')
 def new_article(request):
-    url = request.params.get('url')
-    if url:
-        proc = DocumentProcessor()
+    form = DocumentForm(request.params)
+    url = form.url.data
 
-        if not proc.valid_url(url):
-            request.session.flash("The URL isn't valid or we don't know how to process it.", 'error')
-            raise HTTPSeeOther(request.route_url('new_article', _query={'url': url}))
+    if request.method == 'POST':
+        doc = None
 
-        url = proc.canonicalise_url(url)
-        doc = DBSession.query(Document).filter(Document.url == url).first()
+        if url:
+            # new document from url
+            proc = DocumentProcessor()
+
+            if not proc.valid_url(url):
+                request.session.flash("The URL isn't valid or we don't know how to process it.", 'error')
+                raise HTTPSeeOther(request.route_url('new_article', _query={'url': url}))
+
+            url = proc.canonicalise_url(url)
+            doc = DBSession.query(Document).filter(Document.url == url).one()
+
+            if not doc:
+                # create and process the document
+                doc = DocumentProcessor().process(url)
+        else:
+            # new document from article text
+            if form.validate():
+                doc = Document()
+                form.populate_obj(doc)
 
         if doc:
-            # already exists
-            raise HTTPMovedPermanently(request.route_url('show_article', id=doc.id))
+            if not doc.id:
+                DBSession.add(doc)
+                DBSession.flush()
+                id = doc.id
+                transaction.commit()
+            else:
+                id = doc.id
 
-        # create and process the document
-        # TODO: error handling
-        doc = DocumentProcessor().process(url)
-        DBSession.add(doc)
-        DBSession.flush()
-        id = doc.id
-        transaction.commit()
-
-        raise HTTPMovedPermanently(request.route_url('show_article', id=id))
-    else:
-        raise HTTPSeeOther(request.route_url('new_article'))
+            raise HTTPMovedPermanently(request.route_url('show_article', id=id))
+        
+    return {'url': url, 'form': form}

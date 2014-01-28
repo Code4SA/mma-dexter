@@ -1,3 +1,6 @@
+from wtforms import Form, StringField, TextAreaField, validators
+from wtforms.fields.html5 import URLField
+
 from sqlalchemy import (
     Column,
     DateTime,
@@ -60,91 +63,10 @@ class Document(Base):
 
     def __str__(self):
         return "<Document url=%s>" % (self.url)
-    
-
-class Entity(Base):
-    """
-    An entity (person, place etc.) mentioned or quoted in a document.
-    """
-    __tablename__ = "entities"
-
-    id          = Column(Integer, primary_key=True)
-    group       = Column(String(50), index=True, nullable=False)
-    name        = Column(String(150), index=True, nullable=False)
-
-    created_at   = Column(DateTime(timezone=True), index=True, unique=False, nullable=False, server_default=func.now())
-    updated_at   = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.current_timestamp())
-
-    def __str__(self):
-        return "<Entity group=\"%s\", name=\"%s\">" % (self.group, self.name)
-
-Index('entity_group_name_ix', Entity.group, Entity.name, unique=True)
 
 
-class DocumentEntity(Base):
-    """
-    Entities referenced in a document.
-    """
-    __tablename__ = "document_entities"
-
-    id        = Column(Integer, primary_key=True)
-    doc_id    = Column(Integer, ForeignKey('documents.id'), index=True)
-    entity_id = Column(Integer, ForeignKey('entities.id'), index=True)
-    relevance = Column(Float, index=True, nullable=False)
-    count     = Column(Integer, index=True, nullable=False, default=1)
-
-    created_at   = Column(DateTime(timezone=True), index=True, unique=False, nullable=False, server_default=func.now())
-    updated_at   = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.current_timestamp())
-
-    # Document Offsets
-
-    # Associations
-    entity    = relationship("Entity", lazy=False)
-
-    def __str__(self):
-        return "<DocumentEntity doc=%s, entity=%s, relevance=%f, count=%d>" % (
-                self.document, self.entity, self.relevance, self.count)
-
-Index('doc_entity_doc_id_entity_id_ix', DocumentEntity.doc_id, DocumentEntity.entity_id, unique=True)
-
-
-class Utterance(Base):
-    """
-    A quotation by an entity in a document.
-    """
-    __tablename__ = "utterances"
-
-    id        = Column(Integer, primary_key=True)
-    doc_id    = Column(Integer, ForeignKey('documents.id'), index=True)
-    entity_id = Column(Integer, ForeignKey('entities.id'), index=True)
-    quote     = Column(Text, nullable=False)
-
-    # TODO: document offsets
-
-    created_at   = Column(DateTime(timezone=True), index=True, unique=False, nullable=False, server_default=func.now())
-    updated_at   = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.current_timestamp())
-
-    # Associations
-    entity    = relationship("Entity", lazy=False)
-
-    def __str__(self):
-        return "<Utterance doc=%s, entity=%s, quote=\"%s\">" % (
-                self.document, self.entity, (self.quote or "")[0:15] + "...")
-
-
-class DocumentKeyword(Base):
-    """
-    A keyword (normally a non-entity keyword) in a document.
-    """
-    __tablename__ = "document_keywords"
-
-    id        = Column(Integer, primary_key=True)
-    doc_id    = Column(Integer, ForeignKey('documents.id'), index=True)
-    keyword   = Column(String(100), index=True, nullable=False)
-    relevance = Column(Float, index=True, nullable=False)
-
-    def __str__(self):
-        return "<DocumentKeyword doc=%s, keyword=%s, relevance=%f>" % (
-                self.document, self.keyword, self.relevance)
-
-Index('doc_keyword_doc_id_keyword_ix', DocumentKeyword.doc_id, DocumentKeyword.keyword, unique=True)
+class DocumentForm(Form):
+    url     = URLField('URL', [validators.Required()])
+    title   = StringField('Headline')
+    blurb   = StringField('Blurb')
+    text    = TextAreaField('Article content')

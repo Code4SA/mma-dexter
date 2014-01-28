@@ -1,0 +1,21 @@
+%%def(name="field(fld, **kwargs)")
+  .form-group(class_=('has-error' if fld.errors else ''))
+    - if fld.type == "BooleanField":
+      .col-sm-10.col-sm-offset-2
+        .checkbox
+          %label.checkbox
+            &= fld.label.text
+            = fld(**kwargs)
+          - if fld.errors:
+            %p.help-inline
+              - for err in fld.errors:
+                &= err
+
+    - else:
+      = fld.label(class_="control-label col-sm-2")
+      .col-sm-10
+        = fld(class_='form-control', **kwargs)
+        - if fld.errors:
+          %p.help-block
+            - for err in fld.errors:
+              &= err
