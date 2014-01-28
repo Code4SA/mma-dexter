@@ -1,7 +1,8 @@
 from pyramid.response import Response
 from pyramid.exceptions import NotFound
-from pyramid.httpexceptions import HTTPFound, HTTPNotModified, HTTPSeeOther, HTTPMovedPermanently
+from pyramid.httpexceptions import HTTPSeeOther, HTTPMovedPermanently
 from pyramid.view import view_config
+import transaction
 
 import logging
 log = logging.getLogger(__name__)
@@ -42,11 +43,16 @@ def new_article(request):
 
         if doc:
             # already exists
-            raise HTTPNotModified(request.route_url('show_article', id=doc.id))
+            raise HTTPMovedPermanently(request.route_url('show_article', id=doc.id))
 
         # create and process the document
-        doc = DocumentProcessor().process(url)
         # TODO: error handling
-        raise HTTPMovedPermanently(request.route_url('show_article', id=doc.id))
+        doc = DocumentProcessor().process(url)
+        DBSession.add(doc)
+        DBSession.flush()
+        id = doc.id
+        transaction.commit()
+
+        raise HTTPMovedPermanently(request.route_url('show_article', id=id))
     else:
         raise HTTPSeeOther(request.route_url('new_article'))

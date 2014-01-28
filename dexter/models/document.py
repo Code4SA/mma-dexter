@@ -24,7 +24,6 @@ class Document(Base):
 
     id        = Column(Integer, primary_key=True)
     url       = Column(String(200), index=True, unique=True, nullable=False)
-    url_hash  = Column(String(32), index=True, unique=True, nullable=False)
 
     title     = Column(String(1024))
     blurb     = Column(String(1024))
@@ -60,7 +59,7 @@ class Document(Base):
 
 
     def __str__(self):
-        return "<Document url_hash=%s>" % (self.url_hash)
+        return "<Document url=%s>" % (self.url)
     
 
 class Entity(Base):

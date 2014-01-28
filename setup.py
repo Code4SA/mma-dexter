@@ -9,6 +9,7 @@ with open(os.path.join(here, 'CHANGES.txt')) as f:
     CHANGES = f.read()
 
 requires = [
+    'beautifulsoup4',
     'gunicorn',
     'Mako==0.9.1',
     'MySQL-python==1.2.5',
@@ -18,7 +19,9 @@ requires = [
     'pyramid_debugtoolbar',
     'pyramid_tm',
     'pyramid-webassets==0.7.1',
-    'pyscss==1.2.0.post3'
+    'pyscss==1.2.0.post3',
+    'python-dateutil==2.2',
+    'requests==2.2.1',
     'SQLAlchemy==0.9.1',
     'transaction',
     'zope.sqlalchemy',
