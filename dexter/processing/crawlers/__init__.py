@@ -1,1 +1,1 @@
-from .mg_crawler import MGCrawler
+from .mg import MGCrawler
