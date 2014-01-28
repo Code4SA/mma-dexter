@@ -37,14 +37,21 @@ def new_article(request):
 
             if not proc.valid_url(url):
                 request.session.flash("The URL isn't valid or we don't know how to process it.", 'error')
-                raise HTTPSeeOther(request.route_url('new_article', _query={'url': url}))
+            else:
+                url = proc.canonicalise_url(url)
+                doc = DBSession.query(Document).filter(Document.url == url).first()
 
-            url = proc.canonicalise_url(url)
-            doc = DBSession.query(Document).filter(Document.url == url).one()
+                if doc:
+                    # already exists
+                    request.session.flash("We already have that article.")
+                else:
+                    # create and process the document
+                    try:
+                        doc = DocumentProcessor().process(url)
+                    except Exception as e:
+                        request.session.flash("There was a problem importing the document, try again or type out the contents manually.", 'error')
+                        doc = None
 
-            if not doc:
-                # create and process the document
-                doc = DocumentProcessor().process(url)
         else:
             # new document from article text
             if form.validate():
@@ -60,6 +67,16 @@ def new_article(request):
             else:
                 id = doc.id
 
-            raise HTTPMovedPermanently(request.route_url('show_article', id=id))
+            raise HTTPMovedPermanently(request.route_url('edit_article', id=id))
         
     return {'url': url, 'form': form}
+
+
+@view_config(route_name='edit_article', renderer='articles/edit.haml')
+def edit_article(request):
+    doc = DBSession.query(Document).get(request.matchdict['id'])
+    if not doc:
+        raise NotFound()
+
+    form = DocumentForm(request.params)
+    return {'doc': doc, 'form': form}

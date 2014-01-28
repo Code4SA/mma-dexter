@@ -27,6 +27,7 @@ def setup_routes(config):
 
     # articles
     config.add_route('new_article', 'articles/new', request_method=['GET', 'POST'])
+    config.add_route('edit_article', '/articles/{id}/edit', request_method=['GET', 'POST'])
     config.add_route('show_article', '/articles/{id}', request_method='GET')
 
 

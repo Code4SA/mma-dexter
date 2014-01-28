@@ -35,8 +35,10 @@ class MGCrawler:
 
         self.log.info("Fetching URL: " + url)
 
-        # TODO: error handling
         r = requests.get(url)
+        # raise an HTTPError on badness
+        r.status_for_status()
+
         return r.text.encode('utf8')
 
     def extract(self, doc, raw_html):
