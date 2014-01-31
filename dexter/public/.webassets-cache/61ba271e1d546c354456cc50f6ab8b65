@@ -1,0 +1,7 @@
+@media -sass-debug-info{filename{font-family:file\:\/\/dexter\/assets\/css\/app\.scss}line{font-family:\000031}}
+.heading {
+  margin-bottom: 30px; }
+
+  @media -sass-debug-info{filename{font-family:file\:\/\/dexter\/assets\/css\/app\.scss}line{font-family:\000036}}
+  #new-document form {
+    margin: 20px 0px 30px; }

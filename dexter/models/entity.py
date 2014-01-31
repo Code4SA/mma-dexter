@@ -12,9 +12,9 @@ from sqlalchemy import (
     )
 from sqlalchemy.orm import relationship
 
-from .support import Base, DBSession
+from .support import db
 
-class Entity(Base):
+class Entity(db.Model):
     """
     An entity (person, place etc.) mentioned or quoted in a document.
 
@@ -43,14 +43,14 @@ class Entity(Base):
         group and name are lowercased in the resulting map. """
         entities = {}
         filters = [and_(Entity.group == p[0], Entity.name == p[1]) for p in pairs]
-        for e in DBSession.query(Entity).filter(or_(*filters)).all():
+        for e in db.query(Entity).filter(or_(*filters)).all():
             entities[(e.group.lower(), e.name.lower())] = e
         return entities
 
 Index('entity_group_name_ix', Entity.group, Entity.name, unique=True)
 
 
-class DocumentEntity(Base):
+class DocumentEntity(db.Model):
     """
     Entities referenced in a document.
     """

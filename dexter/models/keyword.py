@@ -7,9 +7,9 @@ from sqlalchemy import (
     Index
     )
 
-from .support import Base
+from .support import db
 
-class DocumentKeyword(Base):
+class DocumentKeyword(db.Model):
     """
     A keyword (normally a non-entity keyword) in a document.
     """

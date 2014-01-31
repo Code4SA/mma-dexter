@@ -1,30 +1,23 @@
-from pyramid.response import Response
-from pyramid.exceptions import NotFound
-from pyramid.httpexceptions import HTTPSeeOther, HTTPMovedPermanently
-from pyramid.view import view_config
-import transaction
-
 import logging
 log = logging.getLogger(__name__)
 
-from .models import (
-    DBSession,
-    Document,
-    )
+from flask import request, url_for, render_template
+
+from .app import app
+from .models import db, Document
 from .models.document import DocumentForm
 
 from .processing import DocumentProcessor
 
-@view_config(route_name='show_article', renderer='articles/show.haml')
-def show_article(request):
-    document = DBSession.query(Document).get(request.matchdict['id'])
-    if not document:
-        raise NotFound()
-    return {"document": document}
+@app.route('/articles/<id>')
+def show_article(id):
+    document = db.query(Document).get_or_404(id)
+    return render_template('articles/show.haml',
+            document=document)
  
 
-@view_config(route_name='new_article', renderer='articles/new.haml')
-def new_article(request):
+@app.route('/articles/new')
+def new_article():
     form = DocumentForm(request.params)
     url = form.url.data
 
@@ -39,7 +32,7 @@ def new_article(request):
                 request.session.flash("The URL isn't valid or we don't know how to process it.", 'error')
             else:
                 url = proc.canonicalise_url(url)
-                doc = DBSession.query(Document).filter(Document.url == url).first()
+                doc = db.query(Document).filter(Document.url == url).first()
 
                 if doc:
                     # already exists
@@ -57,8 +50,8 @@ def new_article(request):
 
         if doc:
             if not doc.id:
-                DBSession.add(doc)
-                DBSession.flush()
+                db.add(doc)
+                db.flush()
                 id = doc.id
                 transaction.commit()
             else:
@@ -66,14 +59,15 @@ def new_article(request):
 
             raise HTTPMovedPermanently(request.route_url('edit_article', id=id))
         
-    return {'url': url, 'form': form}
+    return render_template('articles/show.haml',
+            url=url,
+            form=form)
 
 
-@view_config(route_name='edit_article', renderer='articles/edit.haml')
-def edit_article(request):
-    doc = DBSession.query(Document).get(request.matchdict['id'])
-    if not doc:
-        raise NotFound()
-
+@app.route('/articles/<id>/edit')
+def edit_article(id):
+    doc = db.query(Document).get_or_404(id)
     form = DocumentForm(request.params)
-    return {'doc': doc, 'form': form}
+    return render_template('articles/edit.haml',
+            doc=doc,
+            form=form)

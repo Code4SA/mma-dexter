@@ -14,12 +14,12 @@ from sqlalchemy import (
     )
 from sqlalchemy.orm import relationship, backref
 
-from .support import Base
+from .support import db
 
 import logging
 log = logging.getLogger(__name__)
 
-class Document(Base):
+class Document(db.Model):
     """
     A published document, possibly from online on entered manually.
     """

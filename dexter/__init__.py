@@ -1,9 +1,3 @@
-import os
-from pyramid.config import Configurator
-from pyramid.session import UnencryptedCookieSessionFactoryConfig
-from webassets import Bundle
-
-
 def main(global_config, **settings):
     """ This function returns a Pyramid WSGI application.
     """

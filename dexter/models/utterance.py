@@ -9,9 +9,9 @@ from sqlalchemy import (
     )
 from sqlalchemy.orm import relationship, backref
 
-from .support import Base
+from .support import db
 
-class Utterance(Base):
+class Utterance(db.Model):
     """
     A quotation by an entity in a document.
 

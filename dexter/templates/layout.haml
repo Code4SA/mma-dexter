@@ -7,7 +7,7 @@
       %%block(name="title")
       \- Dexter
     %meta(name="viewport", content="width=device-width, initial-scale=1.0")
-    - for url in webassets(request, 'css'):
+    - for url in webassets('css'):
       %link(rel="stylesheet", href=url)
 
   %body
@@ -19,22 +19,17 @@
               Dexter
 
     .container
-      - for msg in request.session.pop_flash(''):
-        .alert.alert-info
-          &= msg
+      -# show flash messages
+      - for category, message in (get_flashed_messages(with_categories=True) or []):
+        - category = 'info' if category == 'message' else category
+        - category = 'danger' if category == 'error' else category
+        %p.alert(class_="alert-" + category)
+          &= message
 
-      - for msg in request.session.pop_flash('warning'):
-        .alert.alert-warning
-          &= msg
-
-      - for msg in request.session.pop_flash('error'):
-        .alert.alert-danger
-          &= msg
-
-      ${self.body()}
+      ${next.body()}
 
     %footer
       .container
 
-    - for url in webassets(request, 'js'):
+    - for url in webassets('js'):
       %script(src=url)

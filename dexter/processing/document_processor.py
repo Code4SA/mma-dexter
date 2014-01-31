@@ -1,6 +1,6 @@
 from itertools import chain
 
-from ..models import Document, Entity, DBSession
+from ..models import Document, Entity, db
 
 from .crawlers import MGCrawler
 from .extractors import AlchemyExtractor
