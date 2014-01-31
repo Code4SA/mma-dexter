@@ -2,35 +2,26 @@
 
 Dexter web app for MMA.
 
-The app is a [Pyramid web app](http://www.pylonsproject.org/) that uses [SQLAlchemy](http://www.sqlalchemy.org/) to talk to a MySQL database.
+The app is a [Flask web app](http://flask.pocoo.org/) that uses [SQLAlchemy](http://www.sqlalchemy.org/) to talk to a MySQL database.
 
 ## Development
 
 * clone the repo
 * install a virtual env and activate it: `virtualenv --no-site-packages env; source env/bin/activate`
-* install egg in dev mode: `python setup.py develop`
-* setup the database: `initialize_dexter_db development.ini`
+* install requirements: `pip install -r requirements.txt`
 * run the server: `pserve development.ini --reload`
 
 ## Production
 
 * clone the repo
 * install a virtual env and activate it: `virtualenv --system-site-packages env; source env/bin/activate`
-* install egg in dev mode: `python setup.py develop`
+* install requirements: `pip install -r requirements.txt`
 
 Setup the database. Set the database URL as an environment variable:
 
 ```bash
 export SQLALCHEMY_URL=mysql://mma:PASSWORD@localhost/mma
 ```
-
-To create the db from scratch, run
-
-```
-initialize_dexter_db development.ini
-```
-
-or restore it from a backup.
 
 ### nginx
 
