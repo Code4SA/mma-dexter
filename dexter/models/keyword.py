@@ -20,8 +20,8 @@ class DocumentKeyword(Base):
     keyword   = Column(String(100), index=True, nullable=False)
     relevance = Column(Float, index=True, nullable=False)
 
-    def __str__(self):
-        return "<DocumentKeyword doc=%s, keyword=%s, relevance=%f>" % (
-                self.document, self.keyword, self.relevance)
+    def __repr__(self):
+        return "<DocumentKeyword keyword='%s', relevance=%f, doc=%s>" % (
+                self.keyword, self.relevance, self.document)
 
 Index('doc_keyword_doc_id_keyword_ix', DocumentKeyword.doc_id, DocumentKeyword.keyword, unique=True)

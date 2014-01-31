@@ -10,7 +10,7 @@ from sqlalchemy import (
     )
 from sqlalchemy.orm import relationship
 
-from .support import Base
+from .support import Base, DBSession
 
 class Entity(Base):
     """
@@ -62,3 +62,25 @@ class DocumentEntity(Base):
                 self.document, self.entity, self.relevance, self.count)
 
 Index('doc_entity_doc_id_entity_id_ix', DocumentEntity.doc_id, DocumentEntity.entity_id, unique=True)
+
+
+class EntityFactory():
+    """
+    Helper to load and/or create entities.
+    """
+    def get_or_create(entity):
+        """
+        Either get an entity matching the one given,
+        or create it if it doesn't exist.
+        """
+        if entity in DBSession:
+            return entity
+
+        ent = DBSession.query(Entity).filter(Entity.group == entity.group, Entity.name == entity.name).first()
+        if ent:
+            return ent
+
+        # create it
+        DBSession.add(entity)
+
+        return entity
