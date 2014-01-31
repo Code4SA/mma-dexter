@@ -30,7 +30,9 @@ logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
 from flask.ext.mako import MakoTemplates, _lookup
 import haml
 MakoTemplates(app)
-_lookup(app).template_args['preprocessor'] = haml.preprocessor
+app.config['MAKO_PREPROCESSOR'] = haml.preprocessor
+app.config['MAKO_TRANSLATE_EXCEPTIONS'] = False
+app.config['MAKO_DEFAULT_FILTERS'] = ['decode.utf8']
 
 from flask_wtf.csrf import CsrfProtect, generate_csrf
 CsrfProtect(app)

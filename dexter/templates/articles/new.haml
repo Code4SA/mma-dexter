@@ -11,14 +11,18 @@
 
       %h3 By fetching a webpage
 
-      %form.form-horizontal(action=request.route_path('new_article'), method='POST')
+      %form.form-horizontal(action=url_for('new_article'), method='POST')
+        %input(type="hidden", name="csrf_token", value=csrf_token())
+      
         = field(form.url, placeholder='URL')
         .row
           .col-sm-10.col-sm-offset-2
             %input.btn.btn-primary(type='submit', value="Fetch and add article")
 
       %h3 Or by typing it in
-      %form.form-horizontal(action=request.route_path('new_article'), method='POST')
+      %form.form-horizontal(action=url_for('new_article'), method='POST')
+        %input(type="hidden", name="csrf_token", value=csrf_token())
+
         = field(form.title, placeholder='Article headline')
         = field(form.url, placeholder='URL')
         = field(form.text, rows=15, placeholder='The text of the article')

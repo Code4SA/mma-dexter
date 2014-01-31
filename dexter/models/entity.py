@@ -43,7 +43,7 @@ class Entity(db.Model):
         group and name are lowercased in the resulting map. """
         entities = {}
         filters = [and_(Entity.group == p[0], Entity.name == p[1]) for p in pairs]
-        for e in db.query(Entity).filter(or_(*filters)).all():
+        for e in Entity.query.filter(or_(*filters)).all():
             entities[(e.group.lower(), e.name.lower())] = e
         return entities
 

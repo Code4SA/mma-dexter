@@ -1,4 +1,5 @@
-from wtforms import Form, StringField, TextAreaField, validators
+from flask_wtf import Form
+from wtforms import StringField, TextAreaField, validators
 from wtforms.fields.html5 import URLField
 
 from sqlalchemy import (
