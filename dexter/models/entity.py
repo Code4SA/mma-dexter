@@ -6,7 +6,9 @@ from sqlalchemy import (
     String,
     Float,
     func,
-    Index
+    Index,
+    and_,
+    or_,
     )
 from sqlalchemy.orm import relationship
 
@@ -31,8 +33,19 @@ class Entity(Base):
         return isinstance(other, Entity) and self.group == other.group \
             and self.name == other.name
 
-    def __str__(self):
-        return "<Entity group=\"%s\", name=\"%s\">" % (self.group, self.name)
+    def __repr__(self):
+        return "<Entity id=%s, group=\"%s\", name=\"%s\">" % (self.id, self.group, self.name)
+
+    @classmethod
+    def bulk_get(self, pairs):
+        """ For a collection of (group, name) pairs, fetch matching entities in
+        bulk, returning a map from (group, name) pairs to the entity. Both
+        group and name are lowercased in the resulting map. """
+        entities = {}
+        filters = [and_(Entity.group == p[0], Entity.name == p[1]) for p in pairs]
+        for e in DBSession.query(Entity).filter(or_(*filters)).all():
+            entities[(e.group.lower(), e.name.lower())] = e
+        return entities
 
 Index('entity_group_name_ix', Entity.group, Entity.name, unique=True)
 
@@ -57,30 +70,8 @@ class DocumentEntity(Base):
     # Associations
     entity    = relationship("Entity", lazy=False)
 
-    def __str__(self):
+    def __repr__(self):
         return "<DocumentEntity doc=%s, entity=%s, relevance=%f, count=%d>" % (
                 self.document, self.entity, self.relevance, self.count)
 
 Index('doc_entity_doc_id_entity_id_ix', DocumentEntity.doc_id, DocumentEntity.entity_id, unique=True)
-
-
-class EntityFactory():
-    """
-    Helper to load and/or create entities.
-    """
-    def get_or_create(entity):
-        """
-        Either get an entity matching the one given,
-        or create it if it doesn't exist.
-        """
-        if entity in DBSession:
-            return entity
-
-        ent = DBSession.query(Entity).filter(Entity.group == entity.group, Entity.name == entity.name).first()
-        if ent:
-            return ent
-
-        # create it
-        DBSession.add(entity)
-
-        return entity

@@ -1,5 +1,6 @@
-from ..models import Document, DBSession
-from ..models.entity import EntityFactory
+from itertools import chain
+
+from ..models import Document, Entity, DBSession
 
 from .crawlers import MGCrawler
 from .extractors import AlchemyExtractor
@@ -12,7 +13,6 @@ class DocumentProcessor:
     def __init__(self):
         self.crawlers = [MGCrawler()]
         self.extractors = [AlchemyExtractor()]
-        self.entity_factory = EntityFactory()
 
 
     def valid_url(self, url):
@@ -37,6 +37,7 @@ class DocumentProcessor:
 
         self.crawl(doc)
         self.extract(doc)
+        self.reconcile_entities(doc)
 
         return doc
 
@@ -54,26 +55,30 @@ class DocumentProcessor:
             extractor.extract(doc)
 
 
-    def persist(self, doc):
+    def reconcile_entities(self, doc):
         """
-        Write this document, and all its entities, to the database.
+        Reconcile this documents entities with the database.
 
-        If the document or any related entity has already been written,
-        those objects are untouched (and changes will be written naturally.)
-
-        Entities are only written if they aren't already in the database. This
-        means a document can be created (or updated) with entities added
-        naively by their group and name, and this method will sort out what
-        needs to be written and what doesn't.
+        For all entities associated with the document, we check
+        if it already exists and, if it does, replace
+        that entity with the one from the database to prevent it
+        from being created.
 
         Note: if an entity is new and another processor creates it at the same
         time, there is a race condition. The database is left intact and correct,
         but one processor will get a key violation exception.
         """
-        # ensure all these entities exist
-        for de in document.entities:
-            de.entity = self.entity_factory.get_or_create(de.entity)
-        for utterance in document.utterances:
-            utterance.entity = self.entity_factory.get_or_create(utterance.entity)
+        entities = Entity.bulk_get((e.group, e.name) for e in chain(
+            (de.entity for de in doc.entities),
+            (u.entity for u in doc.utterances)))
 
-        DBSession.add(doc)
+        # reconcile entities in document with those in the db
+        for de in doc.entities:
+            de.entity = entities.get(
+                    (de.entity.group.lower(), de.entity.name.lower()),
+                    de.entity)
+
+        for utterance in doc.utterances:
+            utterance.entity = entities.get(
+                    (utterance.entity.group.lower(), utterance.entity.name.lower()),
+                    utterance.entity)

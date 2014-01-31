@@ -37,6 +37,6 @@ class Utterance(Base):
         return isinstance(other, Utterance) and other.entity == self.entity and \
                 other.quote == self.quote
 
-    def __str__(self):
+    def __repr__(self):
         return "<Utterance doc=%s, entity=%s, quote=\"%s\">" % (
                 self.document, self.entity, (self.quote or "")[0:15] + "...")

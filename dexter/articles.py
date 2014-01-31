@@ -46,11 +46,8 @@ def new_article(request):
                     request.session.flash("We already have that article.")
                 else:
                     # create and process the document
-                    try:
-                        doc = DocumentProcessor().process(url)
-                    except Exception as e:
-                        request.session.flash("There was a problem processing the article, try again or type out the contents manually.", 'error')
-                        doc = None
+                    # TODO: error handling
+                    doc = DocumentProcessor().process(url)
 
         else:
             # new document from article text

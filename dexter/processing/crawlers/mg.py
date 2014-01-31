@@ -37,7 +37,7 @@ class MGCrawler:
 
         r = requests.get(url)
         # raise an HTTPError on badness
-        r.status_for_status()
+        r.raise_for_status()
 
         return r.text.encode('utf8')
 
