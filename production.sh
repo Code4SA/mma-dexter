@@ -2,9 +2,6 @@
 
 set -e
 
-APP_HOME=$HOME/mma-dexter
-cd $APP_HOME
-
 source env/bin/activate
 source production-settings.sh
 
