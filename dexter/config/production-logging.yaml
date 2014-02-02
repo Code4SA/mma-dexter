@@ -1,7 +1,6 @@
-version:
-  1
+version: 1
 handlers:
-  console:
+  file:
     class: logging.handlers.TimedRotatingFileHandler
     formatter: normal
     filename: 'log/dexter.log'
@@ -15,5 +14,5 @@ loggers:
   sqlalchemy.engine:
     level: WARN
 root:
-  handlers: [console]
+  handlers: [file]
   level: INFO
