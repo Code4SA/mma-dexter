@@ -16,5 +16,5 @@ GUNICORN_WORKERS=4
 exec gunicorn \
     -w $GUNICORN_WORKERS \
     -b unix:$GUNICORN_SOCKET \
-    dexter.app:app
+    app:app
     2>&1

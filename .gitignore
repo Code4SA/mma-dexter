@@ -4,3 +4,4 @@ production-settings.sh
 *.pyc
 *.egg-info
 log
+dexter/public

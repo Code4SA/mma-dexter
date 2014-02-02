@@ -40,17 +40,3 @@ CsrfProtect(app)
 @app.context_processor
 def csrf_token():
     return dict(csrf_token=generate_csrf)
-
-# setup db
-from flask.ext.sqlalchemy import SQLAlchemy
-if not 'SQLALCHEMY_DATABASE_URI' in app.config:
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('SQLALCHEMY_DATABASE_URI')
-db = SQLAlchemy(app)
-
-# setup extraction
-from .processing.extractors.alchemy import AlchemyExtractor
-AlchemyExtractor.API_KEY = os.environ.get('ALCHEMY_API_KEY')
-
-import dexter.assets
-import dexter.routes
-

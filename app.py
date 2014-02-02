@@ -1,4 +1,4 @@
-from dexter.app import app
+from dexter.core import app
 
 if __name__ == '__main__':
   app.debug = True
