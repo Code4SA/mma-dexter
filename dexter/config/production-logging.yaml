@@ -1,0 +1,19 @@
+version:
+  1
+handlers:
+  console:
+    class: logging.handlers.TimedRotatingFileHandler
+    formatter: normal
+    filename: 'log/dexter.log'
+    when: 'd'
+formatters:
+  normal:
+    format: '%(asctime)s %(name)-12s %(levelname)-8s %(message)s'
+loggers:
+  requests:
+    level: INFO
+  sqlalchemy.engine:
+    level: WARN
+root:
+  handlers: [console]
+  level: INFO

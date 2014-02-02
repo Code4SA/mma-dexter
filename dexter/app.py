@@ -1,4 +1,5 @@
 import logging
+import logging.config
 import os
 import sys
 
@@ -21,10 +22,9 @@ app.config['ENV'] = env
 app.config.from_pyfile('config/%s.cfg' % env)
 
 # setup logging
-logging.basicConfig(level=(logging.DEBUG if env == 'development' else logging.INFO),
-                    format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s')
-logging.getLogger("requests").setLevel(logging.DEBUG)
-logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
+with open('%s/config/%s-logging.yaml' % (app.root_path, env)) as f:
+    import yaml
+    logging.config.dictConfig(yaml.load(f))
 
 # setup templates and haml
 from flask.ext.mako import MakoTemplates, _lookup

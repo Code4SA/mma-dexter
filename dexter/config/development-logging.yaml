@@ -1,0 +1,18 @@
+version:
+  1
+handlers:
+  console:
+    class: logging.StreamHandler
+    formatter: normal
+    stream: ext://sys.stdout
+formatters:
+  normal:
+    format: '%(asctime)s %(name)-12s %(levelname)-8s %(message)s'
+loggers:
+  requests:
+    level: DEBUG
+  sqlalchemy.engine:
+    level: INFO
+root:
+  handlers: [console]
+  level: DEBUG
