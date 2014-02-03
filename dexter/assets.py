@@ -10,24 +10,25 @@ assets.load_path  = ['assets']
 assets.url        = '/public'
 
 assets.register('css', 
-        Bundle(
-            'css/bootstrap-3.0.3.min.css',
-            'css/bootstrap-3.0.3-theme.min.css',
-            'css/datepicker3.css',
-            Bundle(
-                'css/*.scss',
-                filters='pyscss',
-                output='css/app.%(version)s.css'),
-            output='css/all.%(version)s.css'))
+    Bundle(
+      'css/bootstrap-3.0.3.min.css',
+      'css/bootstrap-3.0.3-theme.min.css',
+      'css/font-awesome-4.0.3.min.css',
+      'css/datepicker3.css',
+      Bundle(
+        'css/*.scss',
+        filters='pyscss',
+        output='css/app.%(version)s.css'),
+      output='css/all.%(version)s.css'))
 
 assets.register('js', 
-        Bundle(
-            'js/jquery-1.10.2.min.js',
-            'js/bootstrap-3.0.3.min.js',
-            'js/bootstrap-datepicker.js',
-            'js/ujs.js',
-            'js/app.js',
-            output='js/app.%(version)s.js'))
+    Bundle(
+      'js/jquery-1.10.2.min.js',
+      'js/bootstrap-3.0.3.min.js',
+      'js/bootstrap-datepicker.js',
+      'js/ujs.js',
+      'js/app.js',
+      output='js/app.%(version)s.js'))
 
 # Helper that is available in templates, and returns the
 # urls to the named assets.
