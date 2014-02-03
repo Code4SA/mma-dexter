@@ -5,3 +5,4 @@ production-settings.sh
 *.egg-info
 log
 dexter/public
+.idea

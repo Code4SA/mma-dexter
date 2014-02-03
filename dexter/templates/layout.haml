@@ -20,10 +20,16 @@
             %a.navbar-brand(href="/")
               Dexter
 
-          .pull-right
-            %a.btn.btn-default.navbar-btn(href=url_for('new_article'))
-              %i.fa.fa-plus
-              Add article
+          .navbar-nav.navbar-right.navbar-btn
+            .btn-group
+              %a.btn.btn-default(href=url_for('new_article'))
+                %i.fa.fa-plus
+                Add article
+              %button.btn.btn-default.dropdown-toggle(type="button", dataToggle='dropdown')
+                %span.caret
+              %ul.dropdown-menu
+                %li
+                  %a(href='javascript:window.location="https://mma-dexter.code4sa.org/articles/new?url="+encodeURIComponent(window.location);', title='Drag this bookmarklet into the Bookmarks toolbar') Add to Dexter
 
     .container
       -# show flash messages
