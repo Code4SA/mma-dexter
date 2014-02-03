@@ -2,7 +2,7 @@ import unittest
 
 from dexter.models import Document, DocumentEntity, Entity
 
-class TestAlchemyExtractor(unittest.TestCase):
+class TestDocument(unittest.TestCase):
     def test_add_entities_no_dups(self):
         doc = Document()
 
