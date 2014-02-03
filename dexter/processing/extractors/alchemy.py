@@ -15,6 +15,9 @@ class AlchemyExtractor(BaseExtractor):
     API_KEY = None
 
     def __init__(self):
+        # NOTE: set the ENV variable ALCHEMY_API_KEY before running the process
+        if not self.API_KEY:
+            raise ValueError('%s.%s.API_KEY must be defined.' % (self.__module__, self.__class__.__name__))
         self.alchemy = AlchemyAPI(self.API_KEY)
 
     def extract(self, doc):

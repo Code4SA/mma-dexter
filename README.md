@@ -23,10 +23,11 @@ from dexter.models.support import db
 db.create_all()
 ```
 
-* setup the AlchemyAPI API key:
+* setup the AlchemyAPI and OpenCalais API keys:
 
 ```bash
 export ALCHEMY_API_KEY=thekey
+export CALAIS_API_KEY=anotherkey
 ```
 
 * run the server: `python app.py`

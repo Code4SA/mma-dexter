@@ -72,6 +72,10 @@ class CalaisExtractor(BaseExtractor):
 
 
     def fetch_data(self, text):
+        # NOTE: set the ENV variable CALAIS_API_KEY before running the process
+        if not self.API_KEY:
+            raise ValueError('%s.%s.API_KEY must be defined.' % (self.__module__, self.__class__.__name__))
+
         res = requests.post('http://api.opencalais.com/tag/rs/enrich', text.encode('utf-8'),
             headers={
                 'x-calais-licenseID': self.API_KEY,
