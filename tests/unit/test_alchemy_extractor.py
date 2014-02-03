@@ -5,6 +5,7 @@ from dexter.processing.extractors import AlchemyExtractor
 
 class TestAlchemyExtractor(unittest.TestCase):
     def setUp(self):
+        AlchemyExtractor.API_KEY = 'fake'
         self.ex = AlchemyExtractor()
         self.doc = Document()
 
