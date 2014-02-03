@@ -14,7 +14,10 @@
     - else:
       = fld.label(class_="control-label col-sm-2")
       .col-sm-10
-        = fld(class_='form-control', **kwargs)
+        - cls = 'form-control'
+        - if 'class_' in kwargs:
+          - cls = cls + ' ' + kwargs.pop('class_')
+        = fld(class_=cls, **kwargs)
         - if fld.errors:
           %p.help-block
             - for err in fld.errors:

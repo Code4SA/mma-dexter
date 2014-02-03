@@ -9,7 +9,8 @@
     %section.heading
       %h2&= document.title
       .byline
-        %span.timestamp&= document.published_at.strftime('%Y-%m-%d')
+        - if document.published_at:
+          %span.timestamp&= document.published_at.strftime('%Y-%m-%d')
         - if document.author:
           by
           %span.author&= document.author.name

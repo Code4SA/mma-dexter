@@ -12,21 +12,23 @@
       %h3 By fetching a webpage
 
       %form.form-horizontal(action=url_for('new_article'), method='POST')
-        %input(type="hidden", name="csrf_token", value=csrf_token())
-      
+        = form.csrf_token
+
         = field(form.url, placeholder='URL')
         .row
           .col-sm-10.col-sm-offset-2
-            %input.btn.btn-primary(type='submit', value="Fetch and add article")
+            %input.btn.btn-primary(type='submit', value="Fetch and add article", dataDisableWith='Fetching...')
 
       %h3 Or by typing it in
       %form.form-horizontal(action=url_for('new_article'), method='POST')
-        %input(type="hidden", name="csrf_token", value=csrf_token())
+        = form.csrf_token
+        %input(type='hidden', name='manual', value='True')
 
-        = field(form.title, placeholder='Article headline')
         = field(form.url, placeholder='URL')
-        = field(form.text, rows=15, placeholder='The text of the article')
+        = field(form.title, placeholder='Article headline', required=True)
+        = field(form.published_at, placeholder='YYYY/MM/DD', class_='use-datepicker')
+        = field(form.text, rows=15, placeholder='The text of the article', required=True)
         .row
           .col-sm-10.col-sm-offset-2
-            %input.btn.btn-primary(type='submit', value='Add new article')
+            %input.btn.btn-primary(type='submit', value='Add new article', dataDisableWith='Adding...')
 
