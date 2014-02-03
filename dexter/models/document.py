@@ -36,7 +36,7 @@ class Document(db.Model):
     section   = Column(String(100), index=True)
     author_entity_id = Column(Integer, ForeignKey('entities.id'))
 
-    published_at = Column(DateTime(timezone=True), index=True, unique=False)
+    published_at = Column(DateTime(timezone=True), index=True, unique=False, nullable=False)
     created_at   = Column(DateTime(timezone=True), index=True, unique=False, nullable=False, server_default=func.now())
     updated_at   = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.current_timestamp())
 
