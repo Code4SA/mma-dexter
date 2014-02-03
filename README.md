@@ -11,6 +11,13 @@ The app is a [Flask web app](http://flask.pocoo.org/) that uses [SQLAlchemy](htt
 * install requirements: `pip install -r requirements.txt`
 * setup the database:
 
+```bash
+mysql -u root
+mysql> CREATE DATABASE mma;
+mysql> GRANT ALL ON mma.* TO 'mma'@'localhost';
+mysql> exit;
+```
+
 ```python
 from dexter.models.support import db
 db.create_all()
