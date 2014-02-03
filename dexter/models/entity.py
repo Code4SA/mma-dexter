@@ -13,6 +13,7 @@ from sqlalchemy import (
 from sqlalchemy.orm import relationship
 
 from .support import db
+from .with_offsets import WithOffsets
 
 class Entity(db.Model):
     """
@@ -50,7 +51,7 @@ class Entity(db.Model):
 Index('entity_group_name_ix', Entity.group, Entity.name, unique=True)
 
 
-class DocumentEntity(db.Model):
+class DocumentEntity(db.Model, WithOffsets):
     """
     Entities referenced in a document.
     """
@@ -65,10 +66,12 @@ class DocumentEntity(db.Model):
     created_at   = Column(DateTime(timezone=True), index=True, unique=False, nullable=False, server_default=func.now())
     updated_at   = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.current_timestamp())
 
-    # Document Offsets
+    # offsets in the document, a space-separated list of offset:length pairs.
+    offset_list  = Column(String(1024))
 
     # Associations
     entity    = relationship("Entity", lazy=False)
+
 
     def __repr__(self):
         return "<DocumentEntity doc=%s, entity=%s, relevance=%f, count=%d>" % (

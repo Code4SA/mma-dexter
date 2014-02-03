@@ -46,6 +46,8 @@ class CalaisExtractor(BaseExtractor):
                 de.entity = e
                 de.relevance = float(ent['relevance'])
                 de.count = len(ent['instances'])
+                for occurrence in ent['instances']:
+                    de.add_offset((occurrence['offset'], occurrence['length']))
 
                 if doc.add_entity(de):
                     entities_added += 1
@@ -59,6 +61,10 @@ class CalaisExtractor(BaseExtractor):
         for quote in calais.get('relations', {}).get('Quotation', {}).itervalues():
             u = Utterance()
             u.quote = quote['quote'].strip()
+
+            if quote.get('instances', []):
+                u.offset = quote['instances'][0]['offset']
+                u.length = quote['instances'][0]['length']
 
             # uttering entity
             u.entity = Entity()

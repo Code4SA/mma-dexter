@@ -54,6 +54,7 @@
                   %tr
                     %td&= dp.entity.name
                     %td&= dp.relevance
+                    %td&= dp.offset_list
 
             #orgs-tab.tab-pane
               %h3 Organisations
@@ -62,6 +63,7 @@
                   %tr
                     %td&= org.entity.name
                     %td&= org.relevance
+                    %td&= org.offset_list
 
             #quotations-tab.tab-pane
               %h3 Quotations
@@ -70,6 +72,7 @@
                   %tr
                     %td&= q.entity.name
                     %td&= q.quote
+                    %td&= q.offset
 
             #places-tab.tab-pane
               %h3 Places
@@ -79,6 +82,7 @@
                     %td&= p.entity.name
                     %td&= p.entity.group
                     %td&= p.relevance
+                    %td&= p.offset_list
 
             #keywords-tab.tab-pane
               %h3 Keywords

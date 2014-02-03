@@ -66,9 +66,10 @@ class Document(db.Model):
 
     def add_entity(self, doc_entity):
         """ Add a new DocumentEntity to this document, but only
-        if the entity doesn't already exist on it."""
-        if any(de.entity == doc_entity.entity for de in self.entities):
-            return False
+        if the entity and the specific offsets don't already exist on it. """
+        for de in self.entities:
+            if de.entity == doc_entity.entity:
+                return de.add_offsets(doc_entity.offsets())
 
         self.entities.append(doc_entity)
         return True
