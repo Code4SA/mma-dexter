@@ -78,10 +78,10 @@ class CalaisExtractor(BaseExtractor):
                 'content-type': 'text/raw',
                 'accept': 'application/json',
                 })
-
         if res.status_code == 200:
             return self.normalise(res.json())
         else:
+            log.error(res.text)
             res.raise_for_status()
 
 
