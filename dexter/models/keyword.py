@@ -8,8 +8,9 @@ from sqlalchemy import (
     )
 
 from .support import db
+from .with_offsets import WithOffsets
 
-class DocumentKeyword(db.Model):
+class DocumentKeyword(db.Model, WithOffsets):
     """
     A keyword (normally a non-entity keyword) in a document.
     """
@@ -19,6 +20,9 @@ class DocumentKeyword(db.Model):
     doc_id    = Column(Integer, ForeignKey('documents.id'), index=True)
     keyword   = Column(String(100), index=True, nullable=False)
     relevance = Column(Float, index=True, nullable=False)
+
+    # offsets in the document, a space-separated list of offset:length pairs.
+    offset_list  = Column(String(1024))
 
     def __repr__(self):
         return "<DocumentKeyword keyword='%s', relevance=%f, doc=%s>" % (

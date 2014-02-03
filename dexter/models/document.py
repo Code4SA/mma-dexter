@@ -85,9 +85,10 @@ class Document(db.Model):
 
     def add_keyword(self, keyword):
         """ Add a new keyword, but only if it's not already there. """
-        if any(k.keyword == keyword.keyword for k in self.keywords):
-            return False
-
+        for k in self.keywords:
+            if k.keyword == keyword.keyword:
+                return k.add_offsets(keyword.offsets)
+                
         self.keywords.append(keyword)
         return True
 

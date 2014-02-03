@@ -88,7 +88,7 @@ class AlchemyExtractor(BaseExtractor):
             k = DocumentKeyword()
             k.keyword = kw['text']
             k.relevance = float(kw['relevance'])
-            #k.offset_list = self.all_offsets(doc.text, k.keyword)
+            k.offset_list = self.all_offsets(doc.text, k.keyword)
 
             if doc.add_keyword(k):
                 keywords_added += 1
@@ -123,7 +123,7 @@ class AlchemyExtractor(BaseExtractor):
         while True:
             start = text.find(needle, start)
             if start == -1:
-                return
+                break
             offsets.append((start, needle_len))
             start += needle_len
 
