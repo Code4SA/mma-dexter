@@ -57,8 +57,8 @@ And restart nginx:
 
 Tell upstart about the dexter gunicorn server:
 
-```
-sudo ln -s /home/mma/mma-dexter/resources/upstart/dexter.conf /etc/init/`
+```bash
+sudo ln -s /home/mma/mma-dexter/resources/upstart/dexter.conf /etc/init/
 sudo initctl reload-configuration
 ```
 
