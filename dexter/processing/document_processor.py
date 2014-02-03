@@ -81,7 +81,8 @@ class DocumentProcessor:
         """
         entities = Entity.bulk_get((e.group, e.name) for e in chain(
             (de.entity for de in doc.entities),
-            (u.entity for u in doc.utterances)))
+            (u.entity for u in doc.utterances),
+            [doc.author]) if e)
 
         # reconcile entities in document with those in the db
         for de in doc.entities:
@@ -93,3 +94,7 @@ class DocumentProcessor:
             utterance.entity = entities.get(
                     (utterance.entity.group.lower(), utterance.entity.name.lower()),
                     utterance.entity)
+
+        if doc.author:
+            doc.author = entities.get((doc.author.group.lower(), doc.author.name.lower()),
+                    doc.author)

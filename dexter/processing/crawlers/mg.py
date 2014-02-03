@@ -8,6 +8,8 @@ import logging
 from dateutil.parser import parse
 from dateutil.tz import tzutc
 
+from ...models import Entity
+
 class MGCrawler:
     MG_RE = re.compile('(www\.)?mg.co.za')
     log = logging.getLogger(__name__)
@@ -51,8 +53,12 @@ class MGCrawler:
         doc.text = "\n\n".join(p.text for p in soup.select(".body_printable p"))
 
         doc.published_at = self.parse_timestamp(self.extract_plaintext(soup.select(".content_place_line")))
-        # TODO
-        # doc.author = extract_plaintext(soup.select(".content_place_line_author"))
+
+        author = self.extract_plaintext(soup.select(".content_place_line_author"))
+        if author:
+            doc.author = Entity()
+            doc.author.group = 'person'
+            doc.author.name = author
 
 
     def extract_plaintext(self, lst):

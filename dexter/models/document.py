@@ -33,6 +33,7 @@ class Document(db.Model):
     blurb     = Column(String(1024))
     text      = Column(Text)
     section   = Column(String(100), index=True)
+    author_entity_id = Column(Integer, ForeignKey('entities.id'))
 
     published_at = Column(DateTime(timezone=True), index=True, unique=False, nullable=False)
     created_at   = Column(DateTime(timezone=True), index=True, unique=False, nullable=False, server_default=func.now())
@@ -40,9 +41,9 @@ class Document(db.Model):
 
     # TODO: name of publication, eg. M&G
     # TODO: location
-    # TODO: author
 
     # Associations
+    author      = relationship("Entity", foreign_keys=[author_entity_id])
     entities    = relationship("DocumentEntity", backref=backref('document'), order_by="desc(DocumentEntity.relevance)")
     utterances  = relationship("Utterance", backref=backref('document'))
     keywords    = relationship("DocumentKeyword", backref=backref('document'), order_by="desc(DocumentKeyword.relevance)")
