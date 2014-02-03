@@ -6,6 +6,8 @@
     %title
       %%block(name="title")
       \- Dexter
+    %meta(name='csrf-param', value='csrf_token')
+    %meta(name='csrf-token', value=csrf_token())
     %meta(name="viewport", content="width=device-width, initial-scale=1.0")
     - for url in webassets('css'):
       %link(rel="stylesheet", href=url)
@@ -17,6 +19,11 @@
           .navbar-header
             %a.navbar-brand(href="/")
               Dexter
+
+          .pull-right
+            %a.btn.btn-default.navbar-btn(href=url_for('new_article'))
+              %i.fa.fa-plus
+              Add article
 
     .container
       -# show flash messages

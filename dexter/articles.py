@@ -26,7 +26,7 @@ def new_article():
         doc = None
         proc = DocumentProcessor()
 
-        if url:
+        if url and not 'manual' in request.form:
             # new document from url
             if not proc.valid_url(url):
                 flash("The URL isn't valid or we don't know how to process it.", 'error')
@@ -53,7 +53,7 @@ def new_article():
                 form.populate_obj(doc)
 
                 try:
-                    doc = proc.process_document(doc)
+                    proc.process_document(doc)
                 except ProcessingError as e:
                     log.error("Error processing raw document: %s" % (e, ), exc_info=e)
                     flash("Something went wrong processing the document: %s" % (e,), 'error')
@@ -64,6 +64,7 @@ def new_article():
             db.session.flush()
             id = doc.id
             db.session.commit()
+            flash('Article added.')
             return redirect(url_for('show_article', id=id))
         
     return render_template('articles/new.haml',

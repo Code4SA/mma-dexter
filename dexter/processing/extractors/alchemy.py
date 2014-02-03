@@ -1,5 +1,6 @@
 import re
 
+from .base import BaseExtractor
 from .alchemy_api import AlchemyAPI
 from ...processing import ProcessingError
 from ...models import DocumentKeyword, DocumentEntity, Entity, Utterance
@@ -7,7 +8,7 @@ from ...models import DocumentKeyword, DocumentEntity, Entity, Utterance
 import logging
 log = logging.getLogger(__name__)
 
-class AlchemyExtractor:
+class AlchemyExtractor(BaseExtractor):
     """ Use the Alchemy API to extract entities and other
     useful goodies from a document.
     """
@@ -99,8 +100,3 @@ class AlchemyExtractor:
         if res['status'] == 'ERROR':
             raise ProcessingError(res['statusInfo'])
         return res['keywords']
-
-
-    def normalise_name(self, name):
-        return re.sub('(?!^)([A-Z]+)', r'_\1', name).lower()
-

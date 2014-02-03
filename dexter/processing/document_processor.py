@@ -4,7 +4,7 @@ from ..models import Document, Entity, db
 from ..processing import ProcessingError
 
 from .crawlers import MGCrawler
-from .extractors import AlchemyExtractor
+from .extractors import AlchemyExtractor, CalaisExtractor
 
 from requests.exceptions import HTTPError
 import logging
@@ -14,7 +14,7 @@ class DocumentProcessor:
 
     def __init__(self):
         self.crawlers = [MGCrawler()]
-        self.extractors = [AlchemyExtractor()]
+        self.extractors = [AlchemyExtractor(), CalaisExtractor()]
 
 
     def valid_url(self, url):
@@ -81,15 +81,24 @@ class DocumentProcessor:
         """
         entities = Entity.bulk_get((e.group, e.name) for e in chain(
             (de.entity for de in doc.entities),
-            (u.entity for u in doc.utterances)))
+            (u.entity for u in doc.utterances),
+            [doc.author]) if e)
 
         # reconcile entities in document with those in the db
         for de in doc.entities:
-            de.entity = entities.get(
-                    (de.entity.group.lower(), de.entity.name.lower()),
-                    de.entity)
+            de.entity = self.get_or_set_entity(entities, de.entity)
 
-        for utterance in doc.utterances:
-            utterance.entity = entities.get(
-                    (utterance.entity.group.lower(), utterance.entity.name.lower()),
-                    utterance.entity)
+        for u in doc.utterances:
+            u.entity = self.get_or_set_entity(entities, u.entity)
+
+        if doc.author:
+            doc.author = self.get_or_set_entity(entities, doc.author)
+
+
+    def get_or_set_entity(self, entities, entity):
+        key = (entity.group.lower(), entity.name.lower())
+        if key in entities:
+            return entities[key]
+
+        entities[key] = entity
+        return entity

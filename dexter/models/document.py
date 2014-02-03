@@ -1,6 +1,7 @@
-from flask_wtf import Form
 from wtforms import StringField, TextAreaField, validators
 from wtforms.fields.html5 import URLField
+
+from ..forms import Form
 
 from sqlalchemy import (
     Column,
@@ -27,12 +28,13 @@ class Document(db.Model):
     __tablename__ = "documents"
 
     id        = Column(Integer, primary_key=True)
-    url       = Column(String(200), index=True, unique=True, nullable=False)
+    url       = Column(String(200), index=True, nullable=True)
 
     title     = Column(String(1024))
     blurb     = Column(String(1024))
     text      = Column(Text)
     section   = Column(String(100), index=True)
+    author_entity_id = Column(Integer, ForeignKey('entities.id'))
 
     published_at = Column(DateTime(timezone=True), index=True, unique=False, nullable=False)
     created_at   = Column(DateTime(timezone=True), index=True, unique=False, nullable=False, server_default=func.now())
@@ -40,9 +42,9 @@ class Document(db.Model):
 
     # TODO: name of publication, eg. M&G
     # TODO: location
-    # TODO: author
 
     # Associations
+    author      = relationship("Entity", foreign_keys=[author_entity_id])
     entities    = relationship("DocumentEntity", backref=backref('document'), order_by="desc(DocumentEntity.relevance)")
     utterances  = relationship("Utterance", backref=backref('document'))
     keywords    = relationship("DocumentKeyword", backref=backref('document'), order_by="desc(DocumentKeyword.relevance)")
@@ -94,7 +96,8 @@ class Document(db.Model):
 
 
 class DocumentForm(Form):
-    url     = URLField('URL', [validators.Required()])
-    title   = StringField('Headline')
-    blurb   = StringField('Blurb')
-    text    = TextAreaField('Article content')
+    url     = URLField('URL', [validators.Length(max=200)])
+    title   = StringField('Headline', [validators.Required(), validators.Length(max=1024)])
+    published_at = StringField('Published on', [validators.Required()])
+    blurb   = StringField('Blurb', [validators.Length(max=1024)])
+    text    = TextAreaField('Article content', [validators.Required()])
