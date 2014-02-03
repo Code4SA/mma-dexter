@@ -8,7 +8,7 @@ from .app import app
 from .models import db, Document
 from .models.document import DocumentForm
 
-from .processing import DocumentProcessor
+from .processing import DocumentProcessor, ProcessingError
 
 @app.route('/articles/<id>')
 def show_article(id):
@@ -24,11 +24,10 @@ def new_article():
 
     if request.method == 'POST':
         doc = None
+        proc = DocumentProcessor()
 
         if url:
             # new document from url
-            proc = DocumentProcessor()
-
             if not proc.valid_url(url):
                 flash("The URL isn't valid or we don't know how to process it.", 'error')
             else:
@@ -38,10 +37,14 @@ def new_article():
                 if doc:
                     # already exists
                     flash("We already have that article.")
-                else:
-                    # create and process the document
-                    # TODO: error handling
-                    doc = DocumentProcessor().process(url)
+                    return redirect(url_for('show_article', id=doc.id))
+
+                try:
+                    doc = proc.process_url(url)
+                except ProcessingError as e:
+                    log.error("Error processing %s: %s" % (url, e), exc_info=e)
+                    flash("Something went wrong processing the document: %s" % (e,), 'error')
+                    doc = None
 
         else:
             # new document from article text
@@ -49,16 +52,19 @@ def new_article():
                 doc = Document()
                 form.populate_obj(doc)
 
-        if doc:
-            if not doc.id:
-                db.session.add(doc)
-                db.session.flush()
-                id = doc.id
-                db.session.commit()
-            else:
-                id = doc.id
+                try:
+                    doc = proc.process_document(doc)
+                except ProcessingError as e:
+                    log.error("Error processing raw document: %s" % (e, ), exc_info=e)
+                    flash("Something went wrong processing the document: %s" % (e,), 'error')
+                    doc = None
 
-            return redirect(url_for('edit_article', id=id))
+        if doc:
+            db.session.add(doc)
+            db.session.flush()
+            id = doc.id
+            db.session.commit()
+            return redirect(url_for('show_article', id=id))
         
     return render_template('articles/new.haml',
             url=url,

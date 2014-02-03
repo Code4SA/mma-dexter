@@ -1,10 +1,12 @@
 from itertools import chain
 
 from ..models import Document, Entity, db
+from ..processing import ProcessingError
 
 from .crawlers import MGCrawler
 from .extractors import AlchemyExtractor
 
+from requests.exceptions import HTTPError
 import logging
 
 class DocumentProcessor:
@@ -29,17 +31,26 @@ class DocumentProcessor:
         return url
 
 
-    def process(self, url):
-        """ Downloand and process an article at +url+ and return
+    def process_url(self, url):
+        """ Download and process an article at +url+ and return
         a Document instance. """
         doc = Document()
         doc.url = url
 
-        self.crawl(doc)
+        try:
+            self.crawl(doc)
+            self.process_document(doc)
+        except HTTPError as e:
+            raise ProcessingError("Error fetching document: %s" % (e,))
+
+        return doc
+
+
+    def process_document(self, doc):
+        """ Process an existing document. """
         self.extract(doc)
         self.reconcile_entities(doc)
 
-        return doc
 
     def crawl(self, doc):
         """ Run crawlers against a document's URL to fetch its

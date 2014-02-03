@@ -1,6 +1,7 @@
 import re
 
 from .alchemy_api import AlchemyAPI
+from ...processing import ProcessingError
 from ...models import DocumentKeyword, DocumentEntity, Entity, Utterance
 
 import logging
@@ -88,7 +89,7 @@ class AlchemyExtractor:
             })
 
         if res['status'] == 'ERROR':
-            return None
+            raise ProcessingError(res['statusInfo'])
         return res['entities']
 
 
@@ -96,7 +97,7 @@ class AlchemyExtractor:
         res = self.alchemy.keywords('text', text.encode('utf-8'))
 
         if res['status'] == 'ERROR':
-            return None
+            raise ProcessingError(res['statusInfo'])
         return res['keywords']
 
 
