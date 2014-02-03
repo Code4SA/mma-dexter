@@ -20,6 +20,11 @@
             %a.navbar-brand(href="/")
               Dexter
 
+          .pull-right
+            %a.btn.btn-default.navbar-btn(href=url_for('new_article'))
+              %i.fa.fa-plus
+              Add article
+
     .container
       -# show flash messages
       - for category, message in (get_flashed_messages(with_categories=True) or []):
