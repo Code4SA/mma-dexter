@@ -20,6 +20,7 @@ def show_article(id):
 @app.route('/articles/new', methods=['GET', 'POST'])
 def new_article():
     form = DocumentForm()
+    form.url.data = form.url.data or request.args.get('url')
     url = form.url.data
 
     if request.method == 'POST':
