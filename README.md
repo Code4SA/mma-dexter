@@ -38,11 +38,15 @@ export CALAIS_API_KEY=anotherkey
 * clone the repo
 * install a virtual env and activate it: `virtualenv --system-site-packages env; source env/bin/activate`
 * install requirements: `pip install -r requirements.txt`
+* setup the database
 
-Setup the database and set the database URL as an environment variable in a file called `production-settings.sh`:
+Create a file for sensitive configuration settings called `production-settings.sh` and the appropriate
+configuration entries.
 
 ```bash
 export SQLALCHEMY_URL=mysql://mma:PASSWORD@localhost/mma
+export ALCHEMY_API_KEY=thekey
+export CALAIS_API_KEY=anotherkey
 ```
 
 **Note:** DO NOT commit `production-settings.sh` into source control!
