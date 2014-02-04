@@ -12,12 +12,11 @@
 
     %section.tabs
       .row
-        -#.col-sm-12
         - for doc in documents:
           %div.panel.panel-default
             %div.panel-heading
               %span.pull-right= doc.published_at.strftime('%e %B %Y')
-              %a(href=doc.url, target="_blank")= doc.title
+              %a(href="/articles/" + str(doc.id))= doc.title
             %div.panel-body
               %ul.list-group
                 - for utterance in doc.utterances:
