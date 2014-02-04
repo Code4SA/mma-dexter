@@ -14,6 +14,7 @@ assets.register('css',
       'css/bootstrap-3.0.3.min.css',
       'css/bootstrap-3.0.3-theme.min.css',
       'css/font-awesome-4.0.3.min.css',
+      'css/chosen.min.css',
       'css/datepicker3.css',
       Bundle(
         'css/*.scss',
@@ -27,6 +28,7 @@ assets.register('js',
       'js/bootstrap-3.0.3.min.js',
       'js/bootstrap-datepicker.js',
       'js/ujs.js',
+      'js/chosen.jquery.min.js',
       'js/app.js',
       output='js/app.%(version)s.js'))
 
