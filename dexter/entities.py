@@ -10,7 +10,7 @@ import urllib
 
 
 @app.route('/<string:group>/<string:name>/')
-def profile(group, name):
+def show_entity(group, name):
 
     entity = Entity.query.filter(Entity.group==group, Entity.name==name).first()
 
