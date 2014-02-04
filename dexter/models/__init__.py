@@ -5,3 +5,4 @@ from .keyword import DocumentKeyword
 from .utterance import Utterance
 from .medium import Medium
 from .source import DocumentSource
+from .person import Person, Gender, Race

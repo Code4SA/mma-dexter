@@ -27,8 +27,14 @@ class Entity(db.Model):
     group       = Column(String(50), index=True, nullable=False)
     name        = Column(String(150), index=True, nullable=False)
 
+    # entities with group == 'person' may have a linked person
+    person_id   = Column(Integer, ForeignKey('people.id'))
+
     created_at   = Column(DateTime(timezone=True), index=True, unique=False, nullable=False, server_default=func.now())
     updated_at   = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.current_timestamp())
+
+    # Associations
+    person      = relationship('Person', foreign_keys=[person_id], lazy=False)
 
     def __eq__(self, other):
         return isinstance(other, Entity) and self.group == other.group \

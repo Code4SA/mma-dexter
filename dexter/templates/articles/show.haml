@@ -88,10 +88,25 @@
             #people-tab.tab-pane
               %h3 People
               %table.table.table-striped.table-condensed.entities
+                %thead
+                  %th Name
+                  %th Race
+                  %th Gender
+                  %th Relevance
                 - for dp in document.people():
+                  - person = dp.entity.person
+
                   %tr(dataOffsets=dp.offset_list)
                     %td
                       %a(href= url_for('show_entity', group=dp.entity.group, name=dp.entity.name))&=dp.entity.name
+                    %td
+                      - if person:
+                        - if person.race:
+                          &= person.race.name[0]
+                    %td
+                      - if person:
+                        - if person.gender:
+                          &= person.gender.name[0]
                     %td&= dp.relevance
 
             #orgs-tab.tab-pane
