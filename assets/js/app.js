@@ -43,9 +43,9 @@ $(function() {
         .replace(/\&lt;mark\&gt;/g, '<mark>')
         .replace(/\&lt;\/mark&gt;/g, '</mark>')
         // now add <br> in the same way the server does
-        .replace(/\n+/, "\n")
-        .replace(/\n/, "\n")
-        .replace(/\n/, "</p>");
+        .replace(/\n+/g, "\n")
+        .replace(/\n/g, "\n")
+        .replace(/\n/g, "</p>");
 
       $article.html('<p>' + text + '</p>');
     };
