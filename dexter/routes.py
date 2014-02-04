@@ -4,6 +4,7 @@ from flask.ext.mako import render_template
 from dexter.models import Document
 
 import dexter.articles
+import dexter.entities
 
 @app.route('/')
 def home():

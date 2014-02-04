@@ -3,6 +3,7 @@
   &= document.title
 
 - from dexter.helpers import format_paragraphs
+- from urllib import quote_plus
 
 #show-document
   %article
@@ -61,7 +62,8 @@
               %table.table.table-striped.table-condensed.entities
                 - for dp in document.people():
                   %tr(dataOffsets=dp.offset_list)
-                    %td&= dp.entity.name
+                    %td
+                      %a(href= url_for('show_entity', group=dp.entity.group, name=dp.entity.name))&=dp.entity.name
                     %td&= dp.relevance
 
             #orgs-tab.tab-pane
