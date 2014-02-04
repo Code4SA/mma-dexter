@@ -66,9 +66,10 @@ class Document(db.Model):
 
     def add_entity(self, doc_entity):
         """ Add a new DocumentEntity to this document, but only
-        if the entity doesn't already exist on it."""
-        if any(de.entity == doc_entity.entity for de in self.entities):
-            return False
+        if the entity and the specific offsets don't already exist on it. """
+        for de in self.entities:
+            if de.entity == doc_entity.entity:
+                return de.add_offsets(doc_entity.offsets())
 
         self.entities.append(doc_entity)
         return True
@@ -84,9 +85,10 @@ class Document(db.Model):
 
     def add_keyword(self, keyword):
         """ Add a new keyword, but only if it's not already there. """
-        if any(k.keyword == keyword.keyword for k in self.keywords):
-            return False
-
+        for k in self.keywords:
+            if k.keyword == keyword.keyword:
+                return k.add_offsets(keyword.offsets)
+                
         self.keywords.append(keyword)
         return True
 

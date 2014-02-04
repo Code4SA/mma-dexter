@@ -45,6 +45,9 @@ class AlchemyExtractor(BaseExtractor):
             de.relevance = float(entity['relevance'])
             de.count = int(entity['count'])
 
+            # do our best to guess occurrences
+            de.offset_list = self.all_offsets(doc.text, e.name)
+
             if doc.add_entity(de):
                 entities_added += 1
 
@@ -53,6 +56,13 @@ class AlchemyExtractor(BaseExtractor):
                 u = Utterance()
                 u.quote = quote['quotation'].strip()
                 u.entity = e
+                
+                # lame effort to find quote offset - alchemy often puts ... at the end
+                needle = u.quote.strip(' .')
+                offset = doc.text.find(needle)
+                if offset > -1:
+                    u.offset = offset
+                    u.length = len(needle)
 
                 if doc.add_utterance(u):
                     utterances_added += 1
@@ -78,6 +88,7 @@ class AlchemyExtractor(BaseExtractor):
             k = DocumentKeyword()
             k.keyword = kw['text']
             k.relevance = float(kw['relevance'])
+            k.offset_list = self.all_offsets(doc.text, k.keyword)
 
             if doc.add_keyword(k):
                 keywords_added += 1
@@ -103,3 +114,18 @@ class AlchemyExtractor(BaseExtractor):
         if res['status'] == 'ERROR':
             raise ProcessingError(res['statusInfo'])
         return res['keywords']
+
+    def all_offsets(self, text, needle):
+        needle_len = len(needle)
+        start = 0
+        offsets = []
+
+        while True:
+            start = text.find(needle, start)
+            if start == -1:
+                break
+            offsets.append((start, needle_len))
+            start += needle_len
+
+        return ' '.join('%d:%d' % p for p in offsets)
+

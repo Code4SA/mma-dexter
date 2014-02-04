@@ -33,6 +33,10 @@ class Utterance(db.Model):
     # Associations
     entity    = relationship("Entity", lazy=False)
 
+    # offset and length of quotation in the document
+    offset    = Column(Integer)
+    length    = Column(Integer)
+
     def __eq__(self, other):
         return isinstance(other, Utterance) and other.entity == self.entity and \
                 other.quote == self.quote

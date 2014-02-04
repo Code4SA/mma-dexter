@@ -20,9 +20,8 @@
     %section.tabs
       .row
         .col-sm-5
-          .article-text
-            %p
-              = format_paragraphs(document.text)
+          .article-text(dataOriginal=document.text.replace("\r", "\n"))
+            = format_paragraphs(document.text)
         .col-sm-7
           %ul.nav.nav-tabs
             %li.active
@@ -49,41 +48,41 @@
           .tab-content
             #people-tab.tab-pane.active
               %h3 People
-              %table.table.table-striped.table-condensed
+              %table.table.table-striped.table-condensed.entities
                 - for dp in document.people():
-                  %tr
+                  %tr(dataOffsets=dp.offset_list)
                     %td&= dp.entity.name
                     %td&= dp.relevance
 
             #orgs-tab.tab-pane
               %h3 Organisations
-              %table.table.table-striped.table-condensed
+              %table.table.table-striped.table-condensed.entities
                 - for org in document.organisations():
-                  %tr
+                  %tr(dataOffsets=org.offset_list)
                     %td&= org.entity.name
                     %td&= org.relevance
 
             #quotations-tab.tab-pane
               %h3 Quotations
-              %table.table.table-striped.table-condensed
+              %table.table.table-striped.table-condensed.entities
                 - for q in document.utterances:
-                  %tr
+                  %tr(dataOffsets=('%d:%d' % (q.offset, q.length) if q.offset else ''))
                     %td&= q.entity.name
                     %td&= q.quote
 
             #places-tab.tab-pane
               %h3 Places
-              %table.table.table-striped.table-condensed
+              %table.table.table-striped.table-condensed.entities
                 - for p in document.places():
-                  %tr
+                  %tr(dataOffsets=p.offset_list)
                     %td&= p.entity.name
                     %td&= p.entity.group
                     %td&= p.relevance
 
             #keywords-tab.tab-pane
               %h3 Keywords
-              %table.table.table-striped.table-condensed
+              %table.table.table-striped.table-condensed.entities
                 - for kw in document.keywords:
-                  %tr
+                  %tr(dataOffsets=kw.offset_list)
                     %td&= kw.keyword
                     %td&= kw.relevance
