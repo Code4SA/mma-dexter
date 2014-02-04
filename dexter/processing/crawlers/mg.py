@@ -8,7 +8,7 @@ import logging
 from dateutil.parser import parse
 from dateutil.tz import tzutc
 
-from ...models import Entity
+from ...models import Entity, Medium
 
 class MGCrawler:
     MG_RE = re.compile('(www\.)?mg.co.za')
@@ -45,6 +45,8 @@ class MGCrawler:
 
     def extract(self, doc, raw_html):
         """ Extract text and other things from the raw_html for this document. """
+
+        doc.medium = Medium.query.filter(Medium.name == 'Mail and Guardian').one()
 
         soup = BeautifulSoup(raw_html)
 
