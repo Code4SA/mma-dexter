@@ -10,7 +10,7 @@ from sqlalchemy import (
     and_,
     or_,
     )
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, backref
 
 from .support import db
 

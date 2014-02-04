@@ -1,0 +1,25 @@
+%%inherit(file="../layout.haml")
+%%block(name="title")
+  &= entity.name + " (" + entity.group + ")"
+
+#show-document
+  %article
+    %section.heading
+      %h2&= entity.name
+      .byline
+        - if entity.updated_at:
+          %span.timestamp&= "Last updated: " + entity.updated_at.strftime('%Y-%m-%d')
+
+    %section.tabs
+      .row
+        -#.col-sm-12
+        - for doc in documents:
+          %div.panel.panel-default
+            %div.panel-heading
+              %span.pull-right= doc.published_at.strftime('%e %B %Y')
+              %a(href=doc.url, target="_blank")= doc.title
+            %div.panel-body
+              %ul.list-group
+                - for utterance in doc.utterances:
+                  - if utterance.entity_id == entity.id:
+                    %li.list-group-item = utterance.quote
