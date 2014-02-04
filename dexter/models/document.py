@@ -91,7 +91,7 @@ class Document(db.Model):
         return True
 
 
-    def __str__(self):
+    def __repr__(self):
         return "<Document url=%s>" % (self.url)
 
 

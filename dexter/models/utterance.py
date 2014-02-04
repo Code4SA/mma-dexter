@@ -39,4 +39,4 @@ class Utterance(db.Model):
 
     def __repr__(self):
         return "<Utterance doc=%s, entity=%s, quote=\"%s\">" % (
-                self.document, self.entity, (self.quote or "")[0:15] + "...")
+                self.document, self.entity, (self.quote or "").encode('utf-8')[0:15] + "...")

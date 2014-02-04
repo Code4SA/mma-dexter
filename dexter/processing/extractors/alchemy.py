@@ -37,8 +37,8 @@ class AlchemyExtractor(BaseExtractor):
         for entity in entities:
             # entity
             e = Entity()
-            e.group = self.normalise_name(entity['type']).encode('utf-8')
-            e.name = entity['text'].encode('utf-8')
+            e.group = self.normalise_name(entity['type'])
+            e.name = entity['text']
 
             de = DocumentEntity()
             de.entity = e

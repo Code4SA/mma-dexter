@@ -34,7 +34,7 @@ class Entity(db.Model):
             and self.name == other.name
 
     def __repr__(self):
-        return "<Entity id=%s, group=\"%s\", name=\"%s\">" % (self.id, self.group, self.name)
+        return "<Entity id=%s, group=\"%s\", name=\"%s\">" % (self.id, self.group.encode('utf-8'), self.name.encode('utf-8'))
 
     @classmethod
     def bulk_get(self, pairs):
