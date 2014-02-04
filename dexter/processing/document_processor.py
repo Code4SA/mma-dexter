@@ -4,7 +4,7 @@ from ..models import Document, Entity, db
 from ..processing import ProcessingError
 
 from .crawlers import MGCrawler
-from .extractors import AlchemyExtractor, CalaisExtractor
+from .extractors import AlchemyExtractor, CalaisExtractor, SourcesExtractor
 
 from requests.exceptions import HTTPError
 import logging
@@ -14,7 +14,7 @@ class DocumentProcessor:
 
     def __init__(self):
         self.crawlers = [MGCrawler()]
-        self.extractors = [AlchemyExtractor(), CalaisExtractor()]
+        self.extractors = [AlchemyExtractor(), CalaisExtractor(), SourcesExtractor()]
 
 
     def valid_url(self, url):
@@ -82,6 +82,7 @@ class DocumentProcessor:
         entities = Entity.bulk_get((e.group, e.name) for e in chain(
             (de.entity for de in doc.entities),
             (u.entity for u in doc.utterances),
+            (s.entity for s in doc.sources),
             [doc.author]) if e)
 
         # reconcile entities in document with those in the db
@@ -90,6 +91,9 @@ class DocumentProcessor:
 
         for u in doc.utterances:
             u.entity = self.get_or_set_entity(entities, u.entity)
+
+        for s in doc.sources:
+            s.entity = self.get_or_set_entity(entities, s.entity)
 
         if doc.author:
             doc.author = self.get_or_set_entity(entities, doc.author)
