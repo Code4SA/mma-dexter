@@ -1,5 +1,6 @@
 $(function() {
   $('[title]').tooltip();
+  $('.chosen-select').chosen();
 
   $('.use-datepicker').datepicker({
     format: 'yyyy/mm/dd',

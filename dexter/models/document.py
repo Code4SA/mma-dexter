@@ -1,4 +1,4 @@
-from wtforms import StringField, TextAreaField, validators
+from wtforms import StringField, TextAreaField, validators, SelectField
 from wtforms.fields.html5 import URLField
 
 from ..forms import Form
@@ -35,6 +35,7 @@ class Document(db.Model):
     text      = Column(Text)
     section   = Column(String(100), index=True)
     author_entity_id = Column(Integer, ForeignKey('entities.id'))
+    medium_id = Column(Integer, ForeignKey('mediums.id'))
 
     published_at = Column(DateTime(timezone=True), index=True, unique=False, nullable=False)
     created_at   = Column(DateTime(timezone=True), index=True, unique=False, nullable=False, server_default=func.now())
@@ -48,6 +49,7 @@ class Document(db.Model):
     entities    = relationship("DocumentEntity", backref=backref('document'), order_by="desc(DocumentEntity.relevance)")
     utterances  = relationship("Utterance", backref=backref('document'))
     keywords    = relationship("DocumentKeyword", backref=backref('document'), order_by="desc(DocumentKeyword.relevance)")
+    medium      = relationship("Medium")
 
 
     PLACE_ENTITY_GROUPS = set(['city', 'province_or_state', 'region'])
@@ -103,3 +105,10 @@ class DocumentForm(Form):
     published_at = StringField('Published on', [validators.Required()])
     blurb   = StringField('Blurb', [validators.Length(max=1024)])
     text    = TextAreaField('Article content', [validators.Required()])
+    medium  = SelectField('Medium', [validators.Required()])
+
+    def __init__(self, *args, **kwargs):
+        super(Form, self).__init__(*args, **kwargs)
+
+        from .medium import Medium
+        self.medium.choices = [[str(m.id), m.name] for m in Medium.query.all()]

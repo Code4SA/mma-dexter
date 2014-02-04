@@ -8,14 +8,24 @@
   %article
     %section.heading
       %h2&= document.title
-      .byline
-        - if document.published_at:
-          %span.timestamp&= document.published_at.strftime('%Y-%m-%d')
-        - if document.author:
-          by
-          %span.author&= document.author.name
       .url
         %a(href=document.url, target='_blank')&= document.url
+      .row
+        .col-sm-2
+          .timestamp
+            %i.fa.fa-calendar
+            - if document.published_at:
+              &= document.published_at.strftime('%Y-%m-%d')
+        .col-sm-2
+          .medium
+            %i.fa.fa-building-o
+              &= document.medium.name
+        .col-sm-2
+          .author
+            %i.fa.fa-user
+            - if document.author:
+                &= document.author.name
+        .col-sm-4
 
     %section.tabs
       .row
