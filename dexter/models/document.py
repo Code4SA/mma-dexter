@@ -1,4 +1,4 @@
-from wtforms import StringField, TextAreaField, validators, SelectField
+from wtforms import StringField, TextAreaField, validators, SelectField, DateField
 from wtforms.fields.html5 import URLField
 
 from ..forms import Form
@@ -100,15 +100,15 @@ class Document(db.Model):
 
 
 class DocumentForm(Form):
-    url     = URLField('URL', [validators.Length(max=200)])
-    title   = StringField('Headline', [validators.Required(), validators.Length(max=1024)])
-    published_at = StringField('Published on', [validators.Required()])
-    blurb   = StringField('Blurb', [validators.Length(max=1024)])
-    text    = TextAreaField('Article content', [validators.Required()])
-    medium  = SelectField('Medium', [validators.Required()])
+    url         = URLField('URL', [validators.Length(max=200)])
+    title       = StringField('Headline', [validators.Required(), validators.Length(max=1024)])
+    published_at = DateField('Published on', [validators.Required()], format='%Y/%m/%d')
+    blurb       = StringField('Blurb', [validators.Length(max=1024)])
+    text        = TextAreaField('Article content', [validators.Required()])
+    medium_id   = SelectField('Medium', [validators.Required()])
 
     def __init__(self, *args, **kwargs):
         super(Form, self).__init__(*args, **kwargs)
 
         from .medium import Medium
-        self.medium.choices = [[str(m.id), m.name] for m in Medium.query.all()]
+        self.medium_id.choices = [[str(m.id), m.name] for m in Medium.query.all()]
