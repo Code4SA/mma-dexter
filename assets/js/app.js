@@ -66,7 +66,24 @@ $(function() {
           var pair = e.split(':');
           return [[parseInt(pair[0]), parseInt(pair[1])]];
         });
+
         offsets.sort(function(a, b) { return a[0] - b[0]; });
+
+        // coalesce overlapping offsets
+        var coalesced = [offsets[0]];
+
+        for (var i = 1; i < offsets.length; i++) {
+          var prev = coalesced[coalesced.length-1];
+          var curr = offsets[i];
+
+          if (curr[0] <= prev[0] + prev[1]) {
+            prev[1] = Math.max(prev[0] + prev[1], curr[0] + curr[1]) - prev[0];
+          } else {
+            coalesced.push(curr);
+          }
+        }
+
+        offsets = coalesced;
       }
 
       highlightOffsets(offsets);
