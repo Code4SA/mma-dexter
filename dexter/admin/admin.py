@@ -59,7 +59,7 @@ class EntityView(MyModelView):
         'updated_at'
     )
     column_labels = dict(
-        published_at='Date Created',
+        created_at='Date Created',
         group='Type',
         updated_at='Last Updated',
     )
@@ -73,8 +73,42 @@ class EntityView(MyModelView):
     page_size = 50
 
 
+class UtteranceView(MyModelView):
+
+    can_create = False
+    list_template = 'admin/custom_list_template.html'
+    column_list = (
+        'entity',
+        'quote',
+        'document',
+        'created_at',
+        'updated_at'
+    )
+    column_labels = dict(
+        created_at='Date Created',
+        updated_at='Last Updated',
+    )
+    column_formatters = dict(
+        entity=macro('render_entity'),
+        document=macro('render_document'),
+        created_at=macro('render_date'),
+        updated_at=macro('render_date')
+    )
+    column_sortable_list = (
+        'created_at',
+        ('entity', Entity.name),
+        ('document', Document.title),
+        'quote',
+        'updated_at'
+    )
+    column_searchable_list = (
+        'quote',
+    )
+    page_size = 50
+
+
 admin_instance = Admin(base_template='admin/custom_master.html', name="Dexter")
 admin_instance.add_view(DocumentView(Document, db.session))
 admin_instance.add_view(EntityView(Entity, db.session))
-admin_instance.add_view(MyModelView(Utterance, db.session))
+admin_instance.add_view(UtteranceView(Utterance, db.session))
 admin_instance.add_view(MyModelView(Medium, db.session))
