@@ -1,0 +1,13 @@
+{% extends 'admin/model/list.html' %}
+
+{% macro render_medium(model, column) %}
+    <span class="label">{{ model.medium.name }}</span>
+{% endmacro %}
+
+{% macro render_title(model, column) %}
+    <a href="{{ url_for('show_article', id=model.id) }}">{{ model.title }}</a>
+{% endmacro %}
+
+{% macro render_date(model, column) %}
+    <nobr>{{ model[column]|string|truncate(10, true, "") }}</nobr>
+{% endmacro %}
