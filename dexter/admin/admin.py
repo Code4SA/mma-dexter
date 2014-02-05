@@ -1,6 +1,7 @@
 from dexter.models import db, Document, Entity, Utterance, Medium
+from dexter.models.document import DocumentForm
 from flask.ext.admin import Admin, expose, AdminIndexView
-from flask import render_template
+from flask import render_template, url_for
 from flask.ext.admin.contrib.sqla import ModelView
 from flask.ext.admin.model.template import macro
 from wtforms.fields import SelectField, TextAreaField
@@ -26,10 +27,11 @@ class MyIndexView(AdminIndexView):
         self._template_args['date_to'] = date_to
         return super(MyIndexView, self).index()
 
+
 class DocumentView(MyModelView):
 
-    can_create = False
-    list_template = 'admin/custom_list_template.html'
+    list_template = 'admin/custom_list.html'
+    create_template = 'admin/add_document_template.html'
     column_list = (
         'published_at',
         'medium',
@@ -66,10 +68,20 @@ class DocumentView(MyModelView):
     page_size = 50
 
 
+    @expose('/new/', methods=('GET', 'POST'))
+    def create_view(self):
+        """
+            Create model view
+        """
+
+
+        return self.render('admin/add_document.html', return_url=url_for('.index_view'))
+
+
 class EntityView(MyModelView):
 
     can_create = False
-    list_template = 'admin/custom_list_template.html'
+    list_template = 'admin/custom_list.html'
     column_list = (
         'name',
         'group',
@@ -94,7 +106,7 @@ class EntityView(MyModelView):
 class UtteranceView(MyModelView):
 
     can_create = False
-    list_template = 'admin/custom_list_template.html'
+    list_template = 'admin/custom_list.html'
     column_list = (
         'entity',
         'quote',
