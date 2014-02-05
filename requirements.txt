@@ -4,6 +4,7 @@ Flask-Mako==0.3
 Flask-SQLAlchemy==1.0
 Flask-Testing==0.4
 Flask-WTF==0.9.1
+Flask-Admin==1.0.7
 Jinja2==2.7.2
 Mako==0.9.1
 MarkupSafe==0.18
