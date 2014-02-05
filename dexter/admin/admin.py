@@ -10,7 +10,7 @@ class MyModelView(ModelView):
 
 class DocumentView(MyModelView):
 
-    can_add = False
+    can_create = False
     list_template = 'admin/custom_list_template.html'
     column_list = (
         'published_at',
@@ -24,26 +24,57 @@ class DocumentView(MyModelView):
         medium='Source',
         updated_at='Last Updated',
     )
-    column_sortable_list = [
+    column_sortable_list = (
         'published_at',
         ('medium', Medium.name),
         'title',
         'blurb',
         'updated_at'
-    ]
+    )
     column_formatters = dict(
         medium=macro('render_medium'),
         published_at=macro('render_date'),
-        title=macro('render_title'),
+        title=macro('render_document_title'),
         updated_at=macro('render_date')
     )
     form_overrides = dict(
         blurb=TextAreaField,
         text=TextAreaField,
     )
+    column_searchable_list = (
+        'title',
+        'blurb',
+    )
+    page_size = 50
+
+
+class EntityView(MyModelView):
+
+    can_create = False
+    list_template = 'admin/custom_list_template.html'
+    column_list = (
+        'name',
+        'group',
+        'created_at',
+        'updated_at'
+    )
+    column_labels = dict(
+        published_at='Date Created',
+        group='Type',
+        updated_at='Last Updated',
+    )
+    column_formatters = dict(
+        name=macro('render_entity_name'),
+    )
+    column_searchable_list = (
+        'name',
+        'group'
+    )
+    page_size = 50
+
 
 admin_instance = Admin(base_template='admin/custom_master.html', name="Dexter")
 admin_instance.add_view(DocumentView(Document, db.session))
-admin_instance.add_view(MyModelView(Entity, db.session))
+admin_instance.add_view(EntityView(Entity, db.session))
 admin_instance.add_view(MyModelView(Utterance, db.session))
 admin_instance.add_view(MyModelView(Medium, db.session))
