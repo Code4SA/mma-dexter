@@ -1,5 +1,6 @@
 from dexter.models import db, Document, Entity, Utterance, Medium
-from flask.ext.admin import Admin
+from flask.ext.admin import Admin, expose, AdminIndexView
+from flask import render_template
 from flask.ext.admin.contrib.sqla import ModelView
 from flask.ext.admin.model.template import macro
 from wtforms.fields import SelectField, TextAreaField
@@ -7,6 +8,23 @@ import flask_wtf
 
 class MyModelView(ModelView):
     form_base_class = flask_wtf.Form
+
+
+class MyIndexView(AdminIndexView):
+
+    def __init__(self):
+        super(MyIndexView, self).__init__(url="/")
+
+    @expose('/')
+    def index(self):
+        document_count = Document.query.count()
+        date_from = Document.query.order_by(Document.published_at).first().published_at
+        date_to = Document.query.order_by(Document.published_at.desc()).first().published_at
+
+        self._template_args['document_count'] = document_count
+        self._template_args['date_from'] = date_from
+        self._template_args['date_to'] = date_to
+        return super(MyIndexView, self).index()
 
 class DocumentView(MyModelView):
 
@@ -107,7 +125,7 @@ class UtteranceView(MyModelView):
     page_size = 50
 
 
-admin_instance = Admin(base_template='admin/custom_master.html', name="Dexter")
+admin_instance = Admin(url='/', base_template='admin/custom_master.html', name="Dexter", index_view=MyIndexView())
 admin_instance.add_view(DocumentView(Document, db.session))
 admin_instance.add_view(EntityView(Entity, db.session))
 admin_instance.add_view(UtteranceView(Utterance, db.session))
