@@ -23,12 +23,28 @@ class MyIndexView(AdminIndexView):
     @expose('/')
     def index(self):
         document_count = Document.query.count()
+        self._template_args['document_count'] = document_count
+
         date_from = Document.query.order_by(Document.published_at).first().published_at
         date_to = Document.query.order_by(Document.published_at.desc()).first().published_at
-
-        self._template_args['document_count'] = document_count
         self._template_args['date_from'] = date_from
         self._template_args['date_to'] = date_to
+
+        group_counts = {}
+        tmp = db.session.query(db.func.count(Entity.id), Entity.group).group_by(Entity.group).all()
+        for row in tmp:
+            group_counts[str(row[1])] = int(row[0])
+        self._template_args['group_counts'] = group_counts
+
+        source_count = []
+        tmp = db.session.query(db.func.count(Document.id), Medium.name)\
+            .join(Medium)\
+            .group_by(Document.medium_id)\
+            .order_by(db.func.count(Document.id))\
+            .limit(5)
+        for row in tmp:
+            source_count.append([str(row[1]), int(row[0])])
+        self._template_args['source_count'] = source_count
         return super(MyIndexView, self).index()
 
 
@@ -209,7 +225,7 @@ class UtteranceView(MyModelView):
 
 
 admin_instance = Admin(url='/', base_template='admin/custom_master.html', name="Dexter", index_view=MyIndexView())
-admin_instance.add_view(DocumentView(Document, db.session, endpoint='document'))
-admin_instance.add_view(EntityView(Entity, db.session, endpoint='entity'))
-admin_instance.add_view(UtteranceView(Utterance, db.session))
-admin_instance.add_view(MyModelView(Medium, db.session))
+admin_instance.add_view(DocumentView(Document, db.session, name="Articles", endpoint='document'))
+admin_instance.add_view(EntityView(Entity, db.session, name="Entities", endpoint='entity'))
+admin_instance.add_view(UtteranceView(Utterance, db.session, name="Quotes", endpoint="utterance"))
+admin_instance.add_view(MyModelView(Medium, db.session, name="Sources", endpoint="medium"))

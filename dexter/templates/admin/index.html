@@ -1,18 +1,50 @@
 {% extends 'admin/master.html' %}
 {% block body %}
     {{ super() }}
-    <div class="row-fluid">
 
-        <div>
-            <h1>MMA-Dexter</h1>
-            <p class="lead">
-                Navigate media reports relating to people/organizations of interest.
-            </p>
-            <p>A total of <strong>{{ document_count }} Documents</strong> have been added to the index, spanning publication dates from <strong>{{ date_from.strftime('%B %Y') }} to {{ date_to.strftime('%B %Y') }}</strong>.</p>
+    <h1>MMA-Dexter</h1>
+    <p class="lead">
+        Navigate media reports relating to people/organizations of interest.
+    </p>
+
+    <div class="row-fluid">
+        <div class="span7">
             <p>
-                To-do: Give a short explanation of the application, and some links/buttons for getting started.
+                To-do: Give a short explanation of the application here. Lorem ipsum dolor sit amet, habeo iisque an sit, vix cu justo tollit nostrum, quo at adolescens dissentiet. Ad choro pertinax incorrupte quo, vero augue duo ei, mei dissentias necessitatibus ex. Duo probo erroribus ad. Quo mucius saperet no, cum ne graeco regione dissentiet, diam fastidii deleniti mei ei.
+            </p>
+            <p>
+                Quod paulo consequuntur pro ad, legimus ceteros ex nam, an his aeterno utroque consulatu. Molestie legendos mediocrem duo ne, nominavi percipit constituam te quo, aliquid ornatus ea vel. Inermis invenire appellantur ius id, in his prima consequat. Vix quot vidit melius ut, est ea detracto petentium liberavisse..
             </p>
         </div>
+        <div class="span5">
+            <div class="well">
+                <h4>Index overview</h4>
+                <p>
+                    Documents added to the index: <span class="badge badge-important pull-right">{{ document_count }}</span>
+                </p>
+                <p>
+                    People identified: <span class="badge badge-info pull-right">{{ group_counts['person'] }}</span>
+                </p>
+                <p>
+                    Companies & organisations: <span class="badge badge-info pull-right">{{ group_counts['company'] + group_counts['organization'] }}</span>
+                </p>
 
+                <h4>Top sources</h4>
+                {% for name, count in source_count %}
+                    <p>{{ name }} <span class="badge badge-important pull-right">{{ count }}</span></p>
+                {% endfor %}
+
+                <h4>Publication dates</h4>
+                <p>
+                    Earliest: <strong class="pull-right">{{ date_from.strftime('%e %B %Y') }}</strong>
+                </p>
+                <p>
+                    Latest: <strong class="pull-right">{{ date_to.strftime('%e %B %Y') }}</strong>
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="row-fluid">
+        <a class="btn btn-primary btn-lg" href="{{ url_for('document.create_view') }}">Add an article</a>
     </div>
 {% endblock body %}
