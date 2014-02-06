@@ -1,4 +1,4 @@
-from dexter.models import db, Document, Entity, Utterance, Medium
+from dexter.models import db, Document, Entity, DocumentEntity, Utterance, Medium
 from dexter.models.document import DocumentForm
 from dexter.processing import DocumentProcessor, ProcessingError
 from flask.ext.admin import Admin, expose, AdminIndexView
@@ -129,12 +129,11 @@ class DocumentView(MyModelView):
 
         return self.render('admin/add_document.html', return_url=url_for('.index_view'), form=form)
 
-    @expose('/show/<id>/', methods=('GET',))
+    @expose('/<id>/', methods=('GET',))
     def show_document(self, id):
 
         document = Document.query.get_or_404(id)
         return self.render('admin/show_document.html', return_url=url_for('.index_view'), document=document, format_paragraphs=format_paragraphs)
-
 
 
 class EntityView(MyModelView):
@@ -160,6 +159,19 @@ class EntityView(MyModelView):
         'group'
     )
     page_size = 50
+
+    @expose('/<string:group>/<string:entity_name>/', methods=('GET',))
+    def show_entity(self, group, entity_name):
+
+        entity = Entity.query.filter(Entity.group==group, Entity.name==entity_name).first()
+
+        if not entity:
+            return make_response("The specified entity could not be found.", 404)
+
+        documents = Document.query.join(DocumentEntity)\
+            .filter(DocumentEntity.entity_id==entity.id)\
+            .order_by(Document.published_at.desc()).all()
+        return self.render('admin/show_entity.html', return_url=url_for('.index_view'), entity=entity, documents=documents)
 
 
 class UtteranceView(MyModelView):
@@ -198,6 +210,6 @@ class UtteranceView(MyModelView):
 
 admin_instance = Admin(url='/', base_template='admin/custom_master.html', name="Dexter", index_view=MyIndexView())
 admin_instance.add_view(DocumentView(Document, db.session, endpoint='document'))
-admin_instance.add_view(EntityView(Entity, db.session))
+admin_instance.add_view(EntityView(Entity, db.session, endpoint='entity'))
 admin_instance.add_view(UtteranceView(Utterance, db.session))
 admin_instance.add_view(MyModelView(Medium, db.session))

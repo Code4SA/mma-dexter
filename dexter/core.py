@@ -10,7 +10,6 @@ from dexter.admin.admin import admin_instance
 admin_instance.init_app(app)
 
 import dexter.assets
-import dexter.routes
 
 # setup extraction
 from .processing.extractors.alchemy import AlchemyExtractor

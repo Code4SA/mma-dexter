@@ -13,12 +13,12 @@
 {% endmacro %}
 
 {% macro render_entity_name(model, column) %}
-    <a href="{{ url_for('show_entity', group=model.group, name=model.name) }}">{{ model.name }}</a>
+    <a href="{{ url_for('entity.show_entity', group=model.group, entity_name=model.name) }}">{{ model.name }}</a>
 {% endmacro %}
 
 {% macro render_entity(model, column) %}
     <nobr>
-        <a href="{{ url_for('show_entity', group=model[column].group, name=model[column].name) }}">
+        <a href="{{ url_for('entity.show_entity', group=model[column].group, entity_name=model[column].name) }}">
             {{ model[column].name }}
         </a>
     </nobr>

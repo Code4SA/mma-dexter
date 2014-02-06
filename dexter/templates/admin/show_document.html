@@ -90,7 +90,7 @@
                                     {% for item in document.people() %}
                                         <tr data-offsets="{{ item.offset_list }}">
                                             <td>
-                                                <a href={{ url_for('show_entity', group=item.entity.group, name=item.entity.name) }}>
+                                                <a href={{ url_for('entity.show_entity', group=item.entity.group, entity_name=item.entity.name) }}>
                                                     {{ item.entity.name }}
                                                 </a>
                                             </td>
@@ -106,7 +106,7 @@
                                     {% for item in document.organisations() %}
                                         <tr data-offsets="{{ item.offset_list }}">
                                             <td>
-                                                <a href={{ url_for('show_entity', group=item.entity.group, name=item.entity.name) }}>
+                                                <a href={{ url_for('entity.show_entity', group=item.entity.group, entity_name=item.entity.name) }}>
                                                     {{ item.entity.name }}
                                                 </a>
                                             </td>
@@ -134,7 +134,7 @@
                                     {% for item in document.places() %}
                                         <tr data-offsets="{{ item.offset_list }}">
                                             <td>
-                                                <a href={{ url_for('show_entity', group=item.entity.group, name=item.entity.name) }}>
+                                                <a href={{ url_for('entity.show_entity', group=item.entity.group, entity_name=item.entity.name) }}>
                                                     {{ item.entity.name }}
                                                 </a>
                                             </td>
