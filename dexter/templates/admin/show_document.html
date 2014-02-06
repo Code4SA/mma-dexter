@@ -1,0 +1,166 @@
+{% extends 'admin/master.html' %}
+
+{% block title %}
+    Show article
+{% endblock %}
+
+{% block body %}
+    <ul class="nav nav-tabs">
+        <li>
+            <a href="{{ return_url }}">{{ _gettext('List') }}</a>
+        </li>
+        <li>
+            <a href="{{ url_for('.create_view') }}">{{ _gettext('Create') }}</a>
+        </li>
+        <li class="active">
+            <a href="javascript:void(0)">Show</a>
+        </li>
+    </ul>
+
+    <div id="new-document">
+        <article>
+            <section class="heading">
+                <h2>{{ document.title }}</h2>
+                <p class="url">
+                    <a href={{ document.url}} target='_blank'>{{ document.url }}</a>
+                </p>
+                <div class="row">
+                    {% if document.published_at %}
+                        <div class="span2">
+                            <div class="timestamp">
+                                <i class="fa fa-calendar"> {{ document.published_at.strftime('%Y-%m-%d') }}</i>
+                            </div>
+                        </div>
+                    {% endif %}
+                    <div class="span2">
+                        <div class="medium">
+                            <i class="fa fa-building-o"> {{ document.medium.name }}</i>
+                        </div>
+                    </div>
+                    {% if document.author %}
+                        <div class="span2">
+                            <div class="author">
+                                <i class="fa fa-user"> {{ document.author.name }}</i>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </section>
+
+            <section class="tabs">
+                <div class="row-fluid">
+                    <div class="span5">
+                        <div class="article-text" data-original="{{ document.text.replace("\r", "\n") }}">
+                            {{ format_paragraphs(document.text)|safe }}
+                        </div>
+                    </div>
+                    <div class="span7">
+                        <ul class="nav nav-tabs">
+                            <li class="active">
+                                <a href="#people-tab" data-toggle="tab">
+                                    People <span class="badge">{{ document.people() | length }}</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#orgs-tab" data-toggle="tab">
+                                    Organisations <span class="badge">{{ document.organisations() | length }}</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#quotations-tab" data-toggle="tab">
+                                    Quotations <span class="badge">{{ document.utterances | length }}</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#places-tab" data-toggle="tab">
+                                    Places <span class="badge">{{ document.places() | length }}</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#keywords-tab" data-toggle="tab">
+                                    Keywords <span class="badge">{{ document.keywords | length }}</span>
+                                </a>
+                            </li>
+                        </ul>
+
+                        <div class="tab-content">
+                            <div id="people-tab" class="tab-pane active">
+                                <h3>People</h3>
+                                <table class="table table-striped table-condensed entities">
+                                    {% for item in document.people() %}
+                                        <tr data-offsets="{{ item.offset_list }}">
+                                            <td>
+                                                <a href={{ url_for('show_entity', group=item.entity.group, name=item.entity.name) }}>
+                                                    {{ item.entity.name }}
+                                                </a>
+                                            </td>
+                                            <td>{{ item.relevance | round(1) }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </table>
+                            </div>
+
+                            <div id="orgs-tab" class="tab-pane">
+                                <h3>Organisations</h3>
+                                <table class="table table-striped table-condensed entities">
+                                    {% for item in document.organisations() %}
+                                        <tr data-offsets="{{ item.offset_list }}">
+                                            <td>
+                                                <a href={{ url_for('show_entity', group=item.entity.group, name=item.entity.name) }}>
+                                                    {{ item.entity.name }}
+                                                </a>
+                                            </td>
+                                            <td>{{ item.relevance | round(1) }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </table>
+                            </div>
+
+                            <div id="quotations-tab" class="tab-pane">
+                                <h3>Quotations</h3>
+                                <table class="table table-striped table-condensed entities">
+                                    {% for item in document.utterances %}
+                                        <tr data-offsets="{{ '%d:%d' % (item.offset, item.length) if item.offset else '' }}">
+                                            <td><nobr><strong>{{ item.entity.name }}</strong></nobr></td>
+                                            <td>{{ item.quote }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </table>
+                            </div>
+
+                            <div id="places-tab" class="tab-pane">
+                                <h3>Places</h3>
+                                <table class="table table-striped table-condensed entities">
+                                    {% for item in document.places() %}
+                                        <tr data-offsets="{{ item.offset_list }}">
+                                            <td>
+                                                <a href={{ url_for('show_entity', group=item.entity.group, name=item.entity.name) }}>
+                                                    {{ item.entity.name }}
+                                                </a>
+                                            </td>
+                                            <td>{{ item.relevance | round(1) }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </table>
+                            </div>
+
+                            <div id="keywords-tab" class="tab-pane">
+                                <h3>Keywords</h3>
+                                <table class="table table-striped table-condensed entities">
+                                    {% for item in document.keywords %}
+                                        <tr data-offsets="{{ item.offset_list }}">
+                                            <td><nobr><strong>{{ item.keyword }}</strong></nobr></td>
+                                            <td>{{ item.relevance | round(1) }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </table>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+        </article>
+    </div>
+{% endblock %}

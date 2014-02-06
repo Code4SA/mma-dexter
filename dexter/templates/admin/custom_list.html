@@ -5,11 +5,11 @@
 {% endmacro %}
 
 {% macro render_document_title(model, column) %}
-    <a href="{{ url_for('show_article', id=model.id) }}">{{ model.title }}</a>
+    <a href="{{ url_for('document.show_document', id=model.id) }}">{{ model.title }}</a>
 {% endmacro %}
 
 {% macro render_document(model, column) %}
-    <a href="{{ url_for('show_article', id=model[column].id) }}">{{ model[column].title }}</a>
+    <a href="{{ url_for('document.show_document', id=model[column].id) }}">{{ model[column].title }}</a>
 {% endmacro %}
 
 {% macro render_entity_name(model, column) %}

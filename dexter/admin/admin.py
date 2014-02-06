@@ -197,7 +197,7 @@ class UtteranceView(MyModelView):
 
 
 admin_instance = Admin(url='/', base_template='admin/custom_master.html', name="Dexter", index_view=MyIndexView())
-admin_instance.add_view(DocumentView(Document, db.session))
+admin_instance.add_view(DocumentView(Document, db.session, endpoint='document'))
 admin_instance.add_view(EntityView(Entity, db.session))
 admin_instance.add_view(UtteranceView(Utterance, db.session))
 admin_instance.add_view(MyModelView(Medium, db.session))
