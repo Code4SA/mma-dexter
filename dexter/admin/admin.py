@@ -9,6 +9,7 @@ from wtforms.fields import SelectField, TextAreaField
 import flask_wtf
 import logging
 log = logging.getLogger(__name__)
+from dexter.helpers import format_paragraphs
 
 class MyModelView(ModelView):
     form_base_class = flask_wtf.Form
@@ -127,6 +128,13 @@ class DocumentView(MyModelView):
                 return redirect(url_for('show_article', id=id))
 
         return self.render('admin/add_document.html', return_url=url_for('.index_view'), form=form)
+
+    @expose('/show/<id>/', methods=('GET',))
+    def show_document(self, id):
+
+        document = Document.query.get_or_404(id)
+        return self.render('admin/show_document.html', return_url=url_for('.index_view'), document=document, format_paragraphs=format_paragraphs)
+
 
 
 class EntityView(MyModelView):

@@ -1,20 +1,26 @@
 {% extends 'admin/base.html' %}
 
 {% block head_css %}
-{{ super() }}
-<link rel="stylesheet" type="text/css" href="/public/admin.css">
+    {{ super() }}
+    <link rel="stylesheet" type="text/css" href="/public/admin.css">
+    {% for url in webassets('css') %}
+        <link rel="stylesheet" type="text/css" href="{{ url }}"/>
+    {% endfor %}
 {% endblock %}
 
 {% block head %}
-<script type="application/javascript" src="/static/jquery-1.11.0.min.js"></script>
 {% endblock %}
 
 {% block tail %}
-<div class="container" id="footer">
-    <div class="col-lg-12">
-        <hr>
-        <a class="tiny-logo" href="http://www.code4sa.org/" target="_blank"><img id="logo-code4sa" src="/public/images/code4sa-logo-small.png"></a>
-        <p id="copyright"><small>&copy; 2014 MMA</small></p>
+    <div class="container" id="footer">
+        <div class="col-lg-12">
+            <hr>
+            <a class="tiny-logo" href="http://www.code4sa.org/" target="_blank"><img id="logo-code4sa" src="/public/images/code4sa-logo-small.png"></a>
+            <p id="copyright"><small>&copy; 2014 MMA</small></p>
+        </div>
     </div>
-</div>
+
+    {% for url in webassets('js') %}
+        <script src={{ url }}/> %}
+    {% endfor %}
 {% endblock %}
