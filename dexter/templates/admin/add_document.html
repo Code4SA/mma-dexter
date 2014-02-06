@@ -1,13 +1,90 @@
 {% extends 'admin/model/create.html' %}
 
+{% block title %}
+    Add article
+{% endblock %}
+
 {% block body %}
     <ul class="nav nav-tabs">
-      <li>
-          <a href="{{ return_url }}">{{ _gettext('List') }}</a>
-      </li>
-      <li class="active">
-          <a href="javascript:void(0)">{{ _gettext('Create') }}</a>
-      </li>
-	</ul>
-STUFF
+        <li>
+            <a href="{{ return_url }}">{{ _gettext('List') }}</a>
+        </li>
+        <li class="active">
+            <a href="javascript:void(0)">{{ _gettext('Create') }}</a>
+        </li>
+    </ul>
+
+    <div id="new-document">
+        <article>
+            <section>
+                <h2>Add a new article</h2>
+
+
+                <h3>By fetching a webpage</h3>
+                <div class="row">
+                    <div class="span8 offset1">
+                        <form class="form-horizontal" action="{{ url_for('.create_view') }}" method='POST'>
+                            {{ form.csrf_token }}
+                            <div class="control-group">
+                                {{ form.url.label(class="control-label") }}
+                                <div class="controls">
+                                    {{ form.url(placeholder="URL", autofocus=True, class="input-block-level") }}
+                                </div>
+                            </div>
+                            <div class="control-group">
+                                <div class="controls">
+                                    <input class="btn btn-primary pull-left" type='submit' value="Fetch and add article" dataDisableWith='Fetching...'/>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <h3>Or by typing it in</h3>
+                <div class="row">
+                    <div class="span8 offset1">
+                        <form class="form-horizontal" action="{{ url_for('.create_view') }}" method='POST'>
+                            {{ form.csrf_token }}
+                            <input type="hidden" name="manual" value="True">
+                            <div class="control-group">
+                                {{ form.url.label(class="control-label") }}
+                                <div class="controls">
+                                    {{ form.url(placeholder="URL", autofocus=True, class="input-block-level", required=True) }}
+                                </div>
+                            </div>
+                            <div class="control-group">
+                                {{ form.title.label(class="control-label") }}
+                                <div class="controls">
+                                    {{ form.title(placeholder="Article headline", class="input-block-level", required=True) }}
+                                </div>
+                            </div>
+                            <div class="control-group">
+                                {{ form.published_at.label(class="control-label") }}
+                                <div class="controls">
+                                    {{ form.published_at(placeholder="YYYY/MM/DD", class="input-block-level", required=True) }}
+                                </div>
+                            </div>
+                            <div class="control-group">
+                                {{ form.medium_id.label(class="control-label") }}
+                                <div class="controls">
+                                    {{ form.medium_id(class="input-block-level", class_="chosen-select", required=True) }}
+                                </div>
+                            </div>
+                            <div class="control-group">
+                                {{ form.text.label(class="control-label") }}
+                                <div class="controls">
+                                    {{ form.text(rows=15, placeholder="The text of the article", class="input-block-level", required=True) }}
+                                </div>
+                            </div>
+                            <div class="control-group">
+                                <div class="controls">
+                                    <input class="btn btn-primary pull-left" type='submit' value="Add new article" dataDisableWith='Adding...'/>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </section>
+        </article>
+    </div>
 {% endblock %}

@@ -1,11 +1,14 @@
 from dexter.models import db, Document, Entity, Utterance, Medium
 from dexter.models.document import DocumentForm
+from dexter.processing import DocumentProcessor, ProcessingError
 from flask.ext.admin import Admin, expose, AdminIndexView
-from flask import render_template, url_for
+from flask import request, render_template, url_for, flash, redirect
 from flask.ext.admin.contrib.sqla import ModelView
 from flask.ext.admin.model.template import macro
 from wtforms.fields import SelectField, TextAreaField
 import flask_wtf
+import logging
+log = logging.getLogger(__name__)
 
 class MyModelView(ModelView):
     form_base_class = flask_wtf.Form
@@ -43,7 +46,7 @@ class DocumentView(MyModelView):
         published_at='Date Published',
         medium='Source',
         updated_at='Last Updated',
-    )
+        )
     column_sortable_list = (
         'published_at',
         ('medium', Medium.name),
@@ -60,7 +63,7 @@ class DocumentView(MyModelView):
     form_overrides = dict(
         blurb=TextAreaField,
         text=TextAreaField,
-    )
+        )
     column_searchable_list = (
         'title',
         'blurb',
@@ -74,8 +77,56 @@ class DocumentView(MyModelView):
             Create model view
         """
 
+        form = DocumentForm()
+        url = request.form.get('url')
+        log.debug(url)
 
-        return self.render('admin/add_document.html', return_url=url_for('.index_view'))
+        if request.method == 'POST':
+            doc = None
+            proc = DocumentProcessor()
+
+            if url and not 'manual' in request.form:
+                # new document from url
+                if not proc.valid_url(url):
+                    flash("The URL isn't valid or we don't know how to process it.", 'error')
+                else:
+                    url = proc.canonicalise_url(url)
+                    doc = Document.query.filter(Document.url == url).first()
+
+                    if doc:
+                        # already exists
+                        flash("We already have that article.")
+                        return redirect(url_for('show_article', id=doc.id))
+
+                    try:
+                        doc = proc.process_url(url)
+                    except ProcessingError as e:
+                        log.error("Error processing %s: %s" % (url, e), exc_info=e)
+                        flash("Something went wrong processing the document: %s" % (e,), 'error')
+                        doc = None
+
+            else:
+                # new document from article text
+                if form.validate():
+                    doc = Document()
+                    form.populate_obj(doc)
+
+                    try:
+                        proc.process_document(doc)
+                    except ProcessingError as e:
+                        log.error("Error processing raw document: %s" % (e, ), exc_info=e)
+                        flash("Something went wrong processing the document: %s" % (e,), 'error')
+                        doc = None
+
+            if doc:
+                db.session.add(doc)
+                db.session.flush()
+                id = doc.id
+                db.session.commit()
+                flash('Article added.')
+                return redirect(url_for('show_article', id=id))
+
+        return self.render('admin/add_document.html', return_url=url_for('.index_view'), form=form)
 
 
 class EntityView(MyModelView):
@@ -92,10 +143,10 @@ class EntityView(MyModelView):
         created_at='Date Created',
         group='Type',
         updated_at='Last Updated',
-    )
+        )
     column_formatters = dict(
         name=macro('render_entity_name'),
-    )
+        )
     column_searchable_list = (
         'name',
         'group'
@@ -117,7 +168,7 @@ class UtteranceView(MyModelView):
     column_labels = dict(
         created_at='Date Created',
         updated_at='Last Updated',
-    )
+        )
     column_formatters = dict(
         entity=macro('render_entity'),
         document=macro('render_document'),
