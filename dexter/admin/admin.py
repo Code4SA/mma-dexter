@@ -144,7 +144,7 @@ class DocumentView(MyModelView):
                 id = doc.id
                 db.session.commit()
                 flash('Article added.')
-                return redirect(url_for('show_article', id=id))
+                return redirect(url_for('document.show_document', id=id))
 
         return self.render('admin/add_document.html', return_url=url_for('.index_view'), form=form)
 
