@@ -25,16 +25,19 @@ class MyIndexView(AdminIndexView):
         document_count = Document.query.count()
         self._template_args['document_count'] = document_count
 
-        date_from = Document.query.order_by(Document.published_at).first().published_at
-        date_to = Document.query.order_by(Document.published_at.desc()).first().published_at
-        self._template_args['date_from'] = date_from
-        self._template_args['date_to'] = date_to
+        earliest = Document.query.order_by(Document.published_at).first()
+        if earliest:
+            self._template_args['date_from'] = earliest.published_at
+        latest = Document.query.order_by(Document.published_at.desc()).first()
+        if latest:
+            self._template_args['date_to'] = latest.published_at
 
         group_counts = {}
         tmp = db.session.query(db.func.count(Entity.id), Entity.group).group_by(Entity.group).all()
-        for row in tmp:
-            group_counts[str(row[1])] = int(row[0])
-        self._template_args['group_counts'] = group_counts
+        if tmp:
+            for row in tmp:
+                group_counts[str(row[1])] = int(row[0])
+            self._template_args['group_counts'] = group_counts
 
         source_count = []
         tmp = db.session.query(db.func.count(Document.id), Medium.name)\

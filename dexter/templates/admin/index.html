@@ -22,25 +22,27 @@
                 <p>
                     Documents added to the index: <span class="badge badge-important pull-right">{{ document_count }}</span>
                 </p>
-                <p>
-                    People identified: <span class="badge badge-info pull-right">{{ group_counts['person'] }}</span>
-                </p>
-                <p>
-                    Companies & organisations: <span class="badge badge-info pull-right">{{ group_counts['company'] + group_counts['organization'] }}</span>
-                </p>
+                {% if document_count %}
+                    <p>
+                        People identified: <span class="badge badge-info pull-right">{{ group_counts['person'] }}</span>
+                    </p>
+                    <p>
+                        Companies & organisations: <span class="badge badge-info pull-right">{{ group_counts['company'] + group_counts['organization'] }}</span>
+                    </p>
 
-                <h4>Top sources</h4>
-                {% for name, count in source_count %}
-                    <p>{{ name }} <span class="badge badge-important pull-right">{{ count }}</span></p>
-                {% endfor %}
+                    <h4>Top sources</h4>
+                    {% for name, count in source_count %}
+                        <p>{{ name }} <span class="badge badge-important pull-right">{{ count }}</span></p>
+                    {% endfor %}
 
-                <h4>Publication dates</h4>
-                <p>
-                    Earliest: <strong class="pull-right">{{ date_from.strftime('%e %B %Y') }}</strong>
-                </p>
-                <p>
-                    Latest: <strong class="pull-right">{{ date_to.strftime('%e %B %Y') }}</strong>
-                </p>
+                    <h4>Publication dates</h4>
+                    <p>
+                        Earliest: <strong class="pull-right">{{ date_from.strftime('%e %B %Y') }}</strong>
+                    </p>
+                    <p>
+                        Latest: <strong class="pull-right">{{ date_to.strftime('%e %B %Y') }}</strong>
+                    </p>
+                {% endif %}
             </div>
         </div>
     </div>
