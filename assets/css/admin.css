@@ -18,10 +18,12 @@ body .container:first-child{
 
 .list-item-document{
     padding-top: 10px;
+    margin-left: 15px;
 }
 
 .list-item-utterance blockquote{
-    margin-bottom: 4px;
+    margin-bottom: 5px;
+    margin-left: 12px;
 }
 
 .well p{

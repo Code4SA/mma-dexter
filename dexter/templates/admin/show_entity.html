@@ -28,7 +28,7 @@
                 <ul class="unstyled">
                     {% for doc in documents %}
                         <li class="list-item-document">
-                            <a href={{ url_for('document.show_document', id=doc.id) }}><h4>{{ doc.title }}</h4></a>
+                            <a href={{ url_for('document.show_document', id=doc.id) }}><i class="fa fa-chevron-right"></i> <strong>{{ doc.published_at.strftime('%Y-%m-%d') }} - {{ doc.title }}</strong> <span class="label pull-right">{{ doc.medium.name }}</span></a>
                             <ul class="unstyled">
                                 {% for utterance in doc.utterances %}
                                     {% if utterance.entity_id == entity.id %}
