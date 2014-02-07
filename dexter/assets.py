@@ -14,6 +14,7 @@ assets.register('css',
       'css/font-awesome-4.0.3.min.css',
       'css/chosen.min.css',
       'css/datepicker3.css',
+      'css/admin.css',
       Bundle(
         'css/*.scss',
         filters='pyscss',

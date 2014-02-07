@@ -2,7 +2,6 @@
 
 {% block head_css %}
     {{ super() }}
-    <link rel="stylesheet" type="text/css" href="/public/admin.css">
     {% for url in webassets('css') %}
         <link rel="stylesheet" type="text/css" href="{{ url }}"/>
     {% endfor %}
