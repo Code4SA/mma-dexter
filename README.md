@@ -46,7 +46,7 @@ Create a file for sensitive configuration settings called `production-settings.s
 configuration entries.
 
 ```bash
-export SQLALCHEMY_URL=mysql://mma:PASSWORD@localhost/mma
+export SQLALCHEMY_DATABASE_URI=mysql://mma:PASSWORD@localhost/mma
 export ALCHEMY_API_KEY=thekey
 export CALAIS_API_KEY=anotherkey
 ```
