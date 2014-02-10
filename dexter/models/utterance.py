@@ -25,8 +25,6 @@ class Utterance(db.Model):
     entity_id = Column(Integer, ForeignKey('entities.id'), index=True)
     quote     = Column(Text, nullable=False)
 
-    # TODO: document offsets
-
     created_at   = Column(DateTime(timezone=True), index=True, unique=False, nullable=False, server_default=func.now())
     updated_at   = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.current_timestamp())
 
