@@ -48,10 +48,6 @@
                 Organisations
                 %span.badge&= len(document.organisations())
             %li
-              %a(href="#quotations-tab", dataToggle="tab")
-                Quotations
-                %span.badge&= len(document.utterances)
-            %li
               %a(href="#places-tab", dataToggle="tab")
                 Places
                 %span.badge&= len(document.places())
@@ -71,10 +67,16 @@
                     %th Photo?
                     %th Named?
                 %tbody
-                  - for ds in document.sources:
+                  - sources = sorted(document.sources, key=lambda s: s.entity.name)
+                  - for ds in sources:
                     %tr(dataOffsets=ds.offset_list)
                       %td
                         %a(href= url_for('show_entity', group=ds.entity.group, name=ds.entity.name))&=ds.entity.name
+                        - if ds.person and ds.person.gender:
+                          %span(title=ds.person.gender.name)&= ds.person.gender.symbol()
+                        - if ds.person and ds.person.race:
+                          %span(title=ds.person.race.name)&= ds.person.race.abbr()
+
                       %td
                         &= 'yes' if ds.quoted else 'no'
                         - if len(ds.utterances()) > 0:
@@ -88,10 +90,25 @@
             #people-tab.tab-pane
               %h3 People
               %table.table.table-striped.table-condensed.entities
+                %thead
+                  %th Name
+                  %th Race
+                  %th Gender
+                  %th Relevance
                 - for dp in document.people():
+                  - person = dp.entity.person
+
                   %tr(dataOffsets=dp.offset_list)
                     %td
                       %a(href= url_for('show_entity', group=dp.entity.group, name=dp.entity.name))&=dp.entity.name
+                    %td
+                      - if person:
+                        - if person.race:
+                          &= person.race.name[0]
+                    %td
+                      - if person:
+                        - if person.gender:
+                          &= person.gender.name[0]
                     %td&= dp.relevance
 
             #orgs-tab.tab-pane
@@ -101,14 +118,6 @@
                   %tr(dataOffsets=org.offset_list)
                     %td&= org.entity.name
                     %td&= org.relevance
-
-            #quotations-tab.tab-pane
-              %h3 Quotations
-              %table.table.table-striped.table-condensed.entities
-                - for q in document.utterances:
-                  %tr(dataOffsets=('%d:%d' % (q.offset, q.length) if q.offset else ''))
-                    %td&= q.entity.name
-                    %td&= q.quote
 
             #places-tab.tab-pane
               %h3 Places

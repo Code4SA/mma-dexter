@@ -50,6 +50,13 @@ class DocumentSource(db.Model, WithOffsets):
 
 
     @property
+    def person(self):
+        """ Direct access to the person associated with this source's entity, which may
+        be None. """
+        return self.entity.person if self.entity else None
+
+
+    @property
     def offset_list(self):
         """ String of offset:length pairs of places in this document the entity
         is mentioned or quoted, may be empty. """

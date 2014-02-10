@@ -67,6 +67,14 @@ class Document(db.Model):
         return [e for e in self.entities if e.entity.group in Document.PLACE_ENTITY_GROUPS]
 
 
+    def mentioned_entity(self, entity):
+        """ Get the DocumentEntity for this entity, if any. """
+        for de in self.entities:
+            if de.entity == entity:
+                return de
+        return None
+
+
     def add_entity(self, doc_entity):
         """ Add a new DocumentEntity to this document, but only
         if the entity and the specific offsets don't already exist on it. """
