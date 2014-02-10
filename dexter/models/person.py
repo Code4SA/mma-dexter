@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from sqlalchemy import (
     Column,
     DateTime,
@@ -39,19 +41,21 @@ class Gender(db.Model):
     id        = Column(Integer, primary_key=True)
     name      = Column(String(150), index=True, nullable=False, unique=True)
 
+    SYMBOLS = {
+        'Male': u'♂',
+        'Female': u'♀',
+        'Other: Transgender, Transsexual': u'⚥'}
+
+    def symbol(self):
+        return self.SYMBOLS.get(self.name)
+
     def __repr__(self):
         return "<Gender name='%s'>" % (self.name)
 
     @classmethod
     def create_defaults(self):
-        text = """
-        Female
-        Male
-        Other: Transgender, Transsexual
-        """
-
         genders = []
-        for s in text.strip().split("\n"):
+        for s in self.SYMBOLS.values():
             g = Gender()
             g.name = s.strip()
             genders.append(g)
@@ -67,6 +71,9 @@ class Race(db.Model):
 
     def __repr__(self):
         return "<Race name='%s'>" % (self.name)
+
+    def abbr(self):
+        return self.name[0]
 
     @classmethod
     def create_defaults(self):
