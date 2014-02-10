@@ -27,6 +27,7 @@ class SourcesExtractor(BaseExtractor):
             s = DocumentSource()
             s.entity = u.entity
             s.quoted = True
+            s.named = True
 
             if doc.add_source(s):
                 sources_added += 1

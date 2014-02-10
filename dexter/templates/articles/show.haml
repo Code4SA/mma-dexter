@@ -36,6 +36,10 @@
         .col-sm-7
           %ul.nav.nav-tabs
             %li.active
+              %a(href="#sources-tab", dataToggle="tab")
+                Sources
+                %span.badge&= len(document.sources)
+            %li
               %a(href="#people-tab", dataToggle="tab")
                 People
                 %span.badge&= len(document.people())
@@ -57,7 +61,31 @@
                 %span.badge&= len(document.keywords)
 
           .tab-content
-            #people-tab.tab-pane.active
+            #sources-tab.tab-pane.active
+              %h3 Sources
+              %table.table.table-striped.table-condensed.entities
+                %thead
+                  %tr
+                    %th Name
+                    %th Quoted?
+                    %th Photo?
+                    %th Named?
+                %tbody
+                  - for ds in document.sources:
+                    %tr(dataOffsets=ds.offset_list)
+                      %td
+                        %a(href= url_for('show_entity', group=ds.entity.group, name=ds.entity.name))&=ds.entity.name
+                      %td
+                        &= 'yes' if ds.quoted else 'no'
+                        - if len(ds.utterances()) > 0:
+                          %span.badge&= len(ds.utterances())
+                      %td&= 'yes' if ds.photographed else 'no'
+                      %td&= 'yes' if ds.named else 'no'
+                    - for q in ds.utterances():
+                      %tr.quotation(dataOffsets=('%d:%d' % (q.offset, q.length) if q.offset else ''))
+                        %td(colspan="4")&= q.quote
+
+            #people-tab.tab-pane
               %h3 People
               %table.table.table-striped.table-condensed.entities
                 - for dp in document.people():

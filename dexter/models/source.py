@@ -10,8 +10,9 @@ from sqlalchemy import (
 from sqlalchemy.orm import relationship
 
 from .support import db
+from .with_offsets import WithOffsets
 
-class DocumentSource(db.Model):
+class DocumentSource(db.Model, WithOffsets):
     """
     A source is a source of information for an article.
     A source instance is bound to a document and an entity and describes the
@@ -25,6 +26,7 @@ class DocumentSource(db.Model):
 
     photographed = Column(Boolean)
     quoted       = Column(Boolean)
+    named        = Column(Boolean)
 
     # TODO: add role and method of access
 
@@ -33,6 +35,30 @@ class DocumentSource(db.Model):
 
     # Associations
     entity    = relationship("Entity", lazy=False)
+
+    def document_entity(self):
+        """ The DocumentEntity instance that matches this source for this document. May be None. """
+        for de in self.document.entities:
+            if de.entity == self.entity:
+                return de
+        return None
+
+    def utterances(self):
+        """ A potentially empty list of Utterances from this source in this document. """
+        return sorted([u for u in self.document.utterances if u.entity == self.entity],
+                key=lambda u: u.offset)
+
+
+    @property
+    def offset_list(self):
+        """ String of offset:length pairs of places in this document the entity
+        is mentioned or quoted, may be empty. """
+        offsets = ['%d:%d' % (u.offset, u.length) for u in self.utterances() if u.offset]
+        de = self.document_entity()
+        if de and de.offset_list:
+            offsets.append(de.offset_list)
+
+        return ' '.join(offsets)
 
 
     def __repr__(self):
