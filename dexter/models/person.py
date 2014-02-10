@@ -52,10 +52,19 @@ class Gender(db.Model):
     def __repr__(self):
         return "<Gender name='%s'>" % (self.name)
 
+
     @classmethod
-    def create_defaults(self):
+    def male(cls):
+        return Gender.query.filter(Gender.name == 'Male').one()
+
+    @classmethod
+    def female(cls):
+        return Gender.query.filter(Gender.name == 'Female').one()
+
+    @classmethod
+    def create_defaults(cls):
         genders = []
-        for s in self.SYMBOLS.values():
+        for s in cls.SYMBOLS.keys():
             g = Gender()
             g.name = s.strip()
             genders.append(g)
