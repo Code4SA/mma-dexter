@@ -42,7 +42,6 @@ class Document(db.Model):
     created_at   = Column(DateTime(timezone=True), index=True, unique=False, nullable=False, server_default=func.now())
     updated_at   = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.current_timestamp())
 
-    # TODO: name of publication, eg. M&G
     # TODO: location
 
     # Associations
