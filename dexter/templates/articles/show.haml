@@ -33,8 +33,11 @@
     %section.tabs
       .row
         .col-sm-5
+          .article-blurb
+            %p&= document.blurb
           .article-text(dataOriginal=document.text.replace("\r", "\n"))
             = format_paragraphs(document.text)
+
         .col-sm-7
           %ul.nav.nav-tabs
             %li.active

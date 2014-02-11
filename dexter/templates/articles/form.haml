@@ -1,0 +1,15 @@
+%%namespace(file="../bootstrap_wtf.haml", **{'import': '*'})
+
+.form-horizontal
+  = field(form.title, placeholder='Article headline', required=True)
+  = field(form.url, placeholder='URL')
+  = field(form.blurb, placeholder='Blurb')
+
+.row
+  .col-sm-offset-2.col-sm-2
+    = vertical_field(form.published_at, placeholder='YYYY/MM/DD', class_='use-datepicker')
+  .col-sm-3
+    = vertical_field(form.medium_id, required=True, class_='chosen-select')
+
+.form-horizontal
+  = field(form.text, rows=15, placeholder='The text of the article', required=True)
