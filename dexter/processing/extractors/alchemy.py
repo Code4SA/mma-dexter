@@ -21,14 +21,14 @@ class AlchemyExtractor(BaseExtractor):
         self.alchemy = AlchemyAPI(self.API_KEY)
 
     def extract(self, doc):
-        self.extract_entities(doc)
-        self.extract_keywords(doc)
+        self.fetch_extract_entities(doc)
+        self.fetch_extract_keywords(doc)
 
-    def extract_entities(self, doc):
+    def fetch_extract_entities(self, doc):
         log.info("Extracting entities for %s" % doc)
+        self.extract_entities(doc, self.fetch_entities(doc.text) or [])
 
-        entities = self.fetch_entities(doc.text) or []
-
+    def extract_entities(self, doc, entities):
         log.debug("Raw extracted entities: %s" % entities)
 
         entities_added = 0
@@ -70,13 +70,14 @@ class AlchemyExtractor(BaseExtractor):
         log.info("Added %d entities and %d utterances for %s" % (entities_added, utterances_added, doc))
 
 
-    def extract_keywords(self, doc):
+    def fetch_extract_keywords(self, doc):
         log.info("Extracting keywords for %s" % doc)
+        self.extract_keywords(doc, self.fetch_keywords(doc.text) or [])
 
+
+    def extract_keywords(self, doc, keywords):
         entity_names = set(de.entity.name for de in doc.entities)
-
         keywords_added = 0
-        keywords = self.fetch_keywords(doc.text) or []
 
         log.debug("Raw extracted keywords: %s" % keywords)
 
