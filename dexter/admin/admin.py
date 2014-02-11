@@ -220,4 +220,3 @@ admin_instance.add_view(DocumentView(Document, db.session, name="Articles", endp
 admin_instance.add_view(EntityView(Entity, db.session, name="Entities", endpoint='entity'))
 admin_instance.add_view(UtteranceView(Utterance, db.session, name="Quotes", endpoint="utterance"))
 admin_instance.add_view(MyModelView(Medium, db.session, name="Sources", endpoint="medium"))
-

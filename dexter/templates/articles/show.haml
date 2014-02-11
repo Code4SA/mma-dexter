@@ -1,0 +1,100 @@
+%%inherit(file="../layout.haml")
+%%block(name="title")
+  &= document.title
+
+- from dexter.helpers import format_paragraphs
+- from urllib import quote_plus
+
+#show-document
+  %article
+    %section.heading
+      %h2&= document.title
+      .url
+        %a(href=document.url, target='_blank')&= document.url
+      .row
+        .col-sm-2
+          .timestamp
+            %i.fa.fa-calendar
+            - if document.published_at:
+              &= document.published_at.strftime('%Y-%m-%d')
+        .col-sm-2
+          .medium
+            %i.fa.fa-building-o
+              &= document.medium.name
+        .col-sm-2
+          .author
+            %i.fa.fa-user
+            - if document.author:
+                &= document.author.name
+        .col-sm-4
+
+    %section.tabs
+      .row
+        .col-sm-5
+          .article-text(dataOriginal=document.text.replace("\r", "\n"))
+            = format_paragraphs(document.text)
+        .col-sm-7
+          %ul.nav.nav-tabs
+            %li.active
+              %a(href="#people-tab", dataToggle="tab")
+                People
+                %span.badge&= len(document.people())
+            %li
+              %a(href="#orgs-tab", dataToggle="tab")
+                Organisations
+                %span.badge&= len(document.organisations())
+            %li
+              %a(href="#quotations-tab", dataToggle="tab")
+                Quotations
+                %span.badge&= len(document.utterances)
+            %li
+              %a(href="#places-tab", dataToggle="tab")
+                Places
+                %span.badge&= len(document.places())
+            %li
+              %a(href="#keywords-tab", dataToggle="tab")
+                Keywords
+                %span.badge&= len(document.keywords)
+
+          .tab-content
+            #people-tab.tab-pane.active
+              %h3 People
+              %table.table.table-striped.table-condensed.entities
+                - for dp in document.people():
+                  %tr(dataOffsets=dp.offset_list)
+                    %td
+                      %a(href= url_for('show_entity', group=dp.entity.group, name=dp.entity.name))&=dp.entity.name
+                    %td&= dp.relevance
+
+            #orgs-tab.tab-pane
+              %h3 Organisations
+              %table.table.table-striped.table-condensed.entities
+                - for org in document.organisations():
+                  %tr(dataOffsets=org.offset_list)
+                    %td&= org.entity.name
+                    %td&= org.relevance
+
+            #quotations-tab.tab-pane
+              %h3 Quotations
+              %table.table.table-striped.table-condensed.entities
+                - for q in document.utterances:
+                  %tr(dataOffsets=('%d:%d' % (q.offset, q.length) if q.offset else ''))
+                    %td&= q.entity.name
+                    %td&= q.quote
+
+            #places-tab.tab-pane
+              %h3 Places
+              %table.table.table-striped.table-condensed.entities
+                - for p in document.places():
+                  %tr(dataOffsets=p.offset_list)
+                    %td&= p.entity.name
+                    %td&= p.entity.group
+                    %td&= p.relevance
+
+            #keywords-tab.tab-pane
+              %h3 Keywords
+              %table.table.table-striped.table-condensed.entities
+                - for kw in document.keywords:
+                  %tr(dataOffsets=kw.offset_list)
+                    %td&= kw.keyword
+                    %td&= kw.relevance
