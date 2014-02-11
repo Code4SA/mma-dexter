@@ -2,6 +2,7 @@ import re
 import md5
 import os
 import json
+import gzip
 
 import logging
 log = logging.getLogger(__name__)
@@ -19,7 +20,7 @@ class BaseExtractor:
 
         try:
             log.info('Cache hit: %s' % fname)
-            with open(fname) as f:
+            with gzip.open(fname) as f:
                 return json.load(f)
         except ValueError as e:
             log.warn("Error reading from cache file %s: %s" % (fname, e.message), exc_info=e)
@@ -34,11 +35,11 @@ class BaseExtractor:
         if not os.path.exists(dirname):
             os.makedirs(dirname)
 
-        with open(fname, 'w') as f:
+        with gzip.open(fname, 'wb') as f:
             json.dump(value, f)
     
     def cache_filename(self, url, key):
-        hashed = '%s.%s.json' % (self.hash_url(url), key)
+        hashed = '%s.%s.json.gz' % (self.hash_url(url), key)
         return 'cache/extractors/%s/%s' % (hashed[0:2], hashed)
 
     def hash_url(self, url):
