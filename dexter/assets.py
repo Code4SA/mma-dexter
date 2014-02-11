@@ -11,6 +11,8 @@ assets.url        = '/public'
 
 assets.register('css', 
     Bundle(
+      'css/bootstrap-3.0.3.min.css',
+      'css/bootstrap-3.0.3-theme.min.css',
       'css/font-awesome-4.0.3.min.css',
       'css/chosen.min.css',
       'css/datepicker3.css',
@@ -24,6 +26,8 @@ assets.register('css',
 assets.register('js', 
     Bundle(
       'js/jquery-1.10.2.min.js',
+      'js/bootstrap-3.0.3.min.js',
+      'js/bootstrap-datepicker.js',
       'js/ujs.js',
       'js/chosen.jquery.min.js',
       'js/app.js',
