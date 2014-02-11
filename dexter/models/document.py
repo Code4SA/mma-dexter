@@ -49,6 +49,7 @@ class Document(db.Model):
     entities    = relationship("DocumentEntity", backref=backref('document'), order_by="desc(DocumentEntity.relevance)")
     utterances  = relationship("Utterance", backref=backref('document'))
     keywords    = relationship("DocumentKeyword", backref=backref('document'), order_by="desc(DocumentKeyword.relevance)")
+    sources     = relationship("DocumentSource", backref=backref('document'))
     medium      = relationship("Medium")
 
 
@@ -64,6 +65,14 @@ class Document(db.Model):
 
     def places(self):
         return [e for e in self.entities if e.entity.group in Document.PLACE_ENTITY_GROUPS]
+
+
+    def mentioned_entity(self, entity):
+        """ Get the DocumentEntity for this entity, if any. """
+        for de in self.entities:
+            if de.entity == entity:
+                return de
+        return None
 
 
     def add_entity(self, doc_entity):
@@ -93,6 +102,16 @@ class Document(db.Model):
                 
         self.keywords.append(keyword)
         return True
+
+    def add_source(self, source):
+        """ Add a new source, but only if it's not already there. """
+        for s in self.sources:
+            if s.entity == source.entity:
+                return False
+                
+        self.sources.append(source)
+        return True
+
 
 
     def __repr__(self):

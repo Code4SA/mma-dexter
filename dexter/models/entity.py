@@ -27,8 +27,14 @@ class Entity(db.Model):
     group       = Column(String(50), index=True, nullable=False)
     name        = Column(String(150), index=True, nullable=False)
 
+    # entities with group == 'person' may have a linked person
+    person_id   = Column(Integer, ForeignKey('people.id'))
+
     created_at   = Column(DateTime(timezone=True), index=True, unique=False, nullable=False, server_default=func.now())
     updated_at   = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.current_timestamp())
+
+    # Associations
+    person      = relationship('Person', foreign_keys=[person_id], lazy=False)
 
     def __eq__(self, other):
         return isinstance(other, Entity) and self.group == other.group \
@@ -58,7 +64,7 @@ class DocumentEntity(db.Model, WithOffsets):
     __tablename__ = "document_entities"
 
     id        = Column(Integer, primary_key=True)
-    doc_id    = Column(Integer, ForeignKey('documents.id'), index=True)
+    doc_id    = Column(Integer, ForeignKey('documents.id'), index=True, nullable=False)
     entity_id = Column(Integer, ForeignKey('entities.id'), index=True)
     relevance = Column(Float, index=True, nullable=False)
     count     = Column(Integer, index=True, nullable=False, default=1)

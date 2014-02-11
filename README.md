@@ -4,6 +4,8 @@ Dexter web app for MMA.
 
 The app is a [Flask web app](http://flask.pocoo.org/) that uses [SQLAlchemy](http://www.sqlalchemy.org/) to talk to a MySQL database.
 
+Please read the wiki for a [full overview of how Dexter works](https://github.com/Code4SA/mma-dexter/wiki).
+
 ## Development
 
 * clone the repo

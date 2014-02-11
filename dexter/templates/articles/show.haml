@@ -36,6 +36,10 @@
         .col-sm-7
           %ul.nav.nav-tabs
             %li.active
+              %a(href="#sources-tab", dataToggle="tab")
+                Sources
+                %span.badge&= len(document.sources)
+            %li
               %a(href="#people-tab", dataToggle="tab")
                 People
                 %span.badge&= len(document.people())
@@ -43,10 +47,6 @@
               %a(href="#orgs-tab", dataToggle="tab")
                 Organisations
                 %span.badge&= len(document.organisations())
-            %li
-              %a(href="#quotations-tab", dataToggle="tab")
-                Quotations
-                %span.badge&= len(document.utterances)
             %li
               %a(href="#places-tab", dataToggle="tab")
                 Places
@@ -57,13 +57,58 @@
                 %span.badge&= len(document.keywords)
 
           .tab-content
-            #people-tab.tab-pane.active
+            #sources-tab.tab-pane.active
+              %h3 Sources
+              %table.table.table-striped.table-condensed.entities
+                %thead
+                  %tr
+                    %th Name
+                    %th Quoted?
+                    %th Photo?
+                    %th Named?
+                %tbody
+                  - sources = sorted(document.sources, key=lambda s: s.entity.name)
+                  - for ds in sources:
+                    %tr(dataOffsets=ds.offset_list)
+                      %td
+                        %a(href= url_for('show_entity', group=ds.entity.group, name=ds.entity.name))&=ds.entity.name
+                        - if ds.person and ds.person.gender:
+                          %span(title=ds.person.gender.name)&= ds.person.gender.symbol()
+                        - if ds.person and ds.person.race:
+                          %span(title=ds.person.race.name)&= ds.person.race.abbr()
+
+                      %td
+                        &= 'yes' if ds.quoted else 'no'
+                        - if len(ds.utterances()) > 0:
+                          %span.badge&= len(ds.utterances())
+                      %td&= 'yes' if ds.photographed else 'no'
+                      %td&= 'yes' if ds.named else 'no'
+                    - for q in ds.utterances():
+                      %tr.quotation(dataOffsets=('%d:%d' % (q.offset, q.length) if q.offset else ''))
+                        %td(colspan="4")&= q.quote
+
+            #people-tab.tab-pane
               %h3 People
               %table.table.table-striped.table-condensed.entities
+                %thead
+                  %th Name
+                  %th Race
+                  %th Gender
+                  %th Relevance
                 - for dp in document.people():
+                  - person = dp.entity.person
+
                   %tr(dataOffsets=dp.offset_list)
                     %td
                       %a(href= url_for('show_entity', group=dp.entity.group, name=dp.entity.name))&=dp.entity.name
+                    %td
+                      - if person:
+                        - if person.race:
+                          &= person.race.name[0]
+                    %td
+                      - if person:
+                        - if person.gender:
+                          &= person.gender.name[0]
                     %td&= dp.relevance
 
             #orgs-tab.tab-pane
@@ -73,14 +118,6 @@
                   %tr(dataOffsets=org.offset_list)
                     %td&= org.entity.name
                     %td&= org.relevance
-
-            #quotations-tab.tab-pane
-              %h3 Quotations
-              %table.table.table-striped.table-condensed.entities
-                - for q in document.utterances:
-                  %tr(dataOffsets=('%d:%d' % (q.offset, q.length) if q.offset else ''))
-                    %td&= q.entity.name
-                    %td&= q.quote
 
             #places-tab.tab-pane
               %h3 Places
