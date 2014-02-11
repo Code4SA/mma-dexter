@@ -36,6 +36,7 @@ class Document(db.Model):
     section   = Column(String(100), index=True)
     author_entity_id = Column(Integer, ForeignKey('entities.id'))
     medium_id = Column(Integer, ForeignKey('mediums.id'))
+    topic_ic  = Column(Integer, ForeignKey('topics.id'), index=True)
 
     published_at = Column(DateTime(timezone=True), index=True, unique=False, nullable=False)
     created_at   = Column(DateTime(timezone=True), index=True, unique=False, nullable=False, server_default=func.now())
@@ -51,6 +52,7 @@ class Document(db.Model):
     keywords    = relationship("DocumentKeyword", backref=backref('document'), order_by="desc(DocumentKeyword.relevance)")
     sources     = relationship("DocumentSource", backref=backref('document'))
     medium      = relationship("Medium")
+    topic       = relationship("Topic")
 
 
     PLACE_ENTITY_GROUPS = set(['city', 'province_or_state', 'region'])
