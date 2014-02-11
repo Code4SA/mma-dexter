@@ -1,7 +1,6 @@
 from dexter.models import db, Document, Entity, Utterance, Medium
-from dexter.models.document import DocumentForm
 from flask.ext.admin import Admin, expose, AdminIndexView
-from flask import render_template, url_for
+from flask import render_template
 from flask.ext.admin.contrib.sqla import ModelView
 from flask.ext.admin.model.template import macro
 from wtforms.fields import SelectField, TextAreaField
@@ -46,11 +45,10 @@ class MyIndexView(AdminIndexView):
         self._template_args['source_count'] = source_count
         return super(MyIndexView, self).index()
 
-
 class DocumentView(MyModelView):
 
-    list_template = 'admin/custom_list.html'
-    create_template = 'admin/add_document_template.html'
+    can_create = False
+    list_template = 'admin/custom_list_template.html'
     column_list = (
         'published_at',
         'medium',
@@ -90,7 +88,7 @@ class DocumentView(MyModelView):
 class EntityView(MyModelView):
 
     can_create = False
-    list_template = 'admin/custom_list.html'
+    list_template = 'admin/custom_list_template.html'
     column_list = (
         'name',
         'group',
@@ -115,7 +113,7 @@ class EntityView(MyModelView):
 class UtteranceView(MyModelView):
 
     can_create = False
-    list_template = 'admin/custom_list.html'
+    list_template = 'admin/custom_list_template.html'
     column_list = (
         'entity',
         'quote',
