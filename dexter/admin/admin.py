@@ -12,9 +12,6 @@ class MyModelView(ModelView):
 
 class MyIndexView(AdminIndexView):
 
-    def __init__(self):
-        super(MyIndexView, self).__init__(url="/")
-
     @expose('/')
     def index(self):
         document_count = Document.query.count()
@@ -144,7 +141,7 @@ class UtteranceView(MyModelView):
     page_size = 50
 
 
-admin_instance = Admin(url='/', base_template='admin/custom_master.html', name="Dexter", index_view=MyIndexView())
+admin_instance = Admin(url='/admin', base_template='admin/custom_master.html', name="Dexter", index_view=MyIndexView())
 admin_instance.add_view(DocumentView(Document, db.session, name="Articles", endpoint='document'))
 admin_instance.add_view(EntityView(Entity, db.session, name="Entities", endpoint='entity'))
 admin_instance.add_view(UtteranceView(Utterance, db.session, name="Quotes", endpoint="utterance"))
