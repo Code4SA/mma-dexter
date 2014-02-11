@@ -26,7 +26,7 @@ class AlchemyExtractor(BaseExtractor):
 
     def fetch_extract_entities(self, doc):
         log.info("Extracting entities for %s" % doc)
-        self.extract_entities(doc, self.fetch_entities(doc.text) or [])
+        self.extract_entities(doc, self.fetch_entities(doc) or [])
 
     def extract_entities(self, doc, entities):
         log.debug("Raw extracted entities: %s" % entities)
@@ -72,7 +72,7 @@ class AlchemyExtractor(BaseExtractor):
 
     def fetch_extract_keywords(self, doc):
         log.info("Extracting keywords for %s" % doc)
-        self.extract_keywords(doc, self.fetch_keywords(doc.text) or [])
+        self.extract_keywords(doc, self.fetch_keywords(doc) or [])
 
 
     def extract_keywords(self, doc, keywords):
@@ -97,23 +97,31 @@ class AlchemyExtractor(BaseExtractor):
         log.info("Added %d keywords for %s" % (keywords_added, doc))
 
 
-    def fetch_entities(self, text):
-        res = self.alchemy.entities('text', text.encode('utf-8'), {
-            'quotations': 1,
-            'linkedData': 0,
-            'sentiment': 0,
-            })
+    def fetch_entities(self, doc):
+        res = self.check_cache(doc.url, 'alchemy-entities')
 
-        if res['status'] == 'ERROR':
-            raise ProcessingError(res['statusInfo'])
+        if not res:
+            res = self.alchemy.entities('text', doc.text.encode('utf-8'), {
+                'quotations': 1,
+                'linkedData': 0,
+                'sentiment': 0,
+                })
+            if res['status'] == 'ERROR':
+                raise ProcessingError(res['statusInfo'])
+            self.update_cache(doc.url, 'alchemy-entities', res)
+
         return res['entities']
 
 
-    def fetch_keywords(self, text):
-        res = self.alchemy.keywords('text', text.encode('utf-8'))
+    def fetch_keywords(self, doc):
+        res = self.check_cache(doc.url, 'alchemy-keywords')
 
-        if res['status'] == 'ERROR':
-            raise ProcessingError(res['statusInfo'])
+        if not res:
+            res = self.alchemy.keywords('text', doc.text.encode('utf-8'))
+            if res['status'] == 'ERROR':
+                raise ProcessingError(res['statusInfo'])
+            self.update_cache(doc.url, 'alchemy-keywords', res)
+
         return res['keywords']
 
     def all_offsets(self, text, needle):

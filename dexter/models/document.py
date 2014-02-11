@@ -98,7 +98,7 @@ class Document(db.Model):
         """ Add a new keyword, but only if it's not already there. """
         for k in self.keywords:
             if k.keyword == keyword.keyword:
-                return k.add_offsets(keyword.offsets)
+                return k.add_offsets(keyword.offsets())
                 
         self.keywords.append(keyword)
         return True
