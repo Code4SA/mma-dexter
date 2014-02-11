@@ -97,7 +97,7 @@ class Document(db.Model):
     def add_keyword(self, keyword):
         """ Add a new keyword, but only if it's not already there. """
         for k in self.keywords:
-            if k.keyword == keyword.keyword:
+            if k.keyword.lower() == keyword.keyword.lower():
                 return k.add_offsets(keyword.offsets())
                 
         self.keywords.append(keyword)
@@ -115,7 +115,7 @@ class Document(db.Model):
 
 
     def __repr__(self):
-        return "<Document url=%s>" % (self.url)
+        return "<Document id=%s, url=%s>" % (self.id, self.url)
 
 
 class DocumentForm(Form):

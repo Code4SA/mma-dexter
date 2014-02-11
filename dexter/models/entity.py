@@ -37,8 +37,8 @@ class Entity(db.Model):
     person      = relationship('Person', foreign_keys=[person_id], lazy=False)
 
     def __eq__(self, other):
-        return isinstance(other, Entity) and self.group == other.group \
-            and self.name == other.name
+        return isinstance(other, Entity) and self.group.lower() == other.group.lower() \
+            and self.name.lower() == other.name.lower()
 
     def __repr__(self):
         return "<Entity id=%s, group=\"%s\", name=\"%s\">" % (self.id, self.group.encode('utf-8'), self.name.encode('utf-8'))
