@@ -1,14 +1,24 @@
 import unittest
 
 from dexter.models import Document
+from dexter.models.support import db
+from dexter.models.seeds import seed_db
 from dexter.processing.extractors import AlchemyExtractor
 
 class TestAlchemyExtractor(unittest.TestCase):
     def setUp(self):
+        self.db = db
+        self.db.create_all()
+        seed_db(db)
+
         AlchemyExtractor.API_KEY = 'fake'
         self.ex = AlchemyExtractor()
         self.doc = Document()
         self.doc.text = 'foo'
+
+    def tearDown(self):
+        self.db.session.remove()
+        self.db.drop_all()
 
     def test_extract_entities(self):
         entities = [

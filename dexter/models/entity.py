@@ -44,6 +44,20 @@ class Entity(db.Model):
         return "<Entity id=%s, group=\"%s\", name=\"%s\">" % (self.id, self.group.encode('utf-8'), self.name.encode('utf-8'))
 
     @classmethod
+    def get_or_create(cls, group, name):
+        """ Get the entity with this group and name or create it if it doesn't exist. """
+        e = Entity.query.filter(Entity.group == group, Entity.name == name).first()
+        if not e:
+            e = Entity()
+            e.group = group
+            e.name = name
+            db.session.add(e)
+            # force a db write (within the transaction) so subsequent lookups
+            # find this entity
+            db.session.flush()
+        return e
+
+    @classmethod
     def bulk_get(self, pairs):
         """ For a collection of (group, name) pairs, fetch matching entities in
         bulk, returning a map from (group, name) pairs to the entity. Both

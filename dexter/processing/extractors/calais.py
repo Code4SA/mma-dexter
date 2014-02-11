@@ -38,9 +38,7 @@ class CalaisExtractor(BaseExtractor):
                 if not 'name' in ent:
                     continue
 
-                e = Entity()
-                e.group = group
-                e.name = ent['name']
+                e = Entity.get_or_create(group, ent['name'])
 
                 de = DocumentEntity()
                 de.entity = e
@@ -67,9 +65,9 @@ class CalaisExtractor(BaseExtractor):
                 u.length = quote['instances'][0]['length']
 
             # uttering entity
-            u.entity = Entity()
-            u.entity.group = self.normalise_name(quote['person']['_type'])
-            u.entity.name = quote['person']['name']
+            u.entity = Entity.get_or_create(
+                    self.normalise_name(quote['person']['_type']),
+                    quote['person']['name'])
 
             if doc.add_utterance(u):
                 utterances_added += 1
