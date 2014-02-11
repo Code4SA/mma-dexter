@@ -1,0 +1,45 @@
+{% extends 'admin/master.html' %}
+
+{% block title %}
+    {{ entity.name }} - ({{ entity.group }})
+{% endblock %}
+
+{% block body %}
+    <ul class="nav nav-tabs">
+        <li>
+            <a href="{{ return_url }}">{{ _gettext('List') }}</a>
+        </li>
+        <li class="active">
+            <a href="javascript:void(0)">Show</a>
+        </li>
+    </ul>
+
+    <div id="new-document">
+        <article>
+            <section class="heading">
+                <h2>{{ entity.name }} - ({{ entity.group }})</h2>
+                <div class="byline">
+                    {% if entity.updated_at %}
+                        <span class="timestamp">Last updated: {{ entity.updated_at.strftime('%Y-%m-%d') }}</span>
+                    {% endif %}
+                </div>
+            </section>
+            <section class="quotes">
+                <ul class="unstyled">
+                    {% for doc in documents %}
+                        <li class="list-item-document">
+                            <a href={{ url_for('document.show_document', id=doc.id) }}><i class="fa fa-chevron-right"></i> <strong>{{ doc.published_at.strftime('%Y-%m-%d') }} - {{ doc.title }}</strong> <span class="label pull-right">{{ doc.medium.name }}</span></a>
+                            <ul class="unstyled">
+                                {% for utterance in doc.utterances %}
+                                    {% if utterance.entity_id == entity.id %}
+                                        <li class="list-item-utterance"><blockquote>{{ utterance.quote }}</blockquote></li>
+                                    {% endif %}
+                                {% endfor %}
+                            </ul>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </section>
+        </article>
+    </div>
+{% endblock %}

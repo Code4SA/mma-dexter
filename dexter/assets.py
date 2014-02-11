@@ -9,7 +9,7 @@ assets.directory  = '%s/public' % app.config.root_path
 assets.load_path  = ['assets']
 assets.url        = '/public'
 
-assets.register('css', 
+assets.register('css',
     Bundle(
       'css/bootstrap-3.0.3.min.css',
       'css/bootstrap-3.0.3-theme.min.css',
@@ -22,7 +22,12 @@ assets.register('css',
         output='css/app.%(version)s.css'),
       output='css/all.%(version)s.css'))
 
-assets.register('js', 
+assets.register('admin-css',
+    Bundle(
+      'css/admin.css',
+    ))
+
+assets.register('js',
     Bundle(
       'js/jquery-1.10.2.min.js',
       'js/bootstrap-3.0.3.min.js',

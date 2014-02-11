@@ -1,0 +1,31 @@
+body .container:first-child{
+    min-height: 500px;
+}
+
+#footer{
+    height: 100px;
+}
+
+.tiny-logo{
+    float: right;
+    margin-left: 25px;
+    margin-right: 25px;
+}
+
+#copyright{
+    padding-top: 10px;
+}
+
+.list-item-document{
+    padding-top: 10px;
+    margin-left: 15px;
+}
+
+.list-item-utterance blockquote{
+    margin-bottom: 5px;
+    margin-left: 12px;
+}
+
+.well p{
+    margin-left: 7px;
+}
