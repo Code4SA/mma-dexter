@@ -88,8 +88,14 @@ class Document(db.Model):
     def add_utterance(self, utterance):
         """ Add a new Utterance, but only if the same one doesn't already
         exist. """
-        if any(u == utterance for u in self.utterances):
-            return False
+        for u in self.utterances:
+            if u == utterance:
+                if utterance.offset is not None and u.offset is None:
+                    u.offset = utterance.offset
+                    u.length = utterance.length
+                    return True
+                else:
+                    return False
 
         self.utterances.append(utterance)
         return True
