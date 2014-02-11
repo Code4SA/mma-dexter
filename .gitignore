@@ -6,3 +6,4 @@ production-settings.sh
 log
 dexter/public
 .idea
+cache
