@@ -11,4 +11,7 @@ def seed_db(db):
     for x in Race.create_defaults():
         db.session.add(x)
 
+    for x in SourceFunctions.create_defaults():
+        db.session.add(x)
+
     db.session.commit()

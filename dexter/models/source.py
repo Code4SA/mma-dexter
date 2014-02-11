@@ -23,6 +23,7 @@ class DocumentSource(db.Model, WithOffsets):
     id        = Column(Integer, primary_key=True)
     doc_id    = Column(Integer, ForeignKey('documents.id'), index=True, nullable=False)
     entity_id = Column(Integer, ForeignKey('entities.id'), index=True)
+    source_function_id = Column(Integer, ForeignKey('source_functions.id'))
 
     photographed = Column(Boolean)
     quoted       = Column(Boolean)
@@ -35,6 +36,7 @@ class DocumentSource(db.Model, WithOffsets):
 
     # Associations
     entity    = relationship("Entity", lazy=False)
+    function  = relationship("SourceFunction", lazy=False)
 
     def document_entity(self):
         """ The DocumentEntity instance that matches this source for this document. May be None. """
@@ -70,3 +72,39 @@ class DocumentSource(db.Model, WithOffsets):
 
     def __repr__(self):
         return "<DocumentSource doc=%s, entity=%s>" % (self.document, self.entity)
+
+
+class SourceFunction(db.Model):
+    """
+    In what role/function was the source for a document accessed?
+    """
+    __tablename__ = "source_functions"
+
+    id        = Column(Integer, primary_key=True)
+    name      = Column(String(50), index=True, nullable=False, unique=True)
+
+    def __repr__(self):
+        return "<SourceFunction name='%s'>" % (self.name)
+
+
+    @classmethod
+    def create_defaults(self):
+        text = """
+        Do not know
+        Subject
+        Expert
+        Personal Experience
+        Eye Witness
+        Popular Opinion
+        Secondary Sources
+        Representative/Spokesperson
+        Other
+        """
+
+        functions = []
+        for s in text.strip().split("\n"):
+            g = SourceFunction()
+            g.name = s.strip()
+            functions.append(g)
+
+        return functions
