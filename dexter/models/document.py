@@ -131,10 +131,15 @@ class DocumentForm(Form):
     published_at = DateField('Published on', [validators.Required()], format='%Y/%m/%d')
     blurb       = StringField('Blurb', [validators.Length(max=1024)])
     text        = TextAreaField('Article content', [validators.Required()])
+
     medium_id   = SelectField('Medium', [validators.Required()])
+    topic_id    = SelectField('Topic', [validators.Required()])
 
     def __init__(self, *args, **kwargs):
         super(Form, self).__init__(*args, **kwargs)
 
-        from .medium import Medium
+        from . import Medium
         self.medium_id.choices = [[str(m.id), m.name] for m in Medium.query.all()]
+
+        from . import Topic
+        self.topic_id.choices = [(None, '(none)')] + [[str(t.id), t.name] for t in Topic.query.all()]

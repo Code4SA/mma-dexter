@@ -76,7 +76,7 @@ def new_article():
 @app.route('/articles/<id>/edit')
 def edit_article(id):
     doc = Document.query.get_or_404(id)
-    form = DocumentForm()
+    form = DocumentForm(obj=doc)
     return render_template('articles/edit.haml',
             doc=doc,
             form=form)
