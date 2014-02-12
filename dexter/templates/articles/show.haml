@@ -73,9 +73,13 @@
                       %td
                         %a(href= url_for('show_entity', group=ds.entity.group, name=ds.entity.name))&=ds.entity.name
                         - if ds.person and ds.person.gender:
-                          %span(title=ds.person.gender.name, dataToggle="tab")&="(" + ds.person.gender.abbr() + ")"
+                          %span.text-muted(title=ds.person.gender.name)
+                            %strong&=
+                              " - " + ds.person.gender.abbr()
                         - if ds.person and ds.person.race:
-                          %span(title=ds.person.race.name)&= ds.person.race.abbr()
+                          %span.text-muted(title=ds.person.race.name)
+                          %strong&=
+                            " (" + ds.person.race.abbr() + ")"
 
                       %td
                         &= 'yes' if ds.quoted else 'no'
@@ -92,8 +96,8 @@
               %table.table.table-striped.table-condensed.entities
                 %thead
                   %th Name
-                  %th Race
-                  %th Gender
+                  %th.text-center Race
+                  %th.text-center Gender
                   %th Relevance
                 - for dp in document.people():
                   - person = dp.entity.person
@@ -101,14 +105,18 @@
                   %tr(dataOffsets=dp.offset_list)
                     %td
                       %a(href= url_for('show_entity', group=dp.entity.group, name=dp.entity.name))&=dp.entity.name
-                    %td
+                    %td.text-center
                       - if person:
                         - if person.race:
-                          &= person.race.name[0]
-                    %td
+                          %span.text-muted(title=ds.person.race.name)
+                            %strong&=
+                              ds.person.race.abbr()
+                    %td.text-center
                       - if person:
                         - if person.gender:
-                          &= person.gender.name[0]
+                          %span.text-muted(title=ds.person.gender.name)
+                            %strong&=
+                              ds.person.gender.abbr()
                     %td&= dp.relevance
 
             #orgs-tab.tab-pane
