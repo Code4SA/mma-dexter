@@ -121,15 +121,13 @@
                         %td.text-center
                           - if person:
                             - if person.race:
-                              %span.text-muted(title=ds.person.race.name)
-                                %strong&=
-                                  ds.person.race.abbr()
+                              %span.text-muted(title=person.race.name)
+                                %strong&= person.race.abbr()
                         %td.text-center
                           - if person:
                             - if person.gender:
-                              %span.text-muted(title=ds.person.gender.name)
-                                %strong&=
-                                  ds.person.gender.abbr()
+                              %span.text-muted(title=person.gender.name)
+                                %strong&= person.gender.abbr()
                         %td&= dp.relevance
 
                   %h3 Organisations
