@@ -12,13 +12,17 @@
 
     %section.tabs
       .row
-        - for doc in documents:
-          %div.panel.panel-default
-            %div.panel-heading
-              %span.pull-right= doc.published_at.strftime('%e %B %Y')
-              %a(href="/articles/" + str(doc.id))= doc.title
-            %div.panel-body
-              %ul.list-group
-                - for utterance in doc.utterances:
-                  - if utterance.entity_id == entity.id:
-                    %li.list-group-item = utterance.quote
+        %ul.list-unstyled
+          - for doc in documents:
+            %li.list-item-document
+              %i.fa.fa-chevron-right
+              &=doc.published_at.strftime('%e %B %Y') + ' - '
+              %a(href= url_for('show_article', id=doc.id))
+                %strong&= doc.title
+              %span.pull-right
+                %span.label.label-primary.pull-right&=doc.medium.name
+              - for utterance in doc.utterances:
+                - if utterance.entity_id == entity.id:
+                  %li.list-item-utterance
+                    %blockquote
+                      %em&=utterance.quote

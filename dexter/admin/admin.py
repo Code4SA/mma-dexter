@@ -45,6 +45,8 @@ class MyIndexView(AdminIndexView):
 class DocumentView(MyModelView):
 
     can_create = False
+    can_edit = False
+    can_delete = False
     list_template = 'admin/custom_list_template.html'
     column_list = (
         'published_at',
@@ -85,6 +87,8 @@ class DocumentView(MyModelView):
 class EntityView(MyModelView):
 
     can_create = False
+    can_edit = False
+    can_delete = False
     list_template = 'admin/custom_list_template.html'
     column_list = (
         'name',
@@ -110,6 +114,8 @@ class EntityView(MyModelView):
 class UtteranceView(MyModelView):
 
     can_create = False
+    can_edit = False
+    can_delete = False
     list_template = 'admin/custom_list_template.html'
     column_list = (
         'entity',
@@ -141,8 +147,16 @@ class UtteranceView(MyModelView):
     page_size = 50
 
 
+class MediumView(MyModelView):
+
+    can_create = False
+    can_edit = False
+    can_delete = False
+    page_size = 50
+
+
 admin_instance = Admin(url='/admin', base_template='admin/custom_master.html', name="Dexter", index_view=MyIndexView())
 admin_instance.add_view(DocumentView(Document, db.session, name="Articles", endpoint='document'))
 admin_instance.add_view(EntityView(Entity, db.session, name="Entities", endpoint='entity'))
 admin_instance.add_view(UtteranceView(Utterance, db.session, name="Quotes", endpoint="utterance"))
-admin_instance.add_view(MyModelView(Medium, db.session, name="Sources", endpoint="medium"))
+admin_instance.add_view(MediumView(Medium, db.session, name="Sources", endpoint="medium"))

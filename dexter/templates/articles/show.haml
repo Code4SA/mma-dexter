@@ -9,6 +9,8 @@
   %article
     %section.heading
       %h2&= document.title
+      - if document.topic:
+        %p.lead&='Topic: ' + document.topic.name
       .url
         %a(href=document.url, target='_blank')&= document.url
       .row
@@ -63,6 +65,7 @@
                 %thead
                   %tr
                     %th Name
+                    %th
                     %th Quoted?
                     %th Photo?
                     %th Named?
@@ -73,10 +76,16 @@
                       %td
                         %a(href= url_for('show_entity', group=ds.entity.group, name=ds.entity.name))&=ds.entity.name
                         - if ds.person and ds.person.gender:
-                          %span(title=ds.person.gender.name)&= ds.person.gender.symbol()
+                          %span.text-muted(title=ds.person.gender.name)
+                            %strong&=
+                              " - " + ds.person.gender.abbr()
                         - if ds.person and ds.person.race:
-                          %span(title=ds.person.race.name)&= ds.person.race.abbr()
-
+                          %span.text-muted(title=ds.person.race.name)
+                          %strong&=
+                            " (" + ds.person.race.abbr() + ")"
+                      %td
+                        - if ds.function:
+                          %span.label.label-default&=ds.function.name
                       %td
                         &= 'yes' if ds.quoted else 'no'
                         - if len(ds.utterances()) > 0:
@@ -85,15 +94,15 @@
                       %td&= 'yes' if ds.named else 'no'
                     - for q in ds.utterances():
                       %tr.quotation(dataOffsets=('%d:%d' % (q.offset, q.length) if q.offset else ''))
-                        %td(colspan="4")&= q.quote
+                        %td(colspan="5")&= q.quote
 
             #people-tab.tab-pane
               %h3 People
               %table.table.table-striped.table-condensed.entities
                 %thead
                   %th Name
-                  %th Race
-                  %th Gender
+                  %th.text-center Race
+                  %th.text-center Gender
                   %th Relevance
                 - for dp in document.people():
                   - person = dp.entity.person
@@ -101,14 +110,18 @@
                   %tr(dataOffsets=dp.offset_list)
                     %td
                       %a(href= url_for('show_entity', group=dp.entity.group, name=dp.entity.name))&=dp.entity.name
-                    %td
+                    %td.text-center
                       - if person:
                         - if person.race:
-                          &= person.race.name[0]
-                    %td
+                          %span.text-muted(title=ds.person.race.name)
+                            %strong&=
+                              ds.person.race.abbr()
+                    %td.text-center
                       - if person:
                         - if person.gender:
-                          &= person.gender.name[0]
+                          %span.text-muted(title=ds.person.gender.name)
+                            %strong&=
+                              ds.person.gender.abbr()
                     %td&= dp.relevance
 
             #orgs-tab.tab-pane
