@@ -38,6 +38,24 @@ table.entities {
   padding-bottom: 0px;
 }
 
+.tiny-logo{
+    float: right;
+    margin-left: 25px;
+    margin-right: 25px;
+}
+
+#copyright{
+    padding-top: 10px;
+}
+
+#index-overview{
+  margin-top: 35px;
+}
+
+#index-overview p{
+  margin-left: 10px;
+}
+
 footer {
   border-top: 1px solid #ddd;
   margin-top: 40px;
@@ -67,4 +85,3 @@ footer {
     }
   }
 }
-

@@ -2,48 +2,5 @@
 {% block body %}
     {{ super() }}
 
-    <h1>MMA-Dexter</h1>
-    <p class="lead">
-        Navigate media reports relating to people/organizations of interest.
-    </p>
 
-    <div class="row-fluid">
-        <div class="span7">
-            <p>
-                To-do: Give a short explanation of the application here. Lorem ipsum dolor sit amet, habeo iisque an sit, vix cu justo tollit nostrum, quo at adolescens dissentiet. Ad choro pertinax incorrupte quo, vero augue duo ei, mei dissentias necessitatibus ex. Duo probo erroribus ad. Quo mucius saperet no, cum ne graeco regione dissentiet, diam fastidii deleniti mei ei.
-            </p>
-            <p>
-                Quod paulo consequuntur pro ad, legimus ceteros ex nam, an his aeterno utroque consulatu. Molestie legendos mediocrem duo ne, nominavi percipit constituam te quo, aliquid ornatus ea vel. Inermis invenire appellantur ius id, in his prima consequat. Vix quot vidit melius ut, est ea detracto petentium liberavisse..
-            </p>
-        </div>
-        <div class="span5">
-            <div class="well">
-                <h4>Index overview</h4>
-                <p>
-                    Documents added to the index: <span class="badge badge-important pull-right">{{ document_count }}</span>
-                </p>
-                {% if document_count %}
-                    <p>
-                        People identified: <span class="badge badge-info pull-right">{{ group_counts['person'] }}</span>
-                    </p>
-                    <p>
-                        Companies & organisations: <span class="badge badge-info pull-right">{{ group_counts['company'] + group_counts['organization'] }}</span>
-                    </p>
-
-                    <h4>Top sources</h4>
-                    {% for name, count in source_count %}
-                        <p>{{ name }} <span class="badge badge-important pull-right">{{ count }}</span></p>
-                    {% endfor %}
-
-                    <h4>Publication dates</h4>
-                    <p>
-                        Earliest: <strong class="pull-right">{{ date_from.strftime('%e %B %Y') }}</strong>
-                    </p>
-                    <p>
-                        Latest: <strong class="pull-right">{{ date_to.strftime('%e %B %Y') }}</strong>
-                    </p>
-                {% endif %}
-            </div>
-        </div>
-    </div>
 {% endblock body %}

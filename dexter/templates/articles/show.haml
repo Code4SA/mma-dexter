@@ -27,12 +27,13 @@
         .col-sm-2
           .medium
             %i.fa.fa-building-o
-              &= document.medium.name
+              - if document.medium:
+                &= document.medium.name
         .col-sm-2
           .author
             %i.fa.fa-user
             - if document.author:
-                &= document.author.name
+              &= document.author.name
         .col-sm-4
 
     %section
