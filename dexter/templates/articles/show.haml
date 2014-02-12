@@ -22,12 +22,13 @@
         .col-sm-2
           .medium
             %i.fa.fa-building-o
-              &= document.medium.name
+              - if document.medium:
+                &= document.medium.name
         .col-sm-2
           .author
             %i.fa.fa-user
             - if document.author:
-                &= document.author.name
+              &= document.author.name
         .col-sm-4
 
     %section.tabs
@@ -81,8 +82,8 @@
                               " - " + ds.person.gender.abbr()
                         - if ds.person and ds.person.race:
                           %span.text-muted(title=ds.person.race.name)
-                          %strong&=
-                            " (" + ds.person.race.abbr() + ")"
+                            %strong&=
+                              " (" + ds.person.race.abbr() + ")"
                       %td
                         - if ds.function:
                           %span.label.label-default&=ds.function.name
@@ -106,23 +107,21 @@
                   %th Relevance
                 - for dp in document.people():
                   - person = dp.entity.person
-
-                  %tr(dataOffsets=dp.offset_list)
-                    %td
-                      %a(href= url_for('show_entity', group=dp.entity.group, name=dp.entity.name))&=dp.entity.name
-                    %td.text-center
-                      - if person:
-                        - if person.race:
-                          %span.text-muted(title=ds.person.race.name)
+                  - if person:
+                    %tr(dataOffsets=dp.offset_list)
+                      %td
+                        %a(href= url_for('show_entity', group=dp.entity.group, name=dp.entity.name))&=dp.entity.name
+                      %td.text-center
+                        - if person and person.race:
+                          %span.text-muted(title=person.race.name)
                             %strong&=
                               ds.person.race.abbr()
-                    %td.text-center
-                      - if person:
-                        - if person.gender:
-                          %span.text-muted(title=ds.person.gender.name)
+                      %td.text-center
+                        - if person and person.gender:
+                          %span.text-muted(title=person.gender.name)
                             %strong&=
-                              ds.person.gender.abbr()
-                    %td&= dp.relevance
+                              person.gender.abbr()
+                      %td&= dp.relevance
 
             #orgs-tab.tab-pane
               %h3 Organisations
