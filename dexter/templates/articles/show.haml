@@ -9,6 +9,8 @@
   %article
     %section.heading
       %h2&= document.title
+      - if document.topic:
+        %p.lead&='Topic: ' + document.topic.name
       .url
         %a(href=document.url, target='_blank')&= document.url
       .row
