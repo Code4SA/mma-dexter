@@ -41,17 +41,11 @@ class Gender(db.Model):
     id        = Column(Integer, primary_key=True)
     name      = Column(String(150), index=True, nullable=False, unique=True)
 
-    SYMBOLS = {
-        'Male': u'♂',
-        'Female': u'♀',
-        'Other: Transgender, Transsexual': u'⚥'}
-
-    def symbol(self):
-        return self.SYMBOLS.get(self.name)
-
     def __repr__(self):
         return "<Gender name='%s'>" % (self.name)
 
+    def abbr(self):
+        return self.name[0].upper()
 
     @classmethod
     def male(cls):
@@ -82,7 +76,7 @@ class Race(db.Model):
         return "<Race name='%s'>" % (self.name)
 
     def abbr(self):
-        return self.name[0]
+        return self.name[0].upper()
 
     @classmethod
     def create_defaults(self):

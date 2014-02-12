@@ -73,7 +73,7 @@
                       %td
                         %a(href= url_for('show_entity', group=ds.entity.group, name=ds.entity.name))&=ds.entity.name
                         - if ds.person and ds.person.gender:
-                          %span(title=ds.person.gender.name)&= ds.person.gender.symbol()
+                          %span(title=ds.person.gender.name, dataToggle="tab")&="(" + ds.person.gender.abbr() + ")"
                         - if ds.person and ds.person.race:
                           %span(title=ds.person.race.name)&= ds.person.race.abbr()
 
