@@ -6,6 +6,15 @@
   &= doc.title
 
 #edit-document
-  %article
-    %section
-      aoeu
+  .pull-right
+    %a.btn.btn-default(href=url_for('show_article', id=doc.id)) Cancel
+
+  %h2&= doc.title
+
+  %form(action=url_for('edit_article', id=doc.id), method='POST')
+    = form.csrf_token
+
+    %%include(file='form.haml')
+
+    %input.btn.btn-primary(type='submit', value='Save changes', dataDisableWith='Saving...')
+    %a.btn.btn-default(href=url_for('show_article', id=doc.id)) Cancel

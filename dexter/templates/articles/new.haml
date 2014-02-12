@@ -9,27 +9,24 @@
     %section
       %h2 Add a new article
 
-      %h3 By fetching a webpage
-
-      %form.form-horizontal(action=url_for('new_article'), method='POST')
+      %form(action=url_for('new_article'), method='POST')
         = form.csrf_token
 
-        = field(form.url, placeholder='URL', autofocus=True)
-        .row
-          .col-sm-10.col-sm-offset-2
-            %input.btn.btn-primary(type='submit', value="Fetch and add article", dataDisableWith='Fetching...')
+        %fieldset
+          %legend By fetching a webpage
 
-      %h3 Or by typing it in
-      %form.form-horizontal(action=url_for('new_article'), method='POST')
+          .form-group
+            = field_input(form.url, placeholder='URL', autofocus=True)
+          %input.btn.btn-primary(type='submit', value="Fetch and add article", dataDisableWith='Fetching...')
+
+      %form(action=url_for('new_article'), method='POST')
         = form.csrf_token
-        %input(type='hidden', name='manual', value='True')
 
-        = field(form.url, placeholder='URL')
-        = field(form.title, placeholder='Article headline', required=True)
-        = field(form.published_at, placeholder='YYYY/MM/DD', class_='use-datepicker')
-        = field(form.medium_id, required=True, class_='chosen-select')
-        = field(form.text, rows=15, placeholder='The text of the article', required=True)
-        .row
-          .col-sm-10.col-sm-offset-2
-            %input.btn.btn-primary(type='submit', value='Add new article', dataDisableWith='Adding...')
+        %fieldset
+          %legend Or by typing it in
+
+          %%include(file="form.haml")
+
+          %input(type='hidden', name='manual', value='True')
+          %input.btn.btn-primary(type='submit', value='Add new article', dataDisableWith='Adding...')
 
