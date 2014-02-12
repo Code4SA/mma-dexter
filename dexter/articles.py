@@ -73,10 +73,19 @@ def new_article():
             form=form)
 
 
-@app.route('/articles/<id>/edit')
+@app.route('/articles/<id>/edit', methods=['GET', 'POST'])
 def edit_article(id):
     doc = Document.query.get_or_404(id)
-    form = DocumentForm()
+    form = DocumentForm(obj=doc)
+
+    if request.method == 'POST':
+        if form.validate():
+            form.populate_obj(doc)
+            db.session.commit()
+            flash('Article updated.')
+            return redirect(url_for('show_article', id=id))
+
+
     return render_template('articles/edit.haml',
             doc=doc,
             form=form)

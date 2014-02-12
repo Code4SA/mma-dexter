@@ -8,6 +8,19 @@
   }
 }
 
+#show-document {
+  .article-text {
+    height: 500px;
+    border: 1px solid #ddd;
+    padding: 10px;
+    overflow-y: auto;
+
+    &.affix {
+      top: 20px;
+    }
+  }
+}
+
 table.entities {
   tr.quotation {
     td { padding-left: 20px; }
@@ -24,3 +37,34 @@ table.entities {
   padding-top: 0px;
   padding-bottom: 0px;
 }
+
+footer {
+  border-top: 1px solid #ddd;
+  margin-top: 40px;
+  padding: 20px 10px;
+}
+
+@media (min-width: 768px) {
+  #show-document {
+    .article-text.affix {
+      width: 283px;
+    }
+  }
+}
+
+@media (min-width: 992px) {
+  #show-document {
+    .article-text.affix {
+      width: 374px;
+    }
+  }
+}
+
+@media (min-width: 1200px) {
+  #show-document {
+    .article-text.affix {
+      width: 458px;
+    }
+  }
+}
+
