@@ -10,6 +10,8 @@ import dexter.entities
 @app.route('/')
 def home():
 
+    latest_docs = Document.query.order_by(Document.created_at.desc()).limit(20)
+
     document_count = Document.query.count()
     if document_count is None:
         document_count = 0
@@ -30,6 +32,7 @@ def home():
         medium_counts.append([medium_name, int(medium_count)])
 
     return render_template('index.haml',
+                           latest_docs=latest_docs,
                            document_count=document_count,
                            latest=latest.published_at.strftime('%e %B %Y'),
                            earliest=earliest.published_at.strftime('%e %B %Y'),

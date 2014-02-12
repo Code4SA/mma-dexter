@@ -14,7 +14,7 @@
 
 
   .col-md-5
-    .well
+    #index-overview.well
       %h4 Index overview
       %p
         Documents added to the index:
@@ -42,3 +42,15 @@
         %strong.pull-right&=latest
       %p Earliest:
         %strong.pull-right&=earliest
+
+
+.row
+  %h2 Recently added articles
+  %ul.list-unstyled
+    - for doc in latest_docs:
+      %li.list-item-document
+        %i.fa.fa-chevron-right
+        &=doc.published_at.strftime('%e %B %Y') + ' - '
+        %a(href=url_for('show_article', id=doc.id))
+          &= doc.title
+        %span.label.label-default.pull-right &=doc.medium.name
