@@ -20,7 +20,7 @@ class CalaisExtractor(BaseExtractor):
     def extract(self, doc):
         log.info("Extracting things for %s" % doc)
 
-        calais = self.fetch_data(doc.text).get('extractions', {})
+        calais = self.fetch_data(doc).get('extractions', {})
 
         log.debug("Raw calais extractions: %s" % calais)
 
@@ -38,9 +38,7 @@ class CalaisExtractor(BaseExtractor):
                 if not 'name' in ent:
                     continue
 
-                e = Entity()
-                e.group = group
-                e.name = ent['name']
+                e = Entity.get_or_create(group, ent['name'])
 
                 de = DocumentEntity()
                 de.entity = e
@@ -67,9 +65,9 @@ class CalaisExtractor(BaseExtractor):
                 u.length = quote['instances'][0]['length']
 
             # uttering entity
-            u.entity = Entity()
-            u.entity.group = self.normalise_name(quote['person']['_type'])
-            u.entity.name = quote['person']['name']
+            u.entity = Entity.get_or_create(
+                    self.normalise_name(quote['person']['_type']),
+                    quote['person']['name'])
 
             if doc.add_utterance(u):
                 utterances_added += 1
@@ -77,22 +75,36 @@ class CalaisExtractor(BaseExtractor):
         log.info("Added %d utterances for %s" % (utterances_added, doc))
 
 
-    def fetch_data(self, text):
-        # NOTE: set the ENV variable CALAIS_API_KEY before running the process
-        if not self.API_KEY:
-            raise ValueError('%s.%s.API_KEY must be defined.' % (self.__module__, self.__class__.__name__))
+    def fetch_data(self, doc):
+        # First check for the (legacy) nicely formatted OpenCalais JSON.
+        # We now prefer to cache the original result.
+        res = self.check_cache(doc.url, 'calais-normalised')
+        if not res:
+            # check for regular json
+            res = self.check_cache(doc.url, 'calais')
+            if not res:
+                # fetch it
+                # NOTE: set the ENV variable CALAIS_API_KEY before running the process
+                if not self.API_KEY:
+                    raise ValueError('%s.%s.API_KEY must be defined.' % (self.__module__, self.__class__.__name__))
 
-        res = requests.post('http://api.opencalais.com/tag/rs/enrich', text.encode('utf-8'),
-            headers={
-                'x-calais-licenseID': self.API_KEY,
-                'content-type': 'text/raw',
-                'accept': 'application/json',
-                })
-        if res.status_code == 200:
-            return self.normalise(res.json())
-        else:
-            log.error(res.text)
-            res.raise_for_status()
+                res = requests.post('http://api.opencalais.com/tag/rs/enrich', doc.text.encode('utf-8'),
+                    headers={
+                        'x-calais-licenseID': self.API_KEY,
+                        'content-type': 'text/raw',
+                        'accept': 'application/json',
+                        })
+                if res.status_code != 200:
+                    log.error(res.text)
+                    res.raise_for_status()
+
+                res = res.json()
+                self.update_cache(doc.url, 'calais', res)
+
+            # make the JSON decent and usable
+            res = self.normalise(res)
+
+        return res
 
 
     def normalise(self, js):

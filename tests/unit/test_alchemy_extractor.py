@@ -1,14 +1,24 @@
 import unittest
 
 from dexter.models import Document
+from dexter.models.support import db
+from dexter.models.seeds import seed_db
 from dexter.processing.extractors import AlchemyExtractor
 
 class TestAlchemyExtractor(unittest.TestCase):
     def setUp(self):
+        self.db = db
+        self.db.create_all()
+        seed_db(db)
+
         AlchemyExtractor.API_KEY = 'fake'
         self.ex = AlchemyExtractor()
         self.doc = Document()
         self.doc.text = 'foo'
+
+    def tearDown(self):
+        self.db.session.remove()
+        self.db.drop_all()
 
     def test_extract_entities(self):
         entities = [
@@ -27,9 +37,7 @@ class TestAlchemyExtractor(unittest.TestCase):
                     "quotation": "\"We are not safe, we do not trust them. They are like our enemies,\" she said ...",
                 }]
             }]
-
-        self.ex.fetch_entities = lambda t: entities
-        self.ex.extract_entities(self.doc)
+        self.ex.extract_entities(self.doc, entities)
 
         e = self.doc.entities[0]
         self.assertEqual('Adam Welkom', e.entity.name)
@@ -54,8 +62,7 @@ class TestAlchemyExtractor(unittest.TestCase):
                 "text": "justice",
             }]
 
-        self.ex.fetch_keywords = lambda t: keywords
-        self.ex.extract_keywords(self.doc)
+        self.ex.extract_keywords(self.doc, keywords)
 
         kw = self.doc.keywords[0]
         self.assertEqual('morning', kw.keyword)
@@ -77,8 +84,7 @@ class TestAlchemyExtractor(unittest.TestCase):
                 "text": "justice",
             }]
 
-        self.ex.fetch_keywords = lambda t: keywords
-        self.ex.extract_keywords(self.doc)
+        self.ex.extract_keywords(self.doc, keywords)
 
         k = self.doc.keywords[0]
         self.assertEqual('morning', k.keyword)
@@ -99,8 +105,7 @@ class TestAlchemyExtractor(unittest.TestCase):
             },
             ]
 
-        self.ex.fetch_entities = lambda t: entities
-        self.ex.extract_entities(self.doc)
+        self.ex.extract_entities(self.doc, entities)
 
         e = self.doc.entities[0]
         self.assertEqual('Adam Welkom', e.entity.name)
@@ -123,8 +128,7 @@ class TestAlchemyExtractor(unittest.TestCase):
                 }]
             }]
 
-        self.ex.fetch_entities = lambda t: entities
-        self.ex.extract_entities(self.doc)
+        self.ex.extract_entities(self.doc, entities)
 
         u = self.doc.utterances[0]
         self.assertEqual(17, u.offset)

@@ -58,9 +58,7 @@ class MGCrawler:
 
         author = self.extract_plaintext(soup.select(".content_place_line_author"))
         if author:
-            doc.author = Entity()
-            doc.author.group = 'person'
-            doc.author.name = author
+            doc.author = Entity.get_or_create('person', author)
 
 
     def extract_plaintext(self, lst):

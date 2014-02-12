@@ -37,7 +37,7 @@ class Utterance(db.Model):
 
     def __eq__(self, other):
         return isinstance(other, Utterance) and other.entity == self.entity and \
-                other.quote == self.quote
+                other.quote.lower() == self.quote.lower()
 
     def __repr__(self):
         return "<Utterance doc=%s, entity=%s, quote=\"%s\">" % (

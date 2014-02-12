@@ -36,12 +36,12 @@ class Document(db.Model):
     section   = Column(String(100), index=True)
     author_entity_id = Column(Integer, ForeignKey('entities.id'))
     medium_id = Column(Integer, ForeignKey('mediums.id'))
+    topic_id  = Column(Integer, ForeignKey('topics.id'), index=True)
 
     published_at = Column(DateTime(timezone=True), index=True, unique=False, nullable=False)
     created_at   = Column(DateTime(timezone=True), index=True, unique=False, nullable=False, server_default=func.now())
     updated_at   = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.current_timestamp())
 
-    # TODO: name of publication, eg. M&G
     # TODO: location
 
     # Associations
@@ -51,6 +51,7 @@ class Document(db.Model):
     keywords    = relationship("DocumentKeyword", backref=backref('document'), order_by="desc(DocumentKeyword.relevance)")
     sources     = relationship("DocumentSource", backref=backref('document'))
     medium      = relationship("Medium")
+    topic       = relationship("Topic")
 
 
     PLACE_ENTITY_GROUPS = set(['city', 'province_or_state', 'region'])
@@ -88,8 +89,14 @@ class Document(db.Model):
     def add_utterance(self, utterance):
         """ Add a new Utterance, but only if the same one doesn't already
         exist. """
-        if any(u == utterance for u in self.utterances):
-            return False
+        for u in self.utterances:
+            if u == utterance:
+                if utterance.offset is not None and u.offset is None:
+                    u.offset = utterance.offset
+                    u.length = utterance.length
+                    return True
+                else:
+                    return False
 
         self.utterances.append(utterance)
         return True
@@ -97,8 +104,8 @@ class Document(db.Model):
     def add_keyword(self, keyword):
         """ Add a new keyword, but only if it's not already there. """
         for k in self.keywords:
-            if k.keyword == keyword.keyword:
-                return k.add_offsets(keyword.offsets)
+            if k.keyword.lower() == keyword.keyword.lower():
+                return k.add_offsets(keyword.offsets())
                 
         self.keywords.append(keyword)
         return True
@@ -115,7 +122,7 @@ class Document(db.Model):
 
 
     def __repr__(self):
-        return "<Document url=%s>" % (self.url)
+        return "<Document id=%s, url=%s>" % (self.id, self.url)
 
 
 class DocumentForm(Form):
