@@ -35,11 +35,11 @@
                 &= document.author.name
         .col-sm-4
 
-    %section.tabs
+    %section
       .row
         .col-sm-5
-          .article-blurb
-            %p&= document.blurb
+          %p.article-blurb
+            %em&= document.blurb
           .article-text(dataOriginal=document.text.replace("\r", "\n"))
             = format_paragraphs(document.text)
 
