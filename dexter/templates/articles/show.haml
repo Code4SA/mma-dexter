@@ -63,6 +63,7 @@
                 %thead
                   %tr
                     %th Name
+                    %th
                     %th Quoted?
                     %th Photo?
                     %th Named?
@@ -80,7 +81,9 @@
                           %span.text-muted(title=ds.person.race.name)
                           %strong&=
                             " (" + ds.person.race.abbr() + ")"
-
+                      %td
+                        - if ds.function:
+                          %span.label.label-default&=ds.function.name
                       %td
                         &= 'yes' if ds.quoted else 'no'
                         - if len(ds.utterances()) > 0:
@@ -89,7 +92,7 @@
                       %td&= 'yes' if ds.named else 'no'
                     - for q in ds.utterances():
                       %tr.quotation(dataOffsets=('%d:%d' % (q.offset, q.length) if q.offset else ''))
-                        %td(colspan="4")&= q.quote
+                        %td(colspan="5")&= q.quote
 
             #people-tab.tab-pane
               %h3 People
