@@ -9,24 +9,24 @@
     %section
       %h2 Add a new article
 
-      %h3 By fetching a webpage
-
-      %form.form-horizontal(action=url_for('new_article'), method='POST')
-        = form.csrf_token
-
-        = field(form.url, placeholder='URL', autofocus=True)
-        .row
-          .col-sm-10.col-sm-offset-2
-            %input.btn.btn-primary(type='submit', value="Fetch and add article", dataDisableWith='Fetching...')
-
-      %h3 Or by typing it in
       %form(action=url_for('new_article'), method='POST')
         = form.csrf_token
-        %input(type='hidden', name='manual', value='True')
 
-        %%include(file="form.haml")
+        %fieldset
+          %legend By fetching a webpage
 
-        .row
-          .col-sm-10.col-sm-offset-2
-            %input.btn.btn-primary(type='submit', value='Add new article', dataDisableWith='Adding...')
+          .form-group
+            = field_input(form.url, placeholder='URL', autofocus=True)
+          %input.btn.btn-primary(type='submit', value="Fetch and add article", dataDisableWith='Fetching...')
+
+      %form(action=url_for('new_article'), method='POST')
+        = form.csrf_token
+
+        %fieldset
+          %legend Or by typing it in
+
+          %%include(file="form.haml")
+
+          %input(type='hidden', name='manual', value='True')
+          %input.btn.btn-primary(type='submit', value='Add new article', dataDisableWith='Adding...')
 

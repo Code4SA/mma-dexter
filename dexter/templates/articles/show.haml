@@ -8,6 +8,11 @@
 #show-document
   %article
     %section.heading
+      .pull-right
+        %a.btn.btn-default(href=url_for('edit_article', id=document.id))
+          %i.fa.fa-pencil
+          Edit article
+
       %h2&= document.title
       - if document.topic:
         %p.lead&='Topic: ' + document.topic.name

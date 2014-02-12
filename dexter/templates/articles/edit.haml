@@ -6,22 +6,15 @@
   &= doc.title
 
 #edit-document
-  %h2&= doc.title
+  .pull-right
+    %a.btn.btn-default(href=url_for('show_article', id=doc.id)) Cancel
 
-  %ul.nav.nav-tabs
-    %li.active
-      %a(href="#details-tab")
-        Details
-    %li
-      %a(href="#analysis-tab")
-        Analysis
+  %h2&= doc.title
 
   %form(action=url_for('edit_article', id=doc.id), method='POST')
     = form.csrf_token
 
     %%include(file='form.haml')
 
-    .row
-      .col-sm-10.col-sm-offset-2
-        %input.btn.btn-primary(type='submit', value='Save', dataDisableWith='Saving...')
-        %a.btn.btn-default(href=url_for('show_article', id=doc.id)) Cancel
+    %input.btn.btn-primary(type='submit', value='Save changes', dataDisableWith='Saving...')
+    %a.btn.btn-default(href=url_for('show_article', id=doc.id)) Cancel
