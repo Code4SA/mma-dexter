@@ -136,10 +136,10 @@ class DocumentForm(Form):
     text        = TextAreaField('Article content', [validators.Required()])
 
     medium_id           = SelectField('Medium', [validators.Required()])
-    document_type_id    = SelectField('Type', [validators.Required()])
+    document_type_id    = SelectField('Type', [validators.Required()], default=1)
 
     def __init__(self, *args, **kwargs):
-        super(Form, self).__init__(*args, **kwargs)
+        super(DocumentForm, self).__init__(*args, **kwargs)
 
         from . import Medium, DocumentType
         self.medium_id.choices = [[str(m.id), m.name] for m in Medium.query.all()]
