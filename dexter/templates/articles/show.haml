@@ -34,7 +34,11 @@
             %i.fa.fa-user
             - if document.author:
               &= document.author.name
-        .col-sm-4
+        .col-sm-2
+          .document-type
+            %i.fa.fa-folder
+            - if document.document_type:
+              &= document.document_type.name
 
     %section
       .row
