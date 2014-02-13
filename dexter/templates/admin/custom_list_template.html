@@ -4,6 +4,10 @@
     <span class="label">{{ model.medium.name }}</span>
 {% endmacro %}
 
+{% macro render_medium_type(model, column) %}
+    {{ model.medium_type.title() }}
+{% endmacro %}
+
 {% macro render_document_title(model, column) %}
     <a href="{{ url_for('show_article', id=model.id) }}">{{ model.title }}</a>
 {% endmacro %}

@@ -1,10 +1,10 @@
 from dexter.models import db, Document, Entity, Medium, DocumentType, Topic
 from flask.ext.admin import Admin, expose, AdminIndexView
-from flask import render_template
 from flask.ext.admin.contrib.sqla import ModelView
 from flask.ext.admin.model.template import macro
 from wtforms.fields import SelectField, TextAreaField
 import flask_wtf
+
 
 class MyModelView(ModelView):
     form_base_class = flask_wtf.Form
@@ -36,10 +36,10 @@ class MyIndexView(AdminIndexView):
             self._template_args['group_counts'] = group_counts
 
         source_count = []
-        tmp = db.session.query(db.func.count(Document.id), Medium.name)\
-            .join(Medium)\
-            .group_by(Document.medium_id)\
-            .order_by(db.func.count(Document.id))\
+        tmp = db.session.query(db.func.count(Document.id), Medium.name) \
+            .join(Medium) \
+            .group_by(Document.medium_id) \
+            .order_by(db.func.count(Document.id)) \
             .limit(5)
         for row in tmp:
             source_count.append([str(row[1]), int(row[0])])
@@ -63,7 +63,7 @@ class DocumentView(MyModelView):
         published_at='Date Published',
         medium='Source',
         updated_at='Last Updated',
-    )
+        )
     column_sortable_list = (
         'published_at',
         ('medium', Medium.name),
@@ -80,7 +80,7 @@ class DocumentView(MyModelView):
     form_overrides = dict(
         summary=TextAreaField,
         text=TextAreaField,
-    )
+        )
     column_searchable_list = (
         'title',
         'summary',
@@ -104,10 +104,10 @@ class EntityView(MyModelView):
         created_at='Date Created',
         group='Type',
         updated_at='Last Updated',
-    )
+        )
     column_formatters = dict(
         name=macro('render_entity_name'),
-    )
+        )
     column_searchable_list = (
         'name',
         'group'
@@ -115,9 +115,30 @@ class EntityView(MyModelView):
     page_size = 50
 
 
+class MediumView(MyModelView):
+
+    list_template = 'admin/custom_list_template.html'
+    column_labels = dict(
+        medium_type='Publication Type',
+        )
+    column_formatters = dict(
+        medium_type=macro('render_medium_type'),
+        )
+    choices = []
+    for choice in ["PRINT", "ONLINE", "TELEVISION", "RADIO", "OTHER"]:
+        choices.append((choice, choice.title()))
+
+    form_overrides = dict(medium_type=SelectField)
+    form_args = dict(
+        # Pass the choices to the `SelectField`
+        medium_type=dict(
+            choices=choices
+        ))
+
+
 admin_instance = Admin(url='/admin', base_template='admin/custom_master.html', name="Dexter Admin", index_view=MyIndexView())
 admin_instance.add_view(DocumentView(Document, db.session, name="Articles", endpoint='document'))
 admin_instance.add_view(EntityView(Entity, db.session, name="Entities", endpoint='entity'))
 admin_instance.add_view(MyModelView(Topic, db.session, name="Article Topics", endpoint="topic"))
 admin_instance.add_view(MyModelView(DocumentType, db.session, name="Article Types", endpoint="type"))
-admin_instance.add_view(MyModelView(Medium, db.session, name="Publications", endpoint="medium"))
+admin_instance.add_view(MediumView(Medium, db.session, name="Publications", endpoint="medium"))
