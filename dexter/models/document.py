@@ -31,7 +31,7 @@ class Document(db.Model):
     url       = Column(String(200), index=True, nullable=True)
 
     title     = Column(String(1024))
-    blurb     = Column(String(1024))
+    summary   = Column(String(1024))
     text      = Column(Text)
     section   = Column(String(100), index=True)
 
@@ -132,7 +132,7 @@ class DocumentForm(Form):
     url         = URLField('URL', [validators.Length(max=200)])
     title       = StringField('Headline', [validators.Required(), validators.Length(max=1024)])
     published_at = DateField('Published on', [validators.Required()], format='%Y/%m/%d')
-    blurb       = StringField('Blurb', [validators.Length(max=1024)])
+    summary     = StringField('Summary', [validators.Length(max=1024)])
     text        = TextAreaField('Article content', [validators.Required()])
 
     medium_id           = SelectField('Medium', [validators.Required()])

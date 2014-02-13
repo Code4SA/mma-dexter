@@ -52,7 +52,7 @@ class DocumentView(MyModelView):
         'published_at',
         'medium',
         'title',
-        'blurb',
+        'summary',
         'updated_at'
     )
     column_labels = dict(
@@ -64,7 +64,7 @@ class DocumentView(MyModelView):
         'published_at',
         ('medium', Medium.name),
         'title',
-        'blurb',
+        'summary',
         'updated_at'
     )
     column_formatters = dict(
@@ -74,12 +74,12 @@ class DocumentView(MyModelView):
         updated_at=macro('render_date')
     )
     form_overrides = dict(
-        blurb=TextAreaField,
+        summary=TextAreaField,
         text=TextAreaField,
     )
     column_searchable_list = (
         'title',
-        'blurb',
+        'summary',
     )
     page_size = 50
 
