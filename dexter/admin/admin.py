@@ -1,4 +1,4 @@
-from dexter.models import db, Document, Entity, Medium
+from dexter.models import db, Document, Entity, Medium, DocumentType, Topic
 from flask.ext.admin import Admin, expose, AdminIndexView
 from flask import render_template
 from flask.ext.admin.contrib.sqla import ModelView
@@ -8,6 +8,10 @@ import flask_wtf
 
 class MyModelView(ModelView):
     form_base_class = flask_wtf.Form
+    can_create = True
+    can_edit = True
+    can_delete = False
+    page_size = 50
 
 
 class MyIndexView(AdminIndexView):
@@ -111,15 +115,9 @@ class EntityView(MyModelView):
     page_size = 50
 
 
-class MediumView(MyModelView):
-
-    can_create = False
-    can_edit = False
-    can_delete = False
-    page_size = 50
-
-
 admin_instance = Admin(url='/admin', base_template='admin/custom_master.html', name="Dexter Admin", index_view=MyIndexView())
 admin_instance.add_view(DocumentView(Document, db.session, name="Articles", endpoint='document'))
 admin_instance.add_view(EntityView(Entity, db.session, name="Entities", endpoint='entity'))
-admin_instance.add_view(MediumView(Medium, db.session, name="Sources", endpoint="medium"))
+admin_instance.add_view(MyModelView(Topic, db.session, name="Article Topics", endpoint="topic"))
+admin_instance.add_view(MyModelView(DocumentType, db.session, name="Article Types", endpoint="type"))
+admin_instance.add_view(MyModelView(Medium, db.session, name="Publications", endpoint="medium"))
