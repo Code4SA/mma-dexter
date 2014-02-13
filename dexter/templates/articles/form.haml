@@ -16,6 +16,11 @@
 .form-group
   .row
     .col-sm-6
+      = vertical_field(form.author_name)
+
+.form-group
+  .row
+    .col-sm-6
       = vertical_field(form.author_entity_id, class_='chosen-select')
 
 = vertical_field(form.summary, placeholder='Summary')

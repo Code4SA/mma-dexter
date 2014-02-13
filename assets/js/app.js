@@ -118,3 +118,33 @@ $(function() {
     highlightEntities($('#show-document .tab-pane.active'));
   }
 });
+
+$(function() {
+  // author name autocomplete
+  
+  var peopleHound = new Bloodhound({
+    name: 'people_entities',
+    prefetch: {
+      url: '/api/people',
+      ttl: 60,
+      filter: function(resp) { return resp.people; },
+    },
+    datumTokenizer: function(d) { return Bloodhound.tokenizers.whitespace(d.value); },
+    queryTokenizer: Bloodhound.tokenizers.whitespace
+  });
+  peopleHound.initialize();
+  
+  
+  $('#author_name').typeahead({
+    highlight: true,
+    autoselect: true,
+  }, {
+    source: peopleHound.ttAdapter(),
+  }).on('typeahead:selected', function(e, suggestion, dataset) {
+    console.log(suggestion);
+  }).on('typeahead:opened', function(e) {
+    console.log(['opened', $(this).typeahead('val')]);
+  }).on('typeahead:closed', function(e) {
+    console.log(['closed', $(this).typeahead('val')]);
+  });
+});

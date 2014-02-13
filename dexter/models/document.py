@@ -137,6 +137,7 @@ class DocumentForm(Form):
 
     medium_id           = SelectField('Medium', [validators.Required()])
     document_type_id    = SelectField('Type', [validators.Required()], default=1)
+    author_name         = StringField('Author name')
     author_entity_id    = SelectField('Author', [validators.Required(),
                                                  validators.NoneOf(['None', ''], "")])
 
