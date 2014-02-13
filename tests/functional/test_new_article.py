@@ -9,6 +9,8 @@ from dexter.models.seeds import seed_db
 from dexter.processing.crawlers import MGCrawler
 from dexter.processing.extractors import AlchemyExtractor, CalaisExtractor
 
+from tests.fixtures import dbfixture, PersonData, EntityData
+
 class TestNewArticle(TestCase):
     def create_app(self):
         app.config['TESTING'] = True
@@ -16,8 +18,14 @@ class TestNewArticle(TestCase):
 
     def setUp(self):
         self.db = db
+        self.db.session.remove()
+        self.db.drop_all()
         self.db.create_all()
         seed_db(db)
+
+        self.fx = dbfixture.data(EntityData)
+        self.fx.setup()
+
         self.client.response_wrapper = FormWrapper
 
         AlchemyExtractor.fetch_entities = MagicMock(return_value=[])
@@ -25,6 +33,8 @@ class TestNewArticle(TestCase):
         CalaisExtractor.fetch_data = MagicMock(return_value={})
 
     def tearDown(self):
+        self.fx.teardown()
+        self.db.session.rollback()
         self.db.session.remove()
         self.db.drop_all()
   
@@ -62,6 +72,7 @@ class TestNewArticle(TestCase):
         f.fields['text'] = 'the article text'
         f.fields['medium_id'] = '1'
         f.fields['document_type_id'] = '1'
+        f.fields['author_entity_id'] = str(self.fx.EntityData.joe_author.id)
 
         res = f.submit(self.client)
         self.assertRedirects(res, '/articles/1')

@@ -8,6 +8,7 @@ from dexter.processing.extractors import AlchemyExtractor
 class TestAlchemyExtractor(unittest.TestCase):
     def setUp(self):
         self.db = db
+        self.db.drop_all()
         self.db.create_all()
         seed_db(db)
 

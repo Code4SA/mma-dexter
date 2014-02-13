@@ -137,13 +137,21 @@ class DocumentForm(Form):
 
     medium_id           = SelectField('Medium', [validators.Required()])
     document_type_id    = SelectField('Type', [validators.Required()], default=1)
+    author_entity_id    = SelectField('Author', [validators.Required(),
+                                                 validators.NoneOf(['None', ''], "")])
 
     def __init__(self, *args, **kwargs):
         super(DocumentForm, self).__init__(*args, **kwargs)
 
-        from . import Medium, DocumentType
-        self.medium_id.choices = [[str(m.id), m.name] for m in Medium.query.all()]
-        self.document_type_id.choices = [[str(t.id), t.name] for t in DocumentType.query.all()]
+        from . import Medium, DocumentType, Person
+
+        self.medium_id.choices = [[str(m.id), m.name] for m in Medium.query.order_by(Medium.name).all()]
+        self.document_type_id.choices = [[str(t.id), t.name] for t in DocumentType.query.order_by(DocumentType.name).all()]
+
+        # get a list of entity ids that are linked to a Person
+        options = [(str(entity_id), name) for _, entity_id, name in Person.person_entities()]
+        options = sorted(options, key=lambda i: i[1])
+        self.author_entity_id.choices = [(None, '---')] + options
 
 
 class DocumentType(db.Model):

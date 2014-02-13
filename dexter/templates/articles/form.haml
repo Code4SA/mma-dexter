@@ -11,7 +11,12 @@
   .col-sm-3
     = vertical_field(form.medium_id, required=True, class_='chosen-select')
   .col-sm-3
-    = vertical_field(form.document_type_id, required=True, class_='chosen-select')
+    = vertical_field(form.document_type_id, class_='chosen-select')
+
+.form-group
+  .row
+    .col-sm-6
+      = vertical_field(form.author_entity_id, class_='chosen-select')
 
 = vertical_field(form.summary, placeholder='Summary')
 = vertical_field(form.text, rows=15, placeholder='The text of the article', required=True)

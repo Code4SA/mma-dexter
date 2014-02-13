@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from itertools import groupby
+
 from sqlalchemy import (
     Column,
     DateTime,
@@ -33,6 +35,27 @@ class Person(db.Model):
 
     def __repr__(self):
         return "<Person id=%s, name=\"%s\">" % (self.id, self.name.encode('utf-8'))
+
+
+    @classmethod
+    def person_entities(cls):
+        """
+        Get a list of (person_id, entity_id, person_name) tuples for all
+        entities that are linked to a Person. Each person is returned only once.
+        """
+        from . import Entity
+
+        people = []
+        people_entities = db.session.query(Person.id, Entity.id, Person.name) \
+                .join(Entity) \
+                .order_by(Person.id) \
+                .all()
+        for person_id, group in groupby(people_entities, lambda p: p[0]):
+            for t in group:
+              people.append(t)
+              break
+
+        return people
 
 
 class Gender(db.Model):
