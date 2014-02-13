@@ -6,6 +6,7 @@ from dexter.models import db, Document, Entity, Medium
 
 import dexter.articles
 import dexter.entities
+import dexter.api
 
 @app.route('/')
 def home():

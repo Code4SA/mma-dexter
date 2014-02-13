@@ -84,6 +84,8 @@ def edit_article(id):
             db.session.commit()
             flash('Article updated.')
             return redirect(url_for('show_article', id=id))
+    else:
+        form.author_name.data = doc.author.name
 
 
     return render_template('articles/edit.haml',

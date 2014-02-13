@@ -13,15 +13,12 @@
   .col-sm-3
     = vertical_field(form.document_type_id, class_='chosen-select')
 
+= form.author_id
 .form-group
+  %label.control-label(for_='author_id') Author
   .row
-    .col-sm-6
-      = vertical_field(form.author_name)
-
-.form-group
-  .row
-    .col-sm-6
-      = vertical_field(form.author_entity_id, class_='chosen-select')
+    .col-sm-3
+      = field_input(form.author_name)
 
 = vertical_field(form.summary, placeholder='Summary')
 = vertical_field(form.text, rows=15, placeholder='The text of the article', required=True)

@@ -1,4 +1,4 @@
-from wtforms import StringField, TextAreaField, validators, SelectField, DateField
+from wtforms import StringField, TextAreaField, validators, SelectField, DateField, HiddenField
 from wtforms.fields.html5 import URLField
 
 from ..forms import Form
@@ -137,22 +137,16 @@ class DocumentForm(Form):
 
     medium_id           = SelectField('Medium', [validators.Required()])
     document_type_id    = SelectField('Type', [validators.Required()], default=1)
-    author_name         = StringField('Author name')
-    author_entity_id    = SelectField('Author', [validators.Required(),
-                                                 validators.NoneOf(['None', ''], "")])
+    author_id           = HiddenField()
+    author_name         = StringField('Author')
 
     def __init__(self, *args, **kwargs):
         super(DocumentForm, self).__init__(*args, **kwargs)
 
-        from . import Medium, DocumentType, Person
+        from . import Medium, DocumentType
 
         self.medium_id.choices = [[str(m.id), m.name] for m in Medium.query.order_by(Medium.name).all()]
         self.document_type_id.choices = [[str(t.id), t.name] for t in DocumentType.query.order_by(DocumentType.name).all()]
-
-        # get a list of entity ids that are linked to a Person
-        options = [(str(entity_id), name) for _, entity_id, name in Person.person_entities()]
-        options = sorted(options, key=lambda i: i[1])
-        self.author_entity_id.choices = [(None, '---')] + options
 
 
 class DocumentType(db.Model):

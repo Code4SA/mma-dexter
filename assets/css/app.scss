@@ -31,6 +31,29 @@ table.entities {
   }
 }
 
+/* typeahead styling */
+.twitter-typeahead {
+  width: 100%;
+
+  .tt-dropdown-menu {
+    width: 100%;
+    padding: 6px 0px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    background: white;
+
+    .tt-suggestion {
+      padding: 3px 20px 0px;
+    }
+
+    .tt-cursor { 
+      background-color: #428bca;
+      color: white;
+    }
+  }
+}
+
 .list-item-document{
     padding-top: 10px;
 }

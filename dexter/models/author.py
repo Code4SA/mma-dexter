@@ -29,6 +29,18 @@ class Author(db.Model):
     author_type = relationship("AuthorType", lazy=False)
     person      = relationship("Person", lazy=False)
 
+    def json(self):
+        return {
+            'id': self.id,
+            'name': self.person.name if self.person else self.name,
+            'author_type': self.author_type.name,
+        }
+
+
+    def __repr__(self):
+        return "<Author id=%s, type=%s, name=\"%s\", person=%s>" % (self.id, self.author_type, self.person, self.name.encode('utf-8'))
+
+
     @classmethod
     def get_or_create(cls, name, author_type):
         """ Get the author with this name or create it if it doesn't exist. """
@@ -42,9 +54,6 @@ class Author(db.Model):
             # find this entity
             db.session.flush()
         return a
-
-    def __repr__(self):
-        return "<Author id=%s, type=%s, name=\"%s\", person=%s>" % (self.id, self.author_type, self.person, self.name.encode('utf-8'))
 
 
 class AuthorType(db.Model):

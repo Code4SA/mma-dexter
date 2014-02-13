@@ -122,26 +122,29 @@ $(function() {
 $(function() {
   // author name autocomplete
   
-  var peopleHound = new Bloodhound({
-    name: 'people_entities',
+  var authorHound = new Bloodhound({
+    name: 'authors',
     prefetch: {
-      url: '/api/people',
+      url: '/api/authors',
       ttl: 60,
-      filter: function(resp) { return resp.people; },
+      filter: function(resp) { return resp.authors; },
     },
-    datumTokenizer: function(d) { return Bloodhound.tokenizers.whitespace(d.value); },
+    datumTokenizer: function(d) { return Bloodhound.tokenizers.whitespace(d.name); },
     queryTokenizer: Bloodhound.tokenizers.whitespace
   });
-  peopleHound.initialize();
+  authorHound.initialize();
   
-  
-  $('#author_name').typeahead({
+  var $author_name = $('#author_name');
+  var $author_id = $('#author_id');
+
+  $author_name.typeahead({
     highlight: true,
     autoselect: true,
   }, {
-    source: peopleHound.ttAdapter(),
-  }).on('typeahead:selected', function(e, suggestion, dataset) {
-    console.log(suggestion);
+    source: authorHound.ttAdapter(),
+    displayKey: 'name',
+  }).on('typeahead:selected', function(e, author, dataset) {
+    $author_id.val(author.id);
   }).on('typeahead:opened', function(e) {
     console.log(['opened', $(this).typeahead('val')]);
   }).on('typeahead:closed', function(e) {
