@@ -85,7 +85,7 @@ def edit_article(id):
             flash('Article updated.')
             return redirect(url_for('show_article', id=id))
     else:
-        form.author_name.data = doc.author.name
+        form.author_name.data = doc.author.person.name if doc.author.person else doc.author.name
 
 
     return render_template('articles/edit.haml',

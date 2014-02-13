@@ -136,6 +136,7 @@ $(function() {
   
   var $author_name = $('#author_name');
   var $author_id = $('#author_id');
+  var autoset = false;
 
   $author_name.typeahead({
     highlight: true,
@@ -144,10 +145,20 @@ $(function() {
     source: authorHound.ttAdapter(),
     displayKey: 'name',
   }).on('typeahead:selected', function(e, author, dataset) {
+    autoset = true;
     $author_id.val(author.id);
   }).on('typeahead:opened', function(e) {
-    console.log(['opened', $(this).typeahead('val')]);
+    autoset = false;
   }).on('typeahead:closed', function(e) {
-    console.log(['closed', $(this).typeahead('val')]);
+    if (!autoset) {
+      // auto-select the match if we haven't already and there is only one
+      authorHound.get($author_name.typeahead('val'), function(suggestions) {
+        if (suggestions.length == 1) {
+          $author_name.typeahead('val', suggestions[0].name);
+          $author_name.typeahead('close');
+          $author_name.trigger('typeahead:selected', [suggestions[0], null]);
+        }
+      });
+    }
   });
 });
