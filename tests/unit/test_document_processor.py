@@ -44,16 +44,6 @@ class TestDocumentEntity(unittest.TestCase):
         self.assertEqual(people[1], d.author.person)
         self.assertEqual(people[0], d.utterances[0].entity.person)
 
-    def test_discover_people_non_person_author(self):
-        d = Document()
-        d.text = 'Fred Astair did something. He also did something else.'
-        d.author = Entity()
-        d.author.name = 'SAPA'
-        d.author.group = 'organisation'
-
-        people = self.dp.discover_people(d)
-        self.assertEqual([], people)
-
 
     def test_discover_people_existing(self):
         joe = Person()

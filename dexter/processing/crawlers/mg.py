@@ -8,7 +8,7 @@ import logging
 from dateutil.parser import parse
 from dateutil.tz import tzutc
 
-from ...models import Entity, Medium
+from ...models import Entity, Medium, Author, AuthorType
 
 class MGCrawler:
     MG_RE = re.compile('(www\.)?mg.co.za')
@@ -58,7 +58,7 @@ class MGCrawler:
 
         author = self.extract_plaintext(soup.select(".content_place_line_author"))
         if author:
-            doc.author = Entity.get_or_create('person', author)
+            doc.author = Author.get_or_create(author, AuthorType.journalist())
 
 
     def extract_plaintext(self, lst):

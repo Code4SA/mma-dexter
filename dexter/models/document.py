@@ -35,7 +35,7 @@ class Document(db.Model):
     text      = Column(Text)
     section   = Column(String(100), index=True)
 
-    author_entity_id  = Column(Integer, ForeignKey('entities.id'))
+    author_id         = Column(Integer, ForeignKey('authors.id'), index=True)
     medium_id         = Column(Integer, ForeignKey('mediums.id'), index=True)
     topic_id          = Column(Integer, ForeignKey('topics.id'), index=True)
     document_type_id  = Column(Integer, ForeignKey('document_types.id'), index=True)
@@ -47,7 +47,7 @@ class Document(db.Model):
     # TODO: location
 
     # Associations
-    author      = relationship("Entity", foreign_keys=[author_entity_id])
+    author      = relationship("Author")
     entities    = relationship("DocumentEntity", backref=backref('document'), order_by="desc(DocumentEntity.relevance)")
     utterances  = relationship("Utterance", backref=backref('document'))
     keywords    = relationship("DocumentKeyword", backref=backref('document'), order_by="desc(DocumentKeyword.relevance)")

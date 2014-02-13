@@ -33,7 +33,11 @@
           .author
             %i.fa.fa-user
             - if document.author:
-              &= document.author.name
+              - if document.author.person:
+                &= document.author.person.name
+              - else:
+                &= document.author.name
+              (${document.author.author_type.name|h})
         .col-sm-2
           .document-type
             %i.fa.fa-folder

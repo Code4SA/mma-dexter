@@ -103,7 +103,7 @@ class DocumentProcessor:
                 elif 'she' in mentions or 'her' in mentions:
                     p.gender = Gender.female()
 
-        if doc.author and doc.author.group == 'person' and not doc.author.person:
+        if doc.author and not doc.author.person:
             if doc.author.name not in people:
                 p = Person()
                 p.name = doc.author.name
