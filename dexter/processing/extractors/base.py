@@ -13,6 +13,9 @@ class BaseExtractor:
 
     def check_cache(self, url, key):
         """ See if we have a cached response for this URL and this key."""
+        if not url:
+            return None
+
         fname = self.cache_filename(url, key)
         if not os.path.isfile(fname):
             log.info("Cache miss: %s" % fname)
@@ -29,6 +32,9 @@ class BaseExtractor:
 
     def update_cache(self, url, key, value):
         """ Cache a response for this URL and this key. """
+        if not url:
+            return None
+
         fname = self.cache_filename(url, key)
 
         dirname = os.path.dirname(fname)

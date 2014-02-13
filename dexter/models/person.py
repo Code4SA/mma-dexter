@@ -57,8 +57,13 @@ class Gender(db.Model):
 
     @classmethod
     def create_defaults(cls):
+        text = """
+        Female
+        Male
+        Other: Transgender, Transsexual
+        """
         genders = []
-        for s in cls.SYMBOLS.keys():
+        for s in text.strip().split("\n"):
             g = Gender()
             g.name = s.strip()
             genders.append(g)

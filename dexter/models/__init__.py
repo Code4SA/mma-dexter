@@ -1,5 +1,5 @@
 from .support import db
-from .document import Document
+from .document import Document, DocumentType
 from .entity import DocumentEntity, Entity
 from .keyword import DocumentKeyword, Topic
 from .utterance import Utterance

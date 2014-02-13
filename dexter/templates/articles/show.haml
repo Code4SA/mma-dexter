@@ -34,13 +34,17 @@
             %i.fa.fa-user
             - if document.author:
               &= document.author.name
-        .col-sm-4
+        .col-sm-2
+          .document-type
+            %i.fa.fa-folder
+            - if document.document_type:
+              &= document.document_type.name
 
     %section
       .row
         .col-sm-5
-          %p.article-blurb
-            %em&= document.blurb
+          %p.article-summary
+            %em&= document.summary
           .article-text(dataOriginal=document.text.replace("\r", "\n"))
             = format_paragraphs(document.text)
 

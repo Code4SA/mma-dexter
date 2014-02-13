@@ -61,6 +61,7 @@ class TestNewArticle(TestCase):
         f.fields['published_at'] = '2013/12/22'
         f.fields['text'] = 'the article text'
         f.fields['medium_id'] = '1'
+        f.fields['document_type_id'] = '1'
 
         res = f.submit(self.client)
         self.assertRedirects(res, '/articles/1')

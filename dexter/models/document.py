@@ -31,12 +31,14 @@ class Document(db.Model):
     url       = Column(String(200), index=True, nullable=True)
 
     title     = Column(String(1024))
-    blurb     = Column(String(1024))
+    summary   = Column(String(1024))
     text      = Column(Text)
     section   = Column(String(100), index=True)
-    author_entity_id = Column(Integer, ForeignKey('entities.id'))
-    medium_id = Column(Integer, ForeignKey('mediums.id'))
-    topic_id  = Column(Integer, ForeignKey('topics.id'), index=True)
+
+    author_entity_id  = Column(Integer, ForeignKey('entities.id'))
+    medium_id         = Column(Integer, ForeignKey('mediums.id'), index=True)
+    topic_id          = Column(Integer, ForeignKey('topics.id'), index=True)
+    document_type_id  = Column(Integer, ForeignKey('document_types.id'), index=True)
 
     published_at = Column(DateTime(timezone=True), index=True, unique=False, nullable=False)
     created_at   = Column(DateTime(timezone=True), index=True, unique=False, nullable=False, server_default=func.now())
@@ -52,6 +54,7 @@ class Document(db.Model):
     sources     = relationship("DocumentSource", backref=backref('document'))
     medium      = relationship("Medium")
     topic       = relationship("Topic")
+    document_type = relationship("DocumentType")
 
 
     PLACE_ENTITY_GROUPS = set(['city', 'province_or_state', 'region'])
@@ -129,13 +132,58 @@ class DocumentForm(Form):
     url         = URLField('URL', [validators.Length(max=200)])
     title       = StringField('Headline', [validators.Required(), validators.Length(max=1024)])
     published_at = DateField('Published on', [validators.Required()], format='%Y/%m/%d')
-    blurb       = StringField('Blurb', [validators.Length(max=1024)])
+    summary     = StringField('Summary', [validators.Length(max=1024)])
     text        = TextAreaField('Article content', [validators.Required()])
 
-    medium_id   = SelectField('Medium', [validators.Required()])
+    medium_id           = SelectField('Medium', [validators.Required()])
+    document_type_id    = SelectField('Type', [validators.Required()], default=1)
 
     def __init__(self, *args, **kwargs):
-        super(Form, self).__init__(*args, **kwargs)
+        super(DocumentForm, self).__init__(*args, **kwargs)
 
-        from . import Medium
+        from . import Medium, DocumentType
         self.medium_id.choices = [[str(m.id), m.name] for m in Medium.query.all()]
+        self.document_type_id.choices = [[str(t.id), t.name] for t in DocumentType.query.all()]
+
+
+class DocumentType(db.Model):
+    """
+    Nature of the document.
+    """
+    __tablename__ = "document_types"
+
+    id        = Column(Integer, primary_key=True)
+    name      = Column(String(100), index=True, nullable=False, unique=True)
+
+    def __repr__(self):
+        return "<DocumentType name='%s'>" % (self.name.encode('utf-8'),)
+
+    @classmethod
+    def create_defaults(self):
+        text = """
+        News story
+        In brief/short
+        Cartoon/graphic
+        Editorial
+        Opinion piece
+        Feature/news analysis
+        Business
+        Sport
+        Photograph
+        Opinion poll
+        Interview
+        Panel discussion
+        Phone-in programme/talk
+        Documentary insert
+        Current affairs
+        Special elections programme
+        Other (Last Resort)
+        """
+
+        types = []
+        for s in text.strip().split("\n"):
+            t = DocumentType()
+            t.name = s.strip()
+            types.append(t)
+
+        return types
