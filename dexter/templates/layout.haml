@@ -20,10 +20,14 @@
             %a.navbar-brand(href="/")
               Dexter
 
-          .navbar-nav.navbar-right.navbar-btn
-              %a.btn.btn-default(href=url_for('new_article'))
+          .navbar-nav.navbar-right
+            .navbar-btn.pull-right
+              %a.btn.btn-primary(href=url_for('new_article'))
                 %i.fa.fa-plus
                 Add article
+            .navbar-btn.pull-right
+              %a.btn.btn-default(href='/admin/')
+                Dexter Admin
 
     .container
       -# show flash messages
