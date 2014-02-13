@@ -2,12 +2,25 @@
 
 
 .row
-  .col-md-7
+  .col-md-8
     %h1 MMA-Dexter
     %p.lead
       Navigate media reports relating to people/organizations of interest.
+    %hr
+    %h2 Recently added articles
+    %ul.list-unstyled
+      - if document_count > 0:
+        - for doc in latest_docs:
+          %li.list-item-document
+            %i.fa.fa-chevron-right
+            &=doc.published_at.strftime('%e %B %Y') + ' - '
+            %a(href=url_for('show_article', id=doc.id))
+              %strong&= doc.title
+            %span.label.label-default.pull-right &=doc.medium.name
+      - else:
+        %p There are no documents in the index.
 
-  .col-md-5
+  .col-md-4
     #index-overview.well
       %h4 Index overview
       %p
@@ -24,27 +37,16 @@
           %span.badge.pull-right
             &=group_counts.get('company') + group_counts.get('organization')
 
-      %h4 Top sources
-      - for medium_name, medium_count in medium_counts:
-        %p
-          &= str(medium_name)
-          %span.badge.pull-right
-            &= medium_count
+        %h4 Top sources
+        - for medium_name, medium_count in medium_counts:
+          %p
+            &= str(medium_name)
+            %span.badge.pull-right
+              &= medium_count
 
-      %h4 Publication dates
-      %p Most recent:
-        %strong.pull-right&=latest
-      %p Earliest:
-        %strong.pull-right&=earliest
+        %h4 Publication dates
+        %p Most recent:
+          %strong.pull-right&=latest
+        %p Earliest:
+          %strong.pull-right&=earliest
 
-
-.row
-  %h2 Recently added articles
-  %ul.list-unstyled
-    - for doc in latest_docs:
-      %li.list-item-document
-        %i.fa.fa-chevron-right
-        &=doc.published_at.strftime('%e %B %Y') + ' - '
-        %a(href=url_for('show_article', id=doc.id))
-          &= doc.title
-        %span.label.label-default.pull-right &=doc.medium.name

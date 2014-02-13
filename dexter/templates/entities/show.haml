@@ -1,14 +1,39 @@
 %%inherit(file="../layout.haml")
 %%block(name="title")
-  &= entity.name + " (" + entity.group + ")"
+  - if person:
+    &= person.name
+  - else:
+    &= entities[0].name + " (" + entities[0].group + ")"
 
 #show-document
   %article
     %section.heading
-      %h2&= entity.name
+      %h2
+        - if person:
+          &= person.name
+        - else:
+          &= entities[0].name
       .byline
-        - if entity.updated_at:
-          %span.timestamp&= "Last updated: " + entity.updated_at.strftime('%Y-%m-%d')
+        - if person:
+          %strong.text-muted
+            - if person.gender:
+              &= person.gender.name + ", "
+            -else:
+              &= "Unknown gender, "
+            - if person.race:
+              &= person.race.name + "."
+            - else:
+              &= "unknown race."
+        - else:
+          - if entities[0].updated_at:
+            %span.timestamp&= "Last updated: " + entities[0].updated_at.strftime('%Y-%m-%d')
+      - if person and len(entities) > 1:
+        %p Aliases:
+          %em
+          - tmp = ""
+          - for entity in entities:
+            - tmp += entity.name + ", "
+          &=tmp[0:-2]
 
     %section.tabs
       .row
@@ -22,7 +47,7 @@
               %span.pull-right
                 %span.label.label-primary.pull-right&=doc.medium.name
               - for utterance in doc.utterances:
-                - if utterance.entity_id == entity.id:
+                - if utterance.entity in entities:
                   %li.list-item-utterance
                     %blockquote
                       %em&=utterance.quote

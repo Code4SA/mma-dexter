@@ -18,6 +18,10 @@ def home():
 
     earliest = Document.query.order_by(Document.published_at).first()
     latest = Document.query.order_by(Document.published_at.desc()).first()
+    if earliest:
+        earliest = earliest.published_at.strftime('%e %B %Y')
+    if latest:
+        latest = latest.published_at.strftime('%e %B %Y')
 
     group_counts = {}
     for group_count, group_name in db.session.query(func.count(Entity.id), Entity.group).group_by(Entity.group).all():
@@ -34,7 +38,7 @@ def home():
     return render_template('index.haml',
                            latest_docs=latest_docs,
                            document_count=document_count,
-                           latest=latest.published_at.strftime('%e %B %Y'),
-                           earliest=earliest.published_at.strftime('%e %B %Y'),
+                           latest=latest,
+                           earliest=earliest,
                            group_counts=group_counts,
                            medium_counts=medium_counts)
