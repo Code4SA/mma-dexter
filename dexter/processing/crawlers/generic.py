@@ -1,9 +1,12 @@
 from newspaper import Article
 import logging
+from tld import get_tld
+from sqlalchemy.orm.exc import NoResultFound
 
 from dateutil.parser import parse
 
 from ...models import Entity, Medium
+
 
 class GenericCrawler:
     log = logging.getLogger(__name__)
@@ -19,20 +22,28 @@ class GenericCrawler:
 
     def crawl(self, doc):
         """ Crawl this document. """
-        article = Article(url=doc.url)
+
+        # instantiate and download article
+        article = Article(url=doc.url, language='en', fetch_images=False, request_timeout=10)
         article.download()
+
+        # associate with Medium instance
+        domain = get_tld(doc.url)
+        try:
+            medium = Medium.query.filter(Medium.domain == domain).one()
+        except NoResultFound as e:
+            medium = Medium.query.filter(Medium.name == "Unknown").one()
+        doc.medium = medium
+
+        # extract content
         self.extract(doc, article)
         return
 
     def extract(self, doc, article):
-        """ Extract text and other things from the raw_html for this document. """
-
-        # todo: find medium from known list, os set to unknown
-        # doc.medium = Medium.query.filter(Medium.name == 'Mail and Guardian').one()
+        """ Extract text and other things from this document. """
 
         article.parse()
         doc.title = article.title
-        doc.summary = article.summary
         doc.text = article.text
 
         # todo: handle multiple authors
