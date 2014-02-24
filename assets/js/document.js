@@ -2,11 +2,11 @@
   if (typeof exports.Dexter == 'undefined') exports.Dexter = {};
   var Dexter = exports.Dexter;
 
-  Dexter.ArticleView = function() {
+  Dexter.EditDocumentView = function() {
     var self = this;
 
     self.init = function() {
-      if ($('.new-article, .edit-article').length === 0) {
+      if ($('#new-document, #edit-document').length === 0) {
         return;
       }
 
@@ -81,6 +81,6 @@
 })(jQuery, window);
 
 $(function() {
-  var articleView = new Dexter.ArticleView();
-  articleView.init();
+  var documentView = new Dexter.EditDocumentView();
+  documentView.init();
 });

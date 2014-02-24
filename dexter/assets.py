@@ -36,7 +36,7 @@ assets.register('js',
       'js/ujs.js',
       'js/chosen.jquery.min.js',
       'js/app.js',
-      'js/article.js',
+      'js/document.js',
       output='js/app.%(version)s.js'))
 
 # Helper that is available in templates, and returns the
