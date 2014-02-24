@@ -1,4 +1,4 @@
-from . import Medium, Gender, Race, SourceFunction, Topic, DocumentType, AuthorType
+from . import Medium, Gender, Race, SourceFunction, Topic, DocumentType, AuthorType, Issue
 
 def seed_db(db):
     """ Add seed entities to the database. """
@@ -21,6 +21,9 @@ def seed_db(db):
         db.session.add(x)
 
     for x in AuthorType.create_defaults():
+        db.session.add(x)
+
+    for x in Issue.create_defaults():
         db.session.add(x)
 
     db.session.commit()
