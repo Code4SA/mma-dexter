@@ -84,16 +84,22 @@ def edit_article(id):
     doc = Document.query.get_or_404(id)
     form = DocumentForm(obj=doc)
 
-    if request.method == 'POST':
-        if form.validate():
-            form.populate_obj(doc)
-            db.session.commit()
-            flash('Article updated.')
-            return redirect(url_for('show_article', id=id))
-    else:
-        form.author_name.data = doc.author.person.name if doc.author.person else doc.author.name
+    author_form = AuthorForm(prefix='author', csrf_enabled=False, obj=doc.author)
 
+    if request.method == 'POST':
+        if author_form.validate():
+            # link author
+            form.author_id.data = author_form.get_or_create_author().id
+            if form.validate():
+                form.populate_obj(doc)
+                db.session.commit()
+                flash('Article updated.')
+                return redirect(url_for('show_article', id=id))
+    else:
+        author_form.person_race_id.data = doc.author.person.race.id if doc.author.person and doc.author.person.race else None
+        author_form.person_gender_id.data = doc.author.person.gender.id if doc.author.person and doc.author.person.gender else None
 
     return render_template('articles/edit.haml',
             doc=doc,
-            form=form)
+            form=form,
+            author_form=author_form)

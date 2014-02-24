@@ -21,7 +21,7 @@
         = field_input(author_form.name, required=True)
       .col-sm-9
         .author-details
-        .new-author-details(class_ = 'hidden' if not author_form.name.data else '')
+        .new-author-details(class_ = 'hidden' if not form.author_id.errors else '')
           .row
             .col-sm-4
               = field_input(author_form.author_type_id)

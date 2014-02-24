@@ -76,7 +76,6 @@ class TestNewArticle(TestCase):
         f.fields['author-name'] = str(self.fx.EntityData.joe_author.name)
 
         res = f.submit(self.client)
-        print res.data
         self.assertRedirects(res, '/articles/1')
 
     def test_new_article_new_author(self):
