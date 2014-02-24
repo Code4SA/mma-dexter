@@ -1,3 +1,4 @@
+from urlparse import urlparse, urlunparse
 from newspaper import Article
 import logging
 from tld import get_tld
@@ -17,8 +18,11 @@ class GenericCrawler:
         return True
 
     def canonicalise_url(self, url):
-        """ Just return the URL. DocumentProcessor expects this method to be in place.  """
-        return url
+        """ Strip anchors, etc."""
+
+        parts = urlparse(url)
+        # force http, strip trailing slash
+        return urlunparse(['http', parts.netloc, parts.path.rstrip('/'), parts.params, parts.query, None])
 
     def crawl(self, doc):
         """ Crawl this document. """
