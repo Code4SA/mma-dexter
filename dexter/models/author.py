@@ -8,7 +8,15 @@ from sqlalchemy import (
     )
 from sqlalchemy.orm import relationship
 
+from wtforms import StringField, TextAreaField, validators, SelectField, DateField, HiddenField
+from wtforms.fields.html5 import URLField
+
+from . import Person, Gender, Race
 from .support import db
+from ..forms import Form
+
+import logging
+log = logging.getLogger(__name__)
 
 class Author(db.Model):
     """
@@ -42,16 +50,22 @@ class Author(db.Model):
 
 
     @classmethod
-    def get_or_create(cls, name, author_type):
+    def get_or_create(cls, name, author_type, gender=None, race=None):
         """ Get the author with this name or create it if it doesn't exist. """
         a = Author.query.filter(Author.name == name).first()
+        log.info("author: %s" % a)
         if not a:
             a = Author()
             a.name = name
             a.author_type = author_type
-            db.session.add(a)
+
+            if a.author_type.name in ['Journalist', 'Guest Writer']:
+                # create an associated person
+                a.person = Person.get_or_create(name, gender, race)
+
             # force a db write (within the transaction) so subsequent lookups
             # find this entity
+            db.session.add(a)
             db.session.flush()
         return a
 
@@ -89,3 +103,30 @@ class AuthorType(db.Model):
             types.append(t)
 
         return types
+
+
+class AuthorForm(Form):
+    name              = StringField('Author', [validators.Length(max=50)])
+    author_type_id    = SelectField('Type', default=1)
+    person_gender_id  = SelectField('Gender', default='')
+    person_race_id    = SelectField('Race', default='')
+
+    def __init__(self, *args, **kwargs):
+        super(AuthorForm, self).__init__(*args, **kwargs)
+
+        from . import Gender, Race
+
+        self.author_type_id.choices = [[str(a.id), a.name] for a in AuthorType.query.order_by(AuthorType.name).all()]
+        self.person_gender_id.choices = [['', '(unknown gender)']] + [[str(g.id), g.name] for g in Gender.query.order_by(Gender.name).all()]
+        self.person_race_id.choices = [['', '(unknown race)']] + [[str(r.id), r.name] for r in Race.query.order_by(Race.name).all()]
+
+    def get_or_create_author(self):
+        """ Get or create an author matching this form. Returns None if the form is not valid. """
+        if not self.validate():
+            return None
+
+        return Author.get_or_create(
+                name        = self.name.data,
+                author_type = AuthorType.query.get(self.author_type_id.data),
+                gender      = Gender.query.get(self.person_gender_id.data) if self.person_gender_id.data else None,
+                race        = Race.query.get(self.person_race_id.data) if self.person_race_id.data else None)

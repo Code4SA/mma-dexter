@@ -138,7 +138,6 @@ class DocumentForm(Form):
     medium_id           = SelectField('Medium', [validators.Required()])
     document_type_id    = SelectField('Type', [validators.Required()], default=1)
     author_id           = HiddenField()
-    author_name         = StringField('Author')
 
     def __init__(self, *args, **kwargs):
         super(DocumentForm, self).__init__(*args, **kwargs)

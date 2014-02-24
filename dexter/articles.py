@@ -7,6 +7,7 @@ from flask.ext.mako import render_template
 from .app import app
 from .models import db, Document
 from .models.document import DocumentForm
+from .models.author import AuthorForm
 
 from .processing import DocumentProcessor, ProcessingError
 
@@ -20,6 +21,8 @@ def show_article(id):
 @app.route('/articles/new', methods=['GET', 'POST'])
 def new_article():
     form = DocumentForm()
+    author_form = AuthorForm(prefix='author', csrf_enabled=False)
+
     form.url.data = form.url.data or request.args.get('url')
     url = form.url.data
 
@@ -39,26 +42,28 @@ def new_article():
                     # already exists
                     flash("We already have that article.")
                     return redirect(url_for('show_article', id=doc.id))
-
-                try:
-                    doc = proc.process_url(url)
-                except ProcessingError as e:
-                    log.error("Error processing %s: %s" % (url, e), exc_info=e)
-                    flash("Something went wrong processing the document: %s" % (e,), 'error')
-                    doc = None
-
+                else:
+                    try:
+                        doc = proc.process_url(url)
+                    except ProcessingError as e:
+                        log.error("Error processing %s: %s" % (url, e), exc_info=e)
+                        flash("Something went wrong processing the document: %s" % (e,), 'error')
         else:
             # new document from article text
-            if form.validate():
-                doc = Document()
-                form.populate_obj(doc)
+            if author_form.validate():
+                # link author
+                form.author_id.data = author_form.get_or_create_author().id
 
-                try:
-                    proc.process_document(doc)
-                except ProcessingError as e:
-                    log.error("Error processing raw document: %s" % (e, ), exc_info=e)
-                    flash("Something went wrong processing the document: %s" % (e,), 'error')
-                    doc = None
+                if form.validate():
+                    doc = Document()
+                    form.populate_obj(doc)
+
+                    try:
+                        proc.process_document(doc)
+                    except ProcessingError as e:
+                        log.error("Error processing raw document: %s" % (e, ), exc_info=e)
+                        flash("Something went wrong processing the document: %s" % (e,), 'error')
+                        doc = None
 
         if doc:
             db.session.add(doc)
@@ -70,7 +75,8 @@ def new_article():
         
     return render_template('articles/new.haml',
             url=url,
-            form=form)
+            form=form,
+            author_form=author_form)
 
 
 @app.route('/articles/<id>/edit', methods=['GET', 'POST'])

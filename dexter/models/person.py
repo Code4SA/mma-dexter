@@ -36,6 +36,23 @@ class Person(db.Model):
     def __repr__(self):
         return "<Person id=%s, name=\"%s\">" % (self.id, self.name.encode('utf-8'))
 
+    @classmethod
+    def get_or_create(cls, name, gender=None, race=None):
+        p = Person.query.filter(Person.name == name).first()
+        if not p:
+            p = Person()
+            p.name = name
+            if gender:
+                p.gender = gender
+            if race:
+                p.race = race
+
+            db.session.add(p)
+            # force a db write (within the transaction) so subsequent lookups
+            # find this entity
+            db.session.flush()
+        return p
+
 
     @classmethod
     def person_entities(cls):

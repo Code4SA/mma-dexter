@@ -6,19 +6,29 @@
   = field_input(form.url, placeholder='URL')
 
 .row
-  .col-sm-2
+  .col-sm-3
     = vertical_field(form.published_at, placeholder='YYYY/MM/DD', class_='use-datepicker')
-  .col-sm-3
+  .col-sm-4
     = vertical_field(form.medium_id, required=True, class_='chosen-select')
-  .col-sm-3
+  .col-sm-4
     = vertical_field(form.document_type_id, class_='chosen-select')
 
-= form.author_id
-.form-group
-  %label.control-label(for_='author_id') Author
-  .row
-    .col-sm-3
-      = field_input(form.author_name)
+.author-widget
+  .form-group
+    %label.control-label(for_='author-name') Author
+    .row
+      .col-sm-3
+        = field_input(author_form.name, required=True)
+      .col-sm-9
+        .author-details
+        .new-author-details(class_ = 'hidden' if not author_form.name.data else '')
+          .row
+            .col-sm-4
+              = field_input(author_form.author_type_id)
+            .col-sm-4
+              = field_input(author_form.person_gender_id)
+            .col-sm-4
+              = field_input(author_form.person_race_id)
 
 = vertical_field(form.summary, placeholder='Summary')
 = vertical_field(form.text, rows=15, placeholder='The text of the article', required=True)

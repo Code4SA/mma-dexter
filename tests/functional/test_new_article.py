@@ -5,6 +5,7 @@ from mock import patch, MagicMock
 
 from dexter.core import app
 from dexter.models.support import db
+from dexter.models import Author
 from dexter.models.seeds import seed_db
 from dexter.processing.crawlers import MGCrawler
 from dexter.processing.extractors import AlchemyExtractor, CalaisExtractor
@@ -61,7 +62,7 @@ class TestNewArticle(TestCase):
 
         self.assertRedirects(res, '/articles/1')
 
-    def test_new_article(self):
+    def test_new_article_existing_author(self):
         res = self.client.get('/articles/new')
         self.assert200(res)
 
@@ -72,7 +73,30 @@ class TestNewArticle(TestCase):
         f.fields['text'] = 'the article text'
         f.fields['medium_id'] = '1'
         f.fields['document_type_id'] = '1'
-        f.fields['author_entity_id'] = str(self.fx.EntityData.joe_author.id)
+        f.fields['author-name'] = str(self.fx.EntityData.joe_author.name)
+
+        res = f.submit(self.client)
+        print res.data
+        self.assertRedirects(res, '/articles/1')
+
+    def test_new_article_new_author(self):
+        res = self.client.get('/articles/new')
+        self.assert200(res)
+
+        f = res.forms[1]
+        f.fields['url'] = 'http://fake'
+        f.fields['title'] = 'headline'
+        f.fields['published_at'] = '2013/12/22'
+        f.fields['text'] = 'the article text'
+        f.fields['medium_id'] = '1'
+        f.fields['document_type_id'] = '1'
+        f.fields['author-name'] = 'Sue Skosana'
+        f.fields['author-person_gender_id'] = '1'
+        f.fields['author-person_race_id'] = '1'
 
         res = f.submit(self.client)
         self.assertRedirects(res, '/articles/1')
+
+        sue = Author.query.filter(Author.name == 'Sue Skosana').one()
+        self.assertEqual('Female', sue.person.gender.name)
+        self.assertEqual('Black', sue.person.race.name)
