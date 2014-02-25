@@ -6,7 +6,7 @@ from sqlalchemy.orm.exc import NoResultFound
 
 from dateutil.parser import parse
 
-from ...models import Entity, Medium
+from ...models import Entity, Medium, Author, AuthorType
 
 
 class GenericCrawler:
@@ -53,7 +53,10 @@ class GenericCrawler:
         # todo: handle multiple authors
         authors = article.authors
         if authors:
-            doc.author = Entity.get_or_create('person', authors[0])
+            author = authors[0]
+            doc.author = Author.get_or_create(author, AuthorType.journalist())
+        else:
+            doc.author = Author.unknown()
 
         doc.published_at = self.parse_timestamp(article.published_date)
 

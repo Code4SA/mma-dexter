@@ -59,6 +59,8 @@ class MGCrawler:
         author = self.extract_plaintext(soup.select(".content_place_line_author"))
         if author:
             doc.author = Author.get_or_create(author, AuthorType.journalist())
+        else:
+            doc.author = Author.unknown()
 
 
     def extract_plaintext(self, lst):

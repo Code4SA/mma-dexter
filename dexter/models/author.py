@@ -48,6 +48,9 @@ class Author(db.Model):
     def __repr__(self):
         return "<Author id=%s, type=%s, name=\"%s\", person=%s>" % (self.id, self.author_type, self.person, self.name.encode('utf-8'))
 
+    @classmethod
+    def unknown(cls):
+        return cls.get_or_create('Unknown', AuthorType.unknown())
 
     @classmethod
     def get_or_create(cls, name, author_type, gender=None, race=None):
@@ -85,6 +88,10 @@ class AuthorType(db.Model):
     @classmethod
     def journalist(cls):
         return AuthorType.query.filter(AuthorType.name == 'Journalist').one()
+
+    @classmethod
+    def unknown(cls):
+        return AuthorType.query.filter(AuthorType.name == 'Unknown').one()
 
     @classmethod
     def create_defaults(cls):
