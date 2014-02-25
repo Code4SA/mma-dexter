@@ -7,3 +7,4 @@ from .medium import Medium
 from .source import DocumentSource, SourceFunction
 from .person import Person, Gender, Race
 from .author import Author, AuthorType
+from .location import Location

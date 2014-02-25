@@ -10,9 +10,11 @@
 
   .panel-body
     %section
-      %p
-        %strong Topic:
-        &= document.topic.name if document.topic else '(none)'
+      %dl.dl-horizontal
+        %dt Topic
+        %dd&= document.topic.name if document.topic else '(none)'
+        %dt Origin
+        %dd&= document.origin.name if document.origin else '(none)'
 
     %hr
 

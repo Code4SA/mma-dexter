@@ -31,12 +31,12 @@ class TestEditArticleAnalysis(TestCase):
         self.db.session.remove()
         self.db.drop_all()
   
-    def test_edit_article_new_author(self):
+    def test_edit_article_analysis(self):
         res = self.client.get('/articles/%s/analysis' % self.fx.DocumentData.simple.id)
         self.assert200(res)
 
         f = res.forms[0]
-        f.fields['topic_id'] = ''
 
         res = f.submit(self.client)
+        print res.data
         self.assertRedirects(res, '/articles/%s' % self.fx.DocumentData.simple.id)

@@ -113,15 +113,21 @@ def edit_article_analysis(id):
         if form.validate():
             form.populate_obj(document)
 
+            # TODO: convert from empty values back into None
             if not document.topic_id:
                 document.topic_id = None
+            if not document.origin_location_id:
+                document.origin_location_id = None
 
             db.session.commit()
             flash('Analysis updated.')
             return redirect(url_for('show_article', id=id))
     else:
-        if form.topic_id.data is None:
+        # TODO: wtforms turns None values into None, which sucks
+        if form.topic_id.data == 'None':
             form.topic_id.data = ''
+        if form.origin_location_id.data == 'None':
+            form.origin_location_id.data = ''
 
     return render_template('articles/edit_analysis.haml',
             form=form,

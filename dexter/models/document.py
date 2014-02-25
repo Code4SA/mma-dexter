@@ -39,6 +39,7 @@ class Document(db.Model):
     medium_id         = Column(Integer, ForeignKey('mediums.id'), index=True)
     topic_id          = Column(Integer, ForeignKey('topics.id'), index=True)
     document_type_id  = Column(Integer, ForeignKey('document_types.id'), index=True)
+    origin_location_id = Column(Integer, ForeignKey('locations.id'), index=True)
 
     published_at = Column(DateTime(timezone=True), index=True, unique=False, nullable=False)
     created_at   = Column(DateTime(timezone=True), index=True, unique=False, nullable=False, server_default=func.now())
@@ -55,6 +56,7 @@ class Document(db.Model):
     medium      = relationship("Medium")
     topic       = relationship("Topic")
     document_type = relationship("DocumentType")
+    origin      = relationship("Location")
 
 
     PLACE_ENTITY_GROUPS = set(['city', 'province_or_state', 'region'])
@@ -192,11 +194,14 @@ class DocumentType(db.Model):
 
 
 class DocumentAnalysisForm(Form):
-    topic_id       = SelectField('Topic')
+    topic_id            = SelectField('Topic')
+    origin_location_id  = SelectField('Origin')
 
     def __init__(self, *args, **kwargs):
         super(DocumentAnalysisForm, self).__init__(*args, **kwargs)
 
-        from . import Topic
+        from . import Topic, Location
 
         self.topic_id.choices = [['', '(none)']] + [[str(t.id), t.name] for t in Topic.query.order_by(Topic.name).all()]
+        self.origin_location_id.choices = [['', '(none)']] + [
+                [str(loc.id), loc.name] for loc in Location.query.order_by(Location.name).all()]
