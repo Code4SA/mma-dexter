@@ -1,7 +1,3 @@
-.heading {
-  margin-bottom: 30px;
-}
-
 .navbar-btn{
   margin-left: 10px;
 }
@@ -12,7 +8,19 @@
   }
 }
 
-#show-document {
+.document-container {
+  .heading {
+    margin-bottom: 10px;
+    h2 {
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 5px;
+    }
+  }
+
+  .article-summary {
+    margin-top: 10px;
+  }
+
   .article-text {
     height: 500px;
     border: 1px solid #ddd;
@@ -21,6 +29,12 @@
 
     &.affix {
       top: 20px;
+    }
+  }
+
+  .edit-analysis {
+    .panel.analysis {
+      box-shadow: 0 0 7px gold;
     }
   }
 }

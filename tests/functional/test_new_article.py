@@ -60,7 +60,7 @@ class TestNewArticle(TestCase):
         f.fields['url'] = 'http://mg.co.za/article/2013-12-22-foo'
         res = f.submit(self.client)
 
-        self.assertRedirects(res, '/articles/1')
+        self.assertRedirects(res, '/articles/1/analysis')
 
     def test_new_article_existing_author(self):
         res = self.client.get('/articles/new')
@@ -76,7 +76,7 @@ class TestNewArticle(TestCase):
         f.fields['author-name'] = str(self.fx.EntityData.joe_author.name)
 
         res = f.submit(self.client)
-        self.assertRedirects(res, '/articles/1')
+        self.assertRedirects(res, '/articles/1/analysis')
 
     def test_new_article_new_author(self):
         res = self.client.get('/articles/new')
@@ -94,7 +94,7 @@ class TestNewArticle(TestCase):
         f.fields['author-person_race_id'] = '1'
 
         res = f.submit(self.client)
-        self.assertRedirects(res, '/articles/1')
+        self.assertRedirects(res, '/articles/1/analysis')
 
         sue = Author.query.filter(Author.name == 'Sue Skosana').one()
         self.assertEqual('Female', sue.person.gender.name)

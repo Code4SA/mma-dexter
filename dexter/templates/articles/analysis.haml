@@ -1,0 +1,124 @@
+.panel.panel-default.analysis
+  .panel-heading
+    .row
+      .col-sm-8
+        %h3.panel-title Analysis
+      .col-sm-4.text-right
+        %a.btn.btn-default(href=url_for('edit_article_analysis', id=document.id))
+          %i.fa.fa-pencil
+          Edit analysis
+
+  .panel-body
+    %section
+      %p
+        %strong Topic:
+        &= document.topic.name if document.topic else '(none)'
+
+    %hr
+
+    %section
+      %ul.nav.nav-pills
+        %li.active
+          %a(href="#sources-tab", dataToggle="tab")
+            Sources
+            %span.badge&= len(document.sources)
+        %li
+          %a(href="#mentions-tab", dataToggle="tab")
+            Mentions
+            %span.badge&= len(document.people()) + len(document.organisations())
+        %li
+          %a(href="#places-tab", dataToggle="tab")
+            Places
+            %span.badge&= len(document.places())
+        %li
+          %a(href="#keywords-tab", dataToggle="tab")
+            Keywords
+            %span.badge&= len(document.keywords)
+
+      .tab-content
+        #sources-tab.tab-pane.active
+          %h3 Sources
+          %table.table.table-striped.table-condensed.entities
+            %thead
+              %tr
+                %th Name
+                %th
+                %th Quoted?
+                %th Photo?
+                %th Named?
+            %tbody
+              - sources = sorted(document.sources, key=lambda s: s.entity.name)
+              - for ds in sources:
+                %tr(dataOffsets=ds.offset_list)
+                  %td
+                    %a(href= url_for('show_entity', group=ds.entity.group, name=ds.entity.name))&=ds.entity.name
+                    - if ds.person and ds.person.gender:
+                      %span.text-muted(title=ds.person.gender.name)
+                        %strong&=
+                          " - " + ds.person.gender.abbr()
+                    - if ds.person and ds.person.race:
+                      %span.text-muted(title=ds.person.race.name)
+                        %strong&=
+                          " (" + ds.person.race.abbr() + ")"
+                  %td
+                    - if ds.function:
+                      %span.label.label-default&=ds.function.name
+                  %td
+                    &= 'yes' if ds.quoted else 'no'
+                    - if len(ds.utterances()) > 0:
+                      %span.badge&= len(ds.utterances())
+                  %td&= 'yes' if ds.photographed else 'no'
+                  %td&= 'yes' if ds.named else 'no'
+                - for q in ds.utterances():
+                  %tr.quotation(dataOffsets=('%d:%d' % (q.offset, q.length) if q.offset else ''))
+                    %td(colspan="5")&= q.quote
+
+        #mentions-tab.tab-pane
+          %h3 People
+          %table.table.table-striped.table-condensed.entities
+            %thead
+              %th Name
+              %th.text-center Race
+              %th.text-center Gender
+              %th Relevance
+            - for dp in document.people():
+              - person = dp.entity.person
+
+              %tr(dataOffsets=dp.offset_list)
+                %td
+                  %a(href= url_for('show_entity', group=dp.entity.group, name=dp.entity.name))&=dp.entity.name
+                %td.text-center
+                  - if person:
+                    - if person.race:
+                      %span.text-muted(title=person.race.name)
+                        %strong&= person.race.abbr()
+                %td.text-center
+                  - if person:
+                    - if person.gender:
+                      %span.text-muted(title=person.gender.name)
+                        %strong&= person.gender.abbr()
+                %td&= dp.relevance
+
+          %h3 Organisations
+          %table.table.table-striped.table-condensed.entities
+            - for org in document.organisations():
+              %tr(dataOffsets=org.offset_list)
+                %td&= org.entity.name
+                %td&= org.relevance
+
+        #places-tab.tab-pane
+          %h3 Places
+          %table.table.table-striped.table-condensed.entities
+            - for p in document.places():
+              %tr(dataOffsets=p.offset_list)
+                %td&= p.entity.name
+                %td&= p.entity.group
+                %td&= p.relevance
+
+        #keywords-tab.tab-pane
+          %h3 Keywords
+          %table.table.table-striped.table-condensed.entities
+            - for kw in document.keywords:
+              %tr(dataOffsets=kw.offset_list)
+                %td&= kw.keyword
+                %td&= kw.relevance
