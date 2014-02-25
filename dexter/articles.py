@@ -103,3 +103,13 @@ def edit_article(id):
             doc=doc,
             form=form,
             author_form=author_form)
+
+@app.route('/articles/<id>/analysis', methods=['GET', 'POST'])
+def edit_article_analysis(id):
+    document = Document.query.get_or_404(id)
+
+    if request.method == 'POST':
+        pass
+
+    return render_template('articles/edit_analysis.haml',
+            document=document)

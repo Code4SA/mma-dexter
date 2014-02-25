@@ -1,0 +1,36 @@
+- from dexter.helpers import format_paragraphs
+
+%section
+  .row
+    .col-sm-6
+      .timestamp
+        %i.fa.fa-calendar
+        - if document.published_at:
+          &= document.published_at.strftime('%Y-%m-%d')
+    .col-sm-6
+      .medium
+        %i.fa.fa-building-o
+          - if document.medium:
+            &= document.medium.name
+  .row
+    .col-sm-6
+      .author
+        %i.fa.fa-user
+        - if document.author:
+          - if document.author.person:
+            &= document.author.person.name
+          - else:
+            &= document.author.name
+          (${document.author.author_type.name|h})
+    .col-sm-6
+      .document-type
+        %i.fa.fa-folder
+        - if document.document_type:
+          &= document.document_type.name
+
+%section
+  %p.article-summary
+    %em&= document.summary
+  .article-text(dataOriginal=document.text.replace("\r", "\n"))
+    = format_paragraphs(document.text)
+
