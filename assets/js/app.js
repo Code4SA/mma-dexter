@@ -10,9 +10,6 @@ $(function() {
 });
 
 $(function() {
-    $('[title]').tooltip();
-    $('.chosen-select').chosen();
-
     $('.use-datetimepicker').datetimepicker({
         icons: {
             time: "fa fa-clock-o",
