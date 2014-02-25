@@ -69,7 +69,7 @@ class TestNewArticle(TestCase):
         f = res.forms[1]
         f.fields['url'] = 'http://fake'
         f.fields['title'] = 'headline'
-        f.fields['published_at'] = '2013/12/22'
+        f.fields['published_at'] = '2013/12/22 00:00'
         f.fields['text'] = 'the article text'
         f.fields['medium_id'] = '1'
         f.fields['document_type_id'] = '1'
@@ -85,7 +85,7 @@ class TestNewArticle(TestCase):
         f = res.forms[1]
         f.fields['url'] = 'http://fake'
         f.fields['title'] = 'headline'
-        f.fields['published_at'] = '2013/12/22'
+        f.fields['published_at'] = '2013/12/22 00:00'
         f.fields['text'] = 'the article text'
         f.fields['medium_id'] = '1'
         f.fields['document_type_id'] = '1'
