@@ -57,6 +57,7 @@ class DocumentProcessor:
         for crawler in self.crawlers:
             if crawler.offer(doc.url):
                 crawler.crawl(doc)
+                return
 
 
     def extract(self, doc):
