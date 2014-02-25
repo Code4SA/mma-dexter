@@ -1,5 +1,6 @@
-from wtforms import StringField, TextAreaField, validators, SelectField, DateTimeField, HiddenField
+from wtforms import StringField, TextAreaField, validators, SelectField, DateTimeField, HiddenField, SelectMultipleField
 from wtforms.fields.html5 import URLField
+from wtforms import widgets
 
 from ..forms import Form
 
@@ -192,12 +193,27 @@ class DocumentType(db.Model):
         return types
 
 
+class MultiCheckboxField(SelectMultipleField):
+    """
+    A multiple-select, except displays a list of checkboxes.
+
+    Iterating the field will produce subfields, allowing custom rendering of
+    the enclosed checkbox fields.
+    """
+    widget = widgets.ListWidget(prefix_label=False)
+    option_widget = widgets.CheckboxInput()
+
+
 class DocumentAnalysisForm(Form):
-    topic_id       = SelectField('Topic')
+
+    topic_id    = SelectField('Topic')
+    issues      = MultiCheckboxField('Issues')
 
     def __init__(self, *args, **kwargs):
         super(DocumentAnalysisForm, self).__init__(*args, **kwargs)
 
         from . import Topic
+        from . import Issue
 
         self.topic_id.choices = [['', '(none)']] + [[str(t.id), t.name] for t in Topic.query.order_by(Topic.name).all()]
+        self.issues.choices = [(issue.id, issue.name) for issue in db.session.query(Issue).order_by('name')]

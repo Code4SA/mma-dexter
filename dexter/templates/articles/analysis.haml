@@ -15,6 +15,13 @@
         &= document.topic.name if document.topic else '(none)'
 
     %hr
+    %section
+      %p
+        %strong Issues:
+        - for issue in document.issues:
+          %span.label&=issue.issue.name
+
+    %hr
 
     %section
       %ul.nav.nav-pills
