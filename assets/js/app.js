@@ -35,7 +35,7 @@ $(function() {
 $(function() {
   // helper to setup the offset adjustments for hilighting
   // portions of the article
-  var $article = $('#show-document .article-text');
+  var $article = $('.document-container .article-text');
 
   if ($article.length > 0) {
     var originalText = $article.data('original');
@@ -113,19 +113,19 @@ $(function() {
       highlightOffsets(offsets);
     };
 
-    $('#show-document .tabs a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
+    $('.document-container .tabs a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
       // highlight entities for the active pane
       highlightEntities($($(e.target).attr('href')));
     });
 
-    $('#show-document .table.entities tr').on('mouseover', function(e) {
+    $('.document-container .table.entities tr').on('mouseover', function(e) {
       highlightEntities($(this));
     });
 
-    $('#show-document .table.entities tr').on('mouseout', function(e) {
-      highlightEntities($('#show-document .tab-pane.active'));
+    $('.document-container .table.entities tr').on('mouseout', function(e) {
+      highlightEntities($('.document-container .tab-pane.active'));
     });
 
-    highlightEntities($('#show-document .tab-pane.active'));
+    highlightEntities($('.document-container .tab-pane.active'));
   }
 });
