@@ -131,7 +131,7 @@ class Document(db.Model):
 class DocumentForm(Form):
     url         = URLField('URL', [validators.Length(max=200)])
     title       = StringField('Headline', [validators.Required(), validators.Length(max=1024)])
-    published_at = DateField('Published on', [validators.Required()], format='%Y/%m/%d')
+    published_at = DateField('Published on', [validators.Required()], format='%Y/%m/%d %H:%M')
     summary     = StringField('Summary', [validators.Length(max=1024)])
     text        = TextAreaField('Article content', [validators.Required()])
 

@@ -16,6 +16,7 @@ assets.register('css',
       'css/font-awesome-4.0.3.min.css',
       'css/chosen.min.css',
       'css/datepicker3.css',
+      'css/bootstrap-datetimepicker.min.css',
       Bundle(
         'css/*.scss',
         filters='pyscss',
@@ -37,6 +38,8 @@ assets.register('js',
       'js/chosen.jquery.min.js',
       'js/app.js',
       'js/document.js',
+      'js/moment.min.js',
+      'js/bootstrap-datetimepicker.min.js',
       output='js/app.%(version)s.js'))
 
 # Helper that is available in templates, and returns the
