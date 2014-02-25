@@ -6,7 +6,7 @@ from flask.ext.mako import render_template
 
 from .app import app
 from .models import db, Document
-from .models.document import DocumentForm
+from .models.document import DocumentForm, DocumentAnalysisForm
 from .models.author import AuthorForm
 
 from .processing import DocumentProcessor, ProcessingError
@@ -71,7 +71,7 @@ def new_article():
             id = doc.id
             db.session.commit()
             flash('Article added.')
-            return redirect(url_for('show_article', id=id))
+            return redirect(url_for('edit_article_analysis', id=id))
         
     return render_template('articles/new.haml',
             url=url,
@@ -107,9 +107,22 @@ def edit_article(id):
 @app.route('/articles/<id>/analysis', methods=['GET', 'POST'])
 def edit_article_analysis(id):
     document = Document.query.get_or_404(id)
+    form = DocumentAnalysisForm(obj=document)
 
     if request.method == 'POST':
-        pass
+        if form.validate():
+            form.populate_obj(document)
+
+            if not document.topic_id:
+                document.topic_id = None
+
+            db.session.commit()
+            flash('Analysis updated.')
+            return redirect(url_for('show_article', id=id))
+    else:
+        if form.topic_id.data is None:
+            form.topic_id.data = ''
 
     return render_template('articles/edit_analysis.haml',
+            form=form,
             document=document)

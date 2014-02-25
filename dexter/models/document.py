@@ -189,3 +189,14 @@ class DocumentType(db.Model):
             types.append(t)
 
         return types
+
+
+class DocumentAnalysisForm(Form):
+    topic_id       = SelectField('Topic')
+
+    def __init__(self, *args, **kwargs):
+        super(DocumentAnalysisForm, self).__init__(*args, **kwargs)
+
+        from . import Topic
+
+        self.topic_id.choices = [['', '(none)']] + [[str(t.id), t.name] for t in Topic.query.order_by(Topic.name).all()]
