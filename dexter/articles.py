@@ -110,7 +110,9 @@ def edit_article_analysis(id):
     form = DocumentAnalysisForm(obj=document)
 
     if request.method == 'POST':
+        log.debug(form.issues.data)
         if form.validate():
+            log.debug("Validation success")
             form.populate_obj(document)
 
             # TODO: convert from empty values back into None
@@ -122,6 +124,8 @@ def edit_article_analysis(id):
             db.session.commit()
             flash('Analysis updated.')
             return redirect(url_for('show_article', id=id))
+        else:
+            flash('Validation error.')
     else:
         # TODO: wtforms turns None values into None, which sucks
         if form.topic_id.data == 'None':
