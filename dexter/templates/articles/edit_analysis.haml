@@ -24,8 +24,9 @@
 
         .panel-body
           %section.form-horizontal
-            %p
-              = field(form.topic_id)
+            
+            = field(form.topic_id, class_='chosen-select')
+            = field(form.origin_location_id, class_='chosen-select')
           %hr
 
           %section.form-horizontal

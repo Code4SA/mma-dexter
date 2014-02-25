@@ -104,7 +104,7 @@ footer {
 }
 
 @media (min-width: 768px) {
-  #show-document {
+  .document-container {
     .article-text.affix {
       width: 283px;
     }
@@ -112,7 +112,7 @@ footer {
 }
 
 @media (min-width: 992px) {
-  #show-document {
+  .document-container {
     .article-text.affix {
       width: 374px;
     }
@@ -120,7 +120,7 @@ footer {
 }
 
 @media (min-width: 1200px) {
-  #show-document {
+  .document-container {
     .article-text.affix {
       width: 458px;
     }
