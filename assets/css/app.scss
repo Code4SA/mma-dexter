@@ -61,7 +61,7 @@ table.entities {
       padding: 3px 20px 0px;
     }
 
-    .tt-cursor { 
+    .tt-cursor {
       background-color: #428bca;
       color: white;
     }
@@ -69,7 +69,7 @@ table.entities {
 }
 
 .list-item-document{
-    padding-top: 10px;
+  padding-top: 10px;
 }
 
 .list-item-utterance blockquote{
@@ -80,13 +80,13 @@ table.entities {
 }
 
 .tiny-logo{
-    float: right;
-    margin-left: 25px;
-    margin-right: 25px;
+  float: right;
+  margin-left: 25px;
+  margin-right: 25px;
 }
 
 #copyright{
-    padding-top: 10px;
+  padding-top: 10px;
 }
 
 #index-overview{
@@ -129,12 +129,18 @@ footer {
 
 .checkbox-multi-select label{
   font-weight: normal;
+  left: 15px;
+  position: relative;
 }
 
 .checkbox-multi-select input{
-
+  position: absolute;
+  left: -5px;
+  top: 2px;
 }
 
 .checkbox-multi-select .checkbox-container{
-
+  position: relative;
+  min-height: 20px;
+  overflow: show;
 }
