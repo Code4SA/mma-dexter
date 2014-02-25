@@ -22,7 +22,7 @@ $(function() {
 
 $(function() {
   // affix article text in document view
-  var $text = $('#show-document .article-text');
+  var $text = $('.document-container .article-text');
   if ($text.length > 0) {
     $text.affix({
       offset: {
