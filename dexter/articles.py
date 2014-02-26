@@ -5,7 +5,7 @@ from flask import request, url_for, flash, redirect
 from flask.ext.mako import render_template
 
 from .app import app
-from .models import db, Document
+from .models import db, Document, Issue
 from .models.document import DocumentForm, DocumentAnalysisForm
 from .models.author import AuthorForm
 
@@ -111,6 +111,10 @@ def edit_article_analysis(id):
 
     if request.method == 'POST':
         if form.validate():
+
+            # convert issue id's to Issue objects
+            form.issues.data = [Issue.query.get_or_404(i) for i in form.issues.data]
+
             form.populate_obj(document)
 
             # TODO: convert from empty values back into None
@@ -122,12 +126,16 @@ def edit_article_analysis(id):
             db.session.commit()
             flash('Analysis updated.')
             return redirect(url_for('show_article', id=id))
+        else:
+            flash('Please correct the problems below and try again.')
     else:
         # TODO: wtforms turns None values into None, which sucks
         if form.topic_id.data == 'None':
             form.topic_id.data = ''
         if form.origin_location_id.data == 'None':
             form.origin_location_id.data = ''
+        # ensure that checkboxes can be pre-populated
+        form.issues.data = [str(i.id) for i in document.issues]
 
     return render_template('articles/edit_analysis.haml',
             form=form,

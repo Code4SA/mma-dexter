@@ -17,6 +17,16 @@
         %dd&= document.origin.name if document.origin else '(none)'
 
     %hr
+    %section
+      %p
+        %strong Issues
+      - if not document.issues:
+        %p
+          No issues have been tagged.
+
+      - for issue in document.issues:
+        %span.label.label-info(title=issue.description, dataToggle="tooltip", dataContainer="body")&=issue.name
+    %hr
 
     %section
       %ul.nav.nav-pills

@@ -1,9 +1,10 @@
 from wtforms import StringField, TextAreaField, validators, SelectField, DateTimeField, HiddenField
 from wtforms.fields.html5 import URLField
 
-from ..forms import Form
+from ..forms import Form, MultiCheckboxField
 
 from sqlalchemy import (
+    Table,
     Column,
     DateTime,
     ForeignKey,
@@ -15,11 +16,12 @@ from sqlalchemy import (
     Index
     )
 from sqlalchemy.orm import relationship, backref
-
 from .support import db
 
 import logging
 log = logging.getLogger(__name__)
+
+
 
 class Document(db.Model):
     """
@@ -57,6 +59,11 @@ class Document(db.Model):
     topic       = relationship("Topic")
     document_type = relationship("DocumentType")
     origin      = relationship("Location")
+
+    # Many-to-Many
+    issues = relationship("Issue",
+                    secondary='document_issues',
+                    backref="documents")
 
 
     PLACE_ENTITY_GROUPS = set(['city', 'province_or_state', 'region'])
@@ -195,13 +202,15 @@ class DocumentType(db.Model):
 
 class DocumentAnalysisForm(Form):
     topic_id            = SelectField('Topic')
+    issues              = MultiCheckboxField('Issues')
     origin_location_id  = SelectField('Origin')
 
     def __init__(self, *args, **kwargs):
         super(DocumentAnalysisForm, self).__init__(*args, **kwargs)
 
-        from . import Topic, Location
+        from . import Topic, Location, Issue
 
         self.topic_id.choices = [['', '(none)']] + [[str(t.id), t.name] for t in Topic.query.order_by(Topic.name).all()]
+        self.issues.choices = [(str(issue.id), issue.name) for issue in db.session.query(Issue).order_by('name')]
         self.origin_location_id.choices = [['', '(none)']] + [
                 [str(loc.id), loc.name] for loc in Location.query.order_by(Location.name).all()]
