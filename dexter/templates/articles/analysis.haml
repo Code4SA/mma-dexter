@@ -56,7 +56,6 @@
                 %th Name
                 %th
                 %th Quoted?
-                %th Named?
             %tbody
               - sources = sorted(document.sources, key=lambda s: s.entity.name)
               - for ds in sources:
@@ -78,7 +77,6 @@
                     &= 'yes' if ds.quoted else 'no'
                     - if len(ds.utterances()) > 0:
                       %span.badge&= len(ds.utterances())
-                  %td&= 'yes' if ds.named else 'no'
                 - for q in ds.utterances():
                   %tr.quotation(dataOffsets=('%d:%d' % (q.offset, q.length) if q.offset else ''))
                     %td(colspan="5")&= q.quote

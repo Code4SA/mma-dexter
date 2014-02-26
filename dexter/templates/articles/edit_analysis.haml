@@ -71,15 +71,14 @@
             .tab-content
               #sources-tab.tab-pane.active
                 %h3 Sources
-                %table.table.table-striped.table-condensed.entities
+                %table.table.table-striped.table-condensed.sources
                   %thead
                     %tr
                       %th Name
-                      %th
+                      %th Function
                       %th Quoted?
-                      %th Named?
                   %tbody
-                    %tr.new.template
+                    %tr.template
                       %td
                         &= field_input(new_source_form.person_name)
                       %td
@@ -87,7 +86,13 @@
                       %td
                         &= field_input(new_source_form.quoted)
 
-
+                %table.table.table-striped.table-condensed.sources
+                  %thead
+                    %tr
+                      %th Name
+                      %th
+                      %th Quoted?
+                  %tbody
                     - sources = sorted(document.sources, key=lambda s: s.entity.name)
                     - for ds in sources:
                       %tr(dataOffsets=ds.offset_list)
@@ -108,7 +113,6 @@
                           &= 'yes' if ds.quoted else 'no'
                           - if len(ds.utterances()) > 0:
                             %span.badge&= len(ds.utterances())
-                        %td&= 'yes' if ds.named else 'no'
                       - for q in ds.utterances():
                         %tr.quotation(dataOffsets=('%d:%d' % (q.offset, q.length) if q.offset else ''))
                           %td(colspan="5")&= q.quote

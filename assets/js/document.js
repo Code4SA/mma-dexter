@@ -90,9 +90,29 @@
         return;
       }
 
-      // when the user starts adding a new source, duplicate the row and rename the elements
-      $('input[name="source-new-person_name"]', self.$form).on('keypress', function(e) {
+      // when the user starts adding a new source, duplicate the row to keep a fresh
+      // 'new entry' row, and then rename the elements on this one
+      $('table.sources', self.$form).on('keyup', '.template input[type="text"]', function(e) {
+        if ($(this).val() === '') return;
+
         var $row = $(this).closest('tr');
+        var $template = $row.clone().insertAfter($row);
+        $('input[type="text"]', $template).val('');
+
+        // this row is no longer a template
+        $row.removeClass('template').addClass('new');
+
+        // change form field name prefixes to be new[ix]
+        var ix = $('tr.new', self.$form).length;
+        $('input, select, textarea', $row).each(function() {
+          $(this).attr('name', $(this).attr('name').replace('new-', 'new[' + ix + ']-'));
+        });
+      });
+
+      $('table.sources', self.$form).on('blur', '.new input[type="text"]', function(e) {
+        if ($(this).val() === '') {
+          $(this).closest('tr').remove();
+        }
       });
     };
   };
