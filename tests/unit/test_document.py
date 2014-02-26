@@ -49,6 +49,29 @@ class TestDocument(unittest.TestCase):
         self.assertFalse(doc.add_utterance(u))
         self.assertEqual(1, len(doc.utterances))
 
+    def test_add_utterance_similar(self):
+        doc = Document()
+        doc.text = 'And Fred said "Hello there guys," to everyone.'
+        
+        u = Utterance()
+        u.entity = Entity()
+        u.entity.group = 'person'
+        u.entity.name = 'Fred'
+        u.quote = 'Hello there guys'
+
+        self.assertTrue(doc.add_utterance(u))
+        self.assertTrue(u in doc.utterances)
+
+        # can't add similar quotations twice
+        u2 = Utterance()
+        u2.entity = Entity()
+        u2.entity.group = 'person'
+        u2.entity.name = 'Fred'
+        u2.quote = '\"Hello there guys,\" ...'
+
+        self.assertFalse(doc.add_utterance(u2))
+        self.assertEqual(1, len(doc.utterances))
+
 
     def test_add_utterance_update_offset(self):
         doc = Document()
