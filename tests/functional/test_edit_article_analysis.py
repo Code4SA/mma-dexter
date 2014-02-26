@@ -3,7 +3,7 @@ from flask.ext.fillin import FormWrapper
 
 from dexter.core import app
 from dexter.models.support import db
-from dexter.models import Author
+from dexter.models import Document
 from dexter.models.seeds import seed_db
 
 from tests.fixtures import dbfixture, DocumentData
@@ -35,8 +35,19 @@ class TestEditArticleAnalysis(TestCase):
         res = self.client.get('/articles/%s/analysis' % self.fx.DocumentData.simple.id)
         self.assert200(res)
 
+        # check that no issues have been selected yet
+        doc = Document.query.get(self.fx.DocumentData.simple.id)
+        self.assertEqual(0, len(doc.issues))
+
         f = res.forms[0]
+
+        # select an issue
+        f.fields['issues'] = ['2', ]
 
         res = f.submit(self.client)
         print res.data
         self.assertRedirects(res, '/articles/%s' % self.fx.DocumentData.simple.id)
+
+        # check that an issue has been selected
+        doc = Document.query.get(self.fx.DocumentData.simple.id)
+        self.assertEqual(1, len(doc.issues))
