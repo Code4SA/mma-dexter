@@ -77,9 +77,17 @@
                       %th Name
                       %th
                       %th Quoted?
-                      %th Photo?
                       %th Named?
                   %tbody
+                    %tr.new.template
+                      %td
+                        &= field_input(new_source_form.person_name)
+                      %td
+                        &= field_input(new_source_form.source_function_id)
+                      %td
+                        &= field_input(new_source_form.quoted)
+
+
                     - sources = sorted(document.sources, key=lambda s: s.entity.name)
                     - for ds in sources:
                       %tr(dataOffsets=ds.offset_list)
@@ -100,7 +108,6 @@
                           &= 'yes' if ds.quoted else 'no'
                           - if len(ds.utterances()) > 0:
                             %span.badge&= len(ds.utterances())
-                        %td&= 'yes' if ds.photographed else 'no'
                         %td&= 'yes' if ds.named else 'no'
                       - for q in ds.utterances():
                         %tr.quotation(dataOffsets=('%d:%d' % (q.offset, q.length) if q.offset else ''))

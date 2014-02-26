@@ -8,9 +8,11 @@ from sqlalchemy import (
     func,
     )
 from sqlalchemy.orm import relationship
+from wtforms import StringField, validators, SelectField, HiddenField, BooleanField
 
 from .support import db
 from .with_offsets import WithOffsets
+from ..forms import Form
 
 class DocumentSource(db.Model, WithOffsets):
     """
@@ -108,3 +110,14 @@ class SourceFunction(db.Model):
             functions.append(g)
 
         return functions
+
+
+class DocumentSourceForm(Form):
+    person_name       = StringField('Name', [validators.Length(max=50)])
+    source_function_id = SelectField('Function', [validators.Required()], default=1)
+    quoted            = BooleanField('Quoted', default=False)
+
+    def __init__(self, *args, **kwargs):
+        super(DocumentSourceForm, self).__init__(*args, **kwargs)
+
+        self.source_function_id.choices = [[str(s.id), s.name] for s in SourceFunction.query.order_by(SourceFunction.name).all()]

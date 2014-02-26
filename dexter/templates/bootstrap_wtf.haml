@@ -10,11 +10,16 @@
     = field_input(fld, **kwargs)
 
 %%def(name="field_input(fld, **kwargs)")
+  - from wtforms.widgets import CheckboxInput
+
   - if 'required' in kwargs and not kwargs['required']:
     - del kwargs['required']
 
   %span(class_=('has-error' if fld.errors else ''))
-    - kwargs['class_'] = kwargs.get('class_', '') + ' form-control'
+    - kwargs['class_'] = kwargs.get('class_', '')
+    - if not isinstance(fld.widget, CheckboxInput):
+      - kwargs['class_'] = kwargs['class_'] + ' form-control'
+
     = fld(**kwargs)
     - if fld.errors:
       %p.help-block

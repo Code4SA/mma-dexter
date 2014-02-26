@@ -8,8 +8,7 @@ from sqlalchemy import (
     )
 from sqlalchemy.orm import relationship
 
-from wtforms import StringField, TextAreaField, validators, SelectField, DateField, HiddenField
-from wtforms.fields.html5 import URLField
+from wtforms import StringField, validators, SelectField, HiddenField
 
 from . import Person, Gender, Race
 from .support import db

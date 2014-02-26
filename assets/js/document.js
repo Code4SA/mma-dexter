@@ -2,6 +2,7 @@
   if (typeof exports.Dexter == 'undefined') exports.Dexter = {};
   var Dexter = exports.Dexter;
 
+  // view when editing document details (NOT the analysis)
   Dexter.EditDocumentView = function() {
     var self = this;
 
@@ -78,9 +79,26 @@
       $('.new-author-details', self.$authorWidget).removeClass('hidden');
     };
   };
+
+  // view when editing the document analysis
+  Dexter.EditDocumentAnalysisView = function() {
+    var self = this;
+
+    self.init = function() {
+      self.$form = $('form.edit-analysis');
+      if (self.$form.length === 0) {
+        return;
+      }
+
+      // when the user starts adding a new source, duplicate the row and rename the elements
+      $('input[name="source-new-person_name"]', self.$form).on('keypress', function(e) {
+        var $row = $(this).closest('tr');
+      });
+    };
+  };
 })(jQuery, window);
 
 $(function() {
-  var documentView = new Dexter.EditDocumentView();
-  documentView.init();
+  new Dexter.EditDocumentView().init();
+  new Dexter.EditDocumentAnalysisView().init();
 });
