@@ -4,11 +4,12 @@ from sqlalchemy import (
     Integer,
     String,
     Float,
-    Index
-    )
+    Index,
+    Table
+)
 
 from .support import db
-from sqlalchemy.orm import relationship, backref
+
 
 class DocumentIssue(db.Model):
     """
@@ -17,14 +18,16 @@ class DocumentIssue(db.Model):
     __tablename__ = "document_issues"
 
     id        = Column(Integer, primary_key=True)
-    doc_id    = Column(Integer, ForeignKey('documents.id'), index=True, nullable=False)
+    doc_id    = Column(Integer, ForeignKey('documents.id'), index=True)
     issue_id  = Column(Integer, ForeignKey('issues.id'), index=True, nullable=False)
 
     def __repr__(self):
         return "<DocumentIssue issue='%s', doc=%s>" % (
-                self.issue.name, str(self.document.id))
+                self.issue.encode('utf-8'), self.document)
 
 Index('doc_issue_doc_id_issue_ix', DocumentIssue.doc_id, DocumentIssue.issue_id, unique=True)
+
+
 
 class Issue(db.Model):
     """
@@ -35,8 +38,6 @@ class Issue(db.Model):
     id          = Column(Integer, primary_key=True)
     name        = Column(String(50), index=True, nullable=False, unique=True)
     description = Column(String(100), index=True, nullable=False, unique=True)
-
-    documents      = relationship("DocumentIssue", backref=backref('issue'))
 
     def __repr__(self):
         return "<Issue name='%s'>" % (self.name.encode('utf-8'),)

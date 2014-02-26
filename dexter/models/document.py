@@ -5,6 +5,7 @@ from wtforms import widgets
 from ..forms import Form
 
 from sqlalchemy import (
+    Table,
     Column,
     DateTime,
     ForeignKey,
@@ -16,11 +17,12 @@ from sqlalchemy import (
     Index
     )
 from sqlalchemy.orm import relationship, backref
-
 from .support import db
 
 import logging
 log = logging.getLogger(__name__)
+
+
 
 class Document(db.Model):
     """
@@ -54,11 +56,15 @@ class Document(db.Model):
     utterances  = relationship("Utterance", backref=backref('document'))
     keywords    = relationship("DocumentKeyword", backref=backref('document'), order_by="desc(DocumentKeyword.relevance)")
     sources     = relationship("DocumentSource", backref=backref('document'))
-    issues      = relationship("DocumentIssue", backref=backref('document'))
     medium      = relationship("Medium")
     topic       = relationship("Topic")
     document_type = relationship("DocumentType")
     origin      = relationship("Location")
+
+    # Many-to-Many
+    issues = relationship("Issue",
+                    secondary='document_issues',
+                    backref="documents")
 
 
     PLACE_ENTITY_GROUPS = set(['city', 'province_or_state', 'region'])
@@ -220,4 +226,3 @@ class DocumentAnalysisForm(Form):
         self.issues.choices = [(str(issue.id), issue.name) for issue in db.session.query(Issue).order_by('name')]
         self.origin_location_id.choices = [['', '(none)']] + [
                 [str(loc.id), loc.name] for loc in Location.query.order_by(Location.name).all()]
-
