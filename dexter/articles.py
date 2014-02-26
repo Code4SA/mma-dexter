@@ -139,6 +139,11 @@ def edit_article_analysis(id):
             if not document.origin_location_id:
                 document.origin_location_id = None
 
+            # delete sources
+            to_delete = [s for s in document.sources if ('source-del[%d]' % s.id) in request.form]
+            for source in to_delete:
+                document.sources.remove(source)
+
             # save new sources
             for f in new_sources:
                 src = DocumentSource()

@@ -90,30 +90,53 @@
         return;
       }
 
-      // when the user starts adding a new source, duplicate the row to keep a fresh
-      // 'new entry' row, and then rename the elements on this one
-      $('table.sources', self.$form).on('keyup', '.template input[type="text"]', function(e) {
-        if ($(this).val() === '') return;
+      self.newSourceCount = $('tr.new', self.$form).length;
 
-        var $row = $(this).closest('tr');
-        var $template = $row.clone().insertAfter($row);
-        $('input[type="text"]', $template).val('');
+      $('table.sources', self.$form).
+        on('keyup', '.template input[type="text"]', self.newSourceKeyUp).
+        on('blur', '.new input[type="text"]', function(e) {
+          if ($(this).val() === '') {
+            $(this).closest('tr').remove();
+          }
+        }).
+        on('click', '.btn.delete', self.deleteSource);
+    };
+      
+    // when the user starts adding a new source, duplicate the row to keep a fresh
+    // 'new entry' row, and then rename the elements on this one
+    self.newSourceKeyUp = function(e) {
+      if ($(this).val() === '') return;
 
-        // this row is no longer a template
-        $row.removeClass('template').addClass('new');
+      var $row = $(this).closest('tr');
+      var $template = $row.clone().insertAfter($row);
+      $('input[type="text"]', $template).val('');
 
-        // change form field name prefixes to be new[ix]
-        var ix = $('tr.new', self.$form).length;
-        $('input, select, textarea', $row).each(function() {
-          $(this).attr('name', $(this).attr('name').replace('new-', 'new[' + ix + ']-'));
-        });
+      // this row is no longer a template
+      $row.removeClass('template').addClass('new');
+
+      self.newSourceCount++;
+
+      // change form field name prefixes to be new[ix]
+      $('input, select, textarea', $row).each(function() {
+        $(this).attr('name', $(this).attr('name').replace('new-', 'new[' + self.newSourceCount + ']-'));
       });
+    };
 
-      $('table.sources', self.$form).on('blur', '.new input[type="text"]', function(e) {
-        if ($(this).val() === '') {
-          $(this).closest('tr').remove();
+    // delete button was clicked
+    self.deleteSource = function(e) {
+      e.preventDefault();
+
+      $row = $(this).closest('tr');
+      if (confirm('Go ahead and delete this source?')) {
+        if ($row.hasClass('new')) {
+          // it's new
+          $row.remove();
+        } else {
+          // it's not new
+          $row.addClass('deleted');
+          self.$form.append('<input type="hidden" name="source-del[' + $row.data('source-id') + ']" value="Y">');
         }
-      });
+      }
     };
   };
 })(jQuery, window);

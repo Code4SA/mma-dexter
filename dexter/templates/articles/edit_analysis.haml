@@ -20,7 +20,7 @@
             .col-sm-4.text-right
               %a.btn.btn-default(href=url_for('show_article', id=document.id))
                 Close
-              %input.btn.btn-primary(type='submit', value='Save')
+              %input.btn.btn-success(type='submit', value='Save changes')
 
         .panel-body
           %section.form-horizontal
@@ -77,14 +77,21 @@
                       %th Name
                       %th Function
                       %th Quoted?
+                      %th
                   %tbody
+                    - for f in new_sources:
+                      %tr.new
+                        %td&= field_input(f.person_name)
+                        %td&= field_input(f.source_function_id)
+                        %td&= field_input(f.quoted)
+
                     %tr.template
-                      %td
-                        &= field_input(new_source_form.person_name)
-                      %td
-                        &= field_input(new_source_form.source_function_id)
-                      %td
-                        &= field_input(new_source_form.quoted)
+                      %td&= field_input(new_source_form.person_name)
+                      %td&= field_input(new_source_form.source_function_id)
+                      %td&= field_input(new_source_form.quoted)
+                      %td.text-right
+                        %a.btn.delete(href="#", title='delete this source')
+                          %i.fa.fa-times-circle
 
                 %table.table.table-striped.table-condensed.offsets.sources
                   %thead
@@ -92,10 +99,11 @@
                       %th Name
                       %th
                       %th Quoted?
+                      %th
                   %tbody
                     - sources = sorted(document.sources, key=lambda s: s.entity.name)
                     - for ds in sources:
-                      %tr(dataOffsets=ds.offset_list)
+                      %tr(dataOffsets=ds.offset_list, dataSourceId=ds.id)
                         %td
                           %a(href= url_for('show_entity', group=ds.entity.group, name=ds.entity.name))&=ds.entity.name
                           - if ds.person and ds.person.gender:
@@ -113,9 +121,12 @@
                           &= 'yes' if ds.quoted else 'no'
                           - if len(ds.utterances()) > 0:
                             %span.badge&= len(ds.utterances())
+                        %td.text-right
+                          %a.btn.delete(href="#", title='delete this source')
+                            %i.fa.fa-times-circle
                       - for q in ds.utterances():
                         %tr.quotation(dataOffsets=('%d:%d' % (q.offset, q.length) if q.offset else ''))
-                          %td(colspan="5")&= q.quote
+                          %td(colspan="4")&= q.quote
 
               #mentions-tab.tab-pane
                 %h3 People
@@ -166,3 +177,9 @@
                     %tr(dataOffsets=kw.offset_list)
                       %td&= kw.keyword
                       %td&= kw.relevance
+
+        .panel-footer
+          .text-right
+            %a.btn.btn-default(href=url_for('show_article', id=document.id))
+              Close
+            %input.btn.btn-success(type='submit', value='Save changes')

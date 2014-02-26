@@ -50,6 +50,24 @@ table.sources {
   tr.quotation {
     td { padding-left: 20px; }
   }
+
+  .btn.delete {
+    padding: 0px;
+  }
+
+  .template .btn.delete {
+    display: none;
+    padding: 0px;
+  }
+
+  tr.deleted {
+    td {
+      text-decoration: line-through;
+      .btn.delete {
+        display: none;
+      }
+    }
+  }
 }
 
 /* typeahead styling */
