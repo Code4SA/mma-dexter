@@ -17,7 +17,7 @@
 
           .form-group
             = field_input(form.url, placeholder='URL', autofocus=True)
-          %input.btn.btn-primary(type='submit', value="Fetch and add article", dataDisableWith='Fetching...')
+          %input.btn.btn-success(type='submit', value="Fetch and add article", dataDisableWith='Fetching...')
 
       %form(action=url_for('new_article'), method='POST')
         = form.csrf_token
@@ -28,5 +28,5 @@
           %%include(file="form.haml")
 
           %input(type='hidden', name='manual', value='True')
-          %input.btn.btn-primary(type='submit', value='Add new article', dataDisableWith='Adding...')
+          %input.btn.btn-success(type='submit', value='Add new article', dataDisableWith='Adding...')
 
