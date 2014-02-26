@@ -50,6 +50,14 @@ class Person(db.Model):
         # no exact match, just return the last one
         return last
 
+    def json(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'race': self.race.name if self.race else None,
+            'gender': self.gender.name if self.gender else None,
+        }
+
     def __repr__(self):
         return "<Person id=%s, name=\"%s\">" % (self.id, self.name.encode('utf-8'))
 

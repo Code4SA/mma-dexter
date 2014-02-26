@@ -90,6 +90,19 @@
         return;
       }
 
+      // source person name autocomplete
+      self.personHound = new Bloodhound({
+        name: 'people',
+        prefetch: {
+          url: '/api/people',
+          ttl: 60,
+          filter: function(resp) { return resp.people; },
+        },
+        datumTokenizer: function(d) { return Bloodhound.tokenizers.whitespace(d.name); },
+        queryTokenizer: Bloodhound.tokenizers.whitespace
+      });
+      self.personHound.initialize();
+
       self.newSourceCount = $('tr.new', self.$form).length;
 
       $('table.sources', self.$form).
@@ -120,6 +133,14 @@
       $('input, select, textarea', $row).each(function() {
         $(this).attr('name', $(this).attr('name').replace('new-', 'new[' + self.newSourceCount + ']-'));
       });
+
+      $('input[type="text"]', $row).typeahead({
+        highlight: true,
+        autoselect: true,
+      }, {
+        source: self.personHound.ttAdapter(),
+        displayKey: 'name',
+      }).focus();
     };
 
     // delete button was clicked
