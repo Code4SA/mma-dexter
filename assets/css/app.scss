@@ -37,6 +37,13 @@
       box-shadow: 0 0 7px gold;
     }
   }
+
+  .issues {
+    .label {
+      font-weight: normal;
+      font-size: inherit;
+    }
+  }
 }
 
 table.entities {
@@ -131,6 +138,7 @@ footer {
   font-weight: normal;
   left: 15px;
   position: relative;
+  cursor: pointer;
 }
 
 .checkbox-multi-select input{
