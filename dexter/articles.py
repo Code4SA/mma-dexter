@@ -140,6 +140,12 @@ def edit_article_analysis(id):
             form.topic_id.data = ''
         if form.origin_location_id.data == 'None':
             form.origin_location_id.data = ''
+        # ensure that checkboxes can be pre-populated
+        if document.issues:
+            tmp = []
+            for issue in document.issues:
+                tmp.append(str(issue.issue_id))
+            form.issues.data = tmp
 
     return render_template('articles/edit_analysis.haml',
             form=form,

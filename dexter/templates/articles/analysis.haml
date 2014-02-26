@@ -20,9 +20,8 @@
     %section
       %p
         %strong Issues
-        %br
-        - for issue in document.issues:
-          %span.label.label-info&=issue.issue.name
+      - for issue in document.issues:
+        %span.label.label-info&=issue.issue.name
     %hr
 
     %section

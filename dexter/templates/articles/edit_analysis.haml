@@ -28,7 +28,8 @@
             = field(form.topic_id, class_='chosen-select')
             = field(form.origin_location_id, class_='chosen-select')
           %hr
-
+          %p
+            %strong Issues
           %section.form-horizontal
             - if form.issues.errors:
               %ul.list-unstyled
