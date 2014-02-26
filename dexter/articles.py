@@ -7,7 +7,7 @@ from flask.ext.mako import render_template
 from .app import app
 from .models import db, Document, Issue
 from .models.document import DocumentForm, DocumentAnalysisForm
-from .models.source import DocumentSourceForm
+from .models.source import DocumentSource, DocumentSourceForm
 from .models.author import AuthorForm
 
 from .processing import DocumentProcessor, ProcessingError
@@ -143,8 +143,8 @@ def edit_article_analysis(id):
             for f in new_sources:
                 src = DocumentSource()
                 src.document = document
+                src.entity = f.get_or_create_entity()
                 f.populate_obj(src)
-                # TODO: entity id
 
             db.session.commit()
             flash('Analysis updated.')
@@ -152,7 +152,7 @@ def edit_article_analysis(id):
         else:
             flash('Please correct the problems below and try again.')
     else:
-        # TODO: wtforms turns None values into None, which sucks
+        # wtforms turns None values into None, which sucks
         if form.topic_id.data == 'None':
             form.topic_id.data = ''
         if form.origin_location_id.data == 'None':

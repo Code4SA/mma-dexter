@@ -33,6 +33,23 @@ class Person(db.Model):
     gender      = relationship("Gender", lazy=False)
     race        = relationship("Race", lazy=False)
 
+    def entity(self):
+        """ Get an entity that is linked to this person. Because many entities can be linked, we
+        try find the one with an exact name match before just returning any old one. """
+        from . import Entity
+
+        last = None
+
+        # get all the entities and try to find the one that has an exact
+        # name match
+        for e in Entity.query.filter(Entity.person == self).all():
+            last = e
+            if e.name == self.name:
+                return e
+
+        # no exact match, just return the last one
+        return last
+
     def __repr__(self):
         return "<Person id=%s, name=\"%s\">" % (self.id, self.name.encode('utf-8'))
 
