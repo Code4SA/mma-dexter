@@ -5,7 +5,7 @@ from flask import request, url_for, flash, redirect
 from flask.ext.mako import render_template
 
 from .app import app
-from .models import db, Document, DocumentIssue, Issue
+from .models import db, Document, Issue
 from .models.document import DocumentForm, DocumentAnalysisForm
 from .models.author import AuthorForm
 
@@ -112,13 +112,11 @@ def edit_article_analysis(id):
     if request.method == 'POST':
         if form.validate():
 
-            # convert issue id's to DocumentIssue objects
+            # convert issue id's to Issue objects
             tmp = []
             for issue_id in form.issues.data:
-                # doc_issue = DocumentIssue(issue_id=issue_id, doc_id=id)
                 issue = Issue.query.get_or_404(issue_id)
-                doc_issue = DocumentIssue(issue=issue, document=document)
-                tmp.append(doc_issue)
+                tmp.append(issue)
             form.issues.data = tmp
 
             form.populate_obj(document)
@@ -144,7 +142,7 @@ def edit_article_analysis(id):
         if document.issues:
             tmp = []
             for issue in document.issues:
-                tmp.append(str(issue.issue_id))
+                tmp.append(str(issue.id))
             form.issues.data = tmp
 
     return render_template('articles/edit_analysis.haml',
