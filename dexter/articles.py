@@ -5,7 +5,7 @@ from flask import request, url_for, flash, redirect
 from flask.ext.mako import render_template
 
 from .app import app
-from .models import db, Document
+from .models import db, Document, DocumentIssue, Issue
 from .models.document import DocumentForm, DocumentAnalysisForm
 from .models.author import AuthorForm
 
@@ -110,9 +110,17 @@ def edit_article_analysis(id):
     form = DocumentAnalysisForm(obj=document)
 
     if request.method == 'POST':
-        log.debug(form.issues.data)
         if form.validate():
-            log.debug("Validation success")
+            
+            # convert issue id's to DocumentIssue objects
+            tmp = []
+            for issue_id in form.issues.data:
+                # doc_issue = DocumentIssue(issue_id=issue_id, doc_id=id)
+                issue = Issue.query.get_or_404(issue_id)
+                doc_issue = DocumentIssue(issue=issue, document=document)
+                tmp.append(doc_issue)
+            form.issues.data = tmp
+
             form.populate_obj(document)
 
             # TODO: convert from empty values back into None
