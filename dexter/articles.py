@@ -113,11 +113,7 @@ def edit_article_analysis(id):
         if form.validate():
 
             # convert issue id's to Issue objects
-            tmp = []
-            for issue_id in form.issues.data:
-                issue = Issue.query.get_or_404(issue_id)
-                tmp.append(issue)
-            form.issues.data = tmp
+            form.issues.data = [Issue.query.get_or_404(i) for i in form.issues.data]
 
             form.populate_obj(document)
 
@@ -131,7 +127,7 @@ def edit_article_analysis(id):
             flash('Analysis updated.')
             return redirect(url_for('show_article', id=id))
         else:
-            flash('Validation error.')
+            flash('Please correct the problems below and try again.')
     else:
         # TODO: wtforms turns None values into None, which sucks
         if form.topic_id.data == 'None':
@@ -139,11 +135,7 @@ def edit_article_analysis(id):
         if form.origin_location_id.data == 'None':
             form.origin_location_id.data = ''
         # ensure that checkboxes can be pre-populated
-        if document.issues:
-            tmp = []
-            for issue in document.issues:
-                tmp.append(str(issue.id))
-            form.issues.data = tmp
+        form.issues.data = [str(i.id) for i in document.issues]
 
     return render_template('articles/edit_analysis.haml',
             form=form,

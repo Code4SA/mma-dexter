@@ -21,7 +21,7 @@
       %p
         %strong Issues
       - for issue in document.issues:
-        %span.label.label-info&=issue.name
+        %span.label.label-info(title=issue.description, dataToggle="tooltip", dataContainer="body")&=issue.name
     %hr
 
     %section

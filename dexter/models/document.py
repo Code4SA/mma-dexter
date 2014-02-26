@@ -1,8 +1,7 @@
-from wtforms import StringField, TextAreaField, validators, SelectField, DateTimeField, HiddenField, SelectMultipleField
+from wtforms import StringField, TextAreaField, validators, SelectField, DateTimeField, HiddenField
 from wtforms.fields.html5 import URLField
-from wtforms import widgets
 
-from ..forms import Form
+from ..forms import Form, MultiCheckboxField
 
 from sqlalchemy import (
     Table,
@@ -199,17 +198,6 @@ class DocumentType(db.Model):
             types.append(t)
 
         return types
-
-
-class MultiCheckboxField(SelectMultipleField):
-    """
-    A multiple-select, except displays a list of checkboxes.
-
-    Iterating the field will produce subfields, allowing custom rendering of
-    the enclosed checkbox fields.
-    """
-    widget = widgets.ListWidget(prefix_label=False)
-    option_widget = widgets.CheckboxInput()
 
 
 class DocumentAnalysisForm(Form):
