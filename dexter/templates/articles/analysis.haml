@@ -50,7 +50,7 @@
       .tab-content
         #sources-tab.tab-pane.active
           %h3 Sources
-          %table.table.table-striped.table-condensed.entities
+          %table.table.table-striped.table-condensed.offsets.sources
             %thead
               %tr
                 %th Name
@@ -83,7 +83,7 @@
 
         #mentions-tab.tab-pane
           %h3 People
-          %table.table.table-striped.table-condensed.entities
+          %table.table.table-striped.table-condensed.offsets.entities
             %thead
               %th Name
               %th.text-center Race
@@ -108,7 +108,7 @@
                 %td&= dp.relevance
 
           %h3 Organisations
-          %table.table.table-striped.table-condensed.entities
+          %table.table.table-striped.table-condensed.offsets.entities
             - for org in document.organisations():
               %tr(dataOffsets=org.offset_list)
                 %td&= org.entity.name
@@ -116,7 +116,7 @@
 
         #places-tab.tab-pane
           %h3 Places
-          %table.table.table-striped.table-condensed.entities
+          %table.table.table-striped.table-condensed.offsets.entities
             - for p in document.places():
               %tr(dataOffsets=p.offset_list)
                 %td&= p.entity.name
@@ -125,7 +125,7 @@
 
         #keywords-tab.tab-pane
           %h3 Keywords
-          %table.table.table-striped.table-condensed.entities
+          %table.table.table-striped.table-condensed.offsets.entities
             - for kw in document.keywords:
               %tr(dataOffsets=kw.offset_list)
                 %td&= kw.keyword

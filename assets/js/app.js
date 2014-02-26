@@ -118,11 +118,11 @@ $(function() {
       highlightEntities($($(e.target).attr('href')));
     });
 
-    $('.document-container .table.entities tr').on('mouseover', function(e) {
+    $('.document-container .table.offsets tr').on('mouseover', function(e) {
       highlightEntities($(this));
     });
 
-    $('.document-container .table.entities tr').on('mouseout', function(e) {
+    $('.document-container .table.offsets tr').on('mouseout', function(e) {
       highlightEntities($('.document-container .tab-pane.active'));
     });
 
