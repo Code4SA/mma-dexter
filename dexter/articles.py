@@ -111,7 +111,7 @@ def edit_article_analysis(id):
 
     if request.method == 'POST':
         if form.validate():
-            
+
             # convert issue id's to DocumentIssue objects
             tmp = []
             for issue_id in form.issues.data:
