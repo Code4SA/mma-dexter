@@ -8,6 +8,14 @@
   }
 }
 
+form#edit-person {
+  display: none;
+
+  .buttons {
+    margin-top: 23px;
+  }
+}
+
 .document-container {
   .heading {
     margin-bottom: 10px;

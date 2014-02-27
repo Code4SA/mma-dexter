@@ -11,8 +11,10 @@ from sqlalchemy import (
     func,
     )
 from sqlalchemy.orm import relationship
+from wtforms import StringField, validators, SelectField, HiddenField
 
 from .support import db
+from ..forms import Form
 
 class Person(db.Model):
     """
@@ -79,25 +81,16 @@ class Person(db.Model):
         return p
 
 
-    @classmethod
-    def person_entities(cls):
-        """
-        Get a list of (person_id, entity_id, person_name) tuples for all
-        entities that are linked to a Person. Each person is returned only once.
-        """
-        from . import Entity
+class PersonForm(Form):
+    gender_id  = SelectField('Gender', default='')
+    race_id    = SelectField('Race', default='')
 
-        people = []
-        people_entities = db.session.query(Person.id, Entity.id, Person.name) \
-                .join(Entity) \
-                .order_by(Person.id) \
-                .all()
-        for person_id, group in groupby(people_entities, lambda p: p[0]):
-            for t in group:
-              people.append(t)
-              break
+    def __init__(self, *args, **kwargs):
+        super(PersonForm, self).__init__(*args, **kwargs)
 
-        return people
+        self.gender_id.choices = [['', '(unknown gender)']] + [[str(g.id), g.name] for g in Gender.query.order_by(Gender.name).all()]
+        self.race_id.choices = [['', '(unknown race)']] + [[str(r.id), r.name] for r in Race.query.order_by(Race.name).all()]
+
 
 
 class Gender(db.Model):
