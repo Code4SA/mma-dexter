@@ -109,11 +109,19 @@ def edit_article(id):
 def edit_article_analysis(id):
     document = Document.query.get_or_404(id)
     form = DocumentAnalysisForm(obj=document)
-    new_sources = []
+
+    # forms for existing sources
+    source_forms = []
+    for source in document.sources:
+        f = DocumentSourceForm(prefix='source[%d]' % source.id, obj=source)
+        f.source = source
+        source_forms.append(f)
+    source_forms.sort(key=lambda f: f.source.entity.name)
 
     # in the page, the fields for all new sources will be transformed into
     # 'source-new[0]-name'. This form is used as a template for these
     # new source forms.
+    new_sources = []
     new_source_form = DocumentSourceForm(prefix='source-new', csrf_enabled=False)
 
     if request.method == 'POST':
@@ -125,7 +133,7 @@ def edit_article_analysis(id):
             if src_form.person_name.data != '':
                 new_sources.append(src_form)
 
-        forms = [form] + new_sources
+        forms = [form] + new_sources + source_forms
         if all(f.validate() for f in forms):
             # convert issue id's to Issue objects
             form.issues.data = [Issue.query.get_or_404(i) for i in form.issues.data]
@@ -138,6 +146,10 @@ def edit_article_analysis(id):
                 document.topic_id = None
             if not document.origin_location_id:
                 document.origin_location_id = None
+
+            # update sourecs
+            for f in source_forms:
+                f.populate_obj(f.source)
 
             # delete sources
             to_delete = [s for s in document.sources if ('source-del[%d]' % s.id) in request.form]
@@ -167,6 +179,7 @@ def edit_article_analysis(id):
 
     return render_template('articles/edit_analysis.haml',
             form=form,
+            source_forms=source_forms,
             new_source_form=new_source_form,
             new_sources=new_sources,
             document=document)
