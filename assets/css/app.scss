@@ -34,7 +34,7 @@
 
   .edit-analysis {
     .panel.analysis {
-      box-shadow: 0 0 7px gold;
+      box-shadow: 0 0 7px #428bca;
     }
   }
 
@@ -46,9 +46,37 @@
   }
 }
 
-table.entities {
+table.sources {
   tr.quotation {
     td { padding-left: 20px; }
+  }
+
+  .btn.delete, .btn.undo-delete {
+    padding: 0px;
+  }
+
+  .template .btn.delete {
+    display: none;
+    padding: 0px;
+  }
+
+  .btn.undo-delete {
+    display: none;
+  }
+
+  tr.deleted {
+    td {
+      background-color: #f2dede;
+      text-decoration: line-through;
+      .btn.delete { display: none; }
+      .btn.undo-delete { display: inline-block; text-decoration: none }
+    }
+  }
+
+  tr.new, tr.template {
+    td {
+      background-color: #faebcc;
+    }
   }
 }
 

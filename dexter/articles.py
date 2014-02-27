@@ -7,6 +7,7 @@ from flask.ext.mako import render_template
 from .app import app
 from .models import db, Document, Issue
 from .models.document import DocumentForm, DocumentAnalysisForm
+from .models.source import DocumentSource, DocumentSourceForm
 from .models.author import AuthorForm
 
 from .processing import DocumentProcessor, ProcessingError
@@ -109,27 +110,67 @@ def edit_article_analysis(id):
     document = Document.query.get_or_404(id)
     form = DocumentAnalysisForm(obj=document)
 
-    if request.method == 'POST':
-        if form.validate():
+    # forms for existing sources
+    source_forms = []
+    for source in document.sources:
+        f = DocumentSourceForm(prefix='source[%d]' % source.id, obj=source)
+        f.source = source
+        source_forms.append(f)
+    source_forms.sort(key=lambda f: [not f.source.manual, f.source.entity.name])
 
+    # in the page, the fields for all new sources will be transformed into
+    # 'source-new[0]-name'. This form is used as a template for these
+    # new source forms.
+    new_sources = []
+    new_source_form = DocumentSourceForm(prefix='source-new', csrf_enabled=False)
+
+    if request.method == 'POST':
+        # find new sources and build forms for them.
+        # the field names are like: source-new[2]-person_name
+        for key in sorted(set('-'.join(key.split('-', 3)[0:2]) for key in request.form.keys() if key.startswith('source-new['))):
+            src_form = DocumentSourceForm(prefix=key)
+            # skip new sources that have an empty name
+            if src_form.person_name.data != '':
+                new_sources.append(src_form)
+
+        forms = [form] + new_sources + source_forms
+        if all(f.validate() for f in forms):
             # convert issue id's to Issue objects
             form.issues.data = [Issue.query.get_or_404(i) for i in form.issues.data]
 
+            # update document
             form.populate_obj(document)
 
-            # TODO: convert from empty values back into None
+            # convert from empty values back into None
             if not document.topic_id:
                 document.topic_id = None
             if not document.origin_location_id:
                 document.origin_location_id = None
 
+            # update sourecs
+            for f in source_forms:
+                f.populate_obj(f.source)
+
+            # delete sources
+            to_delete = [s for s in document.sources if ('source-del[%d]' % s.id) in request.form]
+            for source in to_delete:
+                document.sources.remove(source)
+
+            # save new sources
+            for f in new_sources:
+                src = DocumentSource()
+                src.document = document
+                src.entity = f.get_or_create_entity()
+                src.manual = True
+                f.populate_obj(src)
+
             db.session.commit()
             flash('Analysis updated.')
-            return redirect(url_for('show_article', id=id))
+            return redirect(url_for('edit_article_analysis', id=id))
         else:
             flash('Please correct the problems below and try again.')
     else:
-        # TODO: wtforms turns None values into None, which sucks
+        # wtforms turns None values into None, which sucks
         if form.topic_id.data == 'None':
             form.topic_id.data = ''
         if form.origin_location_id.data == 'None':
@@ -139,4 +180,7 @@ def edit_article_analysis(id):
 
     return render_template('articles/edit_analysis.haml',
             form=form,
+            source_forms=source_forms,
+            new_source_form=new_source_form,
+            new_sources=new_sources,
             document=document)

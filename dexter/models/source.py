@@ -8,9 +8,11 @@ from sqlalchemy import (
     func,
     )
 from sqlalchemy.orm import relationship
+from wtforms import StringField, validators, SelectField, HiddenField, BooleanField
 
 from .support import db
 from .with_offsets import WithOffsets
+from ..forms import Form
 
 class DocumentSource(db.Model, WithOffsets):
     """
@@ -28,6 +30,9 @@ class DocumentSource(db.Model, WithOffsets):
     photographed = Column(Boolean)
     quoted       = Column(Boolean)
     named        = Column(Boolean)
+
+    # was this source added manually or was it inferred by machine learning?
+    manual       = Column(Boolean, default=False, nullable=False)
 
     # TODO: add role and method of access
 
@@ -108,3 +113,58 @@ class SourceFunction(db.Model):
             functions.append(g)
 
         return functions
+
+
+class DocumentSourceForm(Form):
+    person_name       = StringField('Name', [validators.Length(max=50)])
+    source_function_id = SelectField('Function', [validators.Required()], default=1)
+    quoted            = BooleanField('Quoted', default=False)
+
+    def __init__(self, *args, **kwargs):
+        super(DocumentSourceForm, self).__init__(*args, **kwargs)
+
+        self.source_function_id.choices = [[str(s.id), s.name] for s in SourceFunction.query.order_by(SourceFunction.name).all()]
+
+
+    def get_or_create_entity(self):
+        from . import Person, Entity
+
+        """ Get or create an entity that matches the name of this document source.
+        We try, in order:
+
+        * a person with that name
+        * a person entity with that name (and create a person if not already linked)
+        * any entity with that name
+
+        If all fail, we create a new entity and a new person.
+        """
+        name = self.person_name.data
+        if not name:
+            return None
+
+        person = Person.query.filter(Person.name == name).first()
+
+        if person:
+            entity = person.entity()
+        else:
+            # find a person entity
+            entity = Entity.query.filter(Entity.name == name, Entity.group == 'person').first()
+
+            if not entity:
+                # find an arbitrary entity
+                entity = Entity.query.filter(Entity.name == name).first()
+
+                if not entity:
+                    # create the entity
+                    entity = Entity()
+                    entity.group = 'person'
+                    entity.name = name
+                    db.session.add(entity)
+
+            # link a person to the entity if it doesn't exist
+            if entity.group == 'person' and not entity.person:
+                person = Person()
+                person.name = entity.name
+                entity.person = person
+
+        return entity

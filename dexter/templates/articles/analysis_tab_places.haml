@@ -1,0 +1,9 @@
+#places-tab.tab-pane
+  %h3 Places
+  %table.table.table-striped.table-condensed.offsets.entities
+    - for p in document.places():
+      %tr(dataOffsets=p.offset_list)
+        %td&= p.entity.name
+        %td&= p.entity.group
+        %td&= p.relevance
+

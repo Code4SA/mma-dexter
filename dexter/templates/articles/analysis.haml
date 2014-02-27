@@ -50,16 +50,15 @@
       .tab-content
         #sources-tab.tab-pane.active
           %h3 Sources
-          %table.table.table-striped.table-condensed.entities
+          %table.table.table-striped.table-condensed.offsets.sources
             %thead
               %tr
                 %th Name
-                %th
+                %th Function
                 %th Quoted?
-                %th Photo?
-                %th Named?
+                %th
             %tbody
-              - sources = sorted(document.sources, key=lambda s: s.entity.name)
+              - sources = sorted(document.sources, key=lambda s: [not s.manual, s.entity.name])
               - for ds in sources:
                 %tr(dataOffsets=ds.offset_list)
                   %td
@@ -79,58 +78,13 @@
                     &= 'yes' if ds.quoted else 'no'
                     - if len(ds.utterances()) > 0:
                       %span.badge&= len(ds.utterances())
-                  %td&= 'yes' if ds.photographed else 'no'
-                  %td&= 'yes' if ds.named else 'no'
+                  %td
+                    - if ds.manual:
+                      %i.fa.fa-check-circle(title='Added manually by a monitor')
                 - for q in ds.utterances():
                   %tr.quotation(dataOffsets=('%d:%d' % (q.offset, q.length) if q.offset else ''))
-                    %td(colspan="5")&= q.quote
+                    %td(colspan="4")&= q.quote
 
-        #mentions-tab.tab-pane
-          %h3 People
-          %table.table.table-striped.table-condensed.entities
-            %thead
-              %th Name
-              %th.text-center Race
-              %th.text-center Gender
-              %th Relevance
-            - for dp in document.people():
-              - person = dp.entity.person
-
-              %tr(dataOffsets=dp.offset_list)
-                %td
-                  %a(href= url_for('show_entity', group=dp.entity.group, name=dp.entity.name))&=dp.entity.name
-                %td.text-center
-                  - if person:
-                    - if person.race:
-                      %span.text-muted(title=person.race.name)
-                        %strong&= person.race.abbr()
-                %td.text-center
-                  - if person:
-                    - if person.gender:
-                      %span.text-muted(title=person.gender.name)
-                        %strong&= person.gender.abbr()
-                %td&= dp.relevance
-
-          %h3 Organisations
-          %table.table.table-striped.table-condensed.entities
-            - for org in document.organisations():
-              %tr(dataOffsets=org.offset_list)
-                %td&= org.entity.name
-                %td&= org.relevance
-
-        #places-tab.tab-pane
-          %h3 Places
-          %table.table.table-striped.table-condensed.entities
-            - for p in document.places():
-              %tr(dataOffsets=p.offset_list)
-                %td&= p.entity.name
-                %td&= p.entity.group
-                %td&= p.relevance
-
-        #keywords-tab.tab-pane
-          %h3 Keywords
-          %table.table.table-striped.table-condensed.entities
-            - for kw in document.keywords:
-              %tr(dataOffsets=kw.offset_list)
-                %td&= kw.keyword
-                %td&= kw.relevance
+        %%include(file='analysis_tab_mentions.haml')
+        %%include(file='analysis_tab_places.haml')
+        %%include(file='analysis_tab_keywords.haml')

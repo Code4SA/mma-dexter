@@ -18,9 +18,8 @@
             .col-sm-8
               %h3.panel-title Analysis
             .col-sm-4.text-right
-              %a.btn.btn-default(href=url_for('show_article', id=document.id))
-                Close
-              %input.btn.btn-primary(type='submit', value='Save')
+              %a.btn.btn-default(href=url_for('show_article', id=document.id)) Close
+              %input.btn.btn-success(type='submit', value='Save changes')
 
         .panel-body
           %section.form-horizontal
@@ -71,18 +70,44 @@
             .tab-content
               #sources-tab.tab-pane.active
                 %h3 Sources
-                %table.table.table-striped.table-condensed.entities
+                %table.table.table-striped.table-condensed.sources
                   %thead
                     %tr
                       %th Name
-                      %th
+                      %th Function
                       %th Quoted?
-                      %th Photo?
-                      %th Named?
+                      %th
                   %tbody
-                    - sources = sorted(document.sources, key=lambda s: s.entity.name)
-                    - for ds in sources:
-                      %tr(dataOffsets=ds.offset_list)
+                    - for f in new_sources:
+                      %tr.new
+                        %td&= field_input(f.person_name)
+                        %td&= field_input(f.source_function_id)
+                        %td&= field_input(f.quoted)
+
+                    %tr.template
+                      %td&= field_input(new_source_form.person_name)
+                      %td&= field_input(new_source_form.source_function_id)
+                      %td
+                        %label
+                          &= field_input(new_source_form.quoted)
+                          quoted
+                      %td.text-right
+                        %a.btn.btn-link.delete(href="#", title='delete this source')
+                          %i.fa.fa-times-circle
+
+                %table.table.table-striped.table-condensed.offsets.sources
+                  %thead
+                    %tr
+                      %th Name
+                      %th Function
+                      %th Quoted?
+                      %th
+                      %th
+                  %tbody
+                    - for source_form in source_forms:
+                      - ds = source_form.source
+
+                      %tr(dataOffsets=ds.offset_list, dataSourceId=ds.id)
                         %td
                           %a(href= url_for('show_entity', group=ds.entity.group, name=ds.entity.name))&=ds.entity.name
                           - if ds.person and ds.person.gender:
@@ -93,65 +118,29 @@
                             %span.text-muted(title=ds.person.race.name)
                               %strong&=
                                 " (" + ds.person.race.abbr() + ")"
+                        %td= field_input(source_form.source_function_id)
                         %td
-                          - if ds.function:
-                            %span.label.label-default&=ds.function.name
-                        %td
+                          %input(type='hidden', name=source_form.quoted.name, value=source_form.quoted.data)
                           &= 'yes' if ds.quoted else 'no'
                           - if len(ds.utterances()) > 0:
                             %span.badge&= len(ds.utterances())
-                        %td&= 'yes' if ds.photographed else 'no'
-                        %td&= 'yes' if ds.named else 'no'
+                        %td
+                          - if ds.manual:
+                            %i.fa.fa-check-circle(title='Added manually by a monitor')
+                        %td.text-right
+                          %a.btn.btn-link.delete(href="#", title='delete this source')
+                            %i.fa.fa-times-circle
+                          %a.btn.btn-link.undo-delete(href="#", title='re-add this source') undo
                       - for q in ds.utterances():
                         %tr.quotation(dataOffsets=('%d:%d' % (q.offset, q.length) if q.offset else ''))
                           %td(colspan="5")&= q.quote
 
-              #mentions-tab.tab-pane
-                %h3 People
-                %table.table.table-striped.table-condensed.entities
-                  %thead
-                    %th Name
-                    %th.text-center Race
-                    %th.text-center Gender
-                    %th Relevance
-                  - for dp in document.people():
-                    - person = dp.entity.person
 
-                    %tr(dataOffsets=dp.offset_list)
-                      %td
-                        %a(href= url_for('show_entity', group=dp.entity.group, name=dp.entity.name))&=dp.entity.name
-                      %td.text-center
-                        - if person:
-                          - if person.race:
-                            %span.text-muted(title=person.race.name)
-                              %strong&= person.race.abbr()
-                      %td.text-center
-                        - if person:
-                          - if person.gender:
-                            %span.text-muted(title=person.gender.name)
-                              %strong&= person.gender.abbr()
-                      %td&= dp.relevance
+              %%include(file='analysis_tab_mentions.haml')
+              %%include(file='analysis_tab_places.haml')
+              %%include(file='analysis_tab_keywords.haml')
 
-                %h3 Organisations
-                %table.table.table-striped.table-condensed.entities
-                  - for org in document.organisations():
-                    %tr(dataOffsets=org.offset_list)
-                      %td&= org.entity.name
-                      %td&= org.relevance
-
-              #places-tab.tab-pane
-                %h3 Places
-                %table.table.table-striped.table-condensed.entities
-                  - for p in document.places():
-                    %tr(dataOffsets=p.offset_list)
-                      %td&= p.entity.name
-                      %td&= p.entity.group
-                      %td&= p.relevance
-
-              #keywords-tab.tab-pane
-                %h3 Keywords
-                %table.table.table-striped.table-condensed.entities
-                  - for kw in document.keywords:
-                    %tr(dataOffsets=kw.offset_list)
-                      %td&= kw.keyword
-                      %td&= kw.relevance
+        .panel-footer
+          .text-right
+            %a.btn.btn-default(href=url_for('show_article', id=document.id)) Close
+            %input.btn.btn-success(type='submit', value='Save changes')

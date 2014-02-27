@@ -1,0 +1,32 @@
+#mentions-tab.tab-pane
+  %h3 People
+  %table.table.table-striped.table-condensed.offsets.entities
+    %thead
+      %th Name
+      %th.text-center Race
+      %th.text-center Gender
+      %th Relevance
+    - for dp in document.people():
+      - person = dp.entity.person
+
+      %tr(dataOffsets=dp.offset_list)
+        %td
+          %a(href= url_for('show_entity', group=dp.entity.group, name=dp.entity.name))&=dp.entity.name
+        %td.text-center
+          - if person:
+            - if person.race:
+              %span.text-muted(title=person.race.name)
+                %strong&= person.race.abbr()
+        %td.text-center
+          - if person:
+            - if person.gender:
+              %span.text-muted(title=person.gender.name)
+                %strong&= person.gender.abbr()
+        %td&= dp.relevance
+
+  %h3 Organisations
+  %table.table.table-striped.table-condensed.offsets.entities
+    - for org in document.organisations():
+      %tr(dataOffsets=org.offset_list)
+        %td&= org.entity.name
+        %td&= org.relevance

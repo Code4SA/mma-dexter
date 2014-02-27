@@ -2,6 +2,7 @@
   if (typeof exports.Dexter == 'undefined') exports.Dexter = {};
   var Dexter = exports.Dexter;
 
+  // view when editing document details (NOT the analysis)
   Dexter.EditDocumentView = function() {
     var self = this;
 
@@ -78,9 +79,98 @@
       $('.new-author-details', self.$authorWidget).removeClass('hidden');
     };
   };
+
+  // view when editing the document analysis
+  Dexter.EditDocumentAnalysisView = function() {
+    var self = this;
+
+    self.init = function() {
+      self.$form = $('form.edit-analysis');
+      if (self.$form.length === 0) {
+        return;
+      }
+
+      // source person name autocomplete
+      self.personHound = new Bloodhound({
+        name: 'people',
+        prefetch: {
+          url: '/api/people',
+          ttl: 60,
+          filter: function(resp) { return resp.people; },
+        },
+        datumTokenizer: function(d) { return Bloodhound.tokenizers.whitespace(d.name); },
+        queryTokenizer: Bloodhound.tokenizers.whitespace
+      });
+      self.personHound.initialize();
+
+      self.newSourceCount = $('tr.new', self.$form).length;
+
+      $('table.sources', self.$form).
+        on('keyup', '.template input[type="text"]', self.newSourceKeyUp).
+        on('blur', '.new input[type="text"]', function(e) {
+          if ($(this).val() === '') {
+            $(this).closest('tr').remove();
+          }
+        }).
+        on('click', '.btn.delete', self.deleteSource).
+        on('click', '.btn.undo-delete', self.undoDeleteSource);
+    };
+      
+    // when the user starts adding a new source, duplicate the row to keep a fresh
+    // 'new entry' row, and then rename the elements on this one
+    self.newSourceKeyUp = function(e) {
+      if ($(this).val() === '') return;
+
+      var $row = $(this).closest('tr');
+      var $template = $row.clone().insertAfter($row);
+      $('input[type="text"]', $template).val('');
+
+      // this row is no longer a template
+      $row.removeClass('template').addClass('new');
+
+      self.newSourceCount++;
+
+      // change form field name prefixes to be new[ix]
+      $('input, select, textarea', $row).each(function() {
+        $(this).attr('name', $(this).attr('name').replace('new-', 'new[' + self.newSourceCount + ']-'));
+      });
+
+      $('input[type="text"]', $row).typeahead({
+        highlight: true,
+        autoselect: true,
+      }, {
+        source: self.personHound.ttAdapter(),
+        displayKey: 'name',
+      }).focus();
+    };
+
+    // delete button was clicked
+    self.deleteSource = function(e) {
+      e.preventDefault();
+
+      $row = $(this).closest('tr');
+      if ($row.hasClass('new')) {
+        // it's new
+        $row.remove();
+      } else {
+        // it's not new
+        $row.addClass('deleted');
+        self.$form.append('<input type="hidden" name="source-del[' + $row.data('source-id') + ']" value="Y">');
+      }
+    };
+
+    // undo a source delete
+    self.undoDeleteSource = function(e) {
+      e.preventDefault();
+
+      $row = $(this).closest('tr');
+      $row.removeClass('deleted');
+      $('input[name="source-del[' + $row.data('source-id') + ']"]', self.$form).remove();
+    };
+  };
 })(jQuery, window);
 
 $(function() {
-  var documentView = new Dexter.EditDocumentView();
-  documentView.init();
+  new Dexter.EditDocumentView().init();
+  new Dexter.EditDocumentAnalysisView().init();
 });
