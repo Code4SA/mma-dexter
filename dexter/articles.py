@@ -169,6 +169,14 @@ def edit_article_analysis(id):
                 if any(src.entity == u.entity for u in document.utterances):
                     src.quoted = True
 
+            # get around wtf not supporting None
+            for source in document.sources:
+                if source.fairness_id == '':
+                    source.fairness_id = None
+                if source.bias_oppose_individual_id == '':
+                    source.bias_oppose_individual_id = None
+                if source.bias_favour_individual_id == '':
+                    source.bias_favour_individual_id = None
 
             db.session.commit()
             flash('Analysis updated.')

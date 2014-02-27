@@ -9,3 +9,4 @@ from .person import Person, Gender, Race
 from .author import Author, AuthorType
 from .location import Location
 from .issue import Issue
+from .fairness import Fairness, Individual

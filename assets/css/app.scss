@@ -56,7 +56,7 @@ form#edit-person {
 
 table.sources {
   tr.quotation {
-    td { padding-left: 20px; }
+    td { padding-left: 25px; }
   }
 
   .btn.delete, .btn.undo-delete {
@@ -72,6 +72,14 @@ table.sources {
     display: none;
   }
 
+  .source-details {
+    margin-left: 20px;
+  }
+
+  .quoted {
+    margin-top: 30px;
+  }
+
   tr.deleted {
     td {
       background-color: #f2dede;
@@ -85,6 +93,10 @@ table.sources {
     td {
       background-color: #faebcc;
     }
+  }
+
+  tr.template {
+    .source-details { display: none }
   }
 }
 
