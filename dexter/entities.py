@@ -9,7 +9,7 @@ from .models import db, Document, Entity, Utterance, DocumentEntity, Person
 import urllib
 
 
-@app.route('/<string:group>/<string:name>/')
+@app.route('/entities/<string:group>/<string:name>/')
 def show_entity(group, name):
 
     entity = Entity.query.filter(Entity.group==group, Entity.name==name).first()
