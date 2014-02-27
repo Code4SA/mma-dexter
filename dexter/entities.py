@@ -3,6 +3,7 @@ log = logging.getLogger(__name__)
 
 from flask import request, url_for, flash, redirect, make_response
 from flask.ext.mako import render_template
+from sqlalchemy.orm import subqueryload
 
 from .app import app
 from .models import db, Document, Entity, Utterance, DocumentEntity, Person
@@ -46,7 +47,6 @@ def show_person(id):
             if person.race_id == '':
                 person.race_id = None
 
-
             flash('Saved.')
             db.session.commit()
             return redirect(url_for('show_person', id=id))
@@ -57,7 +57,9 @@ def show_person(id):
     for entity in entities:
         tmp_ids.append(entity.id)
 
-    documents = Document.query.join(DocumentEntity)\
+    documents = Document.query\
+        .join(DocumentEntity)\
+        .options(subqueryload(Document.utterances))\
         .filter(DocumentEntity.entity_id.in_(tmp_ids))\
         .order_by(Document.published_at.desc()).all()
 
