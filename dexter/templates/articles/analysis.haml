@@ -88,3 +88,9 @@
         %%include(file='analysis_tab_mentions.haml')
         %%include(file='analysis_tab_places.haml')
         %%include(file='analysis_tab_keywords.haml')
+
+  .panel-footer
+    .text-right
+      %a.btn.btn-default(href=url_for('edit_article_analysis', id=document.id))
+        %i.fa.fa-pencil
+        Edit analysis
