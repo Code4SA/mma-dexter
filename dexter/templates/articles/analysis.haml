@@ -56,8 +56,9 @@
                 %th Name
                 %th Function
                 %th Quoted?
+                %th
             %tbody
-              - sources = sorted(document.sources, key=lambda s: s.entity.name)
+              - sources = sorted(document.sources, key=lambda s: [not s.manual, s.entity.name])
               - for ds in sources:
                 %tr(dataOffsets=ds.offset_list)
                   %td
@@ -77,9 +78,12 @@
                     &= 'yes' if ds.quoted else 'no'
                     - if len(ds.utterances()) > 0:
                       %span.badge&= len(ds.utterances())
+                  %td
+                    - if ds.manual:
+                      %i.fa.fa-check-circle(title='Added manually by a monitor')
                 - for q in ds.utterances():
                   %tr.quotation(dataOffsets=('%d:%d' % (q.offset, q.length) if q.offset else ''))
-                    %td(colspan="5")&= q.quote
+                    %td(colspan="4")&= q.quote
 
         %%include(file='analysis_tab_mentions.haml')
         %%include(file='analysis_tab_places.haml')

@@ -116,7 +116,7 @@ def edit_article_analysis(id):
         f = DocumentSourceForm(prefix='source[%d]' % source.id, obj=source)
         f.source = source
         source_forms.append(f)
-    source_forms.sort(key=lambda f: f.source.entity.name)
+    source_forms.sort(key=lambda f: [not f.source.manual, f.source.entity.name])
 
     # in the page, the fields for all new sources will be transformed into
     # 'source-new[0]-name'. This form is used as a template for these
@@ -161,6 +161,7 @@ def edit_article_analysis(id):
                 src = DocumentSource()
                 src.document = document
                 src.entity = f.get_or_create_entity()
+                src.manual = True
                 f.populate_obj(src)
 
             db.session.commit()

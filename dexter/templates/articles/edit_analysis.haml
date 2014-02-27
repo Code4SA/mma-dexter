@@ -87,7 +87,10 @@
                     %tr.template
                       %td&= field_input(new_source_form.person_name)
                       %td&= field_input(new_source_form.source_function_id)
-                      %td&= field_input(new_source_form.quoted)
+                      %td
+                        %label
+                          &= field_input(new_source_form.quoted)
+                          quoted
                       %td.text-right
                         %a.btn.btn-link.delete(href="#", title='delete this source')
                           %i.fa.fa-times-circle
@@ -98,6 +101,7 @@
                       %th Name
                       %th Function
                       %th Quoted?
+                      %th
                       %th
                   %tbody
                     - for source_form in source_forms:
@@ -120,13 +124,16 @@
                           &= 'yes' if ds.quoted else 'no'
                           - if len(ds.utterances()) > 0:
                             %span.badge&= len(ds.utterances())
+                        %td
+                          - if ds.manual:
+                            %i.fa.fa-check-circle(title='Added manually by a monitor')
                         %td.text-right
                           %a.btn.btn-link.delete(href="#", title='delete this source')
                             %i.fa.fa-times-circle
                           %a.btn.btn-link.undo-delete(href="#", title='re-add this source') undo
                       - for q in ds.utterances():
                         %tr.quotation(dataOffsets=('%d:%d' % (q.offset, q.length) if q.offset else ''))
-                          %td(colspan="4")&= q.quote
+                          %td(colspan="5")&= q.quote
 
 
               %%include(file='analysis_tab_mentions.haml')

@@ -31,6 +31,9 @@ class DocumentSource(db.Model, WithOffsets):
     quoted       = Column(Boolean)
     named        = Column(Boolean)
 
+    # was this source added manually or was it inferred by machine learning?
+    manual       = Column(Boolean, default=False, nullable=False)
+
     # TODO: add role and method of access
 
     created_at   = Column(DateTime(timezone=True), index=True, unique=False, nullable=False, server_default=func.now())
