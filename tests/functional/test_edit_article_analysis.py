@@ -45,8 +45,7 @@ class TestEditArticleAnalysis(TestCase):
         f.fields['issues'] = ['2', ]
 
         res = f.submit(self.client)
-        print res.data
-        self.assertRedirects(res, '/articles/%s' % self.fx.DocumentData.simple.id)
+        self.assertRedirects(res, '/articles/%s/analysis' % self.fx.DocumentData.simple.id)
 
         # check that an issue has been selected
         doc = Document.query.get(self.fx.DocumentData.simple.id)

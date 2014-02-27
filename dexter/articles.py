@@ -165,7 +165,7 @@ def edit_article_analysis(id):
 
             db.session.commit()
             flash('Analysis updated.')
-            return redirect(url_for('show_article', id=id))
+            return redirect(url_for('edit_article_analysis', id=id))
         else:
             flash('Please correct the problems below and try again.')
     else:
