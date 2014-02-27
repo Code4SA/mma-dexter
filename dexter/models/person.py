@@ -11,8 +11,10 @@ from sqlalchemy import (
     func,
     )
 from sqlalchemy.orm import relationship
+from wtforms import StringField, validators, SelectField, HiddenField
 
 from .support import db
+from ..forms import Form
 
 class Person(db.Model):
     """
@@ -77,6 +79,18 @@ class Person(db.Model):
             # find this entity
             db.session.flush()
         return p
+
+
+class PersonForm(Form):
+    gender_id  = SelectField('Gender', default='')
+    race_id    = SelectField('Race', default='')
+
+    def __init__(self, *args, **kwargs):
+        super(PersonForm, self).__init__(*args, **kwargs)
+
+        self.gender_id.choices = [['', '(unknown gender)']] + [[str(g.id), g.name] for g in Gender.query.order_by(Gender.name).all()]
+        self.race_id.choices = [['', '(unknown race)']] + [[str(r.id), r.name] for r in Race.query.order_by(Race.name).all()]
+
 
 
 class Gender(db.Model):

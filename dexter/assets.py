@@ -38,6 +38,7 @@ assets.register('js',
       'js/chosen.jquery.min.js',
       'js/app.js',
       'js/document.js',
+      'js/person.js',
       'js/moment.min.js',
       'js/bootstrap-datetimepicker.min.js',
       output='js/app.%(version)s.js'))

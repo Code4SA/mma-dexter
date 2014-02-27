@@ -1,0 +1,68 @@
+%%inherit(file="../layout.haml")
+%%namespace(file="../bootstrap_wtf.haml", **{'import': '*'})
+
+%%block(name="title")
+  - if person:
+    &= person.name
+  - else:
+    &= entities[0].name + " (" + entities[0].group + ")"
+
+#show-person
+  %article
+    %section.heading
+      %h2
+        &= person.name
+
+    %section
+      %form#edit-person(action=url_for('show_person', id=person.id), method='POST')
+        = form.csrf_token
+
+        .row
+          .col-sm-3
+            = vertical_field(form.gender_id)
+          .col-sm-3
+            = vertical_field(form.race_id)
+          .col-sm-3.buttons
+            %input.btn.btn-default(type="submit", value="Save")
+            or
+            %a.cancel(href="#") cancel
+
+      .gender-race
+        %strong.text-muted
+          - if person.gender:
+            &= person.gender.name + ", "
+          -else:
+            &= "Unknown gender, "
+
+          - if person.race:
+            &= person.race.name
+          - else:
+            &= "unknown race"
+        %span.edit-link
+          \—
+          %a.edit(href="#") Edit
+
+      - if len(entities) > 1:
+        %p Aliases:
+          %em
+          - tmp = ""
+          - for entity in entities:
+            - tmp += entity.name + ", "
+          &=tmp[0:-2]
+
+    %section.tabs
+      .row
+        %ul.list-unstyled
+          - for doc in documents:
+            %li.list-item-document
+              %i.fa.fa-chevron-right
+              &=doc.published_at.strftime('%e %B %Y') + ' - '
+              %a(href= url_for('show_article', id=doc.id))
+                %strong&= doc.title
+              %span.pull-right
+                %span.label.label-primary.pull-right&=doc.medium.name
+              - for utterance in doc.utterances:
+                - if utterance.entity in entities:
+                  %li.list-item-utterance
+                    %blockquote
+                      %em&=utterance.quote
