@@ -89,7 +89,7 @@
                       %td&= field_input(new_source_form.source_function_id)
                       %td&= field_input(new_source_form.quoted)
                       %td.text-right
-                        %a.btn.delete(href="#", title='delete this source')
+                        %a.btn.btn-link.delete(href="#", title='delete this source')
                           %i.fa.fa-times-circle
 
                 %table.table.table-striped.table-condensed.offsets.sources
@@ -121,8 +121,9 @@
                           - if len(ds.utterances()) > 0:
                             %span.badge&= len(ds.utterances())
                         %td.text-right
-                          %a.btn.delete(href="#", title='delete this source')
+                          %a.btn.btn-link.delete(href="#", title='delete this source')
                             %i.fa.fa-times-circle
+                          %a.btn.btn-link.undo-delete(href="#", title='re-add this source') undo
                       - for q in ds.utterances():
                         %tr.quotation(dataOffsets=('%d:%d' % (q.offset, q.length) if q.offset else ''))
                           %td(colspan="4")&= q.quote

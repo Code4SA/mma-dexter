@@ -112,7 +112,8 @@
             $(this).closest('tr').remove();
           }
         }).
-        on('click', '.btn.delete', self.deleteSource);
+        on('click', '.btn.delete', self.deleteSource).
+        on('click', '.btn.undo-delete', self.undoDeleteSource);
     };
       
     // when the user starts adding a new source, duplicate the row to keep a fresh
@@ -148,16 +149,23 @@
       e.preventDefault();
 
       $row = $(this).closest('tr');
-      if (confirm('Go ahead and delete this source?')) {
-        if ($row.hasClass('new')) {
-          // it's new
-          $row.remove();
-        } else {
-          // it's not new
-          $row.addClass('deleted');
-          self.$form.append('<input type="hidden" name="source-del[' + $row.data('source-id') + ']" value="Y">');
-        }
+      if ($row.hasClass('new')) {
+        // it's new
+        $row.remove();
+      } else {
+        // it's not new
+        $row.addClass('deleted');
+        self.$form.append('<input type="hidden" name="source-del[' + $row.data('source-id') + ']" value="Y">');
       }
+    };
+
+    // undo a source delete
+    self.undoDeleteSource = function(e) {
+      e.preventDefault();
+
+      $row = $(this).closest('tr');
+      $row.removeClass('deleted');
+      $('input[name="source-del[' + $row.data('source-id') + ']"]', self.$form).remove();
     };
   };
 })(jQuery, window);
