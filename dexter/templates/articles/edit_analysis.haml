@@ -18,8 +18,7 @@
             .col-sm-8
               %h3.panel-title Analysis
             .col-sm-4.text-right
-              %a.btn.btn-default(href=url_for('show_article', id=document.id))
-                Close
+              %a.btn.btn-default(href=url_for('show_article', id=document.id)) Close
               %input.btn.btn-success(type='submit', value='Save changes')
 
         .panel-body
@@ -128,58 +127,12 @@
                         %tr.quotation(dataOffsets=('%d:%d' % (q.offset, q.length) if q.offset else ''))
                           %td(colspan="4")&= q.quote
 
-              #mentions-tab.tab-pane
-                %h3 People
-                %table.table.table-striped.table-condensed.offsets.entities
-                  %thead
-                    %th Name
-                    %th.text-center Race
-                    %th.text-center Gender
-                    %th Relevance
-                  - for dp in document.people():
-                    - person = dp.entity.person
 
-                    %tr(dataOffsets=dp.offset_list)
-                      %td
-                        %a(href= url_for('show_entity', group=dp.entity.group, name=dp.entity.name))&=dp.entity.name
-                      %td.text-center
-                        - if person:
-                          - if person.race:
-                            %span.text-muted(title=person.race.name)
-                              %strong&= person.race.abbr()
-                      %td.text-center
-                        - if person:
-                          - if person.gender:
-                            %span.text-muted(title=person.gender.name)
-                              %strong&= person.gender.abbr()
-                      %td&= dp.relevance
-
-                %h3 Organisations
-                %table.table.table-striped.table-condensed.offsets.entities
-                  - for org in document.organisations():
-                    %tr(dataOffsets=org.offset_list)
-                      %td&= org.entity.name
-                      %td&= org.relevance
-
-              #places-tab.tab-pane
-                %h3 Places
-                %table.table.table-striped.table-condensed.offsets.entities
-                  - for p in document.places():
-                    %tr(dataOffsets=p.offset_list)
-                      %td&= p.entity.name
-                      %td&= p.entity.group
-                      %td&= p.relevance
-
-              #keywords-tab.tab-pane
-                %h3 Keywords
-                %table.table.table-striped.table-condensed.offsets.entities
-                  - for kw in document.keywords:
-                    %tr(dataOffsets=kw.offset_list)
-                      %td&= kw.keyword
-                      %td&= kw.relevance
+              %%include(file='analysis_tab_mentions.haml')
+              %%include(file='analysis_tab_places.haml')
+              %%include(file='analysis_tab_keywords.haml')
 
         .panel-footer
           .text-right
-            %a.btn.btn-default(href=url_for('show_article', id=document.id))
-              Close
+            %a.btn.btn-default(href=url_for('show_article', id=document.id)) Close
             %input.btn.btn-success(type='submit', value='Save changes')
