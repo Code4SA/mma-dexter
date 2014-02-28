@@ -2,10 +2,7 @@
 %%namespace(file="../bootstrap_wtf.haml", **{'import': '*'})
 
 %%block(name="title")
-  - if person:
-    &= person.name
-  - else:
-    &= entities[0].name + " (" + entities[0].group + ")"
+  &= person.name
 
 #show-person
   %article
@@ -16,53 +13,79 @@
     %section
       %form#edit-person(action=url_for('show_person', id=person.id), method='POST')
         = form.csrf_token
-
         .row
-          .col-sm-3
-            = vertical_field(form.gender_id)
-          .col-sm-3
-            = vertical_field(form.race_id)
-          .col-sm-3.buttons
-            %input.btn.btn-default(type="submit", value="Save")
-            or
-            %a.cancel(href="#") cancel
+          .col-sm-6
+            .gender-race-controls
+              .row
+                .col-sm-4
+                  = vertical_field(form.gender_id)
+                .col-sm-4
+                  = vertical_field(form.race_id)
+                .col-sm-4.buttons
+                  %input.btn.btn-default(type="submit", value="Save")
+                  or
+                  %a.cancel(href="#") cancel
 
-      .gender-race
-        %strong.text-muted
-          - if person.gender:
-            &= person.gender.name + ", "
-          -else:
-            &= "Unknown gender, "
+            .gender-race
+              %strong.text-muted
+                - if person.gender:
+                  &= person.gender.name + ", "
+                -else:
+                  &= "Unknown gender, "
 
-          - if person.race:
-            &= person.race.name
-          - else:
-            &= "unknown race"
-        %span.edit-link
-          \—
-          %a.edit(href="#") Edit
+                - if person.race:
+                  &= person.race.name
+                - else:
+                  &= "unknown race"
+              %span.edit-link
+                \—
+                %a.edit(href="#") Edit
 
-      - if len(entities) > 1:
-        %p Aliases:
-          %em
-          - tmp = ""
-          - for entity in entities:
-            - tmp += entity.name + ", "
-          &=tmp[0:-2]
+          .col-sm-6
+            .aliases-controls
+              %strong Aliases
+              %section
+                - if form.alias_entity_ids.errors:
+                  %ul.list-unstyled
+                    - for error in form.alias_entity_ids.errors:
+                      %li.text-warning.text-center Error:
+                        &=error
+                %ul.list-unstyled.alias-list
+                  - for subfield in form.alias_entity_ids:
+                    %li
+                      = subfield()
+                      = subfield.label()
 
-    %section.tabs
-      .row
-        %ul.list-unstyled
-          - for doc in documents:
-            %li.list-item-document
-              %i.fa.fa-chevron-right
-              &=doc.published_at.strftime('%e %B %Y') + ' - '
-              %a(href= url_for('show_article', id=doc.id))
-                %strong&= doc.title
-              %span.pull-right
-                %span.label.label-primary.pull-right&=doc.medium.name
-              - for utterance in doc.utterances:
-                - if utterance.entity in entities:
-                  %li.list-item-utterance
-                    %blockquote
-                      %em&=utterance.quote
+                .row
+                  .col-sm-6
+                    %input.form-control.new-alias-name(type='text', name='new-alias')
+
+              .buttons
+                %input.btn.btn-default(type="submit", value="Save")
+                or
+                %a.cancel(href="#") cancel
+
+            .aliases
+              %strong Aliases
+              %span.edit-link
+                \—
+                %a.edit(href="#") Edit
+              %ul.list-inline
+                - for entity in person.entities:
+                  %li&= entity.name
+
+    %section
+      %ul.list-unstyled
+        - for doc in documents:
+          %li.list-item-document
+            %i.fa.fa-chevron-right
+            &=doc.published_at.strftime('%e %B %Y') + ' - '
+            %a(href= url_for('show_article', id=doc.id))
+              %strong&= doc.title
+            %span.pull-right
+              %span.label.label-primary.pull-right&=doc.medium.name
+            - for utterance in doc.utterances:
+              - if utterance.entity in person.entities:
+                %li.list-item-utterance
+                  %blockquote
+                    %em&=utterance.quote

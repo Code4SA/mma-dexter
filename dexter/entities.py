@@ -23,20 +23,23 @@ def show_entity(group, name):
     if entity.person:
         return redirect(url_for('show_person', id=entity.person.id))
 
-    documents = Document.query.join(DocumentEntity)\
+    documents = Document.query\
+        .join(DocumentEntity)\
+        .options(subqueryload(Document.utterances))\
         .filter(DocumentEntity.entity_id==entity.id)\
         .order_by(Document.published_at.desc()).all()
 
     return render_template('entities/show.haml', person=None, entities=[entity, ], documents=documents)
 
 
-@app.route('/person/<int:id>/', methods=['GET', 'POST'])
+@app.route('/people/<int:id>/', methods=['GET', 'POST'])
 def show_person(id):
     person = Person.query.get(id)
     if not person:
         return make_response("The specified entity could not be found.", 404)
 
     form = PersonForm(obj=person)
+    form.alias_entity_ids.choices = [[str(e.id), '%s (%d)' % (e.name, e.id)] for e in person.entities]
 
     if request.method == 'POST':
         if form.validate():
@@ -52,19 +55,13 @@ def show_person(id):
             return redirect(url_for('show_person', id=id))
 
 
-    entities = Entity.query.filter(Entity.person==person).all()
-    tmp_ids = []
-    for entity in entities:
-        tmp_ids.append(entity.id)
-
     documents = Document.query\
         .join(DocumentEntity)\
         .options(subqueryload(Document.utterances))\
-        .filter(DocumentEntity.entity_id.in_(tmp_ids))\
+        .filter(DocumentEntity.entity_id.in_(person.alias_entity_ids))\
         .order_by(Document.published_at.desc()).all()
 
     return render_template('person/show.haml',
         person=person,
         form=form,
-        entities=entities,
         documents=documents)

@@ -13,34 +13,76 @@
 
       $('.gender-race a.edit').on('click', function(e) {
         e.preventDefault();
-
         $('.gender-race').hide();
-        $('form#edit-person').show();
+        $('.gender-race-controls').show();
       });
 
-      $('form#edit-person a.cancel').on('click', function(e) {
+      $('.gender-race-controls a.cancel').on('click', function(e) {
+        e.preventDefault();
+        $(this).closest('form')[0].reset();
+
         $('.gender-race').show();
-        $('form#edit-person').hide();
+        $('.gender-race-controls').hide();
       });
 
+      $('.aliases a.edit').on('click', function(e) {
+        e.preventDefault();
+        $('.aliases').hide();
+        $('.aliases-controls').show();
+      });
+
+      $('.aliases-controls a.cancel').on('click', function(e) {
+        e.preventDefault();
+        $(this).closest('form')[0].reset();
+
+        $('.alias-list .new').remove();
+        $('.aliases').show();
+        $('.aliases-controls').hide();
+      });
+
+      // person entity name autocomplete
+      self.personHound = new Bloodhound({
+        name: 'people',
+        prefetch: {
+          url: '/api/entities/person',
+          ttl: 3600*1000,
+          filter: function(resp) { return resp.entities; },
+        },
+        remote: {
+          url: '/api/entities/person?q=%QUERY',
+          filter: function(resp) { return resp.entities; },
+        },
+        datumTokenizer: function(d) { return Bloodhound.tokenizers.whitespace(d.name); },
+        queryTokenizer: Bloodhound.tokenizers.whitespace
+      });
+      self.personHound.initialize();
+
+      $('.new-alias-name').typeahead({
+        highlight: true,
+        autoselect: true,
+      }, {
+        source: self.personHound.ttAdapter(),
+        displayKey: 'name',
+      }).on('typeahead:selected', function(e, entity, dataset) {
+        self.newAlias(entity);
+        $('.new-alias-name').typeahead('val', '');
+      });
     };
 
-    self.setAuthor = function(author) {
-      var info = [author.author_type];
-      
-      if (author.gender) info.push(author.gender);
-      if (author.race) info.push(author.race);
+    self.newAlias = function(entity) {
+      var $new = $('ul.alias-list li:eq(0)').clone().addClass('new');
 
-      $('.author-details', self.$authorWidget).removeClass('hidden').text(info.join(', '));
-      $('.new-author-details', self.$authorWidget).addClass('hidden');
+      $('input', $new).
+        attr('id', 'alias_entity_ids-' + entity.id).
+        attr('value', entity.id);
+
+      $('label', $new).
+        attr('for', 'alias_entity_ids-' + entity.id).
+        text(entity.name + ' (' + entity.id + ')');
+
+      $('.alias-list').append($new);
     };
 
-    self.setNewAuthor = function() {
-      // TODO: show the new author form widgets,
-      // include type of author, race, gender
-      $('.author-details', self.$authorWidget).addClass('hidden');
-      $('.new-author-details', self.$authorWidget).removeClass('hidden');
-    };
   };
 })(jQuery, window);
 

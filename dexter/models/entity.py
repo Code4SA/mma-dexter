@@ -34,7 +34,13 @@ class Entity(db.Model):
     updated_at   = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.current_timestamp())
 
     # Associations
-    person      = relationship('Person', foreign_keys=[person_id], lazy=False)
+    person      = relationship('Person', backref='entities', foreign_keys=[person_id], lazy=False)
+
+    def json(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+        }
 
     def __eq__(self, other):
         return isinstance(other, Entity) and self.group.lower() == other.group.lower() \

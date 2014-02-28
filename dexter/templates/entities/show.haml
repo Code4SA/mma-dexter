@@ -35,19 +35,18 @@
             - tmp += entity.name + ", "
           &=tmp[0:-2]
 
-    %section.tabs
-      .row
-        %ul.list-unstyled
-          - for doc in documents:
-            %li.list-item-document
-              %i.fa.fa-chevron-right
-              &=doc.published_at.strftime('%e %B %Y') + ' - '
-              %a(href= url_for('show_article', id=doc.id))
-                %strong&= doc.title
-              %span.pull-right
-                %span.label.label-primary.pull-right&=doc.medium.name
-              - for utterance in doc.utterances:
-                - if utterance.entity in entities:
-                  %li.list-item-utterance
-                    %blockquote
-                      %em&=utterance.quote
+    %section
+      %ul.list-unstyled
+        - for doc in documents:
+          %li.list-item-document
+            %i.fa.fa-chevron-right
+            &=doc.published_at.strftime('%e %B %Y') + ' - '
+            %a(href= url_for('show_article', id=doc.id))
+              %strong&= doc.title
+            %span.pull-right
+              %span.label.label-primary.pull-right&=doc.medium.name
+            - for utterance in doc.utterances:
+              - if utterance.entity in entities:
+                %li.list-item-utterance
+                  %blockquote
+                    %em&=utterance.quote

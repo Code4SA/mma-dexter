@@ -9,10 +9,24 @@
 }
 
 form#edit-person {
-  display: none;
+  .gender-race-controls {
+    display: none;
 
-  .buttons {
-    margin-top: 23px;
+    .buttons {
+      margin-top: 23px;
+    }
+  }
+
+  .aliases-controls {
+    display: none;
+
+    ul label {
+      font-weight: normal;
+    }
+
+    .buttons {
+      margin-top: 23px;
+    }
   }
 }
 

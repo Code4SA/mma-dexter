@@ -14,7 +14,7 @@ from sqlalchemy.orm import relationship
 from wtforms import StringField, validators, SelectField, HiddenField
 
 from .support import db
-from ..forms import Form
+from ..forms import Form, MultiCheckboxField
 
 class Person(db.Model):
     """
@@ -44,13 +44,30 @@ class Person(db.Model):
 
         # get all the entities and try to find the one that has an exact
         # name match
-        for e in Entity.query.filter(Entity.person == self).all():
+        for e in self.entities:
             last = e
             if e.name == self.name:
                 return e
 
         # no exact match, just return the last one
         return last
+
+    def get_alias_entity_ids(self):
+        """
+        Return a list of entity ids that are aliases for this person.
+        """
+        return [e.id for e in self.entities]
+
+    def set_alias_entity_ids(self, ids):
+        """
+        Updated entities linked to this person by setting a list of
+        entity ids.
+        """
+        from . import Entity
+        self.entities = Entity.query.filter(Entity.id.in_(ids)).all()
+
+    alias_entity_ids = property(get_alias_entity_ids, set_alias_entity_ids)
+
 
     def json(self):
         return {
@@ -84,13 +101,18 @@ class Person(db.Model):
 class PersonForm(Form):
     gender_id  = SelectField('Gender', default='')
     race_id    = SelectField('Race', default='')
+    alias_entity_ids = MultiCheckboxField('Aliases')
 
     def __init__(self, *args, **kwargs):
         super(PersonForm, self).__init__(*args, **kwargs)
 
+        from . import Entity
+
         self.gender_id.choices = [['', '(unknown gender)']] + [[str(g.id), g.name] for g in Gender.query.order_by(Gender.name).all()]
         self.race_id.choices = [['', '(unknown race)']] + [[str(r.id), r.name] for r in Race.query.order_by(Race.name).all()]
 
+        # we don't care if the entities are in the valid list or not
+        self.alias_entity_ids.pre_validate = lambda form: True
 
 
 class Gender(db.Model):
