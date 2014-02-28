@@ -1,39 +1,33 @@
 %%inherit(file="../layout.haml")
 %%block(name="title")
-  - if person:
-    &= person.name
-  - else:
-    &= entities[0].name + " (" + entities[0].group + ")"
+  &= entity.name + " (" + entity.group + ")"
 
 #show-document
   %article
     %section.heading
-      %h2
-        - if person:
-          &= person.name
-        - else:
-          &= entities[0].name
-      .byline
-        - if person:
-          %strong.text-muted
-            - if person.gender:
-              &= person.gender.name + ", "
-            -else:
-              &= "Unknown gender, "
-            - if person.race:
-              &= person.race.name + "."
-            - else:
-              &= "unknown race."
-        - else:
-          - if entities[0].updated_at:
-            %span.timestamp&= "Last updated: " + entities[0].updated_at.strftime('%Y-%m-%d')
-      - if person and len(entities) > 1:
-        %p Aliases:
-          %em
-          - tmp = ""
-          - for entity in entities:
-            - tmp += entity.name + ", "
-          &=tmp[0:-2]
+      .row
+        .col-sm-7
+          %h2&= entity.name
+          .byline
+            - if entity.updated_at:
+              %span.timestamp&= "Last updated: " + entity.updated_at.strftime('%Y-%m-%d')
+        .col-sm-5
+          - if entity.group == 'person':
+            %form(method='post', action=url_for('new_person'), dataConfirm='Are you sure?')
+              %input(type='hidden', name='csrf_token', value=csrf_token())
+              %input(type='hidden', name='name', value=entity.name)
+              %input(type='hidden', name='entity_id', value=entity.id)
+              .alert.alert-info
+                .row
+                  .col-sm-8
+                    %p
+                      We think
+                      %strong&= entity.name
+                      is a person, but we're not sure.
+                  .col-sm-4.text-right
+                      %input.btn.btn-default(type='submit', value='This is a person')
+              
+
 
     %section
       %ul.list-unstyled
@@ -46,7 +40,7 @@
             %span.pull-right
               %span.label.label-primary.pull-right&=doc.medium.name
             - for utterance in doc.utterances:
-              - if utterance.entity in entities:
+              - if utterance.entity == entity:
                 %li.list-item-utterance
                   %blockquote
                     %em&=utterance.quote

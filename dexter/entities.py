@@ -29,7 +29,7 @@ def show_entity(group, name):
         .filter(DocumentEntity.entity_id==entity.id)\
         .order_by(Document.published_at.desc()).all()
 
-    return render_template('entities/show.haml', person=None, entities=[entity, ], documents=documents)
+    return render_template('entities/show.haml', entity=entity, documents=documents)
 
 
 @app.route('/people/<int:id>/', methods=['GET', 'POST'])
@@ -65,3 +65,24 @@ def show_person(id):
         person=person,
         form=form,
         documents=documents)
+
+@app.route('/people/new', methods=['POST'])
+def new_person():
+    name = request.form.get('name', '')
+    entity_id = request.form.get('entity_id')
+
+    if name:
+        if entity_id:
+            entity = Entity.query.filter(Entity.name == name).first()
+        else:
+            entity = None
+
+        person = Person.get_or_create(name)
+        if entity:
+            person.entities.append(entity)
+
+        id = person.id
+        db.session.commit()
+        return redirect(url_for('show_person', id=id))
+
+    return redirect_to('/')
