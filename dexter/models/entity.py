@@ -15,6 +15,18 @@ from sqlalchemy.orm import relationship
 from .support import db
 from .with_offsets import WithOffsets
 
+import re
+
+punctuation_re = re.compile(r'[^0-9a-z]+$', re.IGNORECASE)
+
+def sanitise_name(name):
+    """
+    Strip weird characters from names
+    """
+    name = punctuation_re.sub('', name)
+    name = name.replace(u'\xa0', ' ')
+    return name
+
 class Entity(db.Model):
     """
     An entity (person, place etc.) mentioned or quoted in a document.
@@ -53,6 +65,8 @@ class Entity(db.Model):
     @classmethod
     def get_or_create(cls, group, name):
         """ Get the entity with this group and name or create it if it doesn't exist. """
+        name = sanitise_name(name)
+
         e = Entity.query.filter(Entity.group == group, Entity.name == name).first()
         if not e:
             e = Entity()
