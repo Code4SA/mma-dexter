@@ -20,6 +20,14 @@
           ttl: 60,
           filter: function(resp) { return resp.authors; },
         },
+        sorter: function(a, b) {
+          // compare on length, then alphabetically
+          if (a.name.length == b.name.length) {
+            return a.name.localeCompare(b.name);
+          } else {
+            return a.name.length - b.name.length;
+          }
+        },
         datumTokenizer: function(d) { return Bloodhound.tokenizers.whitespace(d.name); },
         queryTokenizer: Bloodhound.tokenizers.whitespace
       });
@@ -97,6 +105,14 @@
           url: '/api/people',
           ttl: 60,
           filter: function(resp) { return resp.people; },
+        },
+        sorter: function(a, b) {
+          // compare on length, then alphabetically
+          if (a.name.length == b.name.length) {
+            return a.name.localeCompare(b.name);
+          } else {
+            return a.name.length - b.name.length;
+          }
         },
         datumTokenizer: function(d) { return Bloodhound.tokenizers.whitespace(d.name); },
         queryTokenizer: Bloodhound.tokenizers.whitespace
