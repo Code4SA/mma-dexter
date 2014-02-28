@@ -51,8 +51,7 @@
                       %li.text-warning.text-center Error:
                         &=error
                 %ul.list-unstyled.alias-list
-                  - fields = sorted(form.alias_entity_ids, key=lambda f: f.label())
-                  - for subfield in fields:
+                  - for subfield in form.alias_entity_ids:
                     %li
                       = subfield()
                       = subfield.label()
