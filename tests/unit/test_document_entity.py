@@ -46,3 +46,4 @@ class TestEntity(unittest.TestCase):
         self.assertEqual('A.N.C', sanitise_name('A.N.C.'))
         self.assertEqual('Zuma', sanitise_name('Zuma,]'))
         self.assertEqual('Jacob Zuma', sanitise_name(u'Jacob\xa0Zuma'))
+        self.assertEqual('Zuma', sanitise_name(u'Zuma -'))
