@@ -16,8 +16,20 @@ def api_people():
     people = Person.query.order_by(Person.name).all()
     return jsonify({'people': [p.json() for p in people]})
 
+@app.route('/api/entities')
+def api_entities():
+    query = Entity.query.order_by(Entity.name)
+    q = request.args.get('q', '').strip()
+    if q:
+        q = '%' + q.replace('%', '%%').replace(' ', '%') + '%'
+        query = query.filter(Entity.name.like(q))
+
+    entities = query.all()
+
+    return jsonify({'entities': [e.json() for e in entities]})
+
 @app.route('/api/entities/<string:group>')
-def api_entities(group):
+def api_group_entities(group):
     query = Entity.query.filter(Entity.group == group).order_by(Entity.name)
     q = request.args.get('q', '').strip()
     if q:

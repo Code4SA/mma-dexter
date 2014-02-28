@@ -39,7 +39,7 @@ def show_person(id):
         return make_response("The specified entity could not be found.", 404)
 
     form = PersonForm(obj=person)
-    form.alias_entity_ids.choices = [[str(e.id), '%s (%d)' % (e.name, e.id)] for e in person.entities]
+    form.alias_entity_ids.choices = [[str(e.id), '%s (%s, %d)' % (e.name, e.group, e.id)] for e in person.entities]
 
     if request.method == 'POST':
         if form.validate():

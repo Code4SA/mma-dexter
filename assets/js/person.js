@@ -49,9 +49,18 @@
           filter: function(resp) { return resp.entities; },
         },
         remote: {
-          url: '/api/entities/person?q=%QUERY',
+          url: '/api/entities?q=%QUERY',
           filter: function(resp) { return resp.entities; },
         },
+        sorter: function(a, b) {
+          // compare on length, then alphabetically
+          if (a.name.length == b.name.length) {
+            return a.name.localeCompare(b.name);
+          } else {
+            return a.name.length - b.name.length;
+          }
+        },
+        dupDetector: function(remote, local) { return remote.id == local.id; },
         datumTokenizer: function(d) { return Bloodhound.tokenizers.whitespace(d.name); },
         queryTokenizer: Bloodhound.tokenizers.whitespace
       });
@@ -62,7 +71,7 @@
         autoselect: true,
       }, {
         source: self.personHound.ttAdapter(),
-        displayKey: 'name',
+        displayKey: self.entityName,
       }).on('typeahead:selected', function(e, entity, dataset) {
         self.newAlias(entity);
         $('.new-alias-name').typeahead('val', '');
@@ -78,9 +87,13 @@
 
       $('label', $new).
         attr('for', 'alias_entity_ids-' + entity.id).
-        text(entity.name + ' (' + entity.id + ')');
+        text(self.entityName(entity));
 
       $('.alias-list').append($new);
+    };
+
+    self.entityName = function(e) {
+      return e.name + ' (' + e.group + ', ' + e.id + ')';
     };
 
   };

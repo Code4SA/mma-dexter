@@ -40,6 +40,7 @@ class Entity(db.Model):
         return {
             'id': self.id,
             'name': self.name,
+            'group': self.group,
         }
 
     def __eq__(self, other):
