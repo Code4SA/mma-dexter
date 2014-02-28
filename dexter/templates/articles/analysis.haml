@@ -77,6 +77,9 @@
                           %span.text-muted(title=ds.person.race.name)
                             %strong&=
                               " (" + ds.person.race.abbr() + ")"
+                        - if ds.fairness and ds.fairness.name == 'Fair':
+                          %span.label.label-default Fair
+
                       .col-sm-4
                         - if ds.function:
                           %span.label.label-default&=ds.function.name
@@ -89,7 +92,7 @@
                           %i.fa.fa-check-circle(title='Added manually by a monitor')
 
                     .source-details
-                      - if ds.fairness:
+                      - if ds.fairness and ds.fairness.name != 'Fair':
                         .row
                           .col-sm-4
                             %strong Fairness
