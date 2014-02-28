@@ -135,7 +135,9 @@
         $(this).attr('name', $(this).attr('name').replace('new-', 'new[' + self.newSourceCount + ']-'));
       });
 
-      $('input[type="text"]', $row).typeahead({
+      $('.chosen-select-delayed', $row).chosen();
+
+      $('.person-name', $row).typeahead({
         highlight: true,
         autoselect: true,
       }, {

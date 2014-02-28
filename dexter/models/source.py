@@ -34,14 +34,26 @@ class DocumentSource(db.Model, WithOffsets):
     # was this source added manually or was it inferred by machine learning?
     manual       = Column(Boolean, default=False, nullable=False)
 
-    # TODO: add role and method of access
+    # Is the source biased for or against anyone? Note that, for now, a source is biased
+    # for or against a fixed list of organisations/individuals. In time, that list
+    # will have to be changed and merged into the entity table.
+    fairness_id  = Column(Integer, ForeignKey('fairness.id'), index=True, default=6)
+    # who is the source biased in favour of?
+    bias_favour_individual_id = Column(Integer, ForeignKey('individuals.id'), index=True, nullable=True)
+    # who is the source biased against?
+    bias_oppose_individual_id = Column(Integer, ForeignKey('individuals.id'), index=True, nullable=True)
+    
+    # TODO: add role source played
 
     created_at   = Column(DateTime(timezone=True), index=True, unique=False, nullable=False, server_default=func.now())
     updated_at   = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.current_timestamp())
 
     # Associations
-    entity    = relationship("Entity", lazy=False)
-    function  = relationship("SourceFunction", lazy=False)
+    entity      = relationship("Entity", lazy=False)
+    function    = relationship("SourceFunction", lazy=False)
+    fairness    = relationship("Fairness", lazy=False)
+    bias_favour = relationship("Individual", lazy=False, foreign_keys=[bias_favour_individual_id])
+    bias_oppose = relationship("Individual", lazy=False, foreign_keys=[bias_oppose_individual_id])
 
     def document_entity(self):
         """ The DocumentEntity instance that matches this source for this document. May be None. """
@@ -120,10 +132,23 @@ class DocumentSourceForm(Form):
     source_function_id = SelectField('Function', [validators.Required()], default=1)
     quoted            = BooleanField('Quoted', default=False)
 
+    fairness_id                 = SelectField('Fairness', default='')
+    bias_favour_individual_id   = SelectField('Favour', default='')
+    bias_oppose_individual_id   = SelectField('Oppose', default='')
+
+    # the associated source object, if any
+    source = None
+
     def __init__(self, *args, **kwargs):
         super(DocumentSourceForm, self).__init__(*args, **kwargs)
 
+        from . import Fairness, Individual
+
         self.source_function_id.choices = [[str(s.id), s.name] for s in SourceFunction.query.order_by(SourceFunction.name).all()]
+        self.fairness_id.choices = [['', '(none)']] + [[str(s.id), s.name] for s in Fairness.query.order_by(Fairness.name).all()]
+  
+        self.bias_favour_individual_id.choices = [['', '(none)']] + [[str(s.id), s.full_name()] for s in Individual.query.order_by(Individual.code).all()]
+        self.bias_oppose_individual_id.choices = self.bias_favour_individual_id.choices
 
 
     def get_or_create_entity(self):

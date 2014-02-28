@@ -70,70 +70,79 @@
             .tab-content
               #sources-tab.tab-pane.active
                 %h3 Sources
+
+                -# helper template to show a source form
+                %%def(name="show_source_form(f)")
+                  .pull-right
+                    - if f.source and f.source.manual:
+                      %i.fa.fa-check-circle(title='Added manually by a monitor')
+                    %a.btn.btn-link.delete(href="#", title='delete this source')
+                      %i.fa.fa-times-circle
+                    - if f.source:
+                      %a.btn.btn-link.undo-delete(href="#", title='re-add this source') undo
+
+                  - if f.source:
+                    -# source exists, it's not new
+                    %a(href= url_for('show_entity', group=f.source.entity.group, name=f.source.entity.name))&=f.source.entity.name
+                    - if f.source.person and f.source.person.gender:
+                      %span.text-muted(title=f.source.person.gender.name)
+                        %strong&=
+                          " - " + f.source.person.gender.abbr()
+                    - if f.source.person and f.source.person.race:
+                      %span.text-muted(title=f.source.person.race.name)
+                        %strong&=
+                          " (" + f.source.person.race.abbr() + ")"
+                  - else:
+                    -# it's a new source
+                    = vertical_field(f.person_name, class_='person-name')
+
+                  .source-details
+                    .row
+                      .col-xs-6
+                        = vertical_field(f.source_function_id)
+                      .col-xs-4
+                        .quoted
+                          - if f.source:
+                            %input(type='hidden', name=f.quoted.name, value=f.quoted.data)
+                            &= 'quoted' if f.source.quoted else 'not quoted'
+                            - if len(ds.utterances()) > 0:
+                              %span.badge&= len(ds.utterances())
+                          - else:
+                            %label
+                              &= field_input(f.quoted)
+                              Quoted?
+
+                    .row
+                      .col-xs-4
+                        &= vertical_field(f.fairness_id)
+                      .col-sm-4
+                        &= vertical_field(f.bias_favour_individual_id, class_='chosen-select' if f.source else 'chosen-select-delayed')
+                      .col-sm-4
+                        &= vertical_field(f.bias_oppose_individual_id, class_='chosen-select' if f.source else 'chosen-select-delayed')
+
+
                 %table.table.table-striped.table-condensed.sources
-                  %thead
-                    %tr
-                      %th Name
-                      %th Function
-                      %th Quoted?
-                      %th
                   %tbody
                     - for f in new_sources:
                       %tr.new
-                        %td&= field_input(f.person_name)
-                        %td&= field_input(f.source_function_id)
-                        %td&= field_input(f.quoted)
+                        %td
+                          - show_source_form(f)
 
                     %tr.template
-                      %td&= field_input(new_source_form.person_name)
-                      %td&= field_input(new_source_form.source_function_id)
                       %td
-                        %label
-                          &= field_input(new_source_form.quoted)
-                          quoted
-                      %td.text-right
-                        %a.btn.btn-link.delete(href="#", title='delete this source')
-                          %i.fa.fa-times-circle
+                        - show_source_form(new_source_form)
 
                 %table.table.table-striped.table-condensed.offsets.sources
-                  %thead
-                    %tr
-                      %th Name
-                      %th Function
-                      %th Quoted?
-                      %th
-                      %th
                   %tbody
                     - for source_form in source_forms:
                       - ds = source_form.source
 
                       %tr(dataOffsets=ds.offset_list, dataSourceId=ds.id)
                         %td
-                          %a(href= url_for('show_entity', group=ds.entity.group, name=ds.entity.name))&=ds.entity.name
-                          - if ds.person and ds.person.gender:
-                            %span.text-muted(title=ds.person.gender.name)
-                              %strong&=
-                                " - " + ds.person.gender.abbr()
-                          - if ds.person and ds.person.race:
-                            %span.text-muted(title=ds.person.race.name)
-                              %strong&=
-                                " (" + ds.person.race.abbr() + ")"
-                        %td= field_input(source_form.source_function_id)
-                        %td
-                          %input(type='hidden', name=source_form.quoted.name, value=source_form.quoted.data)
-                          &= 'yes' if ds.quoted else 'no'
-                          - if len(ds.utterances()) > 0:
-                            %span.badge&= len(ds.utterances())
-                        %td
-                          - if ds.manual:
-                            %i.fa.fa-check-circle(title='Added manually by a monitor')
-                        %td.text-right
-                          %a.btn.btn-link.delete(href="#", title='delete this source')
-                            %i.fa.fa-times-circle
-                          %a.btn.btn-link.undo-delete(href="#", title='re-add this source') undo
+                          - show_source_form(source_form)
                       - for q in ds.utterances():
                         %tr.quotation(dataOffsets=('%d:%d' % (q.offset, q.length) if q.offset else ''))
-                          %td(colspan="5")&= q.quote
+                          %td(colspan="3")&= q.quote
 
 
               %%include(file='analysis_tab_mentions.haml')

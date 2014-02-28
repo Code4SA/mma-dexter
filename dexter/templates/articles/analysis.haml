@@ -53,37 +53,61 @@
           %table.table.table-striped.table-condensed.offsets.sources
             %thead
               %tr
-                %th Name
-                %th Function
-                %th Quoted?
                 %th
+                  .row
+                    .col-sm-5
+                      Name
+                    .col-sm-4
+                      Function
+                    .col-sm-2
+                      Quoted?
             %tbody
               - sources = sorted(document.sources, key=lambda s: [not s.manual, s.entity.name])
               - for ds in sources:
                 %tr(dataOffsets=ds.offset_list)
                   %td
-                    %a(href= url_for('show_entity', group=ds.entity.group, name=ds.entity.name))&=ds.entity.name
-                    - if ds.person and ds.person.gender:
-                      %span.text-muted(title=ds.person.gender.name)
-                        %strong&=
-                          " - " + ds.person.gender.abbr()
-                    - if ds.person and ds.person.race:
-                      %span.text-muted(title=ds.person.race.name)
-                        %strong&=
-                          " (" + ds.person.race.abbr() + ")"
-                  %td
-                    - if ds.function:
-                      %span.label.label-default&=ds.function.name
-                  %td
-                    &= 'yes' if ds.quoted else 'no'
-                    - if len(ds.utterances()) > 0:
-                      %span.badge&= len(ds.utterances())
-                  %td
-                    - if ds.manual:
-                      %i.fa.fa-check-circle(title='Added manually by a monitor')
+                    .row
+                      .col-sm-5
+                        %a(href= url_for('show_entity', group=ds.entity.group, name=ds.entity.name))&=ds.entity.name
+                        - if ds.person and ds.person.gender:
+                          %span.text-muted(title=ds.person.gender.name)
+                            %strong&=
+                              " - " + ds.person.gender.abbr()
+                        - if ds.person and ds.person.race:
+                          %span.text-muted(title=ds.person.race.name)
+                            %strong&=
+                              " (" + ds.person.race.abbr() + ")"
+                      .col-sm-4
+                        - if ds.function:
+                          %span.label.label-default&=ds.function.name
+                      .col-sm-2
+                        &= 'quoted' if ds.quoted else 'not quoted'
+                        - if len(ds.utterances()) > 0:
+                          %span.badge&= len(ds.utterances())
+                      .col-sm-1
+                        - if ds.manual:
+                          %i.fa.fa-check-circle(title='Added manually by a monitor')
+
+                    .source-details
+                      - if ds.fairness:
+                        .row
+                          .col-sm-4
+                            %strong Fairness
+                          .col-sm-4
+                            %strong Favour
+                          .col-sm-4
+                            %strong Oppose
+                        .row
+                          .col-sm-4
+                            &= ds.fairness.name
+                          .col-sm-4
+                            &= ds.bias_favour.full_name() if ds.bias_favour else ''
+                          .col-sm-4
+                            &= ds.bias_oppose.full_name() if ds.bias_oppose else ''
+
                 - for q in ds.utterances():
                   %tr.quotation(dataOffsets=('%d:%d' % (q.offset, q.length) if q.offset else ''))
-                    %td(colspan="4")&= q.quote
+                    %td&= q.quote
 
         %%include(file='analysis_tab_mentions.haml')
         %%include(file='analysis_tab_places.haml')
