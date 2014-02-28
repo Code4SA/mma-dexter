@@ -1,4 +1,4 @@
-from dexter.models import db, Document, Entity, Medium, DocumentType, Topic
+from dexter.models import db, Document, Entity, Medium, DocumentType, Topic, Fairness, Individual
 from flask.ext.admin import Admin, expose, AdminIndexView
 from flask.ext.admin.contrib.sqla import ModelView
 from flask.ext.admin.model.template import macro
@@ -135,10 +135,27 @@ class MediumView(MyModelView):
             choices=choices
         ))
 
+class IndividualView(MyModelView):
+
+    can_create = True
+    can_edit = True
+    can_delete = False
+    list_template = 'admin/custom_list_template.html'
+    column_list = (
+        'code',
+        'name',
+    )
+    column_searchable_list = (
+        'code',
+        'name'
+    )
+    page_size = 100
 
 admin_instance = Admin(url='/admin', base_template='admin/custom_master.html', name="Dexter Admin", index_view=MyIndexView())
 admin_instance.add_view(DocumentView(Document, db.session, name="Articles", endpoint='document'))
 admin_instance.add_view(EntityView(Entity, db.session, name="Entities", endpoint='entity'))
 admin_instance.add_view(MyModelView(Topic, db.session, name="Article Topics", endpoint="topic"))
 admin_instance.add_view(MyModelView(DocumentType, db.session, name="Article Types", endpoint="type"))
-admin_instance.add_view(MediumView(Medium, db.session, name="Publications", endpoint="medium"))
+admin_instance.add_view(MediumView(Medium, db.session, name="Mediums", endpoint="medium"))
+admin_instance.add_view(MyModelView(Fairness, db.session, name="Fairness", endpoint="fairness"))
+admin_instance.add_view(IndividualView(Individual, db.session, name="Individuals", endpoint="individuals"))
