@@ -122,8 +122,8 @@
       self.newSourceCount = $('.sources tr.new', self.$form).length;
 
       $('table.sources', self.$form).
-        on('keyup', '.template input[type="text"]', self.newSourceKeyUp).
-        on('blur', '.new input[type="text"]', function(e) {
+        on('keyup', '.template .person-name', self.newSourceKeyUp).
+        on('blur', '.new .person-name', function(e) {
           if ($(this).val() === '') {
             $(this).closest('tr').remove();
           }
@@ -145,7 +145,7 @@
 
       var $row = $(this).closest('tr');
       var $template = $row.clone().insertAfter($row);
-      $('input[type="text"]', $template).val('');
+      $('.person-name', $template).val('');
 
       // this row is no longer a template
       $row.removeClass('template').addClass('new');
