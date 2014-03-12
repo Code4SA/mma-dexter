@@ -2,16 +2,18 @@
 
 .form-group
   = field_input(form.title, placeholder='Article headline', required=True)
-.form-group
-  = field_input(form.url, placeholder='URL')
 
 .row
-  .col-sm-4
+  .col-sm-2
     = vertical_field(form.published_at, placeholder='YYYY/MM/DD hh:mm', class_='use-datetimepicker', **{'data-format':'YYYY/MM/DD HH:mm',})
+  .col-sm-2
+    = vertical_field(form.item_num)
   .col-sm-3
     = vertical_field(form.medium_id, required=True, class_='chosen-select')
   .col-sm-4
     = vertical_field(form.document_type_id, class_='chosen-select')
+
+= vertical_field(form.url, placeholder='URL')
 
 .author-widget
   .form-group

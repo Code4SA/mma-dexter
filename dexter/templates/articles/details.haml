@@ -14,19 +14,24 @@
             &= document.medium.name
   .row
     .col-sm-6
-      .author
-        %i.fa.fa-user
-        - if document.author:
-          - if document.author.person:
-            &= document.author.person.name
-          - else:
-            &= document.author.name
-          (${document.author.author_type.name|h})
-    .col-sm-6
       .document-type
         %i.fa.fa-folder
         - if document.document_type:
           &= document.document_type.name
+    .col-sm-6
+      - if document.item_num is not None:
+        %i.fa.fa-list-ul
+        Item
+        &= document.item_num
+
+  .author
+    %i.fa.fa-user
+    - if document.author:
+      - if document.author.person:
+        &= document.author.person.name
+      - else:
+        &= document.author.name
+      (${document.author.author_type.name|h})
 
 %section
   %p.article-summary

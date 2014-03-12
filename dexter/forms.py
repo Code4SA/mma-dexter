@@ -1,5 +1,6 @@
 from flask_wtf import Form as BaseForm
 from wtforms import SelectMultipleField, widgets
+from wtforms.fields.html5 import IntegerField as WTFIntegerField
 
 class StripFilter():
     def __call__(self, value):
@@ -31,3 +32,17 @@ class MultiCheckboxField(SelectMultipleField):
     """
     widget = widgets.ListWidget(prefix_label=False)
     option_widget = widgets.CheckboxInput()
+
+
+class IntegerField(WTFIntegerField):
+    def process_formdata(self, valuelist):
+        if valuelist:
+            try:
+                if valuelist[0]:
+                    self.data = int(valuelist[0])
+                else:
+                    self.data = None
+            except ValueError:
+                self.data = None
+                raise ValueError(self.gettext('Not a valid integer value'))
+

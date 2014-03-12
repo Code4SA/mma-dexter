@@ -3,7 +3,7 @@ import re
 from wtforms import StringField, TextAreaField, validators, SelectField, DateTimeField, HiddenField
 from wtforms.fields.html5 import URLField
 
-from ..forms import Form, MultiCheckboxField
+from ..forms import Form, MultiCheckboxField, IntegerField
 
 from sqlalchemy import (
     Table,
@@ -40,6 +40,7 @@ class Document(db.Model):
     summary   = Column(String(1024))
     text      = Column(Text)
     section   = Column(String(100), index=True)
+    item_num  = Column(Integer)
 
     author_id         = Column(Integer, ForeignKey('authors.id'), index=True)
     medium_id         = Column(Integer, ForeignKey('mediums.id'), index=True)
@@ -50,8 +51,6 @@ class Document(db.Model):
     published_at = Column(DateTime(timezone=True), index=True, unique=False, nullable=False)
     created_at   = Column(DateTime(timezone=True), index=True, unique=False, nullable=False, server_default=func.now())
     updated_at   = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.current_timestamp())
-
-    # TODO: location
 
     # Associations
     author      = relationship("Author")
@@ -157,6 +156,7 @@ class DocumentForm(Form):
     published_at = DateTimeField('Published on', [validators.Required()], format='%Y/%m/%d %H:%M')
     summary     = StringField('Summary', [validators.Length(max=1024)])
     text        = TextAreaField('Article content', [validators.Required()])
+    item_num    = IntegerField('Item no')
 
     medium_id           = SelectField('Medium', [validators.Required()])
     document_type_id    = SelectField('Type', [validators.Required()], default=1)
