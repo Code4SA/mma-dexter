@@ -87,8 +87,11 @@ class DocumentFairnessForm(Form):
         super(DocumentFairnessForm, self).__init__(*args, **kwargs)
 
         self.fairness_id.choices = [['', '(none)']] + [[str(s.id), s.name] for s in Fairness.query.order_by(Fairness.name).all()]
+
+        # sort according to code
+        individuals = sorted(Individual.query.all(), key=Individual.sort_key)
   
-        self.bias_favour_individual_id.choices = [['', '(none)']] + [[str(s.id), s.full_name()] for s in Individual.query.order_by(Individual.code).all()]
+        self.bias_favour_individual_id.choices = [['', '(none)']] + [[str(s.id), s.full_name()] for s in individuals]
         self.bias_oppose_individual_id.choices = self.bias_favour_individual_id.choices
 
 
@@ -110,6 +113,9 @@ class Individual(db.Model):
 
     def full_name(self):
         return self.code + ' - ' + self.name
+
+    def sort_key(self):
+        return [int(k) if k else 0 for k in self.code.split('.')]
 
     def __repr__(self):
         return "<Individual code='%s', name='%s'>" % (self.code, self.name)
