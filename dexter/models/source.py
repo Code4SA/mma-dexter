@@ -117,7 +117,7 @@ class SourceFunction(db.Model):
 
 class DocumentSourceForm(Form):
     person_name       = StringField('Name', [validators.Length(max=50)])
-    source_function_id = SelectField('Function', [validators.Required()], default=1)
+    source_function_id = SelectField('Function', default='')
     quoted            = BooleanField('Quoted', default=False)
 
     # the associated source object, if any
@@ -126,7 +126,7 @@ class DocumentSourceForm(Form):
     def __init__(self, *args, **kwargs):
         super(DocumentSourceForm, self).__init__(*args, **kwargs)
 
-        self.source_function_id.choices = [[str(s.id), s.name] for s in SourceFunction.query.order_by(SourceFunction.name).all()]
+        self.source_function_id.choices = [['', '(none)']] + [[str(s.id), s.name] for s in SourceFunction.query.order_by(SourceFunction.name).all()]
 
 
     def get_or_create_entity(self):

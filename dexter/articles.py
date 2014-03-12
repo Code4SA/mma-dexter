@@ -186,6 +186,10 @@ def edit_article_analysis(id):
                 if any(src.entity == u.entity for u in document.utterances):
                     src.quoted = True
 
+            for src in document.sources:
+                if src.source_function_id == '':
+                    src.source_function_id = None
+
 
             # --- fairness
             to_delete = [f for f in document.fairness if ('fairness-del[%d]' % f.id) in request.form]
