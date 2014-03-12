@@ -4,6 +4,7 @@ from flask.ext.admin.contrib.sqla import ModelView
 from flask.ext.admin.model.template import macro
 from wtforms.fields import SelectField, TextAreaField, TextField, HiddenField
 import flask_wtf
+from flask.ext.login import current_user
 
 from ..forms import Form
 
@@ -14,6 +15,8 @@ class MyModelView(ModelView):
     can_delete = False
     page_size = 50
 
+    def is_accessible(self):
+        return current_user.is_authenticated() and current_user.admin
 
 class MyIndexView(AdminIndexView):
 

@@ -3,6 +3,7 @@ log = logging.getLogger(__name__)
 
 from flask import request, url_for, flash, redirect
 from flask.ext.mako import render_template
+from flask.ext.login import login_required
 
 from .app import app
 from .models import db, Document, Issue
@@ -14,6 +15,7 @@ from .models.author import AuthorForm
 from .processing import DocumentProcessor, ProcessingError
 
 @app.route('/articles/<id>')
+@login_required
 def show_article(id):
     document = Document.query.get_or_404(id)
     return render_template('articles/show.haml',
@@ -21,6 +23,7 @@ def show_article(id):
  
 
 @app.route('/articles/new', methods=['GET', 'POST'])
+@login_required
 def new_article():
     form = DocumentForm()
     author_form = AuthorForm(prefix='author', csrf_enabled=False)
@@ -82,6 +85,7 @@ def new_article():
 
 
 @app.route('/articles/<id>/edit', methods=['GET', 'POST'])
+@login_required
 def edit_article(id):
     doc = Document.query.get_or_404(id)
     form = DocumentForm(obj=doc)
@@ -108,6 +112,7 @@ def edit_article(id):
             author_form=author_form)
 
 @app.route('/articles/<id>/analysis', methods=['GET', 'POST'])
+@login_required
 def edit_article_analysis(id):
     document = Document.query.get_or_404(id)
     form = DocumentAnalysisForm(obj=document)

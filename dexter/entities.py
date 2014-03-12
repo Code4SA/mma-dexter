@@ -3,6 +3,7 @@ log = logging.getLogger(__name__)
 
 from flask import request, url_for, flash, redirect, make_response
 from flask.ext.mako import render_template
+from flask.ext.login import login_required, current_user
 from sqlalchemy.orm import subqueryload
 
 from .app import app
@@ -13,6 +14,7 @@ import urllib
 
 
 @app.route('/entities/<string:group>/<string:name>/')
+@login_required
 def show_entity(group, name):
 
     entity = Entity.query.filter(Entity.group==group, Entity.name==name).first()
@@ -33,6 +35,7 @@ def show_entity(group, name):
 
 
 @app.route('/people/<int:id>/', methods=['GET', 'POST'])
+@login_required
 def show_person(id):
     person = Person.query.get(id)
     if not person:
@@ -43,7 +46,7 @@ def show_person(id):
             [[str(e.id), '%s (%s, %d)' % (e.name, e.group, e.id)] for e in person.entities],
             key=lambda t: t[1])
 
-    if request.method == 'POST':
+    if request.method == 'POST' and current_user.admin:
         if form.validate():
             form.populate_obj(person)
 
@@ -69,6 +72,7 @@ def show_person(id):
         documents=documents)
 
 @app.route('/people/new', methods=['POST'])
+@login_required
 def new_person():
     name = request.form.get('name', '')
     entity_id = request.form.get('entity_id')
