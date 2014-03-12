@@ -1,3 +1,5 @@
+import re
+
 from wtforms import StringField, TextAreaField, validators, SelectField, DateTimeField, HiddenField
 from wtforms.fields.html5 import URLField
 
@@ -22,6 +24,8 @@ import logging
 log = logging.getLogger(__name__)
 
 
+universal_newline_re = re.compile(R"\r\n|\n|\r")  # All types of newline.
+newlines_re = re.compile(R"\n+")
 
 class Document(db.Model):
     """
@@ -130,6 +134,16 @@ class Document(db.Model):
                 
         self.sources.append(source)
         return True
+
+
+    def normalise_text(self):
+        """ Run some normalisations on the document. """
+        if self.text:
+            # normalise newlines
+            # first ensure they're all \n
+            self.text = universal_newline_re.sub("\n", self.text)
+            # now ensure all \n's are double
+            self.text = newlines_re.sub("\n\n", self.text)
 
 
 

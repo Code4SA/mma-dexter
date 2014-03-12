@@ -48,8 +48,15 @@ class DocumentProcessor:
 
     def process_document(self, doc):
         """ Process an existing document. """
+        self.normalise(doc)
         self.extract(doc)
         self.discover_people(doc)
+
+
+    def normalise(self, doc):
+        """ Run some normalisations on the document. """
+        doc.normalise_text()
+
 
     def crawl(self, doc):
         """ Run crawlers against a document's URL to fetch its

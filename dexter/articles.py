@@ -93,6 +93,7 @@ def edit_article(id):
             form.author_id.data = author_form.get_or_create_author().id
             if form.validate():
                 form.populate_obj(doc)
+                doc.normalise_text()
                 db.session.commit()
                 flash('Article updated.')
                 return redirect(url_for('show_article', id=id))
