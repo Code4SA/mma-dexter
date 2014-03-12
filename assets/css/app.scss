@@ -114,6 +114,31 @@ table.sources {
   }
 }
 
+table.fairness {
+  .template {
+    .btn.delete, select.chosen-select-delayed {
+      display: none;
+    }
+  }
+
+  .btn.delete, .btn.undo-delete {
+    padding: 0px;
+  }
+
+  .btn.undo-delete {
+    display: none;
+  }
+
+  tr.deleted {
+    td {
+      background-color: #f2dede;
+      text-decoration: line-through;
+      .btn.delete { display: none; }
+      .btn.undo-delete { display: inline-block; text-decoration: none }
+    }
+  }
+}
+
 /* typeahead styling */
 .twitter-typeahead {
   width: 100%;

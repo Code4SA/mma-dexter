@@ -59,6 +59,7 @@ class Document(db.Model):
     utterances  = relationship("Utterance", backref=backref('document'))
     keywords    = relationship("DocumentKeyword", backref=backref('document'), order_by="desc(DocumentKeyword.relevance)")
     sources     = relationship("DocumentSource", backref=backref('document'), cascade='all, delete-orphan')
+    fairness    = relationship("DocumentFairness", backref=backref('document'), cascade='all, delete-orphan')
     medium      = relationship("Medium")
     topic       = relationship("Topic")
     document_type = relationship("DocumentType")

@@ -9,8 +9,11 @@ from sqlalchemy import (
     )
 from sqlalchemy.orm import relationship
 
+from wtforms import StringField, TextAreaField, validators, SelectField, DateTimeField, HiddenField
+from wtforms.fields.html5 import URLField
+
+from ..forms import Form
 from .support import db
-from .with_offsets import WithOffsets
 
 class Fairness(db.Model):
     """
@@ -44,6 +47,53 @@ class Fairness(db.Model):
             fairness.append(f)
 
         return fairness
+
+class DocumentFairness(db.Model):
+    """
+    Fairness/bias description for an article.
+    """
+    __tablename__ = "document_fairness"
+
+    id        = Column(Integer, primary_key=True)
+    doc_id    = Column(Integer, ForeignKey('documents.id'), index=True, nullable=False)
+
+    # Is the article biased for or against anyone? Note that, for now, biased is
+    # for or against a fixed list of organisations/individuals. In time, that list
+    # will have to be changed and merged into the entity table.
+    fairness_id  = Column(Integer, ForeignKey('fairness.id'), index=True, default=6)
+    # who is the source biased in favour of?
+    bias_favour_individual_id = Column(Integer, ForeignKey('individuals.id'), index=True, nullable=True)
+    # who is the source biased against?
+    bias_oppose_individual_id = Column(Integer, ForeignKey('individuals.id'), index=True, nullable=True)
+    
+    created_at   = Column(DateTime(timezone=True), index=True, unique=False, nullable=False, server_default=func.now())
+    updated_at   = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.current_timestamp())
+
+    # Associations
+    fairness    = relationship("Fairness", lazy=False)
+    bias_favour = relationship("Individual", lazy=False, foreign_keys=[bias_favour_individual_id])
+    bias_oppose = relationship("Individual", lazy=False, foreign_keys=[bias_oppose_individual_id])
+
+    def __repr__(self):
+        return "<DocumentFairness id=%s, doc=%s, fairness=%s>" % (self.id, self.document, self.fairness)
+
+
+class DocumentFairnessForm(Form):
+    fairness_id                 = SelectField('Bias', default='')
+    bias_favour_individual_id   = SelectField('Favour', default='')
+    bias_oppose_individual_id   = SelectField('Disfavour', default='')
+
+    def __init__(self, *args, **kwargs):
+        super(DocumentFairnessForm, self).__init__(*args, **kwargs)
+
+        self.fairness_id.choices = [['', '(none)']] + [[str(s.id), s.name] for s in Fairness.query.order_by(Fairness.name).all()]
+  
+        self.bias_favour_individual_id.choices = [['', '(none)']] + [[str(s.id), s.full_name()] for s in Individual.query.order_by(Individual.code).all()]
+        self.bias_oppose_individual_id.choices = self.bias_favour_individual_id.choices
+
+
+    def is_new(self):
+        return self._prefix.startswith('fairness-new')
 
 
 class Individual(db.Model):

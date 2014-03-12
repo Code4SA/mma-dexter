@@ -46,7 +46,35 @@
                       = subfield.label()
                       %br
           %hr
+          %section
+            %h4 Bias
 
+            %table.table.table-striped.table-condensed.fairness
+              %tbody
+                %tr
+                  %th Bias
+                  %th Favour
+                  %th Disfavour
+                  %th
+                - for f in fairness_forms + [new_fairness_form]:
+                  - class_ = ''
+                  - class_ += ' template' if f == new_fairness_form else ''
+                  - class_ += ' new' if f.is_new() else ''
+
+                  %tr(class_=class_, dataFairnessId=f.document_fairness.id if not f.is_new() and f.document_fairness else '')
+                    %td
+                      = field_input(f.fairness_id)
+                    %td
+                      = field_input(f.bias_favour_individual_id, class_='chosen-select' if f != new_fairness_form else 'chosen-select-delayed')
+                    %td
+                      = field_input(f.bias_oppose_individual_id, class_='chosen-select' if f != new_fairness_form else 'chosen-select-delayed')
+                    %td
+                      %a.btn.btn-link.delete(href="#", title='delete this')
+                        %i.fa.fa-times-circle
+                      - if not f.is_new():
+                        %a.btn.btn-link.undo-delete(href="#", title='re-add this') undo
+
+          %hr
           %section
             %ul.nav.nav-pills
               %li.active
@@ -110,14 +138,6 @@
                             %label
                               &= field_input(f.quoted)
                               Quoted?
-
-                    .row
-                      .col-xs-4
-                        &= vertical_field(f.fairness_id)
-                      .col-sm-4
-                        &= vertical_field(f.bias_favour_individual_id, class_='chosen-select' if f.source else 'chosen-select-delayed')
-                      .col-sm-4
-                        &= vertical_field(f.bias_oppose_individual_id, class_='chosen-select' if f.source else 'chosen-select-delayed')
 
 
                 %table.table.table-striped.table-condensed.sources
