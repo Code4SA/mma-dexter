@@ -75,19 +75,17 @@
               %tr
                 %th
                   .row
-                    .col-sm-5
-                      Name
-                    .col-sm-4
-                      Function
-                    .col-sm-2
-                      Quoted?
+                    .col-sm-4 Name
+                    .col-sm-3 Function
+                    .col-sm-3 Affiliation
+                    .col-sm-1 Quoted?
             %tbody
               - sources = sorted(document.sources, key=lambda s: [not s.manual, s.entity.name])
               - for ds in sources:
                 %tr(dataOffsets=ds.offset_list)
                   %td
                     .row
-                      .col-sm-5
+                      .col-sm-4
                         %a(href= url_for('show_entity', group=ds.entity.group, name=ds.entity.name))&=ds.entity.name
                         - if ds.person and ds.person.gender:
                           %span.text-muted(title=ds.person.gender.name)
@@ -98,13 +96,21 @@
                             %strong&=
                               " (" + ds.person.race.abbr() + ")"
 
-                      .col-sm-4
+                      .col-sm-3
                         - if ds.function:
-                          %span.label.label-default&=ds.function.name
-                      .col-sm-2
-                        &= 'quoted' if ds.quoted else 'not quoted'
-                        - if len(ds.utterances()) > 0:
-                          %span.badge&= len(ds.utterances())
+                          &=ds.function.name
+                      .col-sm-3
+                        - if ds.affiliation:
+                          &=ds.affiliation.full_name()
+                      .col-sm-1
+                        - if not ds.quoted:
+                          no
+                        - else:
+                          - if len(ds.utterances()) > 0:
+                            %span.badge&= len(ds.utterances())
+                          - else:
+                            yes
+
                       .col-sm-1
                         - if ds.manual:
                           %i.fa.fa-check-circle(title='Added manually by a monitor')

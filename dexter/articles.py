@@ -189,6 +189,8 @@ def edit_article_analysis(id):
             for src in document.sources:
                 if src.source_function_id == '':
                     src.source_function_id = None
+                if src.affiliation_individual_id == '':
+                    src.affiliation_individual_id = None
 
 
             # --- fairness

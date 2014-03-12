@@ -34,7 +34,8 @@ class DocumentSource(db.Model, WithOffsets):
     # was this source added manually or was it inferred by machine learning?
     manual       = Column(Boolean, default=False, nullable=False)
 
-    # TODO: add role source played
+    # who is the person affiliated with?
+    affiliation_individual_id = Column(Integer, ForeignKey('individuals.id'), index=True)
 
     created_at   = Column(DateTime(timezone=True), index=True, unique=False, nullable=False, server_default=func.now())
     updated_at   = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.current_timestamp())
@@ -42,6 +43,7 @@ class DocumentSource(db.Model, WithOffsets):
     # Associations
     entity      = relationship("Entity", lazy=False)
     function    = relationship("SourceFunction", lazy=False)
+    affiliation = relationship("Individual", lazy=False)
 
     def document_entity(self):
         """ The DocumentEntity instance that matches this source for this document. May be None. """
@@ -118,6 +120,7 @@ class SourceFunction(db.Model):
 class DocumentSourceForm(Form):
     person_name       = StringField('Name', [validators.Length(max=50)])
     source_function_id = SelectField('Function', default='')
+    affiliation_individual_id = SelectField('Affiliation', default='')
     quoted            = BooleanField('Quoted', default=False)
 
     # the associated source object, if any
@@ -127,6 +130,14 @@ class DocumentSourceForm(Form):
         super(DocumentSourceForm, self).__init__(*args, **kwargs)
 
         self.source_function_id.choices = [['', '(none)']] + [[str(s.id), s.name] for s in SourceFunction.query.order_by(SourceFunction.name).all()]
+
+        # because this list is heirarchical, we class 'organisations' as
+        # this with only 0 or two dots
+        from . import Individual
+
+        orgs = [i for i in Individual.query.all() if i.code.count('.') <= 1]
+        orgs.sort(key=Individual.sort_key)
+        self.affiliation_individual_id.choices = [['', '(none)']] + [[str(s.id), s.full_name()] for s in orgs]
 
 
     def get_or_create_entity(self):

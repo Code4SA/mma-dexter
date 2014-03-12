@@ -118,6 +118,7 @@
                         %label
                           &= field_input(f.quoted)
                           Quoted?
+                = vertical_field(f.affiliation_individual_id, class_='chosen-select' if f.source else 'chosen-select-delayed')
 
 
             %table.table.table-striped.table-condensed.sources

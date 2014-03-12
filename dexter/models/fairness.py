@@ -554,7 +554,7 @@ class Individual(db.Model):
 3.38.3              |Other City Official
 3.38.4              |City Councillor
 3.39                |Uthungulu District Municipality
-3.39..3             |Other City Official
+3.39.3              |Other City Official
 3.39.1              |Mayor
 3.39.2              |Municipal Manager
 3.39.4              |City Councillor
