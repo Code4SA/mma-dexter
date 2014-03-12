@@ -132,9 +132,9 @@ class DocumentSourceForm(Form):
     source_function_id = SelectField('Function', [validators.Required()], default=1)
     quoted            = BooleanField('Quoted', default=False)
 
-    fairness_id                 = SelectField('Fairness', default='')
+    fairness_id                 = SelectField('Bias', default='')
     bias_favour_individual_id   = SelectField('Favour', default='')
-    bias_oppose_individual_id   = SelectField('Oppose', default='')
+    bias_oppose_individual_id   = SelectField('Disfavour', default='')
 
     # the associated source object, if any
     source = None

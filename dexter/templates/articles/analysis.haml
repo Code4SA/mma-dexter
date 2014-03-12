@@ -18,8 +18,7 @@
 
     %hr
     %section.issues
-      %p
-        %strong Issues
+      %h4 Issues Raised
       - if not document.issues:
         %p
           No issues have been tagged.
@@ -95,11 +94,11 @@
                       - if ds.fairness and ds.fairness.name != 'Fair':
                         .row
                           .col-sm-4
-                            %strong Fairness
+                            %strong Bias
                           .col-sm-4
                             %strong Favour
                           .col-sm-4
-                            %strong Oppose
+                            %strong Disfavour
                         .row
                           .col-sm-4
                             &= ds.fairness.name

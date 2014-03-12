@@ -27,9 +27,8 @@
             = field(form.topic_id, class_='chosen-select')
             = field(form.origin_location_id, class_='chosen-select')
           %hr
-          %p
-            %strong Issues
           %section.form-horizontal
+            %h4 Issues Raised
             - if form.issues.errors:
               %ul.list-unstyled
                 - for error in form.issues.errors:
