@@ -1,7 +1,6 @@
 %%namespace(file="../bootstrap_wtf.haml", **{'import': '*'})
 
-.form-group
-  = field_input(form.title, placeholder='Article headline', required=True)
+= vertical_field(form.title, placeholder='Article headline', required=True)
 
 .row
   .col-sm-2
@@ -12,8 +11,6 @@
     = vertical_field(form.medium_id, required=True, class_='chosen-select')
   .col-sm-4
     = vertical_field(form.document_type_id, class_='chosen-select')
-
-= vertical_field(form.url, placeholder='URL')
 
 .author-widget
   .form-group
@@ -32,5 +29,6 @@
             .col-sm-4
               = field_input(author_form.person_race_id)
 
+= vertical_field(form.url, placeholder='URL')
 = vertical_field(form.summary, placeholder='Summary')
-= vertical_field(form.text, rows=15, placeholder='The text of the article', required=True)
+= vertical_field(form.text, rows=15, placeholder='The text of the article')

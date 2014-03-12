@@ -156,7 +156,7 @@ class DocumentForm(Form):
     title       = StringField('Headline', [validators.Required(), validators.Length(max=1024)])
     published_at = DateTimeField('Published/broadcast on', [validators.Required()], format='%Y/%m/%d %H:%M')
     summary     = StringField('Summary', [validators.Length(max=1024)])
-    text        = TextAreaField('Article content', [validators.Required()])
+    text        = TextAreaField('Article content')
     item_num    = IntegerField('Item no')
 
     medium_id           = SelectField('Medium', [validators.Required()])
