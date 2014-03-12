@@ -1,4 +1,5 @@
 import re
+import datetime
 
 from wtforms import StringField, TextAreaField, validators, SelectField, DateTimeField, HiddenField
 from wtforms.fields.html5 import URLField
@@ -153,7 +154,7 @@ class Document(db.Model):
 class DocumentForm(Form):
     url         = URLField('URL', [validators.Length(max=200)])
     title       = StringField('Headline', [validators.Required(), validators.Length(max=1024)])
-    published_at = DateTimeField('Published on', [validators.Required()], format='%Y/%m/%d %H:%M')
+    published_at = DateTimeField('Published/broadcast on', [validators.Required()], format='%Y/%m/%d %H:%M')
     summary     = StringField('Summary', [validators.Length(max=1024)])
     text        = TextAreaField('Article content', [validators.Required()])
     item_num    = IntegerField('Item no')
@@ -169,6 +170,7 @@ class DocumentForm(Form):
 
         self.medium_id.choices = [[str(m.id), m.name] for m in Medium.query.order_by(Medium.name).all()]
         self.document_type_id.choices = [[str(t.id), t.name] for t in DocumentType.query.order_by(DocumentType.name).all()]
+        self.published_at.data = datetime.datetime.utcnow()
 
 
 class DocumentType(db.Model):
