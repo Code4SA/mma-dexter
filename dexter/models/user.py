@@ -38,7 +38,8 @@ class User(db.Model, UserMixin):
         return None
 
     def set_password(self, password):
-        self.encrypted_password = sha256_crypt.encrypt(password)
+        if password:
+            self.encrypted_password = sha256_crypt.encrypt(password)
 
     password = property(get_password, set_password)
 
