@@ -1,3 +1,5 @@
+- from flask.ext.login import current_user
+
 !!! 5
 %html
   %head
@@ -6,8 +8,8 @@
     %title
       %%block(name="title")
       \- Dexter
-    %meta(name='csrf-param', value='csrf_token')
-    %meta(name='csrf-token', value=csrf_token())
+    %meta(name='csrf-param', content='csrf_token')
+    %meta(name='csrf-token', content=csrf_token())
     %meta(name="viewport", content="width=device-width, initial-scale=1.0")
     - for url in webassets('css'):
       %link(rel="stylesheet", href=url)
@@ -20,14 +22,18 @@
             %a.navbar-brand(href="/")
               Dexter
 
-          .navbar-nav.navbar-right
-            .navbar-btn.pull-right
-              %a.btn.btn-primary(href=url_for('new_article'))
-                %i.fa.fa-plus
-                Add article
-            .navbar-btn.pull-right
-              %a.btn.btn-default(href='/admin/')
-                Dexter Admin
+          - if current_user.is_authenticated():
+            .navbar-nav.navbar-right
+              .navbar-btn.pull-right
+                %a.btn.btn-primary(href=url_for('new_article'))
+                  %i.fa.fa-plus
+                  Add article
+              .navbar-btn.pull-right
+                %a.btn.btn-default(href='/admin/')
+                  Dexter Admin
+              .navbar-btn.pull-right
+                %a.btn.btn-default(href=url_for('user_logout'), dataMethod='post')
+                  Logout
 
     .container
       -# show flash messages
