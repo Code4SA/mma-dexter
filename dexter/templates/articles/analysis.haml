@@ -33,22 +33,18 @@
         %p No fairness provided.
 
       - if document.fairness:
-        %ul.unstyled-list
-          %li
-            .row
-              .col-sm-4 Bias
-              .col-sm-4 Favour
-              .col-sm-4 Disfavour
-          
-        - for df in document.fairness:
-          %li
-            .row
-              .col-sm-4
-                %span.label.label-info(title=df.fairness.name)&= df.fairness.name
-              .col-sm-4
-                &= df.bias_favour.full_name() if df.bias_favour else ''
-              .col-sm-4
-                &= df.bias_oppose.full_name() if df.bias_oppose else ''
+        %table.table-striped.table-condensed
+          %thead
+            %tr
+              %th Bias
+              %th Favour
+              %th Disfavour
+          %tbody
+            - for df in document.fairness:
+              %tr
+                %td&= df.fairness.name
+                %td&= df.bias_favour.full_name() if df.bias_favour else ''
+                %td&= df.bias_oppose.full_name() if df.bias_oppose else ''
 
 
     %hr
