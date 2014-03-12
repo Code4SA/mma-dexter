@@ -8,6 +8,7 @@ from .app import app
 from .models import db, Document, Issue
 from .models.document import DocumentForm, DocumentAnalysisForm
 from .models.source import DocumentSource, DocumentSourceForm
+from .models.fairness import DocumentFairness, DocumentFairnessForm
 from .models.author import AuthorForm
 
 from .processing import DocumentProcessor, ProcessingError
@@ -125,6 +126,14 @@ def edit_article_analysis(id):
     new_sources = []
     new_source_form = DocumentSourceForm(prefix='source-new', csrf_enabled=False)
 
+    # fairness forms
+    new_fairness_form = DocumentFairnessForm(prefix='fairness-new', csrf_enabled=False)
+    fairness_forms = []
+    for fairness in document.fairness:
+        f = DocumentFairnessForm(prefix='fairness[%d]' % fairness.id, obj=fairness)
+        f.document_fairness = fairness
+        fairness_forms.append(f)
+
     if request.method == 'POST':
         # find new sources and build forms for them.
         # the field names are like: source-new[2]-person_name
@@ -134,7 +143,14 @@ def edit_article_analysis(id):
             if src_form.person_name.data != '':
                 new_sources.append(src_form)
 
-        forms = [form] + new_sources + source_forms
+        # new fairness
+        for key in sorted(set('-'.join(key.split('-', 3)[0:2]) for key in request.form.keys() if key.startswith('fairness-new['))):
+            frm = DocumentFairnessForm(prefix=key)
+            # skip new fairness that have an empty bias
+            if frm.fairness_id.data != '':
+                fairness_forms.append(frm)
+
+        forms = [form] + new_sources + source_forms + fairness_forms
         if all(f.validate() for f in forms):
             # convert issue id's to Issue objects
             form.issues.data = [Issue.query.get_or_404(i) for i in form.issues.data]
@@ -148,7 +164,7 @@ def edit_article_analysis(id):
             if not document.origin_location_id:
                 document.origin_location_id = None
 
-            # update sourecs
+            # update sources
             for f in source_forms:
                 f.populate_obj(f.source)
 
@@ -170,14 +186,28 @@ def edit_article_analysis(id):
                 if any(src.entity == u.entity for u in document.utterances):
                     src.quoted = True
 
+
+            # --- fairness
+            to_delete = [f for f in document.fairness if ('fairness-del[%d]' % f.id) in request.form]
+            for f in to_delete:
+                document.fairness.remove(f)
+
+            for frm in fairness_forms:
+                if frm.is_new():
+                    f = DocumentFairness()
+                    f.document = document
+                    frm.populate_obj(f)
+                else:
+                    frm.populate_obj(frm.document_fairness)
+
             # get around wtf not supporting None
-            for source in document.sources:
-                if source.fairness_id == '':
-                    source.fairness_id = None
-                if source.bias_oppose_individual_id == '':
-                    source.bias_oppose_individual_id = None
-                if source.bias_favour_individual_id == '':
-                    source.bias_favour_individual_id = None
+            for fairness in document.fairness:
+                if fairness.fairness_id == '':
+                    fairness.fairness_id = None
+                if fairness.bias_oppose_individual_id == '':
+                    fairness.bias_oppose_individual_id = None
+                if fairness.bias_favour_individual_id == '':
+                    fairness.bias_favour_individual_id = None
 
             db.session.commit()
             flash('Analysis updated.')
@@ -198,4 +228,6 @@ def edit_article_analysis(id):
             source_forms=source_forms,
             new_source_form=new_source_form,
             new_sources=new_sources,
+            new_fairness_form=new_fairness_form,
+            fairness_forms=fairness_forms,
             document=document)

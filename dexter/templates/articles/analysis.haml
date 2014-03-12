@@ -25,8 +25,29 @@
 
       - for issue in document.issues:
         %span.label.label-info(title=issue.description, dataToggle="tooltip", dataContainer="body")&=issue.name
-    %hr
 
+    %hr
+    %section.fairness
+      %h4 Bias
+      - if not document.fairness:
+        %p No fairness provided.
+
+      - if document.fairness:
+        %table.table-striped.table-condensed
+          %thead
+            %tr
+              %th Bias
+              %th Favour
+              %th Disfavour
+          %tbody
+            - for df in document.fairness:
+              %tr
+                %td&= df.fairness.name
+                %td&= df.bias_favour.full_name() if df.bias_favour else ''
+                %td&= df.bias_oppose.full_name() if df.bias_oppose else ''
+
+
+    %hr
     %section
       %ul.nav.nav-pills
         %li.active
@@ -76,8 +97,6 @@
                           %span.text-muted(title=ds.person.race.name)
                             %strong&=
                               " (" + ds.person.race.abbr() + ")"
-                        - if ds.fairness and ds.fairness.name == 'Fair':
-                          %span.label.label-default Fair
 
                       .col-sm-4
                         - if ds.function:
@@ -89,23 +108,6 @@
                       .col-sm-1
                         - if ds.manual:
                           %i.fa.fa-check-circle(title='Added manually by a monitor')
-
-                    .source-details
-                      - if ds.fairness and ds.fairness.name != 'Fair':
-                        .row
-                          .col-sm-4
-                            %strong Bias
-                          .col-sm-4
-                            %strong Favour
-                          .col-sm-4
-                            %strong Disfavour
-                        .row
-                          .col-sm-4
-                            &= ds.fairness.name
-                          .col-sm-4
-                            &= ds.bias_favour.full_name() if ds.bias_favour else ''
-                          .col-sm-4
-                            &= ds.bias_oppose.full_name() if ds.bias_oppose else ''
 
                 - for q in ds.utterances():
                   %tr.quotation(dataOffsets=('%d:%d' % (q.offset, q.length) if q.offset else ''))

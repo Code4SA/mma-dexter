@@ -119,7 +119,7 @@
       });
       self.personHound.initialize();
 
-      self.newSourceCount = $('tr.new', self.$form).length;
+      self.newSourceCount = $('.sources tr.new', self.$form).length;
 
       $('table.sources', self.$form).
         on('keyup', '.template input[type="text"]', self.newSourceKeyUp).
@@ -130,6 +130,12 @@
         }).
         on('click', '.btn.delete', self.deleteSource).
         on('click', '.btn.undo-delete', self.undoDeleteSource);
+
+      self.newFairnessCount = $('.fairness tr.new', self.$form).length;
+      $('table.fairness', self.$form).
+        on('change', '.template select', self.addNewFairness).
+        on('click', '.btn.delete', self.deleteFairness).
+        on('click', '.btn.undo-delete', self.undoDeleteFairness);
     };
       
     // when the user starts adding a new source, duplicate the row to keep a fresh
@@ -184,6 +190,52 @@
       $row = $(this).closest('tr');
       $row.removeClass('deleted');
       $('input[name="source-del[' + $row.data('source-id') + ']"]', self.$form).remove();
+    };
+
+    // when the user starts adding a new fairness, duplicate the row to keep a fresh
+    // 'new entry' row, and then rename the elements on this one
+    self.addNewFairness = function(e) {
+      if ($(this).val() === '') return;
+
+      var $row = $(this).closest('tr');
+      var $template = $row.clone().insertAfter($row);
+      $('select[type="text"]', $template).val('');
+
+      // this row is no longer a template
+      $row.removeClass('template').addClass('new');
+
+      self.newFairnessCount++;
+
+      // change form field name prefixes to be new[ix]
+      $('select', $row).each(function() {
+        $(this).attr('name', $(this).attr('name').replace('new-', 'new[' + self.newFairnessCount + ']-'));
+      });
+
+      $('.chosen-select-delayed', $row).chosen();
+    };
+
+    // delete button was clicked
+    self.deleteFairness = function(e) {
+      e.preventDefault();
+
+      $row = $(this).closest('tr');
+      if ($row.hasClass('new')) {
+        // it's new
+        $row.remove();
+      } else {
+        // it's not new
+        $row.addClass('deleted');
+        self.$form.append('<input type="hidden" name="fairness-del[' + $row.data('fairness-id') + ']" value="Y">');
+      }
+    };
+
+    // undo a fairness delete
+    self.undoDeleteFairness = function(e) {
+      e.preventDefault();
+
+      $row = $(this).closest('tr');
+      $row.removeClass('deleted');
+      $('input[name="fairness-del[' + $row.data('fairness-id') + ']"]', self.$form).remove();
     };
   };
 })(jQuery, window);
