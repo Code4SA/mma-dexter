@@ -5,9 +5,10 @@ from flask.ext.admin.model.template import macro
 from wtforms.fields import SelectField, TextAreaField
 import flask_wtf
 
+from ..forms import Form
 
 class MyModelView(ModelView):
-    form_base_class = flask_wtf.Form
+    form_base_class = Form
     can_create = True
     can_edit = True
     can_delete = False

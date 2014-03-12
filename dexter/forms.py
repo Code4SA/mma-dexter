@@ -14,6 +14,11 @@ class Form(BaseForm):
     """ A form that strips the values of all its fields. """
     _decorated = False
 
+    def __init__(self, *args, **kwargs):
+        if 'obj' in kwargs:
+            self._obj = kwargs['obj']
+        super(Form, self).__init__(*args, **kwargs)
+
     def process(self, *args, **kwargs):
         if not self._decorated:
             self._decorated = True
