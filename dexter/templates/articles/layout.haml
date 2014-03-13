@@ -8,7 +8,15 @@
         Edit article
 
     %h2&= document.title
-    .url
-      %a(href=document.url, target='_blank')&= document.url
+    .row
+      .col-sm-9
+        .url
+          %a(href=document.url, target='_blank')&= document.url
+      .col-sm-3.text-right
+        - if document.checked_by:
+          %span.label.label-success.label-lg
+            %i.fa.fa-check-circle
+            Checked by
+            &= document.checked_by.email
 
   ${next.body()}

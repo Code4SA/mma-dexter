@@ -177,6 +177,12 @@ table.fairness {
   padding-bottom: 0px;
 }
 
+/* override bootstrap's small labels */
+.label.label-lg {
+  font-size: 100%;
+  font-weight: normal;
+}
+
 .tiny-logo{
   float: right;
   margin-left: 25px;

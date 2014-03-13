@@ -48,6 +48,7 @@ class Document(db.Model):
     topic_id          = Column(Integer, ForeignKey('topics.id'), index=True)
     document_type_id  = Column(Integer, ForeignKey('document_types.id'), index=True)
     origin_location_id = Column(Integer, ForeignKey('locations.id'), index=True)
+    checked_by_user_id = Column(Integer, ForeignKey('users.id'), index=True)
 
     published_at = Column(DateTime(timezone=True), index=True, unique=False, nullable=False)
     created_at   = Column(DateTime(timezone=True), index=True, unique=False, nullable=False, server_default=func.now())
@@ -64,6 +65,7 @@ class Document(db.Model):
     topic       = relationship("Topic")
     document_type = relationship("DocumentType")
     origin      = relationship("Location")
+    checked_by  = relationship("User", backref=backref('checked_documents'), foreign_keys=[checked_by_user_id])
 
     # Many-to-Many
     issues = relationship("Issue",

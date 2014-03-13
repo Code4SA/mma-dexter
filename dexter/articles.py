@@ -222,6 +222,9 @@ def edit_article_analysis(id):
                 if fairness.bias_favour_individual_id == '':
                     fairness.bias_favour_individual_id = None
 
+            if current_user.is_authenticated():
+                document.checked_by = current_user
+
             log.info("Updated analysis by %s for %s" % (current_user, document))
 
             db.session.commit()
