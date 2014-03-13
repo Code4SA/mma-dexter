@@ -1,9 +1,10 @@
-from dexter.models import db, Document, Entity, Medium, DocumentType, Topic, Fairness, Individual
+from dexter.models import db, Document, Entity, Medium, DocumentType, Topic, Fairness, Individual, User
 from flask.ext.admin import Admin, expose, AdminIndexView
 from flask.ext.admin.contrib.sqla import ModelView
 from flask.ext.admin.model.template import macro
-from wtforms.fields import SelectField, TextAreaField
+from wtforms.fields import SelectField, TextAreaField, TextField, HiddenField
 import flask_wtf
+from flask.ext.login import current_user
 
 from ..forms import Form
 
@@ -14,6 +15,8 @@ class MyModelView(ModelView):
     can_delete = False
     page_size = 50
 
+    def is_accessible(self):
+        return current_user.is_authenticated() and current_user.admin
 
 class MyIndexView(AdminIndexView):
 
@@ -152,7 +155,31 @@ class IndividualView(MyModelView):
     )
     page_size = 100
 
+class UserView(MyModelView):
+
+    can_create = True
+    can_edit = True
+    can_delete = False
+    list_template = 'admin/custom_list_template.html'
+    column_list = (
+        'email',
+        'admin',
+    )
+    column_searchable_list = (
+        'email',
+    )
+    page_size = 50
+
+    def scaffold_form(self):
+        form_class = super(UserView, self).scaffold_form()
+        form_class.password = TextField('Change password')
+        del form_class.encrypted_password
+        del form_class.created_at
+        del form_class.updated_at
+        return form_class
+
 admin_instance = Admin(url='/admin', base_template='admin/custom_master.html', name="Dexter Admin", index_view=MyIndexView())
+admin_instance.add_view(UserView(User, db.session, name="Users", endpoint='user'))
 admin_instance.add_view(DocumentView(Document, db.session, name="Articles", endpoint='document'))
 admin_instance.add_view(EntityView(Entity, db.session, name="Entities", endpoint='entity'))
 admin_instance.add_view(MyModelView(Topic, db.session, name="Article Topics", endpoint="topic"))

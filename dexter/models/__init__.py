@@ -10,3 +10,4 @@ from .author import Author, AuthorType
 from .location import Location
 from .issue import Issue
 from .fairness import Fairness, Individual, DocumentFairness
+from .user import User

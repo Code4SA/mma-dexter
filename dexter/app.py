@@ -40,3 +40,15 @@ CsrfProtect(app)
 @app.context_processor
 def csrf_token():
     return dict(csrf_token=generate_csrf)
+
+
+# user authentication
+from flask.ext.login import LoginManager
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'user_login'
+
+@login_manager.user_loader
+def load_user(userid):
+    from .models import User
+    return User.query.get(userid)

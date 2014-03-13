@@ -37,9 +37,10 @@
                   &= person.race.name
                 - else:
                   &= "unknown race"
-              %span.edit-link
-                \—
-                %a.edit(href="#") Edit
+              - if current_user.admin:
+                %span.edit-link
+                  \—
+                  %a.edit(href="#") Edit
 
           .col-sm-6
             .aliases-controls
@@ -65,9 +66,10 @@
 
             .aliases
               %strong Aliases
-              %span.edit-link
-                \—
-                %a.edit(href="#") Edit
+              - if current_user.admin:
+                %span.edit-link
+                  \—
+                  %a.edit(href="#") Edit
               %ul.list-inline
                 - for entity in person.entities:
                   %li&= entity.name

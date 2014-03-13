@@ -1,0 +1,20 @@
+%%inherit(file="../layout.haml")
+%%namespace(file="../bootstrap_wtf.haml", **{'import': '*'})
+%%block(name="title")
+  Login
+
+%form(action=url_for('user_login'), method='POST')
+  = form.csrf_token
+
+  .row
+    .col-sm-offset-4.col-sm-4
+      .panel.panel-default
+        .panel-heading
+          %h3.panel-title Login
+
+        .panel-body
+          = vertical_field(form.email, required=True)
+          = vertical_field(form.password, required=True)
+
+        .panel-footer
+          %input.btn.btn-success(type='submit', value='Login')

@@ -1,5 +1,6 @@
 from dexter.app import app
 from flask.ext.mako import render_template
+from flask.ext.login import login_required
 from sqlalchemy.sql import func
 
 from dexter.models import db, Document, Entity, Medium
@@ -7,8 +8,10 @@ from dexter.models import db, Document, Entity, Medium
 import dexter.articles
 import dexter.entities
 import dexter.api
+import dexter.users
 
 @app.route('/')
+@login_required
 def home():
 
     latest_docs = Document.query.order_by(Document.created_at.desc()).limit(20)
