@@ -172,6 +172,7 @@ def edit_article_analysis(id):
 
             # update sources
             for f in source_forms:
+                f.source.manual = True
                 f.populate_obj(f.source)
 
             # delete sources
