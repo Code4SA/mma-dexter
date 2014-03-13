@@ -43,6 +43,8 @@ class User(db.Model, UserMixin):
 
     password = property(get_password, set_password)
 
+    def __repr__(self):
+        return "<User email=%s>" % (self.email,)
 
     @classmethod
     def get_and_authenticate(cls, email, password):

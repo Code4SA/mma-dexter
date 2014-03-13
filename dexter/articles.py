@@ -3,7 +3,7 @@ log = logging.getLogger(__name__)
 
 from flask import request, url_for, flash, redirect
 from flask.ext.mako import render_template
-from flask.ext.login import login_required
+from flask.ext.login import login_required, current_user
 
 from .app import app
 from .models import db, Document, Issue
@@ -74,6 +74,7 @@ def new_article():
             db.session.add(doc)
             db.session.flush()
             id = doc.id
+            log.info("Document added by %s: %s" % (current_user, doc))
             db.session.commit()
             flash('Article added.')
             return redirect(url_for('edit_article_analysis', id=id))
@@ -219,6 +220,8 @@ def edit_article_analysis(id):
                     fairness.bias_oppose_individual_id = None
                 if fairness.bias_favour_individual_id == '':
                     fairness.bias_favour_individual_id = None
+
+            log.info("Updated analysis by %s for %s" % (current_user, document))
 
             db.session.commit()
             flash('Analysis updated.')
