@@ -1,5 +1,5 @@
 #mentions-tab.tab-pane
-  %h3 People
+  %h4 People
   %table.table.table-striped.table-condensed.offsets.entities
     %thead
       %th Name
@@ -24,7 +24,7 @@
                 %strong&= person.gender.abbr()
         %td&= dp.relevance
 
-  %h3 Organisations
+  %h4 Organisations
   %table.table.table-striped.table-condensed.offsets.entities
     - for org in document.organisations():
       %tr(dataOffsets=org.offset_list)

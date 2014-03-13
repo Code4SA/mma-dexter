@@ -22,127 +22,151 @@
               %input.btn.btn-success(type='submit', value='Save changes')
 
         .panel-body
-          %section.form-horizontal
+          %ul.nav.nav-tabs
+            %li.active
+              %a(href="#analysis-tab", dataToggle="tab") Analysis
+            %li
+              %a(href="#mentions-tab", dataToggle="tab")
+                Mentions
+                %span.badge&= len(document.people()) + len(document.organisations())
+            %li
+              %a(href="#places-tab", dataToggle="tab")
+                Places
+                %span.badge&= len(document.places())
+            %li
+              %a(href="#keywords-tab", dataToggle="tab")
+                Keywords
+                %span.badge&= len(document.keywords)
 
-            = field(form.topic_id, class_='chosen-select')
-            = field(form.origin_location_id, class_='chosen-select')
-          %hr
-          %section.form-horizontal
-            %h4 Issues Raised
-            - if form.issues.errors:
-              %ul.list-unstyled
-                - for error in form.issues.errors:
-                  %li.text-warning.text-center Error:
-                    =error
-            .row.checkbox-multi-select
-              - rows = len(list(form.issues))/3
-              - tmp_list = list(form.issues)
-              - tmp1, tmp2, tmp3 = tmp_list[0:rows], tmp_list[rows:2*rows], tmp_list[2*rows::]
-              - for field_list in [tmp1, tmp2, tmp3]:
-                .col-sm-4
-                  - for subfield in field_list:
-                    %div.checkbox-container
-                      = subfield()
-                      = subfield.label()
-                      %br
-          %hr
-          %section
-            %h4 Bias
+          .tab-content
+            #analysis-tab.tab-pane.active
+              %section.form-horizontal
+                %h4 Analysis
+                = field(form.topic_id, class_='chosen-select')
+                = field(form.origin_location_id, class_='chosen-select')
 
-            %table.table.table-striped.table-condensed.fairness
-              %tbody
-                %tr
-                  %th Bias
-                  %th Favour
-                  %th Disfavour
-                  %th
-                - for f in fairness_forms + [new_fairness_form]:
-                  - class_ = ''
-                  - class_ += ' template' if f == new_fairness_form else ''
-                  - class_ += ' new' if f.is_new() else ''
+              %hr
+              %section
+                %h4 Sources
 
-                  %tr(class_=class_, dataFairnessId=f.document_fairness.id if not f.is_new() and f.document_fairness else '')
-                    %td
-                      = field_input(f.fairness_id)
-                    %td
-                      = field_input(f.bias_favour_individual_id, class_='chosen-select' if f != new_fairness_form else 'chosen-select-delayed')
-                    %td
-                      = field_input(f.bias_oppose_individual_id, class_='chosen-select' if f != new_fairness_form else 'chosen-select-delayed')
-                    %td
-                      %a.btn.btn-link.delete(href="#", title='delete this')
-                        %i.fa.fa-times-circle
-                      - if not f.is_new():
-                        %a.btn.btn-link.undo-delete(href="#", title='re-add this') undo
+                -# helper template to show a source form
+                %%def(name="show_source_form(f)")
+                  .pull-right
+                    - if f.source and f.source.manual:
+                      %i.fa.fa-check-circle(title='Added manually by a monitor')
+                    %a.btn.btn-link.delete(href="#", title='delete this source')
+                      %i.fa.fa-times-circle
+                    - if f.source:
+                      %a.btn.btn-link.undo-delete(href="#", title='re-add this source') undo
 
-          %hr
-          %section
-            %h4 Sources
+                  - if f.source:
+                    -# source exists, it's not new
+                    %a(href= url_for('show_entity', group=f.source.entity.group, name=f.source.entity.name))&=f.source.entity.name
+                    - if f.source.person and f.source.person.gender:
+                      %span.text-muted(title=f.source.person.gender.name)
+                        %strong&=
+                          " - " + f.source.person.gender.abbr()
+                    - if f.source.person and f.source.person.race:
+                      %span.text-muted(title=f.source.person.race.name)
+                        %strong&=
+                          " (" + f.source.person.race.abbr() + ")"
+                  - else:
+                    -# it's a new source
+                    = vertical_field(f.person_name, class_='person-name')
 
-            -# helper template to show a source form
-            %%def(name="show_source_form(f)")
-              .pull-right
-                - if f.source and f.source.manual:
-                  %i.fa.fa-check-circle(title='Added manually by a monitor')
-                %a.btn.btn-link.delete(href="#", title='delete this source')
-                  %i.fa.fa-times-circle
-                - if f.source:
-                  %a.btn.btn-link.undo-delete(href="#", title='re-add this source') undo
-
-              - if f.source:
-                -# source exists, it's not new
-                %a(href= url_for('show_entity', group=f.source.entity.group, name=f.source.entity.name))&=f.source.entity.name
-                - if f.source.person and f.source.person.gender:
-                  %span.text-muted(title=f.source.person.gender.name)
-                    %strong&=
-                      " - " + f.source.person.gender.abbr()
-                - if f.source.person and f.source.person.race:
-                  %span.text-muted(title=f.source.person.race.name)
-                    %strong&=
-                      " (" + f.source.person.race.abbr() + ")"
-              - else:
-                -# it's a new source
-                = vertical_field(f.person_name, class_='person-name')
-
-              .source-details
-                .row
-                  .col-xs-6
-                    = vertical_field(f.source_function_id)
-                  .col-xs-4
-                    .quoted
-                      - if f.source:
-                        %input(type='hidden', name=f.quoted.name, value=f.quoted.data)
-                        &= 'quoted' if f.source.quoted else 'not quoted'
-                        - if len(ds.utterances()) > 0:
-                          %span.badge&= len(ds.utterances())
-                      - else:
-                        %label
-                          &= field_input(f.quoted)
-                          Quoted?
-                = vertical_field(f.affiliation_individual_id, class_='chosen-select' if f.source else 'chosen-select-delayed')
+                  .source-details
+                    .row
+                      .col-xs-6
+                        = vertical_field(f.source_function_id)
+                      .col-xs-4
+                        .quoted
+                          - if f.source:
+                            %input(type='hidden', name=f.quoted.name, value=f.quoted.data)
+                            &= 'quoted' if f.source.quoted else 'not quoted'
+                            - if len(ds.utterances()) > 0:
+                              %span.badge&= len(ds.utterances())
+                          - else:
+                            %label
+                              &= field_input(f.quoted)
+                              Quoted?
+                    = vertical_field(f.affiliation_individual_id, class_='chosen-select' if f.source else 'chosen-select-delayed')
 
 
-            %table.table.table-striped.table-condensed.sources
-              %tbody
-                - for f in new_sources:
-                  %tr.new
-                    %td
-                      - show_source_form(f)
+                %table.table.table-striped.table-condensed.sources
+                  %tbody
+                    - for f in new_sources:
+                      %tr.new
+                        %td
+                          - show_source_form(f)
 
-                %tr.template
-                  %td
-                    - show_source_form(new_source_form)
+                    %tr.template
+                      %td
+                        - show_source_form(new_source_form)
 
-            %table.table.table-striped.table-condensed.offsets.sources
-              %tbody
-                - for source_form in source_forms:
-                  - ds = source_form.source
+                %table.table.table-striped.table-condensed.offsets.sources
+                  %tbody
+                    - for source_form in source_forms:
+                      - ds = source_form.source
 
-                  %tr(dataOffsets=ds.offset_list, dataSourceId=ds.id)
-                    %td
-                      - show_source_form(source_form)
-                  - for q in ds.utterances():
-                    %tr.quotation(dataOffsets=('%d:%d' % (q.offset, q.length) if q.offset else ''))
-                      %td(colspan="3")&= q.quote
+                      %tr(dataOffsets=ds.offset_list, dataSourceId=ds.id)
+                        %td
+                          - show_source_form(source_form)
+                      - for q in ds.utterances():
+                        %tr.quotation(dataOffsets=('%d:%d' % (q.offset, q.length) if q.offset else ''))
+                          %td(colspan="3")&= q.quote
+
+              %hr
+              %section.form-horizontal
+                %h4 Issues Raised
+                - if form.issues.errors:
+                  %ul.list-unstyled
+                    - for error in form.issues.errors:
+                      %li.text-warning.text-center Error:
+                        =error
+                .row.checkbox-multi-select
+                  - rows = len(list(form.issues))/3
+                  - tmp_list = list(form.issues)
+                  - tmp1, tmp2, tmp3 = tmp_list[0:rows], tmp_list[rows:2*rows], tmp_list[2*rows::]
+                  - for field_list in [tmp1, tmp2, tmp3]:
+                    .col-sm-4
+                      - for subfield in field_list:
+                        %div.checkbox-container
+                          = subfield()
+                          = subfield.label()
+                          %br
+              %hr
+              %section
+                %h4 Bias
+
+                %table.table.table-striped.table-condensed.fairness
+                  %tbody
+                    %tr
+                      %th Bias
+                      %th Favour
+                      %th Disfavour
+                      %th
+                    - for f in fairness_forms + [new_fairness_form]:
+                      - class_ = ''
+                      - class_ += ' template' if f == new_fairness_form else ''
+                      - class_ += ' new' if f.is_new() else ''
+
+                      %tr(class_=class_, dataFairnessId=f.document_fairness.id if not f.is_new() and f.document_fairness else '')
+                        %td
+                          = field_input(f.fairness_id)
+                        %td
+                          = field_input(f.bias_favour_individual_id, class_='chosen-select' if f != new_fairness_form else 'chosen-select-delayed')
+                        %td
+                          = field_input(f.bias_oppose_individual_id, class_='chosen-select' if f != new_fairness_form else 'chosen-select-delayed')
+                        %td
+                          %a.btn.btn-link.delete(href="#", title='delete this')
+                            %i.fa.fa-times-circle
+                          - if not f.is_new():
+                            %a.btn.btn-link.undo-delete(href="#", title='re-add this') undo
+
+              %hr
+            %%include(file='analysis_tab_mentions.haml')
+            %%include(file='analysis_tab_places.haml')
+            %%include(file='analysis_tab_keywords.haml')
 
         .panel-footer
           .text-right

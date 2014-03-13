@@ -10,50 +10,9 @@
 
   .panel-body
     %section
-      %dl.dl-horizontal
-        %dt Topic
-        %dd&= document.topic.name if document.topic else '(none)'
-        %dt Origin
-        %dd&= document.origin.name if document.origin else '(none)'
-
-    %hr
-    %section.issues
-      %h4 Issues Raised
-      - if not document.issues:
-        %p
-          No issues have been tagged.
-
-      - for issue in document.issues:
-        %span.label.label-info(title=issue.description, dataToggle="tooltip", dataContainer="body")&=issue.name
-
-    %hr
-    %section.fairness
-      %h4 Bias
-      - if not document.fairness:
-        %p No fairness provided.
-
-      - if document.fairness:
-        %table.table-striped.table-condensed
-          %thead
-            %tr
-              %th Bias
-              %th Favour
-              %th Disfavour
-          %tbody
-            - for df in document.fairness:
-              %tr
-                %td&= df.fairness.name
-                %td&= df.bias_favour.full_name() if df.bias_favour else ''
-                %td&= df.bias_oppose.full_name() if df.bias_oppose else ''
-
-
-    %hr
-    %section
-      %ul.nav.nav-pills
+      %ul.nav.nav-tabs
         %li.active
-          %a(href="#sources-tab", dataToggle="tab")
-            Sources
-            %span.badge&= len(document.sources)
+          %a(href="#analysis-tab", dataToggle="tab") Analysis
         %li
           %a(href="#mentions-tab", dataToggle="tab")
             Mentions
@@ -68,56 +27,95 @@
             %span.badge&= len(document.keywords)
 
       .tab-content
-        #sources-tab.tab-pane.active
-          %h3 Sources
-          %table.table.table-striped.table-condensed.offsets.sources
-            %thead
-              %tr
-                %th
-                  .row
-                    .col-sm-4 Name
-                    .col-sm-3 Function
-                    .col-sm-3 Affiliation
-                    .col-sm-1 Quoted?
-            %tbody
-              - sources = sorted(document.sources, key=lambda s: [not s.manual, s.entity.name])
-              - for ds in sources:
-                %tr(dataOffsets=ds.offset_list)
-                  %td
+        #analysis-tab.tab-pane.active
+          %section
+            %h4 Analysis
+            %dl.dl-horizontal
+              %dt Topic
+              %dd&= document.topic.name if document.topic else '(none)'
+              %dt Origin
+              %dd&= document.origin.name if document.origin else '(none)'
+
+          %section
+            %h4 Sources
+            %table.table.table-striped.table-condensed.offsets.sources
+              %thead
+                %tr
+                  %th
                     .row
-                      .col-sm-4
-                        %a(href= url_for('show_entity', group=ds.entity.group, name=ds.entity.name))&=ds.entity.name
-                        - if ds.person and ds.person.gender:
-                          %span.text-muted(title=ds.person.gender.name)
-                            %strong&=
-                              " - " + ds.person.gender.abbr()
-                        - if ds.person and ds.person.race:
-                          %span.text-muted(title=ds.person.race.name)
-                            %strong&=
-                              " (" + ds.person.race.abbr() + ")"
+                      .col-sm-4 Name
+                      .col-sm-3 Function
+                      .col-sm-3 Affiliation
+                      .col-sm-1 Quoted?
+              %tbody
+                - sources = sorted(document.sources, key=lambda s: [not s.manual, s.entity.name])
+                - for ds in sources:
+                  %tr(dataOffsets=ds.offset_list)
+                    %td
+                      .row
+                        .col-sm-4
+                          %a(href= url_for('show_entity', group=ds.entity.group, name=ds.entity.name))&=ds.entity.name
+                          - if ds.person and ds.person.gender:
+                            %span.text-muted(title=ds.person.gender.name)
+                              %strong&=
+                                " - " + ds.person.gender.abbr()
+                          - if ds.person and ds.person.race:
+                            %span.text-muted(title=ds.person.race.name)
+                              %strong&=
+                                " (" + ds.person.race.abbr() + ")"
 
-                      .col-sm-3
-                        - if ds.function:
-                          &=ds.function.name
-                      .col-sm-3
-                        - if ds.affiliation:
-                          &=ds.affiliation.full_name()
-                      .col-sm-1
-                        - if not ds.quoted:
-                          no
-                        - else:
-                          - if len(ds.utterances()) > 0:
-                            %span.badge&= len(ds.utterances())
+                        .col-sm-3
+                          - if ds.function:
+                            &=ds.function.name
+                        .col-sm-3
+                          - if ds.affiliation:
+                            &=ds.affiliation.full_name()
+                        .col-sm-1
+                          - if not ds.quoted:
+                            no
                           - else:
-                            yes
+                            - if len(ds.utterances()) > 0:
+                              %span.badge&= len(ds.utterances())
+                            - else:
+                              yes
 
-                      .col-sm-1
-                        - if ds.manual:
-                          %i.fa.fa-check-circle(title='Added manually by a monitor')
+                        .col-sm-1
+                          - if ds.manual:
+                            %i.fa.fa-check-circle(title='Added manually by a monitor')
 
-                - for q in ds.utterances():
-                  %tr.quotation(dataOffsets=('%d:%d' % (q.offset, q.length) if q.offset else ''))
-                    %td&= q.quote
+                  - for q in ds.utterances():
+                    %tr.quotation(dataOffsets=('%d:%d' % (q.offset, q.length) if q.offset else ''))
+                      %td&= q.quote
+
+          %hr
+          %section.issues
+            %h4 Issues Raised
+            - if not document.issues:
+              %p
+                No issues have been tagged.
+
+            - for issue in document.issues:
+              %span.label.label-info(title=issue.description, dataToggle="tooltip", dataContainer="body")&=issue.name
+
+          %hr
+          %section.fairness
+            %h4 Bias
+            - if not document.fairness:
+              %p No fairness provided.
+
+            - if document.fairness:
+              %table.table-striped.table-condensed
+                %thead
+                  %tr
+                    %th Bias
+                    %th Favour
+                    %th Disfavour
+                %tbody
+                  - for df in document.fairness:
+                    %tr
+                      %td&= df.fairness.name
+                      %td&= df.bias_favour.full_name() if df.bias_favour else ''
+                      %td&= df.bias_oppose.full_name() if df.bias_oppose else ''
 
         %%include(file='analysis_tab_mentions.haml')
         %%include(file='analysis_tab_places.haml')
