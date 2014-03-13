@@ -2,11 +2,10 @@
 
 %article.document-container
   %section.heading
-    - if request.path == url_for('show_article', id=document.id):
-      .pull-right
-        %a.btn.btn-default(href=url_for('edit_article', id=document.id))
-          %i.fa.fa-pencil
-          Edit article
+    .pull-right
+      %a.btn.btn-default(href=url_for('edit_article', id=document.id))
+        %i.fa.fa-pencil
+        Edit article
 
     %h2&= document.title
     .url
