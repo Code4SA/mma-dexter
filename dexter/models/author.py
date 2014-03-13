@@ -55,7 +55,6 @@ class Author(db.Model):
     def get_or_create(cls, name, author_type, gender=None, race=None):
         """ Get the author with this name or create it if it doesn't exist. """
         a = Author.query.filter(Author.name == name).first()
-        log.info("author: %s" % a)
         if not a:
             a = Author()
             a.name = name
