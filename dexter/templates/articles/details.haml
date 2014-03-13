@@ -28,7 +28,8 @@
     %i.fa.fa-user
     - if document.author:
       - if document.author.person:
-        &= document.author.person.name
+        %a(href=url_for('show_person', id=document.author.person.id))
+          &= document.author.person.name
       - else:
         &= document.author.name
       (${document.author.author_type.name|h})
