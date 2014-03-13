@@ -163,6 +163,7 @@ class UserView(MyModelView):
     list_template = 'admin/custom_list_template.html'
     column_list = (
         'email',
+        'disabled',
         'admin',
     )
     column_searchable_list = (

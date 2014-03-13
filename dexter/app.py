@@ -51,4 +51,11 @@ login_manager.login_view = 'user_login'
 @login_manager.user_loader
 def load_user(userid):
     from .models import User
-    return User.query.get(userid)
+
+    user = User.query.get(userid)
+
+    # don't allow disabled users
+    if user and user.disabled:
+        user = None
+
+    return user
