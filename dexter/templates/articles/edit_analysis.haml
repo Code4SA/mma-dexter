@@ -9,7 +9,7 @@
     %%include(file="details.haml")
 
   .col-sm-7
-    %form.edit-analysis(action=url_for('edit_article_analysis', id=document.id), method='POST')
+    %form.safedirty.edit-analysis(action=url_for('edit_article_analysis', id=document.id), method='POST')
       = form.csrf_token
 
       .panel.panel-default.analysis

@@ -43,6 +43,29 @@ $(function() {
 });
 
 $(function() {
+  // prevent dirty forms from being navigated away from
+  var dirty = false;
+
+  $('form.safedirty').on('change', 'input, select, textarea', function(e) {
+    e.delegateTarget.dirty = true;
+  });
+
+  $('form.safedirty').on('submit', function(e) {
+    this.dirty = false;
+  });
+
+  $(window).on('beforeunload', function(e) {
+    forms = $('form.safedirty');
+    for (var i = 0; i < forms.length; i++) {
+      if (forms[i].dirty) {
+        e.preventDefault();
+        return 'You will lose your changes!';
+      }
+    }
+  });
+});
+
+$(function() {
   // helper to setup the offset adjustments for hilighting
   // portions of the article
   var $article = $('.document-container .article-text');

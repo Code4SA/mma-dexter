@@ -9,7 +9,7 @@
     %section
       %h2 Add a new article
 
-      %form(action=url_for('new_article'), method='POST')
+      %form.safedirty(action=url_for('new_article'), method='POST')
         = form.csrf_token
 
         %fieldset
