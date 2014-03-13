@@ -20,6 +20,16 @@ $(function() {
   });
 });
 
+// globally prevent enter key from submitting forms
+$(function() {
+  $(document).on('keydown', 'input, select', function(event) {
+    if(event.keyCode == 13) {
+      event.preventDefault();
+      return false;
+    }
+  });
+});
+
 $(function() {
   // affix article text in document view
   var $text = $('.document-container .article-text');
