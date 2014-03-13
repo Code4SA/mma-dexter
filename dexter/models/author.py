@@ -111,7 +111,7 @@ class AuthorType(db.Model):
 
 
 class AuthorForm(Form):
-    name              = StringField('Author', [validators.Length(max=50)])
+    name              = StringField('Author', [validators.Length(max=50)], default='Unknown')
     author_type_id    = SelectField('Type', default=1)
     person_gender_id  = SelectField('Gender', default='')
     person_race_id    = SelectField('Race', default='')
