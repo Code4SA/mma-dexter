@@ -81,7 +81,8 @@
                         = vertical_field(f.source_function_id)
                       .col-xs-4
                         .quoted
-                          - if f.source:
+                          -# don't allow editing of directly quoted sources
+                          - if f.source and ds.utterances():
                             %input(type='hidden', name=f.quoted.name, value=f.quoted.data)
                             &= 'quoted' if f.source.quoted else 'not quoted'
                             - if len(ds.utterances()) > 0:
