@@ -75,6 +75,7 @@
                     = vertical_field(f.person_name, class_='person-name')
 
                   .source-details
+                    = vertical_field(f.affiliation_individual_id, class_='chosen-select' if f.source else 'chosen-select-delayed')
                     .row
                       .col-xs-6
                         = vertical_field(f.source_function_id)
@@ -89,19 +90,7 @@
                             %label
                               &= field_input(f.quoted)
                               Quoted?
-                    = vertical_field(f.affiliation_individual_id, class_='chosen-select' if f.source else 'chosen-select-delayed')
 
-
-                %table.table.table-striped.table-condensed.sources
-                  %tbody
-                    - for f in new_sources:
-                      %tr.new
-                        %td
-                          - show_source_form(f)
-
-                    %tr.template
-                      %td
-                        - show_source_form(new_source_form)
 
                 %table.table.table-striped.table-condensed.offsets.sources
                   %tbody
@@ -114,6 +103,17 @@
                       - for q in ds.utterances():
                         %tr.quotation(dataOffsets=('%d:%d' % (q.offset, q.length) if q.offset else ''))
                           %td(colspan="3")&= q.quote
+
+                %table.table.table-striped.table-condensed.sources
+                  %tbody
+                    - for f in new_sources:
+                      %tr.new
+                        %td
+                          - show_source_form(f)
+
+                    %tr.template
+                      %td
+                        - show_source_form(new_source_form)
 
               %hr
               %section.form-horizontal
