@@ -38,7 +38,7 @@ $(function() {
   var $article = $('.document-container .article-text');
 
   if ($article.length > 0) {
-    var originalText = $article.data('original');
+    var originalText = $article.data('original') || '';
 
     var htmlEscape = function(str) {
       return String(str)

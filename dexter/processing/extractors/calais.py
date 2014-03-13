@@ -18,14 +18,15 @@ class CalaisExtractor(BaseExtractor):
         pass
 
     def extract(self, doc):
-        log.info("Extracting things for %s" % doc)
+        if doc.text:
+            log.info("Extracting things for %s" % doc)
 
-        calais = self.fetch_data(doc).get('extractions', {})
+            calais = self.fetch_data(doc).get('extractions', {})
 
-        log.debug("Raw calais extractions: %s" % calais)
+            log.debug("Raw calais extractions: %s" % calais)
 
-        self.extract_entities(doc, calais)
-        self.extract_utterances(doc, calais)
+            self.extract_entities(doc, calais)
+            self.extract_utterances(doc, calais)
 
 
     def extract_entities(self, doc, calais):

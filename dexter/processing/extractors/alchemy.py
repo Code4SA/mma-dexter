@@ -21,8 +21,9 @@ class AlchemyExtractor(BaseExtractor):
         self.alchemy = AlchemyAPI(self.API_KEY)
 
     def extract(self, doc):
-        self.fetch_extract_entities(doc)
-        self.fetch_extract_keywords(doc)
+        if doc.text:
+            self.fetch_extract_entities(doc)
+            self.fetch_extract_keywords(doc)
 
     def fetch_extract_entities(self, doc):
         log.info("Extracting entities for %s" % doc)
