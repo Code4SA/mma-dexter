@@ -6,7 +6,10 @@
       .timestamp
         %i.fa.fa-calendar
         - if document.published_at:
-          &= document.published_at.strftime('%Y-%m-%d %H:%M')
+          - if document.published_at.hour == 0 and document.published_at.minute == 0:
+            &= document.published_at.strftime('%Y-%m-%d')
+          - else:
+            &= document.published_at.strftime('%Y-%m-%d %H:%M')
     .col-sm-6
       .medium
         %i.fa.fa-building-o
