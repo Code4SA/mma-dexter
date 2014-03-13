@@ -1,6 +1,6 @@
 from itertools import chain
 
-from ..models import Document, Entity, db, Gender, Person, DocumentType
+from ..models import Document, Entity, db, Gender, Person, DocumentType, DocumentFairness, Fairness
 from ..processing import ProcessingError
 
 from .crawlers import MGCrawler, GenericCrawler
@@ -56,8 +56,14 @@ class DocumentProcessor:
     def normalise(self, doc):
         """ Run some normalisations on the document. """
         doc.normalise_text()
+
         if not doc.document_type:
             doc.document_type = DocumentType.query.filter(DocumentType.name == 'News story').one()
+
+        if not doc.fairness:
+            df = DocumentFairness()
+            df.fairness = Fairness.query.filter(Fairness.name == 'Fair').one()
+            doc.fairness.append(df)
 
 
     def crawl(self, doc):
