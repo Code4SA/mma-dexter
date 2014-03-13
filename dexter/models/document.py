@@ -165,13 +165,14 @@ class DocumentForm(Form):
     author_id           = HiddenField()
 
     def __init__(self, *args, **kwargs):
+        self.published_at.data = datetime.datetime.utcnow()
+
         super(DocumentForm, self).__init__(*args, **kwargs)
 
         from . import Medium, DocumentType
 
         self.medium_id.choices = [[str(m.id), m.name] for m in Medium.query.order_by(Medium.name).all()]
         self.document_type_id.choices = [[str(t.id), t.name] for t in DocumentType.query.order_by(DocumentType.name).all()]
-        self.published_at.data = datetime.datetime.utcnow()
 
 
 class DocumentType(db.Model):
