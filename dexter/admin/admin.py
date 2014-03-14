@@ -1,4 +1,4 @@
-from dexter.models import db, Document, Entity, Medium, DocumentType, Topic, Fairness, Individual, User
+from dexter.models import db, Document, Entity, Medium, DocumentType, Topic, Fairness, Individual, User, Issue, Location
 from flask.ext.admin import Admin, expose, AdminIndexView
 from flask.ext.admin.contrib.sqla import ModelView
 from flask.ext.admin.model.template import macro
@@ -181,10 +181,12 @@ class UserView(MyModelView):
 
 admin_instance = Admin(url='/admin', base_template='admin/custom_master.html', name="Dexter Admin", index_view=MyIndexView())
 admin_instance.add_view(UserView(User, db.session, name="Users", endpoint='user'))
-admin_instance.add_view(MyModelView(Topic, db.session, name="Article Topics", endpoint="topic"))
-admin_instance.add_view(MyModelView(DocumentType, db.session, name="Article Types", endpoint="type"))
 admin_instance.add_view(MediumView(Medium, db.session, name="Mediums", endpoint="medium"))
-admin_instance.add_view(MyModelView(Fairness, db.session, name="Bias", endpoint="bias"))
-admin_instance.add_view(IndividualView(Individual, db.session, name="Affiliations", endpoint="affiliations"))
-admin_instance.add_view(EntityView(Entity, db.session, name="Entities", endpoint='entity'))
 admin_instance.add_view(DocumentView(Document, db.session, name="Articles", endpoint='document'))
+admin_instance.add_view(MyModelView(DocumentType, db.session, name="Types", endpoint="type"))
+admin_instance.add_view(MyModelView(Topic, db.session, name="Topics", endpoint="topic"))
+admin_instance.add_view(MyModelView(Location, db.session, name="Origins", endpoint="origins"))
+admin_instance.add_view(EntityView(Entity, db.session, name="Entities", endpoint='entity'))
+admin_instance.add_view(IndividualView(Individual, db.session, name="Affiliations", endpoint="affiliations"))
+admin_instance.add_view(MyModelView(Issue, db.session, name="Issues", endpoint="issues"))
+admin_instance.add_view(MyModelView(Fairness, db.session, name="Bias", endpoint="bias"))
