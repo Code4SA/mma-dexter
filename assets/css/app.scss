@@ -81,9 +81,12 @@ table.sources {
     padding: 0px;
   }
 
-  .template .btn.delete {
+  .template {
     display: none;
-    padding: 0px;
+  }
+
+  .unnamed-details {
+    display: none
   }
 
   .btn.undo-delete {
@@ -107,14 +110,10 @@ table.sources {
     }
   }
 
-  tr.new, tr.template {
+  tr.new {
     td {
       background-color: #faebcc;
     }
-  }
-
-  tr.template {
-    .source-details { display: none }
   }
 }
 

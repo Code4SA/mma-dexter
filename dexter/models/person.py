@@ -24,7 +24,7 @@ class Person(db.Model):
     __tablename__ = "people"
 
     id          = Column(Integer, primary_key=True)
-    name        = Column(String(50), index=True, nullable=False, unique=True)
+    name        = Column(String(100), index=True, nullable=False, unique=True)
     gender_id   = Column(Integer, ForeignKey('genders.id'))
     race_id     = Column(Integer, ForeignKey('races.id'))
 

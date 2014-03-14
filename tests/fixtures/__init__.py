@@ -10,11 +10,29 @@ class PersonData(DataSet):
         gender_id = 2
         race_id = 1
 
+    class zuma:
+        name = 'Jacob Zuma'
+        gender_id = 2
+        race_id = 2
+
+    class sue_no_gender:
+        name = 'Sue'
+
 class EntityData(DataSet):
     class joe_author:
         name = 'Joe Author'
         group = 'person'
         person = PersonData.joe_author
+
+    class zuma:
+        name = 'Jacob Zuma'
+        group = 'person'
+        person = PersonData.zuma
+
+    class sue_no_gender:
+        name = 'Sue'
+        group = 'person'
+        person = PersonData.sue_no_gender
 
 class AuthorData(DataSet):
     class joe_author:

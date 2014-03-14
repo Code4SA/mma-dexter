@@ -121,15 +121,11 @@
 
       self.newSourceCount = $('.sources tr.new', self.$form).length;
 
+      $('.btn.add-source').on('click', self.addSource);
       $('table.sources', self.$form).
-        on('keyup', '.template .person-name', self.newSourceKeyUp).
-        on('blur', '.new .person-name', function(e) {
-          if ($(this).val() === '') {
-            $(this).closest('tr').remove();
-          }
-        }).
         on('click', '.btn.delete', self.deleteSource).
-        on('click', '.btn.undo-delete', self.undoDeleteSource);
+        on('click', '.btn.undo-delete', self.undoDeleteSource).
+        on('change', 'input:radio[name$="-source_type"]', self.toggleSourceType);
 
       self.newFairnessCount = $('.fairness tr.new', self.$form).length;
       $('table.fairness', self.$form).
@@ -138,34 +134,53 @@
         on('click', '.btn.undo-delete', self.undoDeleteFairness);
     };
       
-    // when the user starts adding a new source, duplicate the row to keep a fresh
-    // 'new entry' row, and then rename the elements on this one
-    self.newSourceKeyUp = function(e) {
-      if ($(this).val() === '') return;
+    self.addSource = function(e) {
+      e.preventDefault();
 
-      var $row = $(this).closest('tr');
-      var $template = $row.clone().insertAfter($row);
-      $('.person-name', $template).val('');
+      var $template = $('table.sources tr.template');
+      var $row = $template.clone().insertBefore($template);
 
       // this row is no longer a template
       $row.removeClass('template').addClass('new');
 
       self.newSourceCount++;
 
-      // change form field name prefixes to be new[ix]
-      $('input, select, textarea', $row).each(function() {
-        $(this).attr('name', $(this).attr('name').replace('new-', 'new[' + self.newSourceCount + ']-'));
+      // change form field name and 'for' prefixes to be new[ix]
+      $('input, select, textarea, label', $row).each(function() {
+        var attrs = ['name', 'id', 'for'];
+
+        for (var i = 0; i < attrs.length; i++) {
+          var attr = attrs[i];
+          var val = $(this).attr(attr);
+          if (val) {
+            $(this).attr(attr, val.replace('new-', 'new[' + self.newSourceCount + ']-'));
+          }
+        }
       });
 
       $('.chosen-select-delayed', $row).chosen();
 
-      $('.person-name', $row).typeahead({
-        highlight: true,
-        autoselect: true,
-      }, {
-        source: self.personHound.ttAdapter(),
-        displayKey: 'name',
-      }).focus();
+      self.personTypeaheadEnabled = false;
+      self.enablePersonTypeahead($row);
+    };
+
+    self.enablePersonTypeahead = function($row) {
+      if (!self.personTypeaheadEnabled) {
+        $('.person-name input', $row).val('').typeahead({
+          highlight: true,
+          autoselect: true,
+        }, {
+          source: self.personHound.ttAdapter(),
+          displayKey: 'name',
+        });
+
+        self.personTypeaheadEnabled = true;
+      }
+    };
+
+    self.disablePersonTypeahead = function($row) {
+      $('.person-name input', $row).typeahead('destroy').val('');
+      self.personTypeaheadEnabled = false;
     };
 
     // delete button was clicked
@@ -179,7 +194,7 @@
       } else {
         // it's not new
         $row.addClass('deleted');
-        self.$form.append('<input type="hidden" name="source-del[' + $row.data('source-id') + ']" value="Y">');
+        $('input[name$="-deleted"]', $row).val('1');
       }
     };
 
@@ -189,7 +204,30 @@
 
       $row = $(this).closest('tr');
       $row.removeClass('deleted');
-      $('input[name="source-del[' + $row.data('source-id') + ']"]', self.$form).remove();
+      $('input[name$="-deleted"]', $row).val('0');
+    };
+
+    // should we show the unnamed-details area?
+    self.toggleSourceType = function(e) {
+      var $row = $(this).closest('tr');
+      var sourceType = $(this).val();
+
+      if (sourceType == 'unnamed') {
+        $('.person-name', $row).hide();
+        $('.unnamed-details', $row).show();
+
+      } else {
+        $('.person-name', $row).show();
+        $('.unnamed-details', $row).hide();
+
+        if (sourceType == 'person') {
+          self.enablePersonTypeahead($row);
+        } else {
+          self.disablePersonTypeahead($row);
+        }
+
+        $('.person-name input', $row).focus();
+      }
     };
 
     // when the user starts adding a new fairness, duplicate the row to keep a fresh

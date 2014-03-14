@@ -8,7 +8,7 @@ from sqlalchemy import (
     func,
     )
 from sqlalchemy.orm import relationship
-from wtforms import StringField, validators, SelectField, HiddenField, BooleanField
+from wtforms import StringField, validators, SelectField, HiddenField, BooleanField, RadioField
 
 from .support import db
 from .with_offsets import WithOffsets
@@ -17,19 +17,29 @@ from ..forms import Form
 class DocumentSource(db.Model, WithOffsets):
     """
     A source is a source of information for an article.
-    A source instance is bound to a document and an entity and describes the
-    role in which the source was accessed, how they were accessed, etc.
+    A source can be one of:
+
+     - a named person (linked via person_id)
+     - an unnamed person (in which case gender_id and race_id are meaningful)
+     - a non-person secondary source (only name is applicable)
     """
     __tablename__ = "document_sources"
 
     id        = Column(Integer, primary_key=True)
     doc_id    = Column(Integer, ForeignKey('documents.id'), index=True, nullable=False)
-    entity_id = Column(Integer, ForeignKey('entities.id'), index=True)
-    source_function_id = Column(Integer, ForeignKey('source_functions.id'))
 
-    photographed = Column(Boolean)
+    person_id = Column(Integer, ForeignKey('people.id'), index=True)
+
+    # if this is True, then person_id is ignored and this is an anonymous source
+    unnamed           = Column(Boolean, default=False)
+    unnamed_gender_id = Column(Integer, ForeignKey('genders.id'))
+    unnamed_race_id   = Column(Integer, ForeignKey('races.id'))
+
+    # if unnamed is False and person_id is null, then this is a secondary, named source
+    name         = Column(String(100))
+
+    source_function_id = Column(Integer, ForeignKey('source_functions.id'))
     quoted       = Column(Boolean)
-    named        = Column(Boolean)
 
     # was this source added manually or was it inferred by machine learning?
     manual       = Column(Boolean, default=False, nullable=False)
@@ -41,28 +51,77 @@ class DocumentSource(db.Model, WithOffsets):
     updated_at   = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.current_timestamp())
 
     # Associations
-    entity      = relationship("Entity", lazy=False)
+    person      = relationship("Person", foreign_keys=[person_id], lazy=False)
     function    = relationship("SourceFunction", lazy=False)
     affiliation = relationship("Individual", lazy=False)
+    unnamed_gender = relationship("Gender", lazy=False)
+    unnamed_race   = relationship("Race", lazy=False)
 
-    def document_entity(self):
-        """ The DocumentEntity instance that matches this source for this document. May be None. """
-        for de in self.document.entities:
-            if de.entity == self.entity:
-                return de
-        return None
+    def document_entities(self):
+        """ List of DocumentEntity instances that matches this source for this document. May be empty. """
+        if not self.person:
+            return []
+        return [de for de in self.document.entities if de.entity.person == self.person]
 
     def utterances(self):
         """ A potentially empty list of Utterances from this source in this document. """
-        return sorted([u for u in self.document.utterances if u.entity == self.entity],
+        return sorted([u for u in self.document.utterances if self.person and u.entity.person == self.person],
                 key=lambda u: u.offset)
 
 
+    def friendly_name(self):
+        if self.person:
+            return self.person.name
+
+        if self.unnamed:
+            return 'Unnamed'
+
+        return self.name or '(none)'
+
+
+    def sort_key(self):
+        return [not self.manual, self.friendly_name()]
+
+
+    def gender(self):
+        if self.person:
+            return self.person.gender
+        return self.unnamed_gender
+
+    def race(self):
+        if self.person:
+            return self.person.race
+        return self.unnamed_race
+
+
     @property
-    def person(self):
-        """ Direct access to the person associated with this source's entity, which may
-        be None. """
-        return self.entity.person if self.entity else None
+    def source_type(self):
+        if self.person_id:
+            return 'person'
+
+        if self.unnamed:
+            return 'unnamed'
+
+        return 'secondary'
+
+    @source_type.setter
+    def source_type(self, typ):
+        if typ == 'person':
+            self.unnamed = False
+            self.name = None
+            self.unnamed_gender_id = None
+            self.unnamed_race_id = None
+
+        elif typ == 'unnamed':
+            self.unnamed = True
+            self.person = None
+            self.name = None
+
+        elif typ == 'secondary':
+            self.unnamed = False
+            self.person = None
+            self.unnamed_gender_id = None
+            self.unnamed_race_id = None
 
 
     @property
@@ -70,15 +129,15 @@ class DocumentSource(db.Model, WithOffsets):
         """ String of offset:length pairs of places in this document the entity
         is mentioned or quoted, may be empty. """
         offsets = ['%d:%d' % (u.offset, u.length) for u in self.utterances() if u.offset]
-        de = self.document_entity()
-        if de and de.offset_list:
-            offsets.append(de.offset_list)
+        for de in self.document_entities():
+            if de.offset_list:
+                offsets.append(de.offset_list)
 
         return ' '.join(offsets)
 
 
     def __repr__(self):
-        return "<DocumentSource doc=%s, entity=%s>" % (self.document, self.entity)
+        return "<DocumentSource doc=%s, person=%s, unnamed=%s, name='%s'>" % (self.document, self.person, self.unnamed, self.name)
 
 
 class SourceFunction(db.Model):
@@ -117,11 +176,24 @@ class SourceFunction(db.Model):
         return functions
 
 
+def none_coerce(v):
+    from wtforms.compat import text_type
+    return text_type('' if v is None else v)
+
+
 class DocumentSourceForm(Form):
-    person_name       = StringField('Name', [validators.Length(max=50)])
+    name              = StringField('Name', [validators.Length(max=100)])
+    unnamed_gender_id = SelectField('Gender', [validators.Optional()], default='', coerce=none_coerce)
+    unnamed_race_id   = SelectField('Race', [validators.Optional()], default='', coerce=none_coerce)
+
+    source_type       = RadioField('Type', default='person', choices=[['person', 'Person'], ['unnamed', 'Unnamed person'], ['secondary', 'Secondary (not person)']])
+
+    quoted            = BooleanField('Quoted', default=False)
+
     source_function_id = SelectField('Function', default='')
     affiliation_individual_id = SelectField('Affiliation', default='')
-    quoted            = BooleanField('Quoted', default=False)
+
+    deleted           = HiddenField('deleted', default='0')
 
     # the associated source object, if any
     source = None
@@ -131,54 +203,13 @@ class DocumentSourceForm(Form):
 
         self.source_function_id.choices = [['', '(none)']] + [[str(s.id), s.name] for s in SourceFunction.query.order_by(SourceFunction.name).all()]
 
+        from . import Gender, Race
+        self.unnamed_gender_id.choices = [['', '(unknown gender)']] + [[str(g.id), g.name] for g in Gender.query.order_by(Gender.name).all()]
+        self.unnamed_race_id.choices = [['', '(unknown race)']] + [[str(r.id), r.name] for r in Race.query.order_by(Race.name).all()]
+
         # because this list is heirarchical, we class 'organisations' as
         # this with only 0 or two dots
         from . import Individual
-
         orgs = [i for i in Individual.query.all() if i.code.count('.') <= 1]
         orgs.sort(key=Individual.sort_key)
         self.affiliation_individual_id.choices = [['', '(none)']] + [[str(s.id), s.full_name()] for s in orgs]
-
-
-    def get_or_create_entity(self):
-        from . import Person, Entity
-
-        """ Get or create an entity that matches the name of this document source.
-        We try, in order:
-
-        * a person with that name
-        * a person entity with that name (and create a person if not already linked)
-        * any entity with that name
-
-        If all fail, we create a new entity and a new person.
-        """
-        name = self.person_name.data
-        if not name:
-            return None
-
-        person = Person.query.filter(Person.name == name).first()
-
-        if person:
-            entity = person.entity()
-        else:
-            # find a person entity
-            entity = Entity.query.filter(Entity.name == name, Entity.group == 'person').first()
-
-            if not entity:
-                # find an arbitrary entity
-                entity = Entity.query.filter(Entity.name == name).first()
-
-                if not entity:
-                    # create the entity
-                    entity = Entity()
-                    entity.group = 'person'
-                    entity.name = name
-                    db.session.add(entity)
-
-            # link a person to the entity if it doesn't exist
-            if entity.group == 'person' and not entity.person:
-                person = Person()
-                person.name = entity.name
-                entity.person = person
-
-        return entity

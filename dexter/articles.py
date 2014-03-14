@@ -6,7 +6,7 @@ from flask.ext.mako import render_template
 from flask.ext.login import login_required, current_user
 
 from .app import app
-from .models import db, Document, Issue
+from .models import db, Document, Issue, Person
 from .models.document import DocumentForm, DocumentAnalysisForm
 from .models.source import DocumentSource, DocumentSourceForm
 from .models.fairness import DocumentFairness, DocumentFairnessForm
@@ -124,7 +124,7 @@ def edit_article_analysis(id):
         f = DocumentSourceForm(prefix='source[%d]' % source.id, obj=source)
         f.source = source
         source_forms.append(f)
-    source_forms.sort(key=lambda f: [not f.source.manual, f.source.entity.name])
+    source_forms.sort(key=lambda f: f.source.sort_key())
 
     # in the page, the fields for all new sources will be transformed into
     # 'source-new[0]-name'. This form is used as a template for these
@@ -142,11 +142,11 @@ def edit_article_analysis(id):
 
     if request.method == 'POST':
         # find new sources and build forms for them.
-        # the field names are like: source-new[2]-person_name
+        # the field names are like: source-new[2]-name
         for key in sorted(set('-'.join(key.split('-', 3)[0:2]) for key in request.form.keys() if key.startswith('source-new['))):
             src_form = DocumentSourceForm(prefix=key)
             # skip new sources that have an empty name
-            if src_form.person_name.data != '':
+            if src_form.source_type.data not in ('person', 'secondary') or src_form.name.data != '':
                 new_sources.append(src_form)
 
         # new fairness
@@ -170,34 +170,39 @@ def edit_article_analysis(id):
             if not document.origin_location_id:
                 document.origin_location_id = None
 
-            # update sources
+            # update and delete sources
             for f in source_forms:
-                f.source.manual = True
-                f.populate_obj(f.source)
-
-            # delete sources
-            to_delete = [s for s in document.sources if ('source-del[%d]' % s.id) in request.form]
-            for source in to_delete:
-                document.sources.remove(source)
+                if f.deleted.data == '1':
+                    document.sources.remove(f.source)
+                else:
+                    f.source.manual = True
+                    f.populate_obj(f.source)
 
             # save new sources
             for f in new_sources:
                 src = DocumentSource()
                 src.document = document
-                src.entity = f.get_or_create_entity()
-                src.manual = True
                 f.populate_obj(src)
+                src.manual = True
+                
+                # link to person if they chose that option
+                if f.source_type.data == 'person':
+                    src.person = Person.get_or_create(f.name.data)
+                    # override the 'quoted' attribute if we know this entity has utterances in
+                    # this document
+                    if any(src.person == u.entity.person for u in document.utterances):
+                        src.quoted = True
 
-                # override the 'quoted' attribute if we know this entity has utterances in
-                # this document
-                if any(src.entity == u.entity for u in document.utterances):
-                    src.quoted = True
 
             for src in document.sources:
                 if src.source_function_id == '':
                     src.source_function_id = None
                 if src.affiliation_individual_id == '':
                     src.affiliation_individual_id = None
+                if src.unnamed_race_id in ('', 'None'):
+                    src.unnamed_race_id = None
+                if src.unnamed_gender_id in ('', 'None'):
+                    src.unnamed_gender_id = None
 
 
             # --- fairness
