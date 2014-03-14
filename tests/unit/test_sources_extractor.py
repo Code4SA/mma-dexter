@@ -36,8 +36,6 @@ class TestSourcesExtractor(unittest.TestCase):
 
         self.db.session.add(d)
 
-        de.entity.person.gender = Gender.male()
-
         self.ex.guess_genders(d)
         self.assertEqual('Male', d.entities[0].entity.person.gender.name)
 
