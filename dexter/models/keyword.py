@@ -45,52 +45,48 @@ class Topic(db.Model):
     @classmethod
     def create_defaults(self):
         text = """
-        2/3 majority
-        Coalitions and party co-operation
-        Election Fraud
-        Election funding
-        IEC/Election Logistics
-        Opinion Polls
-        Party manifesto outline or analyses
-        Party politics(internal and/or external)
-        Political party campaigning (only when no other code applies)
-        Political Violence & Intimidation
-        Service Delivery
-        Voter Education & registration
-        Affirmative Action
-        Arts/Culture/Entertainment/Religion
-        Black Economic Empowerment
-        Children/Child Abuse
-        Corruption Govt & party
-        Crime
-        Death Penalty
-        Diplomacy
-        Gender Based Violence
-        HIV/Aids
-        Housing
-        International Politics
-        Justice System
-        Land
-        Personalities and Profiles
-        Poverty
-        Race & Racism
-        Refugees
-        War on Terror & Terrorism
-        Corruption, general
-        Demonstrations
-        Development
-        Disaster
-        Economics
-        Education
-        Environment
-        Gender
-        Health
-        Human Rights
-        Labour, Strikes, Unemployment
-        Media
-        Science
-        Sport
-        Other (Last Resort)
+Voter education & registration
+Election fraud
+Election funding
+Election logistics 
+Election results
+Opinion polls
+Political party campaigning (only when no other code applies)
+Political party manifesto outlines / analyses
+Political party coalitions & co-operation
+Political party politics (internal &/or external)
+Political violence & intimidation
+Service delivery
+Education
+Environment
+Health
+HIV & Aids
+Corruption (govt, political party, private sector)
+Crime
+Justice system
+Housing
+Land
+Gender
+Children
+Poverty
+Race / Racism
+Refugees / Migration
+Affirmative action
+Diplomacy
+International politics
+Personalities and profiles
+Demonstrations / Protests
+Development
+Disaster
+Economics
+Arts / Culture / Entertainment / Religion
+Human rights
+Labour
+Media
+Science
+Sport
+Disabilities
+Other (Last Resort)
         """
 
         topics = []
