@@ -62,3 +62,11 @@ def load_user(userid):
         user = None
 
     return user
+
+# attach the user id to logs
+from flask import request_started, session
+from logs import UserIdFilter
+
+def log_attach_user_id(sender, **extra):
+    UserIdFilter.set_userid(session.get('user_id', '-'))
+request_started.connect(log_attach_user_id, app)

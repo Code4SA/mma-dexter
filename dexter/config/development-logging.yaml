@@ -5,9 +5,14 @@ handlers:
     class: logging.StreamHandler
     formatter: normal
     stream: ext://sys.stdout
+    filters: [userid]
+filters:
+  userid:
+    (): dexter.logs.userIdFilterFactory
+    class: dexter.logs.UserIdFilter
 formatters:
   normal:
-    format: '%(asctime)s %(name)-12s %(levelname)-8s %(message)s'
+    format: '%(asctime)s %(process)-6d %(name)-12s %(userid)s %(levelname)-8s %(message)s'
 loggers:
   requests:
     level: DEBUG
