@@ -59,14 +59,15 @@
                           - else:
                             -# it's a proper person
                             %a(href=url_for('show_person', id=ds.person.id))&=ds.person.name
-                            - if ds.person.gender:
-                              %span.text-muted(title=ds.person.gender.name)
-                                %strong&=
-                                  " - " + ds.person.gender.abbr()
-                            - if ds.person.race:
-                              %span.text-muted(title=ds.person.race.name)
-                                %strong&=
-                                  " (" + ds.person.race.abbr() + ")"
+
+                          - if ds.gender():
+                            %span.text-muted(title=ds.gender().name)
+                              %strong&=
+                                " - " + ds.gender().abbr()
+                          - if ds.race():
+                            %span.text-muted(title=ds.race().name)
+                              %strong&=
+                                " (" + ds.race().abbr() + ")"
 
                         .col-sm-3.function
                           - if ds.function:
