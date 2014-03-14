@@ -3,13 +3,14 @@ from ...processing import ProcessingError
 from ...models import DocumentSource, Gender
 
 import logging
-log = logging.getLogger(__name__)
 
 class SourcesExtractor(BaseExtractor):
     """ Run after the other extractors, this uses
     extractions to determine links such as classifying
     quoted sources as a document source.
     """
+
+    log = logging.getLogger(__name__)
 
     def extract(self, doc):
         self.extract_sources(doc)
@@ -20,7 +21,7 @@ class SourcesExtractor(BaseExtractor):
         Add quoted entities as a source, but only if they
         tie up with an actual person.
         """
-        log.info("Extracting sources for %s" % doc)
+        self.log.info("Extracting sources for %s" % doc)
 
         sources_added = 0
 
@@ -36,7 +37,7 @@ class SourcesExtractor(BaseExtractor):
                 if doc.add_source(s):
                     sources_added += 1
 
-        log.info("Added %d sources for %s" % (sources_added, doc))
+        self.log.info("Added %d sources for %s" % (sources_added, doc))
 
     def guess_genders(self, doc):
         """ Guess genders based on mentioned people and 'his', 'her' etc. """
