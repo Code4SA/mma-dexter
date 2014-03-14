@@ -1,10 +1,10 @@
 import re
 import datetime
 
-from wtforms import StringField, TextAreaField, validators, SelectField, DateTimeField, HiddenField
+from wtforms import StringField, TextAreaField, validators, DateTimeField, HiddenField
 from wtforms.fields.html5 import URLField
 
-from ..forms import Form, MultiCheckboxField, IntegerField
+from ..forms import Form, MultiCheckboxField, IntegerField, SelectField
 
 from sqlalchemy import (
     Table,
@@ -132,7 +132,7 @@ class Document(db.Model):
     def add_source(self, source):
         """ Add a new source, but only if it's not already there. """
         for s in self.sources:
-            if s.entity == source.entity:
+            if s.person == source.person:
                 return False
                 
         self.sources.append(source)

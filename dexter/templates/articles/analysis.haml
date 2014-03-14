@@ -48,21 +48,25 @@
                       .col-sm-3 Affiliation
                       .col-sm-1 Quoted?
               %tbody
-                - sources = sorted(document.sources, key=lambda s: [not s.manual, s.entity.name])
+                - sources = sorted(document.sources, key=lambda s: s.sort_key())
                 - for ds in sources:
                   %tr(dataOffsets=ds.offset_list)
                     %td
                       .row
                         .col-sm-4
-                          %a(href= url_for('show_entity', group=ds.entity.group, name=ds.entity.name))&=ds.entity.name
-                          - if ds.person and ds.person.gender:
-                            %span.text-muted(title=ds.person.gender.name)
-                              %strong&=
-                                " - " + ds.person.gender.abbr()
-                          - if ds.person and ds.person.race:
-                            %span.text-muted(title=ds.person.race.name)
-                              %strong&=
-                                " (" + ds.person.race.abbr() + ")"
+                          - if not ds.person:
+                            &= ds.friendly_name()
+                          - else:
+                            -# it's a proper person
+                            %a(href=url_for('show_person', id=ds.person.id))&=ds.person.name
+                            - if ds.person.gender:
+                              %span.text-muted(title=ds.person.gender.name)
+                                %strong&=
+                                  " - " + ds.person.gender.abbr()
+                            - if ds.person.race:
+                              %span.text-muted(title=ds.person.race.name)
+                                %strong&=
+                                  " (" + ds.person.race.abbr() + ")"
 
                         .col-sm-3
                           - if ds.function:

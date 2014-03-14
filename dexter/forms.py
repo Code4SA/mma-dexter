@@ -1,5 +1,5 @@
 from flask_wtf import Form as BaseForm
-from wtforms import SelectMultipleField, widgets
+from wtforms import SelectMultipleField, widgets, SelectField as WTFSelectField
 from wtforms.fields.html5 import IntegerField as WTFIntegerField
 
 class StripFilter():
@@ -51,3 +51,11 @@ class IntegerField(WTFIntegerField):
                 self.data = None
                 raise ValueError(self.gettext('Not a valid integer value'))
 
+class SelectField(WTFSelectField):
+    def populate_obj(self, obj, name):
+        super(WTFSelectField, self).populate_obj(obj, name)
+
+        if hasattr(obj, name):
+            val = getattr(obj, name, None)
+            if val == '':
+                setattr(obj, name, None)

@@ -24,7 +24,7 @@ class Person(db.Model):
     __tablename__ = "people"
 
     id          = Column(Integer, primary_key=True)
-    name        = Column(String(50), index=True, nullable=False, unique=True)
+    name        = Column(String(100), index=True, nullable=False, unique=True)
     gender_id   = Column(Integer, ForeignKey('genders.id'))
     race_id     = Column(Integer, ForeignKey('races.id'))
 
@@ -82,14 +82,21 @@ class Person(db.Model):
 
     @classmethod
     def get_or_create(cls, name, gender=None, race=None):
+        from . import Entity
+
         p = Person.query.filter(Person.name == name).first()
         if not p:
             p = Person()
             p.name = name
+
             if gender:
                 p.gender = gender
             if race:
                 p.race = race
+
+            # link entities that are similar
+            for e in Entity.query.filter(Entity.name == name, Entity.group == 'person', Entity.person == None).all():
+                e.person = p
 
             db.session.add(p)
             # force a db write (within the transaction) so subsequent lookups

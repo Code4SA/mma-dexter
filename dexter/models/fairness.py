@@ -9,10 +9,10 @@ from sqlalchemy import (
     )
 from sqlalchemy.orm import relationship
 
-from wtforms import StringField, TextAreaField, validators, SelectField, DateTimeField, HiddenField
+from wtforms import StringField, TextAreaField, validators, DateTimeField, HiddenField
 from wtforms.fields.html5 import URLField
 
-from ..forms import Form
+from ..forms import Form, SelectField
 from .support import db
 
 class Fairness(db.Model):
@@ -93,6 +93,21 @@ class DocumentFairnessForm(Form):
   
         self.bias_favour_individual_id.choices = [['', '(none)']] + [[str(s.id), s.full_name()] for s in individuals]
         self.bias_oppose_individual_id.choices = self.bias_favour_individual_id.choices
+
+
+    def create_or_update(self, document):
+        if self.is_new():
+            return self.create_fairness(document)
+        else:
+            self.populate_obj(self.document_fairness)
+            return None
+
+    def create_fairness(self, document):
+        f = DocumentFairness()
+        f.document = document
+        self.populate_obj(f)
+
+        return f
 
 
     def is_new(self):
