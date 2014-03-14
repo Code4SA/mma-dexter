@@ -164,46 +164,9 @@ def edit_article_analysis(id):
             # update document
             form.populate_obj(document)
 
-            # convert from empty values back into None
-            if not document.topic_id:
-                document.topic_id = None
-            if not document.origin_location_id:
-                document.origin_location_id = None
-
             # update and delete sources
-            for f in source_forms:
-                if f.deleted.data == '1':
-                    document.sources.remove(f.source)
-                else:
-                    f.source.manual = True
-                    f.populate_obj(f.source)
-
-            # save new sources
-            for f in new_sources:
-                src = DocumentSource()
-                src.document = document
-                f.populate_obj(src)
-                src.manual = True
-                
-                # link to person if they chose that option
-                if f.source_type.data == 'person':
-                    src.person = Person.get_or_create(f.name.data)
-                    # override the 'quoted' attribute if we know this entity has utterances in
-                    # this document
-                    if any(src.person == u.entity.person for u in document.utterances):
-                        src.quoted = True
-
-
-            for src in document.sources:
-                if src.source_function_id == '':
-                    src.source_function_id = None
-                if src.affiliation_individual_id == '':
-                    src.affiliation_individual_id = None
-                if src.unnamed_race_id in ('', 'None'):
-                    src.unnamed_race_id = None
-                if src.unnamed_gender_id in ('', 'None'):
-                    src.unnamed_gender_id = None
-
+            for f in source_forms + new_sources:
+                f.create_or_update(document)
 
             # --- fairness
             to_delete = [f for f in document.fairness if ('fairness-del[%d]' % f.id) in request.form]
@@ -211,22 +174,9 @@ def edit_article_analysis(id):
                 document.fairness.remove(f)
 
             for frm in fairness_forms:
-                if frm.is_new():
-                    f = DocumentFairness()
-                    f.document = document
-                    frm.populate_obj(f)
-                else:
-                    frm.populate_obj(frm.document_fairness)
+                frm.create_or_update(document)
 
-            # get around wtf not supporting None
-            for fairness in document.fairness:
-                if fairness.fairness_id == '':
-                    fairness.fairness_id = None
-                if fairness.bias_oppose_individual_id == '':
-                    fairness.bias_oppose_individual_id = None
-                if fairness.bias_favour_individual_id == '':
-                    fairness.bias_favour_individual_id = None
-
+            # link to user
             if current_user.is_authenticated():
                 document.checked_by = current_user
 

@@ -8,11 +8,11 @@ from sqlalchemy import (
     func,
     )
 from sqlalchemy.orm import relationship
-from wtforms import StringField, validators, SelectField, HiddenField, BooleanField, RadioField
+from wtforms import StringField, validators, HiddenField, BooleanField, RadioField
 
 from .support import db
 from .with_offsets import WithOffsets
-from ..forms import Form
+from ..forms import Form, SelectField
 
 class DocumentSource(db.Model, WithOffsets):
     """
@@ -213,3 +213,40 @@ class DocumentSourceForm(Form):
         orgs = [i for i in Individual.query.all() if i.code.count('.') <= 1]
         orgs.sort(key=Individual.sort_key)
         self.affiliation_individual_id.choices = [['', '(none)']] + [[str(s.id), s.full_name()] for s in orgs]
+
+
+    def is_new(self):
+        return self.source is None
+
+
+    def create_or_update(self, document):
+        if self.deleted.data == '1':
+            document.sources.remove(self.source)
+        elif self.is_new():
+            return self.create_source(document)
+        else:
+            self.populate_obj(self.source)
+            self.source.manual = True
+
+        return None
+
+
+    def create_source(self, document):
+        from . import Person
+
+        src = DocumentSource()
+        src.document = document
+
+        self.populate_obj(src)
+        src.manual = True
+        
+        # link to person if they chose that option
+        if self.source_type.data == 'person':
+            src.person = Person.get_or_create(self.name.data)
+
+            # override the 'quoted' attribute if we know this entity has utterances in
+            # this document
+            if any(src.person == u.entity.person for u in document.utterances):
+                src.quoted = True
+
+        return src

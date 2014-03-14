@@ -1,10 +1,10 @@
 import re
 import datetime
 
-from wtforms import StringField, TextAreaField, validators, SelectField, DateTimeField, HiddenField
+from wtforms import StringField, TextAreaField, validators, DateTimeField, HiddenField
 from wtforms.fields.html5 import URLField
 
-from ..forms import Form, MultiCheckboxField, IntegerField
+from ..forms import Form, MultiCheckboxField, IntegerField, SelectField
 
 from sqlalchemy import (
     Table,

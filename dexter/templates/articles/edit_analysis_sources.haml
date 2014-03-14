@@ -7,15 +7,15 @@
   = f.deleted
 
   .pull-right
-    - if f.source and f.source.manual:
+    - if not f.is_new() and f.source.manual:
       %i.fa.fa-check-circle(title='Added manually by a monitor')
 
     %a.btn.btn-link.delete(href="#", title='delete this source')
       %i.fa.fa-times-circle
-    - if f.source:
+    - if not f.is_new():
       %a.btn.btn-link.undo-delete(href="#", title='re-add this source') undo
 
-  - if f.source:
+  - if not f.is_new():
     -# source exists, it's not new
     %input(type="hidden", name=f.source_type.name, value=f.source_type.data)
     %input(type="hidden", name=f.name.name, value=f.name.data)
