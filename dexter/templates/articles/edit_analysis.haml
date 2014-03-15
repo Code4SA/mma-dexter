@@ -87,9 +87,9 @@
                         %td
                           = field_input(f.fairness_id)
                         %td
-                          = field_input(f.bias_favour_individual_id, class_='chosen-select' if f != new_fairness_form else 'chosen-select-delayed')
+                          = field_input(f.bias_favour_affiliation_id, class_='chosen-select' if f != new_fairness_form else 'chosen-select-delayed')
                         %td
-                          = field_input(f.bias_oppose_individual_id, class_='chosen-select' if f != new_fairness_form else 'chosen-select-delayed')
+                          = field_input(f.bias_oppose_affiliation_id, class_='chosen-select' if f != new_fairness_form else 'chosen-select-delayed')
                         %td
                           %a.btn.btn-link.delete(href="#", title='delete this')
                             %i.fa.fa-times-circle

@@ -45,7 +45,7 @@ class DocumentSource(db.Model, WithOffsets):
     manual       = Column(Boolean, default=False, nullable=False)
 
     # who is the person affiliated with?
-    affiliation_individual_id = Column(Integer, ForeignKey('individuals.id'), index=True)
+    affiliation_id = Column(Integer, ForeignKey('affiliations.id'), index=True)
 
     created_at   = Column(DateTime(timezone=True), index=True, unique=False, nullable=False, server_default=func.now())
     updated_at   = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.current_timestamp())
@@ -53,7 +53,7 @@ class DocumentSource(db.Model, WithOffsets):
     # Associations
     person      = relationship("Person", foreign_keys=[person_id], lazy=False)
     function    = relationship("SourceFunction", lazy=False)
-    affiliation = relationship("Individual", lazy=False)
+    affiliation = relationship("Affiliation", lazy=False)
     unnamed_gender = relationship("Gender", lazy=False)
     unnamed_race   = relationship("Race", lazy=False)
 
@@ -190,8 +190,8 @@ class DocumentSourceForm(Form):
 
     quoted            = BooleanField('Quoted', default=False)
 
-    source_function_id = SelectField('Function', default='')
-    affiliation_individual_id = SelectField('Affiliation', default='')
+    source_function_id  = SelectField('Function', default='')
+    affiliation_id      = SelectField('Affiliation', default='')
 
     deleted           = HiddenField('deleted', default='0')
 
@@ -209,10 +209,10 @@ class DocumentSourceForm(Form):
 
         # because this list is heirarchical, we class 'organisations' as
         # this with only 0 or two dots
-        from . import Individual
-        orgs = [i for i in Individual.query.all() if i.code.count('.') <= 1]
-        orgs.sort(key=Individual.sort_key)
-        self.affiliation_individual_id.choices = [['', '(none)']] + [[str(s.id), s.full_name()] for s in orgs]
+        from . import Affiliation
+        orgs = [i for i in Affiliation.query.all() if i.code.count('.') <= 1]
+        orgs.sort(key=Affiliation.sort_key)
+        self.affiliation_id.choices = [['', '(none)']] + [[str(s.id), s.full_name()] for s in orgs]
 
 
     def is_new(self):

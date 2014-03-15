@@ -1,4 +1,4 @@
-from dexter.models import db, Document, Entity, Medium, DocumentType, Topic, Fairness, Individual, User, Issue, Location
+from dexter.models import db, Document, Entity, Medium, DocumentType, Topic, Fairness, Affiliation, User, Issue, Location
 from flask.ext.admin import Admin, expose, AdminIndexView
 from flask.ext.admin.contrib.sqla import ModelView
 from flask.ext.admin.model.template import macro
@@ -139,7 +139,7 @@ class MediumView(MyModelView):
             choices=choices
         ))
 
-class IndividualView(MyModelView):
+class AffiliationView(MyModelView):
 
     can_create = True
     can_edit = True
@@ -187,6 +187,6 @@ admin_instance.add_view(MyModelView(DocumentType, db.session, name="Types", endp
 admin_instance.add_view(MyModelView(Topic, db.session, name="Topics", endpoint="topic"))
 admin_instance.add_view(MyModelView(Location, db.session, name="Origins", endpoint="origins"))
 admin_instance.add_view(EntityView(Entity, db.session, name="Entities", endpoint='entity'))
-admin_instance.add_view(IndividualView(Individual, db.session, name="Affiliations", endpoint="affiliations"))
+admin_instance.add_view(AffiliationView(Affiliation, db.session, name="Affiliations", endpoint="affiliations"))
 admin_instance.add_view(MyModelView(Issue, db.session, name="Issues", endpoint="issues"))
 admin_instance.add_view(MyModelView(Fairness, db.session, name="Bias", endpoint="bias"))

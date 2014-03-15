@@ -57,7 +57,7 @@
           .col-sm-6
             = vertical_field(f.unnamed_race_id)
 
-    = vertical_field(f.affiliation_individual_id, class_='chosen-select' if f.source else 'chosen-select-delayed')
+    = vertical_field(f.affiliation_id, class_='chosen-select' if f.source else 'chosen-select-delayed')
     .row
       .col-xs-6
         = vertical_field(f.source_function_id)

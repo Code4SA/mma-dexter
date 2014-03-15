@@ -58,21 +58,21 @@ class DocumentFairness(db.Model):
     doc_id    = Column(Integer, ForeignKey('documents.id'), index=True, nullable=False)
 
     # Is the article biased for or against anyone? Note that, for now, biased is
-    # for or against a fixed list of organisations/individuals. In time, that list
+    # for or against a fixed list of organisations/affiliations. In time, that list
     # will have to be changed and merged into the entity table.
     fairness_id  = Column(Integer, ForeignKey('fairness.id'), index=True, default=6)
     # who is the source biased in favour of?
-    bias_favour_individual_id = Column(Integer, ForeignKey('individuals.id'), index=True, nullable=True)
+    bias_favour_affiliation_id = Column(Integer, ForeignKey('affiliations.id'), index=True, nullable=True)
     # who is the source biased against?
-    bias_oppose_individual_id = Column(Integer, ForeignKey('individuals.id'), index=True, nullable=True)
+    bias_oppose_affiliation_id = Column(Integer, ForeignKey('affiliations.id'), index=True, nullable=True)
     
     created_at   = Column(DateTime(timezone=True), index=True, unique=False, nullable=False, server_default=func.now())
     updated_at   = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.current_timestamp())
 
     # Associations
     fairness    = relationship("Fairness", lazy=False)
-    bias_favour = relationship("Individual", lazy=False, foreign_keys=[bias_favour_individual_id])
-    bias_oppose = relationship("Individual", lazy=False, foreign_keys=[bias_oppose_individual_id])
+    bias_favour = relationship("Affiliation", lazy=False, foreign_keys=[bias_favour_affiliation_id])
+    bias_oppose = relationship("Affiliation", lazy=False, foreign_keys=[bias_oppose_affiliation_id])
 
     def __repr__(self):
         return "<DocumentFairness id=%s, doc=%s, fairness=%s>" % (self.id, self.document, self.fairness)
@@ -80,8 +80,8 @@ class DocumentFairness(db.Model):
 
 class DocumentFairnessForm(Form):
     fairness_id                 = SelectField('Bias', default='')
-    bias_favour_individual_id   = SelectField('Favour', default='')
-    bias_oppose_individual_id   = SelectField('Disfavour', default='')
+    bias_favour_affiliation_id   = SelectField('Favour', default='')
+    bias_oppose_affiliation_id   = SelectField('Disfavour', default='')
 
     def __init__(self, *args, **kwargs):
         super(DocumentFairnessForm, self).__init__(*args, **kwargs)
@@ -89,10 +89,10 @@ class DocumentFairnessForm(Form):
         self.fairness_id.choices = [['', '(none)']] + [[str(s.id), s.name] for s in Fairness.query.order_by(Fairness.name).all()]
 
         # sort according to code
-        individuals = sorted(Individual.query.all(), key=Individual.sort_key)
+        affiliations = sorted(Affiliation.query.all(), key=Affiliation.sort_key)
   
-        self.bias_favour_individual_id.choices = [['', '(none)']] + [[str(s.id), s.full_name()] for s in individuals]
-        self.bias_oppose_individual_id.choices = self.bias_favour_individual_id.choices
+        self.bias_favour_affiliation_id.choices = [['', '(none)']] + [[str(s.id), s.full_name()] for s in affiliations]
+        self.bias_oppose_affiliation_id.choices = self.bias_favour_affiliation_id.choices
 
 
     def create_or_update(self, document):
@@ -114,13 +114,13 @@ class DocumentFairnessForm(Form):
         return self._prefix.startswith('fairness-new')
 
 
-class Individual(db.Model):
+class Affiliation(db.Model):
     """
-    Quick hack to support the legacy Group -> Org -> Individual construct
+    Quick hack to support the legacy Group -> Org -> Affiliation construct
     from the old database. At some point this should be merged into the 
     entity/person tables.
     """
-    __tablename__ = "individuals"
+    __tablename__ = "affiliations"
 
     id        = Column(Integer, primary_key=True)
     code      = Column(String(10), index=True, nullable=False, unique=True)
@@ -133,7 +133,7 @@ class Individual(db.Model):
         return [int(k) if k else 0 for k in self.code.split('.')]
 
     def __repr__(self):
-        return "<Individual code='%s', name='%s'>" % (self.code, self.name)
+        return "<Affiliation code='%s', name='%s'>" % (self.code, self.name)
 
 
     @classmethod
@@ -434,12 +434,12 @@ class Individual(db.Model):
 13.19 Other corporation not listed
         """
 
-        individuals = []
+        affiliations = []
         for s in text.strip().split("\n"):
             code, name = s.split(" ", 1)
-            i = Individual()
+            i = Affiliation()
             i.code = code.strip()
             i.name = name.strip()
-            individuals.append(i)
+            affiliations.append(i)
 
-        return individuals
+        return affiliations

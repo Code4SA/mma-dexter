@@ -9,5 +9,5 @@ from .person import Person, Gender, Race
 from .author import Author, AuthorType
 from .location import Location
 from .issue import Issue
-from .fairness import Fairness, Individual, DocumentFairness
+from .fairness import Fairness, Affiliation, DocumentFairness
 from .user import User
