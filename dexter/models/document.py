@@ -173,7 +173,7 @@ class DocumentForm(Form):
 
         from . import Medium, DocumentType
 
-        self.medium_id.choices = [[str(m.id), m.name] for m in Medium.query.order_by(Medium.name).all()]
+        self.medium_id.choices = [['', '(none)']] + [[str(m.id), m.name] for m in Medium.query.order_by(Medium.name).all()]
         self.document_type_id.choices = [[str(t.id), t.name] for t in DocumentType.query.order_by(DocumentType.name).all()]
 
 
