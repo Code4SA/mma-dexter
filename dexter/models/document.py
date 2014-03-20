@@ -158,7 +158,7 @@ class DocumentForm(Form):
     url         = URLField('URL', [validators.Length(max=200)])
     title       = StringField('Headline', [validators.Required(), validators.Length(max=1024)])
     published_at = DateTimeField('Published/broadcast on', [validators.Required()], format='%Y/%m/%d %H:%M')
-    summary     = StringField('Summary', [validators.Length(max=1024)])
+    summary     = TextAreaField('Summary', [validators.Length(max=1024)])
     text        = TextAreaField('Article content')
     item_num    = IntegerField('Item no', [validators.Optional(), validators.NumberRange(min=1, max=100)])
 
