@@ -13,7 +13,7 @@
         - for doc in latest_docs:
           %li.list-item-document
             %i.fa.fa-chevron-right
-            &=doc.published_at.strftime('%e %B %Y') + ' - '
+            &=doc.created_at.strftime('%e %B %Y') + ' - '
             %a(href=url_for('show_article', id=doc.id))
               %strong&= doc.title
             %span.label.label-default.pull-right &=doc.medium.name
