@@ -177,6 +177,7 @@ class UserView(MyModelView):
         del form_class.encrypted_password
         del form_class.created_at
         del form_class.updated_at
+        del form_class.checked_documents
         return form_class
 
 admin_instance = Admin(url='/admin', base_template='admin/custom_master.html', name="Dexter Admin", index_view=MyIndexView())
