@@ -137,7 +137,9 @@ class MediumView(MyModelView):
         # Pass the choices to the `SelectField`
         medium_type=dict(
             choices=choices
-        ))
+        ),
+        domain=dict(filters=[lambda x: x or None])
+      )
 
 class AffiliationView(MyModelView):
 
@@ -162,6 +164,8 @@ class UserView(MyModelView):
     can_delete = False
     list_template = 'admin/custom_list_template.html'
     column_list = (
+        'first_name',
+        'last_name',
         'email',
         'disabled',
         'admin',

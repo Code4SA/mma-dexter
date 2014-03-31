@@ -28,6 +28,8 @@ class User(db.Model, UserMixin):
 
     id          = Column(Integer, primary_key=True)
     email       = Column(String(50), index=True, nullable=False, unique=True)
+    first_name  = Column(String(50))
+    last_name   = Column(String(50))
     admin       = Column(Boolean, default=False)
     disabled    = Column(Boolean, default=False)
     encrypted_password = Column(String(100))
@@ -41,6 +43,33 @@ class User(db.Model, UserMixin):
     def set_password(self, password):
         if password:
             self.encrypted_password = sha256_crypt.encrypt(password)
+
+
+    def short_name(self):
+        s = ""
+        if self.first_name:
+            s += self.first_name
+        
+        if self.last_name:
+            if s:
+                s += " " + self.last_name[0] + "."
+            else:
+                s = self.last_name
+
+        if not s:
+            s = self.email
+
+        return s
+
+    def full_name(self):
+        s = '%s %s' % (self.first_name or '', self.last_name or '')
+        s = s.strip()
+
+        if not s:
+            s = self.email
+
+        return s
+
 
     password = property(get_password, set_password)
 

@@ -41,7 +41,7 @@
                 %a.btn.btn-default(href=url_for('user_logout'), dataMethod='post')
                   Logout
               .navbar-btn.pull-right.navbar-text
-                &= current_user.email
+                &= current_user.full_name()
 
     .container
       -# show flash messages
