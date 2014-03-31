@@ -1,5 +1,6 @@
 %%inherit(file="layout.haml")
-
+%%block(name='title')
+  Dashboard
 
 .row
   .col-md-8
@@ -7,18 +8,17 @@
     %p.lead
       Navigate media reports relating to people/organizations of interest.
     %hr
-    %h2 Recently added articles
-    %ul.list-unstyled
-      - if document_count > 0:
-        - for doc in latest_docs:
-          %li.list-item-document
-            %i.fa.fa-chevron-right
-            &=doc.created_at.strftime('%e %B %Y') + ' - '
-            %a(href=url_for('show_article', id=doc.id))
-              %strong&= doc.title
-            %span.label.label-default.pull-right &=doc.medium.name
-      - else:
-        %p There are no documents in the index.
+
+    %section
+      %h2
+        Recently added articles
+        %a(href=url_for('activity')) view all &rarr;
+
+      %%include(file='activity_list.haml')
+
+      %p
+        %a(href=url_for('activity')) View recent activity &rarr;
+
 
   .col-md-4
     #index-overview.well
@@ -33,7 +33,7 @@
             &=group_counts.get('person')
 
         %p
-          Companies & organisations:
+          Companies &amp; organisations:
           %span.badge.pull-right
             &=group_counts.get('company') + group_counts.get('organization')
 

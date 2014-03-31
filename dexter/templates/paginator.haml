@@ -1,0 +1,13 @@
+%%def(name="paginator(endpoint, pagination)")
+  %ul.pagination
+    - for page in pagination.iter_pages():
+      - if page:
+        - if page != pagination.page:
+          %li
+            %a(href=url_for('activity', page=page))&= page
+        - else:
+          %li.active
+            %a(href=url_for('activity', page=page))&= page
+      - else:
+        %li.disabled
+          %a(href="#") ...

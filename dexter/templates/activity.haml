@@ -1,0 +1,17 @@
+%%inherit(file="layout.haml")
+%%namespace(file="paginator.haml", **{'import': '*'})
+
+%%block(name='title')
+  Recently added articles
+
+.row
+  .col-sm-9
+    %article#activity
+      %h3 Recently added articles
+
+      %%include(file='activity_list.haml')
+
+      = paginator('activity', paged_docs)
+
+  .col-sm-3
+

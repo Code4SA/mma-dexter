@@ -204,6 +204,20 @@ table.fairness {
   margin-left: 10px;
 }
 
+.activity-list {
+  section {
+    margin-bottom: 30px;
+  }
+
+  table.activity-list {
+    td.user {width: 16%}
+    td.title {width: 50%}
+    td.published_at {width: 16%}
+    td.published_at {width: 16%}
+    td.medium {width: 16%}
+  }
+}
+
 footer {
   border-top: 1px solid #ddd;
   margin-top: 40px;

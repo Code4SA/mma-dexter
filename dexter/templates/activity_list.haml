@@ -1,0 +1,22 @@
+.activity-list
+  - for date, group in doc_groups.iteritems():
+    %section
+      %h4
+        &= date.strftime('%e %B %Y')
+        %span.badge.badge-default&= len(group)
+
+      %table.table.table-striped.table-condensed.activity-list
+        - for doc in group:
+          %tr
+            %td.user
+              - if doc.checked_by:
+                &= doc.checked_by.short_name()
+              - else:
+                &nbsp;
+            %td.title
+              %a(href=url_for('show_article', id=doc.id))
+                %strong&= doc.title
+            %td.published_at
+              &=doc.published_at.strftime('%e %B %Y')
+            %td.medium
+              %span.label.label-default&=doc.medium.name
