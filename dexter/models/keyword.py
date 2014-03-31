@@ -17,7 +17,7 @@ class DocumentKeyword(db.Model, WithOffsets):
     __tablename__ = "document_keywords"
 
     id        = Column(Integer, primary_key=True)
-    doc_id    = Column(Integer, ForeignKey('documents.id'), index=True)
+    doc_id    = Column(Integer, ForeignKey('documents.id', ondelete='CASCADE'), index=True)
     keyword   = Column(String(100), index=True, nullable=False)
     relevance = Column(Float, index=True, nullable=False)
 

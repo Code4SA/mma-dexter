@@ -56,11 +56,11 @@ class Document(db.Model):
 
     # Associations
     author      = relationship("Author")
-    entities    = relationship("DocumentEntity", backref=backref('document'), order_by="desc(DocumentEntity.relevance)")
-    utterances  = relationship("Utterance", backref=backref('document'))
-    keywords    = relationship("DocumentKeyword", backref=backref('document'), order_by="desc(DocumentKeyword.relevance)")
-    sources     = relationship("DocumentSource", backref=backref('document'), cascade='all, delete-orphan')
-    fairness    = relationship("DocumentFairness", backref=backref('document'), cascade='all, delete-orphan')
+    entities    = relationship("DocumentEntity", backref=backref('document'), cascade='all, delete-orphan', passive_deletes=True, order_by="desc(DocumentEntity.relevance)")
+    utterances  = relationship("Utterance", backref=backref('document'), cascade='all', passive_deletes=True)
+    keywords    = relationship("DocumentKeyword", backref=backref('document'), cascade='all', passive_deletes=True, order_by="desc(DocumentKeyword.relevance)")
+    sources     = relationship("DocumentSource", backref=backref('document'), cascade='all, delete-orphan', passive_deletes=True)
+    fairness    = relationship("DocumentFairness", backref=backref('document'), cascade='all, delete-orphan', passive_deletes=True)
     medium      = relationship("Medium")
     topic       = relationship("Topic")
     document_type = relationship("DocumentType")

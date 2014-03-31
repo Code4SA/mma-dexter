@@ -24,7 +24,7 @@ class Utterance(db.Model):
     __tablename__ = "utterances"
 
     id        = Column(Integer, primary_key=True)
-    doc_id    = Column(Integer, ForeignKey('documents.id'), index=True)
+    doc_id    = Column(Integer, ForeignKey('documents.id', ondelete='CASCADE'), index=True)
     entity_id = Column(Integer, ForeignKey('entities.id'), index=True)
     quote     = Column(Text, nullable=False)
 

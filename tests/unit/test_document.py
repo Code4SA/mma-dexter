@@ -1,8 +1,22 @@
 import unittest
+import datetime
 
 from dexter.models import Document, DocumentEntity, Entity, Utterance
 
+from dexter.models.support import db
+from dexter.models.seeds import seed_db
+
 class TestDocument(unittest.TestCase):
+    def setUp(self):
+        self.db = db
+        self.db.drop_all()
+        self.db.create_all()
+        seed_db(db)
+
+    def tearDown(self):
+        self.db.session.remove()
+        self.db.drop_all()
+
     def test_add_entities_no_dups(self):
         doc = Document()
 
@@ -97,3 +111,26 @@ class TestDocument(unittest.TestCase):
         self.assertEqual(5, u.length)
 
         self.assertFalse(doc.add_utterance(u2))
+
+    def test_delete_document(self):
+        doc = Document()
+        doc.text = 'And Fred said "Hello" to everyone.'
+        doc.published_at = datetime.datetime.utcnow()
+        
+        u = Utterance()
+        u.entity = Entity()
+        u.entity.group = 'person'
+        u.entity.name = 'Fred'
+        u.quote = 'Hello'
+        self.assertTrue(doc.add_utterance(u))
+
+        de = DocumentEntity()
+        de.document = doc
+        de.entity = Entity.query.first()
+        de.relevance = 0.5
+
+        self.db.session.add(doc)
+        self.db.session.commit()
+
+        self.db.session.delete(doc)
+        self.db.session.commit()

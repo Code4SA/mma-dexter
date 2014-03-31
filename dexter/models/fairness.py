@@ -55,7 +55,7 @@ class DocumentFairness(db.Model):
     __tablename__ = "document_fairness"
 
     id        = Column(Integer, primary_key=True)
-    doc_id    = Column(Integer, ForeignKey('documents.id'), index=True, nullable=False)
+    doc_id    = Column(Integer, ForeignKey('documents.id', ondelete='CASCADE'), index=True, nullable=False)
 
     # Is the article biased for or against anyone? Note that, for now, biased is
     # for or against a fixed list of organisations/affiliations. In time, that list

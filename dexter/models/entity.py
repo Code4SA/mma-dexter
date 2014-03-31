@@ -99,7 +99,7 @@ class DocumentEntity(db.Model, WithOffsets):
     __tablename__ = "document_entities"
 
     id        = Column(Integer, primary_key=True)
-    doc_id    = Column(Integer, ForeignKey('documents.id'), index=True, nullable=False)
+    doc_id    = Column(Integer, ForeignKey('documents.id', ondelete='CASCADE'), index=True, nullable=False)
     entity_id = Column(Integer, ForeignKey('entities.id'), index=True)
     relevance = Column(Float, index=True, nullable=False)
     count     = Column(Integer, index=True, nullable=False, default=1)

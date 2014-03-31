@@ -20,6 +20,19 @@ def show_article(id):
     document = Document.query.get_or_404(id)
     return render_template('articles/show.haml',
             document=document)
+
+@app.route('/articles/<id>/delete', methods=['POST'])
+@login_required
+def delete_article(id):
+    document = Document.query.get_or_404(id)
+
+    if current_user.admin:
+        log.info("Document deleted by %s: %s" % (current_user, document))
+        db.session.delete(document)
+        db.session.commit()
+        flash('The document has been deleted.', 'info')
+
+    return redirect(url_for('dashboard'))
  
 
 @app.route('/articles/new', methods=['GET', 'POST'])

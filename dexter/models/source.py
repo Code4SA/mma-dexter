@@ -26,9 +26,9 @@ class DocumentSource(db.Model, WithOffsets):
     __tablename__ = "document_sources"
 
     id        = Column(Integer, primary_key=True)
-    doc_id    = Column(Integer, ForeignKey('documents.id'), index=True, nullable=False)
+    doc_id    = Column(Integer, ForeignKey('documents.id', ondelete='CASCADE'), index=True, nullable=False)
 
-    person_id = Column(Integer, ForeignKey('people.id'), index=True)
+    person_id = Column(Integer, ForeignKey('people.id', ondelete='CASCADE'), index=True)
 
     # if this is True, then person_id is ignored and this is an anonymous source
     unnamed           = Column(Boolean, default=False)
@@ -38,14 +38,14 @@ class DocumentSource(db.Model, WithOffsets):
     # if unnamed is False and person_id is null, then this is a secondary, named source
     name         = Column(String(100))
 
-    source_function_id = Column(Integer, ForeignKey('source_functions.id'))
+    source_function_id = Column(Integer, ForeignKey('source_functions.id', ondelete='SET NULL'))
     quoted       = Column(Boolean)
 
     # was this source added manually or was it inferred by machine learning?
     manual       = Column(Boolean, default=False, nullable=False)
 
     # who is the person affiliated with?
-    affiliation_id = Column(Integer, ForeignKey('affiliations.id'), index=True)
+    affiliation_id = Column(Integer, ForeignKey('affiliations.id', ondelete='SET NULL'), index=True)
 
     created_at   = Column(DateTime(timezone=True), index=True, unique=False, nullable=False, server_default=func.now())
     updated_at   = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.current_timestamp())
