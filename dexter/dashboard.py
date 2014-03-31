@@ -52,12 +52,12 @@ def dashboard():
                            medium_counts=medium_counts)
 
 
-@app.route('/activity', methods=['GET', 'POST'])
+@app.route('/activity')
 @login_required
 def activity():
     per_page = 100
 
-    form = ActivityForm()
+    form = ActivityForm(request.args)
 
     try:
         page = int(request.args.get('page', 1))
