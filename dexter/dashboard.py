@@ -95,8 +95,8 @@ class ActivityForm(Form):
     def __init__(self, *args, **kwargs):
         super(ActivityForm, self).__init__(*args, **kwargs)
 
-        self.user_id.choices = [['', '(none)']] + [
+        self.user_id.choices = [['', '(any)']] + [
                 [str(u.id), u.short_name()] for u in sorted(User.query.all(), key=lambda u: u.short_name())]
 
-        self.medium_id.choices = [['', '(none)']] + [(str(m.id), m.name) for m in Medium.query.order_by(Medium.name).all()]
-        self.document_type_id.choices = [['', '(none)']] + [(str(dt.id), dt.name) for dt in DocumentType.query.order_by(DocumentType.name).all()]
+        self.medium_id.choices = [['', '(any)']] + [(str(m.id), m.name) for m in Medium.query.order_by(Medium.name).all()]
+        self.document_type_id.choices = [['', '(any)']] + [(str(dt.id), dt.name) for dt in DocumentType.query.order_by(DocumentType.name).all()]
