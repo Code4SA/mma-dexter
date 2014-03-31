@@ -6,7 +6,10 @@ from flask.ext.mako import render_template
 from flask.ext.login import login_required, current_user
 from sqlalchemy.sql import func
 
-from dexter.models import db, Document, Entity, Medium
+from dexter.models import db, Document, Entity, Medium, User, DocumentType
+
+from wtforms import validators
+from .forms import Form, SelectField
 
 @app.route('/dashboard')
 @login_required
@@ -49,22 +52,51 @@ def dashboard():
                            medium_counts=medium_counts)
 
 
-@app.route('/activity')
+@app.route('/activity', methods=['GET', 'POST'])
 @login_required
 def activity():
     per_page = 100
+
+    form = ActivityForm()
 
     try:
         page = int(request.args.get('page', 1))
     except ValueError:
         page = 1
 
-    paged_docs = Document.query.order_by(Document.created_at.desc()).paginate(page, per_page)
+    query = Document.query
+
+    if form.medium_id.data:
+        query = query.filter(Document.medium_id == form.medium_id.data)
+
+    if form.user_id.data:
+        query = query.filter(Document.checked_by_user_id == form.user_id.data)
+
+    if form.document_type_id.data:
+        query = query.filter(Document.document_type_id == form.document_type_id.data)
+    
+    paged_docs = query.order_by(Document.created_at.desc()).paginate(page, per_page)
 
     doc_groups = {}
     for date, group in groupby(paged_docs.items, lambda d: d.created_at.date()):
         doc_groups[date] = list(group)
 
     return render_template('activity.haml',
+                           form=form,
                            paged_docs=paged_docs,
                            doc_groups=doc_groups)
+
+
+class ActivityForm(Form):
+    user_id     = SelectField('User', [validators.Optional()], default='')
+    medium_id   = SelectField('Medium', [validators.Optional()], default='')
+    document_type_id = SelectField('Document type', [validators.Optional()], default='')
+
+    def __init__(self, *args, **kwargs):
+        super(ActivityForm, self).__init__(*args, **kwargs)
+
+        self.user_id.choices = [['', '(none)']] + [
+                [str(u.id), u.short_name()] for u in sorted(User.query.all(), key=lambda u: u.short_name())]
+
+        self.medium_id.choices = [['', '(none)']] + [(str(m.id), m.name) for m in Medium.query.order_by(Medium.name).all()]
+        self.document_type_id.choices = [['', '(none)']] + [(str(dt.id), dt.name) for dt in DocumentType.query.order_by(DocumentType.name).all()]
