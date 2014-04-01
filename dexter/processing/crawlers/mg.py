@@ -3,16 +3,12 @@ import re
 
 from bs4 import BeautifulSoup
 import requests
-import logging
 
-from dateutil.parser import parse
-from dateutil.tz import tzutc
-
+from .base import BaseCrawler
 from ...models import Entity, Medium, Author, AuthorType
 
-class MGCrawler:
+class MGCrawler(BaseCrawler):
     MG_RE = re.compile('(www\.)?mg.co.za')
-    log = logging.getLogger(__name__)
 
     def offer(self, url):
         """ Can this crawler process this URL? """
@@ -61,13 +57,3 @@ class MGCrawler:
             doc.author = Author.get_or_create(author, AuthorType.journalist())
         else:
             doc.author = Author.unknown()
-
-
-    def extract_plaintext(self, lst):
-        if len(lst) > 0:
-            return lst[0].text.strip()
-        return ""
-
-
-    def parse_timestamp(self, ts):
-        return parse(ts)
