@@ -16,9 +16,9 @@ from .forms import Form, SelectField
 def dashboard():
     latest_docs = Document.query.order_by(Document.created_at.desc()).limit(30)
 
-    doc_groups = {}
+    doc_groups = []
     for date, group in groupby(latest_docs, lambda d: d.created_at.date()):
-        doc_groups[date] = list(group)
+        doc_groups.append([date, list(group)])
 
     document_count = Document.query.count()
     if document_count is None:
@@ -55,11 +55,11 @@ def dashboard():
 @app.route('/monitor-dashboard')
 @login_required
 def monitor_dashboard():
-    docs = Document.query.filter(Document.checked_by_user_id == current_user.id).order_by(Document.created_at.desc()).limit(30)
+    docs = Document.query.filter(Document.created_by_user_id == current_user.id).order_by(Document.created_at.desc()).limit(30)
 
-    doc_groups = {}
+    doc_groups = []
     for date, group in groupby(docs, lambda d: d.created_at.date()):
-        doc_groups[date] = list(group)
+        doc_groups.append([date, list(group)])
 
     return render_template('dashboard/monitor.haml',
                            doc_groups=doc_groups)
@@ -84,13 +84,13 @@ def activity():
         query = query.filter(Document.medium_id == form.medium_id.data)
 
     if form.user_id.data:
-        query = query.filter(Document.checked_by_user_id == form.user_id.data)
+        query = query.filter(Document.created_by_user_id == form.user_id.data)
 
     paged_docs = query.order_by(Document.created_at.desc()).paginate(page, per_page)
 
-    doc_groups = {}
+    doc_groups = []
     for date, group in groupby(paged_docs.items, lambda d: d.created_at.date()):
-        doc_groups[date] = list(group)
+        doc_groups.append([date, list(group)])
 
     return render_template('dashboard/activity.haml',
                            form=form,

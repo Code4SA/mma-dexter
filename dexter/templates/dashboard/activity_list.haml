@@ -1,5 +1,5 @@
 .activity-list
-  - for date, group in doc_groups.iteritems():
+  - for date, group in doc_groups:
     %section
       %h4
         &= date.strftime('%e %B %Y')
@@ -9,10 +9,11 @@
         - for doc in group:
           %tr
             %td.user
+              - if doc.created_by:
+                &= doc.created_by.short_name()
+
               - if doc.checked_by:
-                &= doc.checked_by.short_name()
-              - else:
-                &nbsp;
+                %i.fa.fa-check-circle(title='Checked by %s' % doc.checked_by.short_name())
             %td.title
               %a(href=url_for('show_article', id=doc.id))
                 %strong&= doc.title
