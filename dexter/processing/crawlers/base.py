@@ -31,4 +31,4 @@ class BaseCrawler:
 
 
     def parse_timestamp(self, ts):
-        return parse(ts)
+        return parse(ts, dayfirst=True)
