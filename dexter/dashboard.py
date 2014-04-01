@@ -43,13 +43,32 @@ def dashboard():
             .limit(5):
         medium_counts.append([medium_name, int(medium_count)])
 
-    return render_template('dashboard.haml',
+    return render_template('dashboard/dashboard.haml',
                            doc_groups=doc_groups,
                            document_count=document_count,
                            latest=latest,
                            earliest=earliest,
                            group_counts=group_counts,
                            medium_counts=medium_counts)
+
+
+@app.route('/monitor-dashboard')
+@login_required
+def monitor_dashboard():
+    docs = Document.query.filter(Document.checked_by_user_id == form.user_id.data).order_by(Document.created_at.desc()).limit(30)
+
+    doc_groups = {}
+    for date, group in groupby(docs, lambda d: d.created_at.date()):
+        doc_groups[date] = list(group)
+
+    return render_template('dashboard/dashboard.haml',
+                           doc_groups=doc_groups,
+                           document_count=document_count,
+                           latest=latest,
+                           earliest=earliest,
+                           group_counts=group_counts,
+                           medium_counts=medium_counts)
+
 
 
 @app.route('/activity')
@@ -81,7 +100,7 @@ def activity():
     for date, group in groupby(paged_docs.items, lambda d: d.created_at.date()):
         doc_groups[date] = list(group)
 
-    return render_template('activity.haml',
+    return render_template('dashboard/activity.haml',
                            form=form,
                            paged_docs=paged_docs,
                            doc_groups=doc_groups)
