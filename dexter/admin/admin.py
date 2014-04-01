@@ -142,7 +142,6 @@ class MediumView(MyModelView):
       )
 
 class AffiliationView(MyModelView):
-
     can_create = True
     can_edit = True
     can_delete = False
@@ -156,6 +155,22 @@ class AffiliationView(MyModelView):
         'name'
     )
     page_size = 100
+
+class IssueView(MyModelView):
+    can_create = True
+    can_edit = True
+    can_delete = False
+    list_template = 'admin/custom_list_template.html'
+    column_list = (
+        'name',
+        'description',
+    )
+    column_searchable_list = (
+        'name',
+    )
+    page_size = 100
+    form_create_rules = ('name', 'description')
+    form_edit_rules = ('name', 'description')
 
 class UserView(MyModelView):
 
@@ -182,6 +197,7 @@ class UserView(MyModelView):
         del form_class.created_at
         del form_class.updated_at
         del form_class.checked_documents
+        del form_class.created_documents
         return form_class
 
 admin_instance = Admin(url='/admin', base_template='admin/custom_master.html', name="Dexter Admin", index_view=MyIndexView())
@@ -194,6 +210,6 @@ admin_instance.add_view(MyModelView(Location, db.session, name="Origins", endpoi
 admin_instance.add_view(EntityView(Entity, db.session, name="Entities", endpoint='entity'))
 admin_instance.add_view(MyModelView(SourceFunction, db.session, name="Functions", endpoint='functions'))
 admin_instance.add_view(AffiliationView(Affiliation, db.session, name="Affiliations", endpoint="affiliations"))
-admin_instance.add_view(MyModelView(Issue, db.session, name="Issues", endpoint="issues"))
+admin_instance.add_view(IssueView(Issue, db.session, name="Issues", endpoint="issues"))
 admin_instance.add_view(MyModelView(Fairness, db.session, name="Bias", endpoint="bias"))
 admin_instance.add_view(MyModelView(AuthorType, db.session, name="Authors", endpoint="authortypes"))
