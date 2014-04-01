@@ -63,17 +63,13 @@ class Document(db.Model):
     keywords    = relationship("DocumentKeyword", backref=backref('document'), cascade='all', passive_deletes=True, order_by="desc(DocumentKeyword.relevance)")
     sources     = relationship("DocumentSource", backref=backref('document'), cascade='all, delete-orphan', passive_deletes=True)
     fairness    = relationship("DocumentFairness", backref=backref('document'), cascade='all, delete-orphan', passive_deletes=True)
+    issues      = relationship("Issue", secondary='document_issues', passive_deletes=True)
     medium      = relationship("Medium")
     topic       = relationship("Topic")
     document_type = relationship("DocumentType")
     origin      = relationship("Location")
     created_by  = relationship("User", backref=backref('created_documents'), foreign_keys=[created_by_user_id])
     checked_by  = relationship("User", backref=backref('checked_documents'), foreign_keys=[checked_by_user_id])
-
-    # Many-to-Many
-    issues = relationship("Issue",
-                    secondary='document_issues',
-                    backref="documents")
 
 
     PLACE_ENTITY_GROUPS = set(['city', 'province_or_state', 'region'])
