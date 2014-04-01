@@ -22,26 +22,40 @@
             %a.navbar-brand(href="/")
               Dexter
 
-          .navbar-nav
-            .navbar-btn
-              %a.btn.btn-default(href=url_for('dashboard'))
-                Dashboard
+          %ul.nav.navbar-nav
+            %li(class_=('active' if request.url_rule.endpoint == 'dashboard' else ''))
+              %a.btn.btn-link(href=url_for('dashboard'))
+                Overview
+            %li(class_=('active' if request.url_rule.endpoint == 'monitor_dashboard' else ''))
+              %a.btn.btn-link(href=url_for('monitor_dashboard'))
+                My Dashboard
+
+          .navbar-nav.navbar-btn
+            %a.btn.btn-primary(href=url_for('new_article'))
+              %i.fa.fa-plus
+              Add article
 
           - if current_user.is_authenticated():
             .navbar-nav.navbar-right
-              .navbar-btn.pull-right
-                %a.btn.btn-primary(href=url_for('new_article'))
-                  %i.fa.fa-plus
-                  Add article
+              %ul.nav.navbar-nav
+                %li
+                  %a.dropdown-toggle(href="#", dataToggle='dropdown')
+                    &= current_user.full_name()
+                    %b.caret
+                  %ul.dropdown-menu
+                    %li
+                      %a(href=url_for('monitor_dashboard'))
+                        My Dashboard
+                    %li
+                      %a(href=url_for('user_logout'), dataMethod='post')
+                        Logout
+
               - if current_user.admin:
                 .navbar-btn.pull-right
                   %a.btn.btn-default(href='/admin/')
                     Dexter Admin
-              .navbar-btn.pull-right
-                %a.btn.btn-default(href=url_for('user_logout'), dataMethod='post')
-                  Logout
-              .navbar-btn.pull-right.navbar-text
-                &= current_user.full_name()
+
+
 
     .container
       -# show flash messages

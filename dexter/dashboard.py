@@ -6,7 +6,7 @@ from flask.ext.mako import render_template
 from flask.ext.login import login_required, current_user
 from sqlalchemy.sql import func
 
-from dexter.models import db, Document, Entity, Medium, User, DocumentType
+from dexter.models import db, Document, Entity, Medium, User
 
 from wtforms import validators
 from .forms import Form, SelectField
@@ -43,13 +43,27 @@ def dashboard():
             .limit(5):
         medium_counts.append([medium_name, int(medium_count)])
 
-    return render_template('dashboard.haml',
+    return render_template('dashboard/dashboard.haml',
                            doc_groups=doc_groups,
                            document_count=document_count,
                            latest=latest,
                            earliest=earliest,
                            group_counts=group_counts,
                            medium_counts=medium_counts)
+
+
+@app.route('/monitor-dashboard')
+@login_required
+def monitor_dashboard():
+    docs = Document.query.filter(Document.checked_by_user_id == current_user.id).order_by(Document.created_at.desc()).limit(30)
+
+    doc_groups = {}
+    for date, group in groupby(docs, lambda d: d.created_at.date()):
+        doc_groups[date] = list(group)
+
+    return render_template('dashboard/monitor.haml',
+                           doc_groups=doc_groups)
+
 
 
 @app.route('/activity')
@@ -72,16 +86,13 @@ def activity():
     if form.user_id.data:
         query = query.filter(Document.checked_by_user_id == form.user_id.data)
 
-    if form.document_type_id.data:
-        query = query.filter(Document.document_type_id == form.document_type_id.data)
-    
     paged_docs = query.order_by(Document.created_at.desc()).paginate(page, per_page)
 
     doc_groups = {}
     for date, group in groupby(paged_docs.items, lambda d: d.created_at.date()):
         doc_groups[date] = list(group)
 
-    return render_template('activity.haml',
+    return render_template('dashboard/activity.haml',
                            form=form,
                            paged_docs=paged_docs,
                            doc_groups=doc_groups)
@@ -90,7 +101,6 @@ def activity():
 class ActivityForm(Form):
     user_id     = SelectField('User', [validators.Optional()], default='')
     medium_id   = SelectField('Medium', [validators.Optional()], default='')
-    document_type_id = SelectField('Document type', [validators.Optional()], default='')
 
     def __init__(self, *args, **kwargs):
         super(ActivityForm, self).__init__(*args, **kwargs)
@@ -99,4 +109,13 @@ class ActivityForm(Form):
                 [str(u.id), u.short_name()] for u in sorted(User.query.all(), key=lambda u: u.short_name())]
 
         self.medium_id.choices = [['', '(any)']] + [(str(m.id), m.name) for m in Medium.query.order_by(Medium.name).all()]
-        self.document_type_id.choices = [['', '(any)']] + [(str(dt.id), dt.name) for dt in DocumentType.query.order_by(DocumentType.name).all()]
+
+    def user(self):
+        if self.user_id.data:
+            return User.query.get(self.user_id.data)
+        return None
+
+    def medium(self):
+        if self.medium_id.data:
+            return Medium.query.get(self.medium_id.data)
+        return None

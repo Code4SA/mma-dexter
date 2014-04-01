@@ -18,4 +18,4 @@ def home():
     if current_user.admin:
         return redirect(url_for('dashboard'))
     else:
-        return redirect(url_for('new_article'))
+        return redirect(url_for('monitor_dashboard'))
