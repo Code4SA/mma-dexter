@@ -35,7 +35,6 @@ class DailysunCrawler(BaseCrawler):
         soup = BeautifulSoup(raw_html)
 
         doc.title = self.extract_plaintext(soup.select("h2.sub-heading"))
-        doc.summary = self.extract_plaintext(soup.select(".article-excerpt"))
         doc.text = "\n\n".join(p.text for p in soup.select(".article-fullview > p") if not 'class' in p.attrs)
 
         date = self.extract_plaintext(soup.select(".publish-date")).replace('Published:', '')
