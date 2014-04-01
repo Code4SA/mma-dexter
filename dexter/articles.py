@@ -84,6 +84,9 @@ def new_article():
                         doc = None
 
         if doc:
+            if current_user.is_authenticated():
+                doc.created_by = current_user
+
             db.session.add(doc)
             db.session.flush()
             id = doc.id
@@ -102,6 +105,10 @@ def new_article():
 @login_required
 def edit_article(id):
     doc = Document.query.get_or_404(id)
+    if not doc.can_user_edit(current_user):
+        flash("You're not allowed to edit this article.", 'error')
+        return redirect(url_for('show_article', id=id))
+
     form = DocumentForm(obj=doc)
 
     author_form = AuthorForm(prefix='author', csrf_enabled=False, obj=doc.author)
@@ -129,6 +136,12 @@ def edit_article(id):
 @login_required
 def edit_article_analysis(id):
     document = Document.query.get_or_404(id)
+
+    # can this user do this?
+    if not document.can_user_edit(current_user):
+        flash("You're not allowed to edit this article.", 'error')
+        return redirect(url_for('show_article', id=id))
+
     form = DocumentAnalysisForm(obj=document)
 
     # forms for existing sources
@@ -190,7 +203,7 @@ def edit_article_analysis(id):
                 frm.create_or_update(document)
 
             # link to user
-            if current_user.is_authenticated():
+            if current_user.is_authenticated() and not document.checked_by:
                 document.checked_by = current_user
 
             log.info("Updated analysis by %s for %s" % (current_user, document))

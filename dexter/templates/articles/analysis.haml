@@ -2,11 +2,16 @@
   .panel-heading
     .row
       .col-sm-8
-        %h3.panel-title Analysis
+        %h3.panel-title
+          Analysis
+          - if document.checked_by:
+            by
+            &= document.checked_by.short_name()
       .col-sm-4.text-right
-        %a.btn.btn-default(href=url_for('edit_article_analysis', id=document.id))
-          %i.fa.fa-pencil
-          Edit analysis
+        - if document.can_user_edit(current_user):
+          %a.btn.btn-default(href=url_for('edit_article_analysis', id=document.id))
+            %i.fa.fa-pencil
+            Edit analysis
 
   .panel-body
     %section

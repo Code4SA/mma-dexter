@@ -48,6 +48,9 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'user_login'
 
+from dexter.authn import AnonymousUser
+login_manager.anonymous_user = AnonymousUser
+
 @login_manager.user_loader
 def load_user(userid):
     from .models import User

@@ -48,6 +48,8 @@ class Document(db.Model):
     topic_id          = Column(Integer, ForeignKey('topics.id'), index=True)
     document_type_id  = Column(Integer, ForeignKey('document_types.id'), index=True)
     origin_location_id = Column(Integer, ForeignKey('locations.id'), index=True)
+
+    created_by_user_id = Column(Integer, ForeignKey('users.id'), index=True)
     checked_by_user_id = Column(Integer, ForeignKey('users.id'), index=True)
 
     published_at = Column(DateTime(timezone=True), index=True, unique=False, nullable=False)
@@ -65,6 +67,7 @@ class Document(db.Model):
     topic       = relationship("Topic")
     document_type = relationship("DocumentType")
     origin      = relationship("Location")
+    created_by  = relationship("User", backref=backref('created_documents'), foreign_keys=[created_by_user_id])
     checked_by  = relationship("User", backref=backref('checked_documents'), foreign_keys=[checked_by_user_id])
 
     # Many-to-Many
@@ -148,6 +151,9 @@ class Document(db.Model):
             # now ensure all \n's are double
             self.text = newlines_re.sub("\n\n", self.text)
 
+
+    def can_user_edit(self, user):
+        return user.admin or self.created_by is None or self.created_by == user
 
 
     def __repr__(self):

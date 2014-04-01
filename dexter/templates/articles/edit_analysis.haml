@@ -16,7 +16,11 @@
         .panel-heading
           .row
             .col-sm-4
-              %h3.panel-title Analysis
+              %h3.panel-title
+                Analysis
+                - if document.checked_by:
+                  by
+                  &= document.checked_by.short_name()
             .col-sm-8.text-right
               %a.btn.btn-default(href=url_for('show_article', id=document.id)) Close
               %input.btn.btn-success(type='submit', value='Save changes', dataDisableWith='Saving...')
