@@ -1,28 +1,16 @@
-from urlparse import urlparse, urlunparse
 from newspaper import Article
-import logging
 from tld import get_tld
 from sqlalchemy.orm.exc import NoResultFound
 
-from dateutil.parser import parse
-
+from .base import BaseCrawler
 from ...models import Entity, Medium, Author, AuthorType
 
 
-class GenericCrawler:
-    log = logging.getLogger(__name__)
-
+class GenericCrawler(BaseCrawler):
     def offer(self, url):
         """ Can this crawler process this URL? """
 
         return True
-
-    def canonicalise_url(self, url):
-        """ Strip anchors, etc."""
-
-        parts = urlparse(url)
-        # force http, strip trailing slash
-        return urlunparse(['http', parts.netloc, parts.path.rstrip('/'), parts.params, parts.query, None])
 
     def crawl(self, doc):
         """ Crawl this document. """
@@ -59,6 +47,3 @@ class GenericCrawler:
             doc.author = Author.unknown()
 
         doc.published_at = self.parse_timestamp(article.published_date)
-
-    def parse_timestamp(self, ts):
-        return parse(ts)

@@ -28,7 +28,7 @@ class Medium(db.Model):
             City Press|PRINT|citypress.co.za
             Daily Dispatch|PRINT
             Daily Maverick|ONLINE
-            Daily Sun|PRINT
+            Daily Sun|PRINT|dailysun.mobi
             Daily Voice|PRINT
             Die Burger|PRINT
             EP Herald|PRINT

@@ -3,7 +3,7 @@ from itertools import chain
 from ..models import Document, Entity, db, Gender, Person, DocumentType, DocumentFairness, Fairness
 from ..processing import ProcessingError
 
-from .crawlers import MGCrawler, GenericCrawler
+from .crawlers import MGCrawler, TimesLiveCrawler, CitizenCrawler, DailysunCrawler, GenericCrawler
 from .extractors import AlchemyExtractor, CalaisExtractor, SourcesExtractor
 
 from requests.exceptions import HTTPError
@@ -13,7 +13,12 @@ class DocumentProcessor:
     log = logging.getLogger(__name__)
 
     def __init__(self):
-        self.crawlers = [MGCrawler(), GenericCrawler()]
+        self.crawlers = [
+                MGCrawler(),
+                TimesLiveCrawler(),
+                CitizenCrawler(),
+                DailysunCrawler(),
+                GenericCrawler()]
         self.extractors = [AlchemyExtractor(), CalaisExtractor(), SourcesExtractor()]
 
 
