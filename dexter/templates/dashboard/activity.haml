@@ -6,13 +6,18 @@
   Recently added articles
 
 %article#activity
-  %h3 Recently added articles
+  %h3
+    Recent articles
+    - if form.user():
+      added by ${form.user().short_name()|h}
+    - if form.medium():
+      from ${form.medium().name|h}
 
 .row
   .col-sm-9
     %article
       %%include(file='activity_list.haml')
-      = paginator('activity', paged_docs, user_id=form.user_id.data, medium_id=form.medium_id.data, document_type_id=form.document_type_id.data)
+      = paginator('activity', paged_docs, user_id=form.user_id.data, medium_id=form.medium_id.data)
 
   .col-sm-3
     %form.activity-refine(action=url_for('activity'), method='GET')
@@ -25,7 +30,6 @@
         .panel-body
           = vertical_field(form.user_id)
           = vertical_field(form.medium_id)
-          = vertical_field(form.document_type_id)
 
         .panel-footer
           %input.btn.btn-success(type='Submit', value='Update')
