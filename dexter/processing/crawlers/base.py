@@ -1,6 +1,7 @@
 from urlparse import urlparse, urlunparse
 
 import logging
+import requests
 
 from dateutil.parser import parse
 
@@ -22,7 +23,14 @@ class BaseCrawler:
         """ Crawl this document. """
         raise NotImplemented()
 
+    def fetch(self, url):
+        self.log.info("Fetching URL: " + url)
 
+        r = requests.get(url)
+        # raise an HTTPError on badness
+        r.raise_for_status()
+
+        return r.text.encode('utf8')
 
     def extract_plaintext(self, lst):
         if len(lst) > 0:
