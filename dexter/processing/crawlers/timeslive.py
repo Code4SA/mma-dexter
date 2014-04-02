@@ -17,7 +17,7 @@ class TimesLiveCrawler(BaseCrawler):
 
     def fetch(self, url):
         url = url + '?service=print'
-        super(TimesLiveCrawler, self).fetch(url)
+        return super(TimesLiveCrawler, self).fetch(url)
 
     def extract(self, doc, raw_html):
         """ Extract text and other things from the raw_html for this document. """
