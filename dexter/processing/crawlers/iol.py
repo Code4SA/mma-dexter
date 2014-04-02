@@ -31,7 +31,13 @@ class IOLCrawler(BaseCrawler):
         doc.title = self.extract_plaintext(soup.select(".article-white h1.article_headers"))
         doc.text = "\n\n".join(p.text for p in soup.select("#article_container p.arcticle_text"))
 
-        date, author = self.extract_plaintext(soup.select(".article-white p.byline")).split("By", 1)
+        parts = self.extract_plaintext(soup.select(".article-white p.byline")).split("By", 1)
+        if len(parts) > 1:
+            date, author = parts
+        else:
+            date = parts[0]
+            author = None
+
         doc.published_at = self.parse_timestamp(date)
 
         if author:
