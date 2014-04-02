@@ -22,12 +22,6 @@ class MGCrawler(BaseCrawler):
         # force http, strip www, strip trailing slash
         return urlunparse(['http', 'mg.co.za', parts.path.rstrip('/'), parts.params, parts.query, None])
 
-    def crawl(self, doc):
-        """ Crawl this document. """
-        doc.url = self.canonicalise_url(doc.url)
-        raw_html = self.fetch(doc.url)
-        self.extract(doc, raw_html)
-
     def fetch(self, url):
         url = url.replace("article", "print")
 

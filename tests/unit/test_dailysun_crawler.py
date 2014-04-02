@@ -254,7 +254,7 @@ class TestTimesliveCrawler(unittest.TestCase):
         self.maxDiff = None
 
         self.assertEqual(doc.title, 'Cop fiddles and wants free sex shows, say magoshas')
-        self.assertEqual(doc.summary, '')
+        self.assertEqual(doc.summary, None)
         self.assertEqual(doc.published_at.strftime('%d %m %Y'), '01 04 2014')
         self.assertEqual(doc.author.name, 'SIBONGILE MABENA')
         self.assertEqual(doc.medium.name, 'Daily Sun')

@@ -3,7 +3,7 @@ from itertools import chain
 from ..models import Document, Entity, db, Gender, Person, DocumentType, DocumentFairness, Fairness
 from ..processing import ProcessingError
 
-from .crawlers import MGCrawler, TimesLiveCrawler, CitizenCrawler, DailysunCrawler, GenericCrawler
+from .crawlers import MGCrawler, TimesLiveCrawler, CitizenCrawler, DailysunCrawler, News24Crawler, GenericCrawler
 from .extractors import AlchemyExtractor, CalaisExtractor, SourcesExtractor
 
 from requests.exceptions import HTTPError
@@ -18,6 +18,7 @@ class DocumentProcessor:
                 TimesLiveCrawler(),
                 CitizenCrawler(),
                 DailysunCrawler(),
+                News24Crawler(),
                 GenericCrawler()]
         self.extractors = [AlchemyExtractor(), CalaisExtractor(), SourcesExtractor()]
 

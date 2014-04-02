@@ -22,11 +22,6 @@ class DailysunCrawler(BaseCrawler):
         # force http, strip www, strip trailing slash
         return urlunparse(['http', 'dailysun.mobi', parts.path.rstrip('/'), parts.params, parts.query, None])
 
-    def crawl(self, doc):
-        """ Crawl this document. """
-        raw_html = self.fetch(doc.url)
-        self.extract(doc, raw_html)
-
     def extract(self, doc, raw_html):
         """ Extract text and other things from the raw_html for this document. """
 
