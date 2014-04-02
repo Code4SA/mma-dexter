@@ -35,6 +35,7 @@ class Medium(db.Model):
             Etv English News|TELEVISION
             Grocotts|PRINT
             IOL|ONLINE|iol.co.za
+            Isolezwe|ONLINE|iol.co.za/isolezwe
             Kaya FM|RADIO
             Lesedi FM|RADIO
             Ligwalagwala FM|RADIO
@@ -56,7 +57,7 @@ class Medium(db.Model):
             Sowetan|PRINT|sowetanlive.co.za
             Sunday Independent|PRINT
             Sunday Sun|PRINT
-            Sunday Times|PRINT
+            Sunday Times|PRINT|timeslive.co.za/sundaytimes
             Sunday World|PRINT
             Talk Radio 702|RADIO
             The Free State Times|PRINT

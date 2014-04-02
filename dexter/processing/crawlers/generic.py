@@ -1,9 +1,8 @@
 from newspaper import Article
-from tld import get_tld
 from sqlalchemy.orm.exc import NoResultFound
 
 from .base import BaseCrawler
-from ...models import Entity, Medium, Author, AuthorType
+from ...models import Entity, Author, AuthorType
 
 
 class GenericCrawler(BaseCrawler):
@@ -19,20 +18,13 @@ class GenericCrawler(BaseCrawler):
         article = Article(url=doc.url, language='en', fetch_images=False, request_timeout=10)
         article.download()
 
-        # associate with Medium instance
-        domain = get_tld(doc.url)
-        try:
-            medium = Medium.query.filter(Medium.domain == domain).one()
-        except NoResultFound as e:
-            medium = Medium.query.filter(Medium.name == "Unknown").one()
-        doc.medium = medium
-
         # extract content
         self.extract(doc, article)
-        return
+
 
     def extract(self, doc, article):
         """ Extract text and other things from this document. """
+        super(GenericCrawler, self).extract(doc, article)
 
         article.parse()
         doc.title = article.title

@@ -249,6 +249,7 @@ class TestTimesliveCrawler(unittest.TestCase):
 """
         
         doc = Document()
+        doc.url = 'http://dailysun.mobi/news/read/5227/cop-fiddles-and-wants-free-sex-shows-say-magoshas'
         self.crawler.extract(doc, html)
 
         self.maxDiff = None

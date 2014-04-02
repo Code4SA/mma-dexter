@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 import requests
 
 from .base import BaseCrawler
-from ...models import Entity, Medium, Author, AuthorType
+from ...models import Entity, Author, AuthorType
 
 class CitizenCrawler(BaseCrawler):
     TL_RE = re.compile('(www\.)?citizen.co.za')
@@ -33,8 +33,7 @@ class CitizenCrawler(BaseCrawler):
 
     def extract(self, doc, raw_html):
         """ Extract text and other things from the raw_html for this document. """
-
-        doc.medium = Medium.query.filter(Medium.domain == 'citizen.co.za').one()
+        super(CitizenCrawler, self).extract(doc, raw_html)
 
         soup = BeautifulSoup(raw_html)
 

@@ -73,11 +73,13 @@ class TestTimesliveCrawler(unittest.TestCase):
 """
         
         doc = Document()
+        doc.url = 'http://www.timeslive.co.za/politics/2014/04/01/iec-s-tlakula-must-resign-opposition-parties'
         self.crawler.extract(doc, html)
 
         self.assertEqual(doc.title, u"IEC's Tlakula must resign: opposition parties")
         self.assertEqual(doc.summary, u"Several opposition parties met in Pretoria on Tuesday to discuss Public Protector Thuli Madonsela's finding on the Nkandla upgrades and the controversy around IEC chairwoman Pansy Tlakula.")
         self.assertEqual(doc.published_at.strftime('%d %m %Y'), '01 04 2014')
+        self.assertEqual(doc.author.name, "Sapa")
+        self.assertEqual(doc.medium.name, 'Times')
         
         self.assertEqual(doc.text, u'Chairman of the multi-party forum Bantu Holomisa, who also heads the United Democratic Movement (UDM), said the opposition parties resolved to push for Tlakula\'s resignation.\n\n"All the political parties present, with the exception of the Democratic Alliance and the Freedom Front Plus, agreed that advocate Tlakula must resign immediately.\n\n"Should she refuse to resign, the parties who are in agreement will pursue legal action," said Holomisa.\n\nThe forum included the African Christian Democratic Party, AgangSA, Azapo, Economic Freedom Fighters, FF Plus, Inkatha Freedom Party, United Christian Democratic Party, and Holomisa\'s UDM.\n\nRegarding Nkandla, the parties resolved to convene another summit after President Jacob Zuma had reacted to Parliament as ordered by Madonsela.')
-        self.assertEqual(doc.author.name, "Sapa")

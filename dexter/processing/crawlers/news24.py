@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 import requests
 
 from .base import BaseCrawler
-from ...models import Entity, Medium, Author, AuthorType
+from ...models import Entity, Author, AuthorType
 
 class News24Crawler(BaseCrawler):
     TL_RE = re.compile('(www\.)?news24.com')
@@ -24,8 +24,7 @@ class News24Crawler(BaseCrawler):
 
     def extract(self, doc, raw_html):
         """ Extract text and other things from the raw_html for this document. """
-
-        doc.medium = Medium.query.filter(Medium.domain == 'news24.com').one()
+        super(News24Crawler, self).extract(doc, raw_html)
 
         soup = BeautifulSoup(raw_html)
 

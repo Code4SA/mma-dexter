@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 import requests
 
 from .base import BaseCrawler
-from ...models import Entity, Medium, Author, AuthorType
+from ...models import Entity, Author, AuthorType
 
 class TimesLiveCrawler(BaseCrawler):
     TL_RE = re.compile('(www\.)?timeslive.co.za')
@@ -21,8 +21,7 @@ class TimesLiveCrawler(BaseCrawler):
 
     def extract(self, doc, raw_html):
         """ Extract text and other things from the raw_html for this document. """
-
-        doc.medium = Medium.query.filter(Medium.domain == 'timeslive.co.za').one()
+        super(TimesLiveCrawler, self).extract(doc, raw_html)
 
         soup = BeautifulSoup(raw_html)
 
