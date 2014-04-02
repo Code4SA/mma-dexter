@@ -26,11 +26,6 @@ class CitizenCrawler(BaseCrawler):
 
         return urlunparse(['http', 'citizen.co.za', path, parts.params, parts.query, None])
 
-    def crawl(self, doc):
-        """ Crawl this document. """
-        raw_html = self.fetch(doc.url)
-        self.extract(doc, raw_html)
-
     def extract(self, doc, raw_html):
         """ Extract text and other things from the raw_html for this document. """
         super(CitizenCrawler, self).extract(doc, raw_html)
