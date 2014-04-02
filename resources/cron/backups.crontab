@@ -1,0 +1,2 @@
+# Run everday at 2am
+0 2 * * * $HOME/mma-dexter/bin/run-mysql-s3-backups.sh
