@@ -1,3 +1,3 @@
 #!/bin/bash
 
-$HOME/mma-dexter/bin/mysql-s3-backup.sh 2>&1 >> $HOME/mma-dexter/log/backups.log
+$HOME/mma-dexter/bin/mysql-s3-backup.sh >> $HOME/mma-dexter/log/backups.log 2>&1
