@@ -48,14 +48,14 @@ class News24Crawler(BaseCrawler):
 
             doc.text = '\n\n'.join(text)
 
-            doc.published_at = self.parse_timestamp(self.extract_plaintext(soup.select(".page-lead-datetime")))
+            doc.published_at = self.parse_timestamp(self.extract_plaintext(soup.select(".article .datestamp")))
             author = self.extract_plaintext(soup.select("#_htmlAccreditationName")).strip('- ').strip()
 
         elif soup.select(".article-content article"):
             # new style of news24 articles (eg. for elections)
             doc.title = self.extract_plaintext(soup.select(".article-content article h1"))
             doc.text = "\n\n".join(p.text for p in soup.select(".article-content article > p"))
-            doc.published_at = self.parse_timestamp(self.extract_plaintext(soup.select(".page-lead-datetime")))
+            doc.published_at = self.parse_timestamp(self.extract_plaintext(soup.select(".article-content article .datestamp")))
             author = self.extract_plaintext(soup.select("#accreditationName")).strip('- ').strip()
 
         else:
