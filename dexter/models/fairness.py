@@ -60,7 +60,7 @@ class DocumentFairness(db.Model):
     # Is the article biased for or against anyone? Note that, for now, biased is
     # for or against a fixed list of organisations/affiliations. In time, that list
     # will have to be changed and merged into the entity table.
-    fairness_id  = Column(Integer, ForeignKey('fairness.id'), index=True, default=6)
+    fairness_id  = Column(Integer, ForeignKey('fairness.id'), index=True, default=6, nullable=False)
     # who is the source biased in favour of?
     bias_favour_affiliation_id = Column(Integer, ForeignKey('affiliations.id'), index=True, nullable=True)
     # who is the source biased against?
@@ -79,14 +79,14 @@ class DocumentFairness(db.Model):
 
 
 class DocumentFairnessForm(Form):
-    fairness_id                 = SelectField('Bias', default='')
+    fairness_id                  = SelectField('Bias', default='')
     bias_favour_affiliation_id   = SelectField('Favour', default='')
     bias_oppose_affiliation_id   = SelectField('Disfavour', default='')
 
     def __init__(self, *args, **kwargs):
         super(DocumentFairnessForm, self).__init__(*args, **kwargs)
 
-        self.fairness_id.choices = [['', '(none)']] + [[str(s.id), s.name] for s in Fairness.query.order_by(Fairness.name).all()]
+        self.fairness_id.choices = [[str(s.id), s.name] for s in Fairness.query.order_by(Fairness.name).all()]
 
         # sort according to code
         affiliations = sorted(Affiliation.query.all(), key=Affiliation.sort_key)

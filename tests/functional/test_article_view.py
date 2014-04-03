@@ -47,9 +47,5 @@ class TestArticleView(TestCase):
         self.db.session.add(df)
         self.db.session.commit()
 
-        df.fairness_id = None
-        self.db.session.commit()
-
         res = self.client.get('/articles/%d' % d.id)
-        print res.data
         self.assert200(res)

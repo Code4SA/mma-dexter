@@ -187,7 +187,7 @@
     self.deleteSource = function(e) {
       e.preventDefault();
 
-      $row = $(this).closest('tr');
+      var $row = $(this).closest('tr');
       if ($row.hasClass('new')) {
         // it's new
         $row.remove();
@@ -202,7 +202,7 @@
     self.undoDeleteSource = function(e) {
       e.preventDefault();
 
-      $row = $(this).closest('tr');
+      var $row = $(this).closest('tr');
       $row.removeClass('deleted');
       $('input[name$="-deleted"]', $row).val('0');
     };
@@ -249,6 +249,13 @@
         $(this).attr('name', $(this).attr('name').replace('new-', 'new[' + self.newFairnessCount + ']-'));
       });
 
+      // remove the (none) option
+      $('select[name$="fairness_id"] > option', $row).each(function(i, opt) {
+        if (opt.value === '') {
+          $(opt).remove();
+        }
+      });
+
       $('.chosen-select-delayed', $row).chosen();
     };
 
@@ -256,13 +263,14 @@
     self.deleteFairness = function(e) {
       e.preventDefault();
 
-      $row = $(this).closest('tr');
+      var $row = $(this).closest('tr');
       if ($row.hasClass('new')) {
         // it's new
         $row.remove();
       } else {
         // it's not new
         $row.addClass('deleted');
+        $('select', $row).prop('disabled', true);
         self.$form.append('<input type="hidden" name="fairness-del[' + $row.data('fairness-id') + ']" value="Y">');
       }
     };
@@ -271,8 +279,9 @@
     self.undoDeleteFairness = function(e) {
       e.preventDefault();
 
-      $row = $(this).closest('tr');
+      var $row = $(this).closest('tr');
       $row.removeClass('deleted');
+      $('select', $row).prop('disabled', false);
       $('input[name="fairness-del[' + $row.data('fairness-id') + ']"]', self.$form).remove();
     };
   };

@@ -160,6 +160,8 @@ def edit_article_analysis(id):
 
     # fairness forms
     new_fairness_form = DocumentFairnessForm(prefix='fairness-new', csrf_enabled=False)
+    new_fairness_form.fairness_id.choices = [['', '(none)']] + new_fairness_form.fairness_id.choices
+
     fairness_forms = []
     for fairness in document.fairness:
         f = DocumentFairnessForm(prefix='fairness[%d]' % fairness.id, obj=fairness)
