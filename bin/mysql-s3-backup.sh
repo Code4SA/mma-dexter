@@ -1,11 +1,11 @@
 #!/bin/bash
 # Shell script to backup MySql database
- 
+
+set -e
+
 # CONFIG - Only edit the below lines to setup the script
 # ===============================
  
-set -e
-
 MyUSER="backup"        # USERNAME
 MyPASS="X2aVljzBeDDm"   # PASSWORD
 MyHOST="localhost"      # Hostname
@@ -19,10 +19,7 @@ DBS="mma"
 # ===============================
  
 # Linux bin paths, change this if it can not be autodetected via which command
-MYSQL="$(which mysql)"
 MYSQLDUMP="$(which mysqldump)"
-CHOWN="$(which chown)"
-CHMOD="$(which chmod)"
 GZIP="$(which gzip)"
  
 # Backup Dest directory, change this if you have someother location
@@ -49,9 +46,19 @@ do
   echo "Backing up $db to $FILE"
 
   # dump database to file and gzip
+  date --rfc-3339=ns
   $MYSQLDUMP -u $MyUSER -h $MyHOST -p$MyPASS $db | $GZIP -9 > $FILE
+  CODE=${PIPESTATUS[0]}
+  date --rfc-3339=ns
 
-  echo "Done"
+  if [ $CODE -ne 0 ]; then
+    echo "mysqldump failed"
+    exit 1
+  fi
+
+  echo "Dump complete"
+
+  ls -l $FILE
 done
  
 # copy mysql backup directory to S3
