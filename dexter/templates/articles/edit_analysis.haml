@@ -86,9 +86,11 @@
                       - class_ = ''
                       - class_ += ' template' if f == new_fairness_form else ''
                       - class_ += ' new' if f.is_new() else ''
+                      - class_ += ' deleted' if f.deleted.data == '1' else ''
 
                       %tr(class_=class_, dataFairnessId=f.document_fairness.id if not f.is_new() and f.document_fairness else '')
                         %td
+                          = f.deleted
                           = field_input(f.fairness_id)
                         %td
                           = field_input(f.bias_favour_affiliation_id, class_='chosen-select' if f != new_fairness_form else 'chosen-select-delayed')

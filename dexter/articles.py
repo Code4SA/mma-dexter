@@ -196,11 +196,7 @@ def edit_article_analysis(id):
             for f in source_forms + new_sources:
                 f.create_or_update(document)
 
-            # --- fairness
-            to_delete = [f for f in document.fairness if ('fairness-del[%d]' % f.id) in request.form]
-            for f in to_delete:
-                document.fairness.remove(f)
-
+            # update and delete fairness
             for frm in fairness_forms:
                 frm.create_or_update(document)
 

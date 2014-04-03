@@ -80,8 +80,10 @@ class DocumentFairness(db.Model):
 
 class DocumentFairnessForm(Form):
     fairness_id                  = SelectField('Bias', default='')
-    bias_favour_affiliation_id   = SelectField('Favour', default='')
-    bias_oppose_affiliation_id   = SelectField('Disfavour', default='')
+    bias_favour_affiliation_id   = SelectField('Favour', [validators.Optional()], default='')
+    bias_oppose_affiliation_id   = SelectField('Disfavour', [validators.Optional()], default='')
+
+    deleted = HiddenField('deleted', default='0')
 
     def __init__(self, *args, **kwargs):
         super(DocumentFairnessForm, self).__init__(*args, **kwargs)
@@ -96,8 +98,13 @@ class DocumentFairnessForm(Form):
 
 
     def create_or_update(self, document):
-        if self.is_new():
+        if self.deleted.data == '1':
+            document.fairness.remove(self.document_fairness)
+            return None
+
+        elif self.is_new():
             return self.create_fairness(document)
+
         else:
             self.populate_obj(self.document_fairness)
             return None

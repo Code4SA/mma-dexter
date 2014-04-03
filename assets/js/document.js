@@ -271,7 +271,7 @@
         // it's not new
         $row.addClass('deleted');
         $('select', $row).prop('disabled', true);
-        self.$form.append('<input type="hidden" name="fairness-del[' + $row.data('fairness-id') + ']" value="Y">');
+        $('input[name$="-deleted"]', $row).val('1');
       }
     };
 
@@ -282,7 +282,7 @@
       var $row = $(this).closest('tr');
       $row.removeClass('deleted');
       $('select', $row).prop('disabled', false);
-      $('input[name="fairness-del[' + $row.data('fairness-id') + ']"]', self.$form).remove();
+      $('input[name$="-deleted"]', $row).val('0');
     };
   };
 })(jQuery, window);
