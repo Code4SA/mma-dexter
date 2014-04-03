@@ -17,7 +17,7 @@
         name: 'authors',
         prefetch: {
           url: '/api/authors',
-          ttl: 60,
+          ttl: 600,
           filter: function(resp) { return resp.authors; },
         },
         sorter: function(a, b) {
@@ -103,7 +103,7 @@
         name: 'people',
         prefetch: {
           url: '/api/people',
-          ttl: 60,
+          ttl: 600,
           filter: function(resp) { return resp.people; },
         },
         sorter: function(a, b) {
