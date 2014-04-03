@@ -5,6 +5,7 @@ from bs4 import BeautifulSoup
 import requests
 
 from .base import BaseCrawler
+from .generic import GenericCrawler
 from ...models import Entity, Author, AuthorType
 
 class News24Crawler(BaseCrawler):
@@ -32,6 +33,7 @@ class News24Crawler(BaseCrawler):
         if tags:
             doc.summary = tags[0].attrs.get('content')
 
+        author = None
         if soup.select("#article_special"):
             # old style of news24 articles
             doc.title = self.extract_plaintext(soup.select(".article h1"))
@@ -55,6 +57,13 @@ class News24Crawler(BaseCrawler):
             doc.text = "\n\n".join(p.text for p in soup.select(".article-content article > p"))
             doc.published_at = self.parse_timestamp(self.extract_plaintext(soup.select(".page-lead-datetime")))
             author = self.extract_plaintext(soup.select("#accreditationName")).strip('- ').strip()
+
+        else:
+            # fall back to the generic crawler
+            self.log.info("Couldn't identify article content, falling back to generic crawler")
+            g = GenericCrawler()
+            g.crawl(doc)
+            return
 
         if author:
             doc.author = Author.get_or_create(author, AuthorType.journalist())
