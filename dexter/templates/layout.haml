@@ -11,6 +11,10 @@
     %meta(name='csrf-param', content='csrf_token')
     %meta(name='csrf-token', content=csrf_token())
     %meta(name="viewport", content="width=device-width, initial-scale=1.0")
+
+    - import newrelic.agent
+    = newrelic.agent.get_browser_timing_header()
+
     - for url in webassets('css'):
       %link(rel="stylesheet", href=url)
 
@@ -77,3 +81,5 @@
 
     - for url in webassets('js'):
       %script(src=url)
+
+    = newrelic.agent.get_browser_timing_footer()
