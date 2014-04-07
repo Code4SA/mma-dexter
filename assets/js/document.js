@@ -166,13 +166,16 @@
 
     self.enablePersonTypeahead = function($row) {
       if (!self.personTypeaheadEnabled) {
-        $('.person-name input', $row).val('').typeahead({
-          highlight: true,
-          autoselect: true,
-        }, {
-          source: self.personHound.ttAdapter(),
-          displayKey: 'name',
-        });
+        $('.person-name input', $row).
+          val('').
+          typeahead({
+            highlight: true,
+            autoselect: true,
+          }, {
+            source: self.personHound.ttAdapter(),
+            displayKey: 'name',
+          }).
+          on('typeahead:selected', self.personSourceChosen);
 
         self.personTypeaheadEnabled = true;
       }
@@ -181,6 +184,26 @@
     self.disablePersonTypeahead = function($row) {
       $('.person-name input', $row).typeahead('destroy').val('');
       self.personTypeaheadEnabled = false;
+    };
+
+    // a new person was chosen as a source from the typeahead box
+    self.personSourceChosen = function(event, person, datasource) {
+      var $row = $(this).closest('tr');
+      var $select = $('select[name$="affiliation_id"]', $row);
+
+      // find the matching affiliation option
+      var affiliationId = $('option', $select).
+        filter(function(i, opt) { return opt.innerText == person.affiliation; }).
+        first().
+        attr('value') || '';
+
+      // choose the affiliation
+      $select.
+        val(affiliationId).
+        trigger('chosen:updated');
+
+      // clear the source function
+      $('select[name$="source_function_id"]', $row).val('');
     };
 
     // delete button was clicked
