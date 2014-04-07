@@ -77,6 +77,7 @@ class Person(db.Model):
             'name': self.name,
             'race': self.race.name if self.race else None,
             'gender': self.gender.name if self.gender else None,
+            'affiliation': self.affiliation.full_name() if self.affiliation else None,
         }
 
     def __repr__(self):
