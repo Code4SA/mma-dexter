@@ -27,6 +27,7 @@ class Person(db.Model):
     name        = Column(String(100), index=True, nullable=False, unique=True)
     gender_id   = Column(Integer, ForeignKey('genders.id'))
     race_id     = Column(Integer, ForeignKey('races.id'))
+    affiliation_id = Column(Integer, ForeignKey('affiliations.id'))
 
     created_at   = Column(DateTime(timezone=True), index=True, unique=False, nullable=False, server_default=func.now())
     updated_at   = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.current_timestamp())
@@ -34,6 +35,7 @@ class Person(db.Model):
     # Associations
     gender      = relationship("Gender", lazy=False)
     race        = relationship("Race", lazy=False)
+    affiliation = relationship("Affiliation")
 
     def entity(self):
         """ Get an entity that is linked to this person. Because many entities can be linked, we
