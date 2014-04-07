@@ -10,6 +10,10 @@
       %h2
         &= person.name
 
+      - if person.affiliation:
+        %h4
+          &= person.affiliation.name
+
     %section
       %form#edit-person(action=url_for('show_person', id=person.id), method='POST')
         = form.csrf_token

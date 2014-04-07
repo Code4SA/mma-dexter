@@ -31,6 +31,7 @@ class SourcesExtractor(BaseExtractor):
 
                 s = DocumentSource()
                 s.person = p
+                s.affiliation = p.affiliation
                 s.quoted = True
                 s.unnamed = False
 
