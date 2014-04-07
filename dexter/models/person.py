@@ -5,7 +5,6 @@ from datetime import datetime, timedelta
 import logging
 
 from sqlalchemy import (
-    Boolean,
     Column,
     DateTime,
     ForeignKey,
@@ -33,10 +32,6 @@ class Person(db.Model):
     gender_id   = Column(Integer, ForeignKey('genders.id'))
     race_id     = Column(Integer, ForeignKey('races.id'))
     affiliation_id = Column(Integer, ForeignKey('affiliations.id'))
-
-    # when this is set, we'll relearn this person's affiliation
-    # based on recently added articles
-    affiliation_update_needed = Column(Boolean, default=False, index=True)
 
     created_at   = Column(DateTime(timezone=True), index=True, unique=False, nullable=False, server_default=func.now())
     updated_at   = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.current_timestamp())

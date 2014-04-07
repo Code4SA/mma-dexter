@@ -210,6 +210,15 @@ def edit_article_analysis(id):
             log.info("Updated analysis by %s for %s" % (current_user, document))
 
             db.session.commit()
+
+            # XXX - the document analysis forms only update the *_id attributes,
+            # no the association attribute, but we need that updated for the functionality
+            # below. So, run it after the commit. It sucks that we don't do this all
+            # in one transaction. We should use a different form mechanism
+            # that updates everything
+            document.relearn_source_affiliations()
+            db.session.commit()
+
             flash('Analysis updated.')
             return redirect(url_for('edit_article_analysis', id=id))
         else:

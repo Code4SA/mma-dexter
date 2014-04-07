@@ -22,7 +22,6 @@ from sqlalchemy.orm import relationship, backref
 from .support import db
 
 import logging
-log = logging.getLogger(__name__)
 
 
 universal_newline_re = re.compile(R"\r\n|\n|\r")  # All types of newline.
@@ -33,6 +32,7 @@ class Document(db.Model):
     A published document, possibly from online on entered manually.
     """
     __tablename__ = "documents"
+    log = logging.getLogger(__name__)
 
     id        = Column(Integer, primary_key=True)
     url       = Column(String(200), index=True, nullable=True)
@@ -150,6 +150,21 @@ class Document(db.Model):
 
     def can_user_edit(self, user):
         return user.admin or self.created_by is None or self.created_by == user
+
+
+    def relearn_source_affiliations(self):
+        """ Update the default affiilations for people sources linked to this
+        document.
+        """
+        people = set()
+        for source in (s for s in self.sources if s.person):
+            if source.affiliation is not None and source.affiliation != source.person.affiliation:
+                people.add(source.person)
+
+        self.log.debug("Relearning source affiliations for %s", people)
+
+        for person in people:
+            person.relearn_affiliation()
 
 
     def __repr__(self):
