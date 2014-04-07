@@ -57,6 +57,17 @@ class DocumentData(DataSet):
         author = AuthorData.joe_author
         created_by = UserData.user
 
+    class simple2:
+        url = 'http://mg.co.za/articles/2012-03-03-bar'
+        title = 'Another title'
+        summary = 'Another document summary'
+        text = 'Today, we do fun things.'
+        published_at = datetime.datetime(2012, 3, 3)
+        medium_id = 1
+        document_type_id = 1
+        author = AuthorData.joe_author
+        created_by = UserData.user
+
 
 dbfixture = SQLAlchemyFixture(
     env=globals(),

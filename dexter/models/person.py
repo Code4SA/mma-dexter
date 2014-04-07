@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 
 from itertools import groupby
+from datetime import datetime, timedelta
+import logging
 
 from sqlalchemy import (
+    Boolean,
     Column,
     DateTime,
     ForeignKey,
@@ -10,7 +13,7 @@ from sqlalchemy import (
     String,
     func,
     )
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, subqueryload
 from wtforms import StringField, validators, SelectField, HiddenField
 
 from .support import db
@@ -23,11 +26,17 @@ class Person(db.Model):
     """
     __tablename__ = "people"
 
+    log = logging.getLogger(__name__)
+
     id          = Column(Integer, primary_key=True)
     name        = Column(String(100), index=True, nullable=False, unique=True)
     gender_id   = Column(Integer, ForeignKey('genders.id'))
     race_id     = Column(Integer, ForeignKey('races.id'))
     affiliation_id = Column(Integer, ForeignKey('affiliations.id'))
+
+    # when this is set, we'll relearn this person's affiliation
+    # based on recently added articles
+    affiliation_update_needed = Column(Boolean, default=False, index=True)
 
     created_at   = Column(DateTime(timezone=True), index=True, unique=False, nullable=False, server_default=func.now())
     updated_at   = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.current_timestamp())
@@ -79,6 +88,64 @@ class Person(db.Model):
             'gender': self.gender.name if self.gender else None,
             'affiliation': self.affiliation.full_name() if self.affiliation else None,
         }
+
+
+    def relearn_affiliation(self):
+        """ Relearn this person's affiliation, based on a time-decaying
+        weighted average of affiliation mappings taken from document
+        sources. 
+        
+        We consider all changes that have taken place over the last 7
+        days. The current affiliation (if any), is considered to have
+        been set exactly 7 days ago.
+
+        All dates are based on document publication dates.
+
+        Returns True if the affiliation was updated, False otherwise.
+        """
+        from . import DocumentSource, Document
+
+        now = datetime.utcnow()
+        days_ago = now - timedelta(days=7)
+
+        sources = DocumentSource.query\
+                .options(subqueryload(DocumentSource.document))\
+                .options(subqueryload(DocumentSource.affiliation))\
+                .filter(Document.published_at >= days_ago)\
+                .filter(DocumentSource.person == self)\
+                .filter(DocumentSource.affiliation != None)\
+                .order_by(Document.published_at)\
+                .all()
+
+        weights = {}
+
+        # exponential decay. An affiliation from today is worth
+        # only half that tomorrow, a half again the day after, etc.
+        weight = lambda d: 1.0 / (2 ** (now - d).days)
+
+        # current affiliation
+        if self.affiliation:
+            weights[self.affiliation] = weight(days_ago)
+
+        # accumulate weights for affiliations gathered over the last
+        # period
+        for source in sources:
+            weights[source.affiliation] = \
+                    weights.get(source.affiliation, 0) + \
+                    weight(source.document.published_at)
+
+        self.log.debug("Affiliation weights for %s: %s" % (self, weights))
+
+        if weights:
+            affiliation, _ = max(weights.items(), key=lambda pair: pair[1])
+
+            if affiliation != self.affiliation:
+                self.log.info("Learned new affiliation for %s: was=%s, now=%s" % (self, self.affiliation, affiliation))
+                self.affiliation = affiliation
+                return True
+
+        return False
+
 
     def __repr__(self):
         return "<Person id=%s, name=\"%s\">" % (self.id, self.name.encode('utf-8'))
