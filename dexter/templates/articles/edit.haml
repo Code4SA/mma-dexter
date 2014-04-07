@@ -21,7 +21,6 @@
         %input.btn.btn-success(type='submit', value='Save changes', dataDisableWith='Saving...')
         %a.btn.btn-default(href=url_for('show_article', id=doc.id)) Cancel
       .col-sm-6.text-right
-        - if current_user.admin:
-          %a.btn.btn-danger(href=url_for('delete_article', id=doc.id), dataMethod='POST', dataConfirm='Are you sure you want to delete this article?', dataDisableWith='Deleting...')
-            %i.fa.fa-trash-o
-            Delete this article
+        %a.btn.btn-danger(href=url_for('delete_article', id=doc.id), dataMethod='POST', dataConfirm='Are you sure you want to delete this article?', dataDisableWith='Deleting...')
+          %i.fa.fa-trash-o
+          Delete this article

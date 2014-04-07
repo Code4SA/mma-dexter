@@ -26,11 +26,14 @@ def show_article(id):
 def delete_article(id):
     document = Document.query.get_or_404(id)
 
-    if current_user.admin:
-        log.info("Document deleted by %s: %s" % (current_user, document))
-        db.session.delete(document)
-        db.session.commit()
-        flash('The document has been deleted.', 'info')
+    if not document.can_user_edit(current_user):
+        flash("You're not allowed to delete this article.", 'error')
+        return redirect(url_for('show_article', id=id))
+
+    log.info("Document deleted by %s: %s" % (current_user, document))
+    db.session.delete(document)
+    db.session.commit()
+    flash('The document has been deleted.', 'info')
 
     return redirect(url_for('dashboard'))
  

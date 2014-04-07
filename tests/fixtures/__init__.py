@@ -2,7 +2,7 @@ import datetime
 
 from fixture import DataSet, NamedDataStyle, SQLAlchemyFixture
 
-from dexter.models import db, Person, Entity, Author, Document
+from dexter.models import db, Person, Entity, Author, Document, User
 
 class PersonData(DataSet):
     class joe_author:
@@ -40,6 +40,11 @@ class AuthorData(DataSet):
         author_type_id = 1
         person = PersonData.joe_author
 
+class UserData(DataSet):
+    class user:
+        first_name = 'User'
+        email = 'user@example.com'
+
 class DocumentData(DataSet):
     class simple:
         url = 'http://mg.co.za/articles/2012-01-01-foo'
@@ -50,6 +55,7 @@ class DocumentData(DataSet):
         medium_id = 1
         document_type_id = 1
         author = AuthorData.joe_author
+        created_by = UserData.user
 
 
 dbfixture = SQLAlchemyFixture(
