@@ -140,7 +140,7 @@ class Affiliation(db.Model):
         return [int(k) if k else 0 for k in self.code.split('.')]
 
     def __repr__(self):
-        return "<Affiliation code='%s', name='%s'>" % (self.code, self.name)
+        return "<Affiliation code='%s', name='%s'>" % (self.code.encode('utf-8'), self.name.encode('utf-8'))
 
 
     @classmethod

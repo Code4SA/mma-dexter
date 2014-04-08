@@ -137,7 +137,7 @@ class DocumentSource(db.Model, WithOffsets):
 
 
     def __repr__(self):
-        return "<DocumentSource doc=%s, person=%s, unnamed=%s, name='%s'>" % (self.document, self.person, self.unnamed, self.name)
+        return "<DocumentSource doc=%s, person=%s, unnamed=%s, name='%s'>" % (self.document, self.person, self.unnamed, self.name.encode('utf-8'))
 
 
 class SourceFunction(db.Model):
