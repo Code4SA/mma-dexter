@@ -3,6 +3,7 @@ log = logging.getLogger(__name__)
 
 from flask import request, url_for, redirect, jsonify
 from flask.ext.login import login_required
+from sqlalchemy.orm import subqueryload
 
 from .app import app
 from .models import db, Author, Person, Entity
@@ -16,7 +17,10 @@ def api_authors():
 @app.route('/api/people')
 @login_required
 def api_people():
-    people = Person.query.order_by(Person.name).all()
+    people = Person.query\
+        .options(subqueryload(Person.affiliation))\
+        .order_by(Person.name)\
+        .all()
     return jsonify({'people': [p.json() for p in people]})
 
 @app.route('/api/entities')

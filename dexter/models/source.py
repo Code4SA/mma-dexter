@@ -226,7 +226,6 @@ class DocumentSourceForm(Form):
             return self.create_source(document)
         else:
             self.populate_obj(self.source)
-            self.source.manual = True
 
         return None
 
