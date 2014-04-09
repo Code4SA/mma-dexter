@@ -29,13 +29,18 @@ class BaseCrawler(object):
         self.extract(doc, raw_html)
 
     def fetch(self, url):
+        """
+        Fetch and return the raw HTML for this url.
+        The return content is a unicode string.
+        """
         self.log.info("Fetching URL: " + url)
 
         r = requests.get(url)
         # raise an HTTPError on badness
         r.raise_for_status()
 
-        return r.text.encode('utf8')
+        # this decodes r.content using a guessed encoding
+        return r.text
 
     def extract(self, doc, raw_html):
         """ Run extractions on the HTML. Subclasses should override this
