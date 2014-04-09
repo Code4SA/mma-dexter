@@ -27,7 +27,7 @@ class News24Crawler(BaseCrawler):
         """ Extract text and other things from the raw_html for this document. """
         super(News24Crawler, self).extract(doc, raw_html)
 
-        soup = BeautifulSoup(raw_html)
+        soup = BeautifulSoup(raw_html, from_encoding='utf-8')
 
         tags = soup.select('meta[property="twitter:description"]')
         if tags:
@@ -42,7 +42,7 @@ class News24Crawler(BaseCrawler):
             for p in soup.select(".article > p"):
                 for tag in p.children:
                     if not tag.name:
-                        text.append(str(tag))
+                        text.append(unicode(tag))
                     elif tag.text:
                         text.append(tag.text)
 
