@@ -27,14 +27,19 @@ from
 --   aggregate scalar information for all documents
 create or replace view documents_view as select 
   d.id as `document_id`,
-  d.published_at,
+  d.url as `article_url`,
+  d.title,
+  d.published_at as `published_at`,
+  date_format(d.published_at, '%Y/%m/%d') as `published_date`,
+  concat(created_user.first_name, ' ', created_user.last_name) as `user_added`,
+  concat(analysis_user.first_name, ' ', analysis_user.last_name) as `user_analysis`,
+  concat('https://mma-dexter.code4sa.org/articles/', d.id) as `dexter_url`,
   d.item_num as `item_num`,
   m.name as `medium`,
   t.name as `topic`,
   l.name as `origin`,
-  d.checked_by_user_id,
-  if (a.person_id is null, a.name, ap.name) as `author-name`,
-  at.name as `author-type` 
+  if (a.person_id is null, a.name, ap.name) as `author_name`,
+  at.name as `author_type`
 from
   documents d
   left join mediums m on d.medium_id = m.id
@@ -43,6 +48,8 @@ from
   left join authors a on d.author_id = a.id
   left join people ap on a.person_id = ap.id
   left join author_types at on a.author_type_id = at.id
+  left join users created_user on d.created_by_user_id = created_user.id
+  left join users analysis_user on d.checked_by_user_id = analysis_user.id
 ;
 
 -- documents_issues_view:
