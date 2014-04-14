@@ -96,10 +96,10 @@ def activity():
         query = query.filter(Document.created_by_user_id == form.user_id.data)
 
     if form.created_from.data:
-        query = query.filter(Document.created_at > form.created_from.data)
+        query = query.filter(Document.created_at >= form.created_from.data)
 
     if form.created_to.data:
-        query = query.filter(Document.created_at > form.created_from.data)
+        query = query.filter(Document.created_at <= form.created_to.data)
 
     if form.format.data == 'csv':
         # return csv
@@ -112,7 +112,14 @@ def activity():
             body.append(u';'.join('"%s"' % (unicode(x) if x is not None else '',) for x in row))
 
         response = make_response(u"\r\n".join(body).encode('utf-8'))
-        response.headers["Content-Disposition"] = "attachment; filename=activity.csv"
+
+        filename = ['activity']
+        if form.created_from.data:
+            filename.append(form.created_from.data.strftime("%Y-%m-%d"))
+        if form.created_to.data:
+            filename.append(form.created_to.data.strftime("%Y-%m-%d"))
+
+        response.headers["Content-Disposition"] = "attachment; filename=%s.csv" % '-'.join(filename)
 
         return response
 
