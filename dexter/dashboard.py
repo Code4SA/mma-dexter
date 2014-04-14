@@ -132,8 +132,8 @@ def activity():
 class ActivityForm(Form):
     user_id     = SelectField('User', [validators.Optional()], default='')
     medium_id   = SelectField('Medium', [validators.Optional()], default='') 
-    created_from   = DateField('Created after', [validators.Optional()], default=lambda: datetime.utcnow() - timedelta(days=14))
-    created_to     = DateField('Created before', [validators.Optional()], default=lambda: datetime.utcnow())
+    created_from   = DateField('Created on or after', [validators.Optional()], default=lambda: datetime.utcnow() - timedelta(days=14))
+    created_to     = DateField('Created on or before', [validators.Optional()], default=lambda: datetime.utcnow())
     format         = HiddenField('format', default='html') 
 
     def __init__(self, *args, **kwargs):
