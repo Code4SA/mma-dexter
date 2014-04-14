@@ -1,14 +1,17 @@
 from itertools import groupby
+from datetime import datetime, timedelta
 
 from dexter.app import app
-from flask import request, url_for, flash, redirect
+from flask import request, url_for, flash, redirect, make_response
 from flask.ext.mako import render_template
 from flask.ext.login import login_required, current_user
 from sqlalchemy.sql import func
 
 from dexter.models import db, Document, Entity, Medium, User
+from dexter.models.document import DocumentsView
 
-from wtforms import validators
+from wtforms import validators, HiddenField
+from wtforms.fields.html5 import DateField
 from .forms import Form, SelectField
 
 @app.route('/dashboard')
@@ -78,7 +81,13 @@ def activity():
     except ValueError:
         page = 1
 
-    query = Document.query
+    if form.format.data == 'csv':
+        # return csv
+        query = db.session.query(DocumentsView)\
+            .join(Document)
+    else:
+        query = Document.query
+
 
     if form.medium_id.data:
         query = query.filter(Document.medium_id == form.medium_id.data)
@@ -86,6 +95,28 @@ def activity():
     if form.user_id.data:
         query = query.filter(Document.created_by_user_id == form.user_id.data)
 
+    if form.created_from.data:
+        query = query.filter(Document.created_at > form.created_from.data)
+
+    if form.created_to.data:
+        query = query.filter(Document.created_at > form.created_from.data)
+
+    if form.format.data == 'csv':
+        # return csv
+        body = []
+        keys = None
+        for row in query.all():
+            if not keys:
+                keys = row.keys()
+                body.append(';'.join(keys))
+            body.append(u';'.join('"%s"' % (unicode(x) if x is not None else '',) for x in row))
+
+        response = make_response(u"\r\n".join(body).encode('utf-8'))
+        response.headers["Content-Disposition"] = "attachment; filename=activity.csv"
+
+        return response
+
+        
     paged_docs = query.order_by(Document.created_at.desc()).paginate(page, per_page)
 
     doc_groups = []
@@ -100,7 +131,10 @@ def activity():
 
 class ActivityForm(Form):
     user_id     = SelectField('User', [validators.Optional()], default='')
-    medium_id   = SelectField('Medium', [validators.Optional()], default='')
+    medium_id   = SelectField('Medium', [validators.Optional()], default='') 
+    created_from   = DateField('Created after', [validators.Optional()], default=lambda: datetime.utcnow() - timedelta(days=14))
+    created_to     = DateField('Created before', [validators.Optional()], default=lambda: datetime.utcnow())
+    format         = HiddenField('format', default='html') 
 
     def __init__(self, *args, **kwargs):
         super(ActivityForm, self).__init__(*args, **kwargs)
@@ -109,6 +143,7 @@ class ActivityForm(Form):
                 [str(u.id), u.short_name()] for u in sorted(User.query.all(), key=lambda u: u.short_name())]
 
         self.medium_id.choices = [['', '(any)']] + [(str(m.id), m.name) for m in Medium.query.order_by(Medium.name).all()]
+
 
     def user(self):
         if self.user_id.data:

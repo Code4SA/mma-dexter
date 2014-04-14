@@ -7,7 +7,7 @@
 
 %article#activity
   %h3
-    Recent articles
+    Articles
     - if form.user():
       added by ${form.user().short_name()|h}
     - if form.medium():
@@ -30,7 +30,13 @@
         .panel-body
           = vertical_field(form.user_id)
           = vertical_field(form.medium_id)
+          = vertical_field(form.created_from)
+          = vertical_field(form.created_to)
 
         .panel-footer
+          .pull-right
+            %button.btn.btn-default.download
+              %i.fa.fa-download
+              Download CSV
           %input.btn.btn-success(type='Submit', value='Update')
 

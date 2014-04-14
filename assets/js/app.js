@@ -162,3 +162,13 @@ $(function() {
     highlightEntities($('.document-container .tab-pane.active'));
   }
 });
+
+$(function() {
+  $('form.activity-refine .btn.download').on('click', function(e) {
+    e.preventDefault();
+
+    $('form.activity-refine').append('<input type="hidden" name="format" value="csv">');
+    $('form.activity-refine').submit();
+    $('form.activity-refine input[name="format"]').remove();
+  });
+});
