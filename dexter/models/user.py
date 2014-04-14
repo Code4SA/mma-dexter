@@ -28,8 +28,8 @@ class User(db.Model, UserMixin):
 
     id          = Column(Integer, primary_key=True)
     email       = Column(String(50), index=True, nullable=False, unique=True)
-    first_name  = Column(String(50))
-    last_name   = Column(String(50))
+    first_name  = Column(String(50), nullable=False)
+    last_name   = Column(String(50), nullable=False)
     admin       = Column(Boolean, default=False)
     disabled    = Column(Boolean, default=False)
     encrypted_password = Column(String(100))
