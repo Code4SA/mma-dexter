@@ -12,8 +12,13 @@
               - if doc.created_by:
                 &= doc.created_by.short_name()
 
-              - if doc.checked_by:
+            %td
+              - warnings = doc.analysis_warnings()
+              - if warnings:
+                %i.text-danger.fa.fa-warning(title=' '.join(warnings))
+              - elif doc.checked_by:
                 %i.fa.fa-check-circle(title='Checked by %s' % doc.checked_by.short_name())
+
             %td.title
               %a(href=url_for('show_article', id=doc.id))
                 %strong&= doc.title
