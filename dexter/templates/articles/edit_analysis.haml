@@ -26,6 +26,8 @@
               %input.btn.btn-success(type='submit', value='Save changes', dataDisableWith='Saving...')
 
         .panel-body
+          %%include(file="analysis_warnings.haml")
+
           %ul.nav.nav-tabs
             %li.active
               %a(href="#analysis-tab", dataToggle="tab") Analysis

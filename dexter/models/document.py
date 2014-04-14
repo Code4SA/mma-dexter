@@ -167,6 +167,20 @@ class Document(db.Model):
             person.relearn_affiliation()
 
 
+    def analysis_warnings(self):
+        """ A list of warnings (possibly empty) for critical things
+        missing from this document. """
+        warnings = []
+
+        if self.topic is None:
+            warnings.append("This article needs a topic.")
+
+        if self.origin is None:
+            warnings.append("This article needs an origin.")
+
+        return warnings
+
+
     def __repr__(self):
         return "<Document id=%s, url=%s>" % (self.id, self.url)
 

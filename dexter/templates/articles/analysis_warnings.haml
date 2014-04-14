@@ -1,0 +1,8 @@
+- warnings = document.analysis_warnings()
+- if warnings:
+  %section.warnings
+    .alert.alert-warning
+      %h4 There are problems with the analysis
+      %ul.list-unstyled
+        - for warning in warnings:
+          %li&= warning
