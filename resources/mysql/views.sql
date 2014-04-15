@@ -36,6 +36,8 @@ create or replace view documents_view as select
   concat('https://mma-dexter.code4sa.org/articles/', d.id) as `dexter_url`,
   d.item_num as `item_num`,
   m.name as `medium`,
+  m.medium_type as `medium_type`,
+  if(m.medium_group IS NULL OR m.medium_group = '', NULL, m.medium_group) as `medium_group`,
   t.name as `topic`,
   l.name as `origin`,
   if (a.person_id is null, a.name, ap.name) as `author_name`,
