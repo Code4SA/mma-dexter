@@ -8,7 +8,6 @@ from flask.ext.login import login_required, current_user
 from sqlalchemy.sql import func
 
 from dexter.models import db, Document, Entity, Medium, User
-from dexter.models.document import DocumentsView
 
 from wtforms import validators, HiddenField
 from wtforms.fields.html5 import DateField
@@ -140,6 +139,7 @@ class ActivityForm(Form):
 
     def make_query(self):
         if self.format.data == 'csv':
+            from dexter.models.views import DocumentsView
             # return csv
             query = db.session.query(DocumentsView).join(Document)
         else:

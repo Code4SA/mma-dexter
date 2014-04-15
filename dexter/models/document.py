@@ -265,9 +265,3 @@ class DocumentAnalysisForm(Form):
         self.issues.choices = [(str(issue.id), issue.name) for issue in db.session.query(Issue).order_by('name')]
         self.origin_location_id.choices = [['', '(none)']] + [
                 [str(loc.id), loc.name] for loc in Location.query.order_by(Location.name).all()]
-
-
-# helper view across documents
-DocumentsView = Table("documents_view", db.metadata, 
-        Column("document_id", Integer, ForeignKey("documents.id")),
-        autoload=True, autoload_with=db.engine)
