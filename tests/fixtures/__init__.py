@@ -43,6 +43,7 @@ class AuthorData(DataSet):
 class UserData(DataSet):
     class user:
         first_name = 'User'
+        last_name  = 'Smith'
         email = 'user@example.com'
 
 class DocumentData(DataSet):
