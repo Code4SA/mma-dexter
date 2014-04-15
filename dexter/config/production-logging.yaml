@@ -5,6 +5,11 @@ handlers:
     formatter: normal
     filename: 'log/dexter.log'
     when: 'd'
+    filters: [userid]
+filters:
+  userid:
+    (): dexter.logs.userIdFilterFactory
+    class: dexter.logs.UserIdFilter
 formatters:
   normal:
     format: '%(asctime)s %(process)-6d %(name)-12s %(userid)s %(levelname)-8s %(message)s'
