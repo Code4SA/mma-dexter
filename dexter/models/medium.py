@@ -20,65 +20,84 @@ class Medium(db.Model):
     @classmethod
     def create_defaults(cls):
         text = """
-            Unknown|UNKNOWN
-            Beeld|PRINT
-            Business Day|PRINT|bdlive.co.za
-            Cape Argus|PRINT
-            Citizen|PRINT|citizen.co.za
-            City Press|PRINT|citypress.co.za
-            Daily Dispatch|PRINT
-            Daily Maverick|ONLINE
-            Daily Sun|PRINT|dailysun.mobi
-            Daily Voice|PRINT
-            Die Burger|PRINT
-            EP Herald|PRINT
-            Etv English News|TELEVISION
-            Grocotts|PRINT
-            IOL|ONLINE|iol.co.za
-            Isolezwe|ONLINE|iol.co.za/isolezwe
-            Kaya FM|RADIO
-            Lesedi FM|RADIO
-            Ligwalagwala FM|RADIO
-            Mail and Guardian|PRINT|mg.co.za
-            Metro FM|RADIO
-            Motsweding FM|RADIO
-            News24|ONLINE|news24.com
-            Phalaphala FM|RADIO
-            Public Eye|PRINT
-            RSG FM|RADIO
-            SABC 1 Elections programs|TELEVISION
-            SABC 1 Isizulu/Isixhosa News|TELEVISION
-            SABC 2 Afrikaans News|TELEVISION
-            SABC 2 Sesotho/Setswana News|TELEVISION
-            SABC 2 Special Elections Programs|TELEVISION
-            SABC 3 English News|TELEVISION
-            Safm|RADIO
-            Saturday Star|PRINT
-            Sowetan|PRINT|sowetanlive.co.za
-            Sunday Independent|PRINT
-            Sunday Sun|PRINT
-            Sunday Times|PRINT|timeslive.co.za/sundaytimes
-            Sunday World|PRINT
-            Talk Radio 702|RADIO
-            The Free State Times|PRINT
-            The New Age|PRINT
-            The Star|PRINT
-            Thobela FM|RADIO
-            Times|PRINT|timeslive.co.za
-            Ukhozi FM|RADIO
-            Umhlobo Wenene FM|RADIO
-            Volksbad|PRINT
-            Weekend Argus|PRINT
-            Weekend Dispatch|PRINT
+Beeld|daily|beeld.com
+Business Day|daily|bdlive.co.za
+Cape Argus|daily|iol.co.za/capeargus
+Cape Times|daily|iol.co.za/capetimes
+City Press|weekly|citypress.co.za
+Daily Dispatch|daily|dispatch.co.za
+Daily Maverick|daily|dailymaverick.co.za
+Daily Sun|daily|dailysun.mobi
+Daily Voice|daily|iol.co.za/2.1894
+Die Burger|daily|dieburger.com
+Etv English News|television|
+Etv Sunrise|television|
+Grocott's Mail|daily|grocotts.co.za
+Ilanga|ONLINE|ilanganews.co.za
+IOL|daily|iol.co.za
+Isolezwe|daily|iol.co.za/isolezwe
+Kaya FM|radio|
+Lesedi FM|radio|
+Ligwalagwala FM|radio|
+Lotus FM|radio|
+Mail and Guardian|weekly|mg.co.za
+Metro FM|radio|
+Motsweding FM|radio|
+Munghana Lonene FM|radio|
+News24|daily|news24.com
+Phalaphala FM|radio|
+Post|daily|iol.co.za/thepost
+Power FM|radio|
+Public Eye|ONLINE|publiceye.co.ls
+RSG FM|radio|
+SA Breaking News|ONLINE|sabreakingnews.co.za
+SABC 1 Elections programs|television|
+SABC 1 Isizulu/Isixhosa News|television|
+SABC 1 Siswati/Ndebele News|television|
+SABC 2 Afrikaans News|television|
+SABC 2 Morning Live|television|
+SABC 2 Sesotho/Setswana News|television|
+SABC 2 Special Elections Programs|television|
+SABC 2 Xitsonga/Tschivenda News|television|
+SABC 3 English News|television|
+SAfm|radio|
+Saturday Star|weekly|iol.co.za/saturday-star
+Sowetan|daily|sowetanlive.co.za
+Sunday Independent|weekly|iol.co.za/sundayindependant
+Sunday Sun|weekly|
+Sunday Times|weekly|timeslive.co.za/sundaytimes
+Sunday Tribune|ONLINE|iol.co.za/sunday-tribune
+Sunday World|weekly|sundayworld.co.za
+Talk Radio 702|radio|
+Citizen|daily|citizen.co.za
+The Daily News|daily|iol.co.za/dailynews
+The Free State Times|PRINT|fstimes.co.za
+The Herald|daily|heraldlive.co.za
+The Independent on Saturday|weekly|iol.co.za/ios
+The Mercury|daily|iol.co.za/mercury
+The New Age|daily|thenewage.co.za
+The Star|daily|iol.co.za/the-star
+The Witness|daily|witness.co.za
+Thobela FM|radio|
+Times|daily|timeslive.co.za
+Ukhozi FM|radio|
+Umhlobo Wenene FM|radio|
+Unknown|other|
+Volksbad|daily|volksblad.com
+Weekend Argus|weekly|
+Weekend Dispatch|weekly|
+Weekend Post|daily|weekendpost.co.za
             """
 
         mediums = []
         for medium in text.strip().split("\n"):
             m = Medium()
+
             components = medium.strip().split('|')
-            m.name, m.medium_type = components[0], components[1]
-            if len(components) > 2:
-                m.domain = components[2]
+            m.name, m.medium_type, m.domain = components
+            if not m.domain:
+                m.domain = None
+
             mediums.append(m)
 
         return mediums

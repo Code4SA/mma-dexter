@@ -129,7 +129,7 @@ class MediumView(MyModelView):
         medium_type=macro('render_medium_type'),
         )
     choices = []
-    for choice in ["PRINT", "ONLINE", "TELEVISION", "RADIO", "OTHER"]:
+    for choice in ["daily", "radio", "television", "weekly", "other"]:
         choices.append((choice, choice.title()))
 
     form_overrides = dict(medium_type=SelectField)
@@ -202,7 +202,7 @@ class UserView(MyModelView):
 
 admin_instance = Admin(url='/admin', base_template='admin/custom_master.html', name="Dexter Admin", index_view=MyIndexView())
 admin_instance.add_view(UserView(User, db.session, name="Users", endpoint='user'))
-admin_instance.add_view(MediumView(Medium, db.session, name="Mediums", endpoint="medium"))
+admin_instance.add_view(MediumView(Medium, db.session, name="Media", endpoint="medium"))
 admin_instance.add_view(DocumentView(Document, db.session, name="Articles", endpoint='document'))
 admin_instance.add_view(MyModelView(DocumentType, db.session, name="Types", endpoint="type"))
 admin_instance.add_view(MyModelView(Topic, db.session, name="Topics", endpoint="topic"))
