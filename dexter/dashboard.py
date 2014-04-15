@@ -81,25 +81,7 @@ def activity():
     except ValueError:
         page = 1
 
-    if form.format.data == 'csv':
-        # return csv
-        query = db.session.query(DocumentsView)\
-            .join(Document)
-    else:
-        query = Document.query
-
-
-    if form.medium_id.data:
-        query = query.filter(Document.medium_id == form.medium_id.data)
-
-    if form.user_id.data:
-        query = query.filter(Document.created_by_user_id == form.user_id.data)
-
-    if form.created_from.data:
-        query = query.filter(Document.created_at >= form.created_from.data)
-
-    if form.created_to.data:
-        query = query.filter(Document.created_at <= form.created_to.data)
+    query = form.make_query()
 
     if form.format.data == 'csv':
         # return csv
@@ -112,15 +94,7 @@ def activity():
             body.append(u';'.join('"%s"' % (unicode(x) if x is not None else '',) for x in row))
 
         response = make_response(u"\r\n".join(body).encode('utf-8'))
-
-        filename = ['activity']
-        if form.created_from.data:
-            filename.append(form.created_from.data.strftime("%Y-%m-%d"))
-        if form.created_to.data:
-            filename.append(form.created_to.data.strftime("%Y-%m-%d"))
-
-        response.headers["Content-Disposition"] = "attachment; filename=%s.csv" % '-'.join(filename)
-
+        response.headers["Content-Disposition"] = "attachment; filename=%s" % form.filename()
         return response
 
         
@@ -139,8 +113,10 @@ def activity():
 class ActivityForm(Form):
     user_id     = SelectField('User', [validators.Optional()], default='')
     medium_id   = SelectField('Medium', [validators.Optional()], default='') 
-    created_from   = DateField('Created on or after', [validators.Optional()], default=lambda: datetime.utcnow() - timedelta(days=14))
-    created_to     = DateField('Created on or before', [validators.Optional()], default=lambda: datetime.utcnow())
+    created_from   = DateField('Added on or after', [validators.Optional()], default=lambda: datetime.utcnow() - timedelta(days=14))
+    created_to     = DateField('Added on or before', [validators.Optional()], default=lambda: datetime.utcnow())
+    published_from   = DateField('Published on or after', [validators.Optional()], default='')
+    published_to     = DateField('Published on or before', [validators.Optional()], default='')
     format         = HiddenField('format', default='html') 
 
     def __init__(self, *args, **kwargs):
@@ -161,3 +137,53 @@ class ActivityForm(Form):
         if self.medium_id.data:
             return Medium.query.get(self.medium_id.data)
         return None
+
+    def make_query(self):
+        if self.format.data == 'csv':
+            # return csv
+            query = db.session.query(DocumentsView).join(Document)
+        else:
+            query = Document.query
+
+        return self.filter_query(query)
+
+
+    def filter_query(self, query):
+        if self.medium_id.data:
+            query = query.filter(Document.medium_id == self.medium_id.data)
+
+        if self.user_id.data:
+            query = query.filter(Document.created_by_user_id == self.user_id.data)
+
+        if self.created_from.data:
+            query = query.filter(Document.created_at >= self.created_from.data)
+
+        if self.created_to.data:
+            query = query.filter(Document.created_at <= self.created_to.data)
+
+        if self.published_from.data:
+            query = query.filter(Document.published_at >= self.published_from.data)
+
+        if self.published_to.data:
+            query = query.filter(Document.published_at <= self.published_to.data)
+
+        return query
+
+    def filename(self):
+        filename = ['documents']
+
+        if self.created_from.data or self.created_to.data:
+            filename.append('added')
+            if self.created_from.data:
+                filename.append(self.created_from.data.strftime("%Y-%m-%d"))
+            if self.created_to.data:
+                filename.append(self.created_to.data.strftime("%Y-%m-%d"))
+
+        if self.published_from.data or self.published_to.data:
+            filename.append('published')
+            if self.published_from.data:
+                filename.append(self.published_from.data.strftime("%Y-%m-%d"))
+            if self.published_to.data:
+                filename.append(self.published_to.data.strftime("%Y-%m-%d"))
+
+        return "%s.csv" % '-'.join(filename)
