@@ -8,7 +8,7 @@ select
   if(gender_person.id is not null, gender_person.name, gender_unnamed.name) as `gender`,
   if(race_person.id is not null, race_person.name, race_unnamed.name) as `race`,
   a.name as `affiliation`,
-  a.code as `affiliation-code`,
+  a.code as `affiliation_code`,
   sf.name as `function`,
   ds.quoted as `quoted`,
   ds.doc_id as `document_id`
