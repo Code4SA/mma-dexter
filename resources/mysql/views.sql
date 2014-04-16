@@ -4,7 +4,7 @@
 --   aggregate all information on document sources
 create or replace view document_sources_view as
 select
-  if(ds.unnamed = 1, '(unnamed)', if(p.id is not null, p.name, ds.name)) as `source name`,
+  if(ds.unnamed = 1, '(unnamed)', if(p.id is not null, p.name, ds.name)) as `source_name`,
   if(gender_person.id is not null, gender_person.name, gender_unnamed.name) as `gender`,
   if(race_person.id is not null, race_person.name, race_unnamed.name) as `race`,
   a.name as `affiliation`,
@@ -37,7 +37,7 @@ create or replace view documents_view as select
   d.item_num as `item_num`,
   m.name as `medium`,
   m.medium_type as `medium_type`,
-  if(m.medium_group IS NULL OR m.medium_group = '', NULL, m.medium_group) as `medium_group`,
+  if(m.medium_group IS NULL OR m.medium_group = '', m.name, m.medium_group) as `medium_group`,
   t.name as `topic`,
   l.name as `origin`,
   if (a.person_id is null, a.name, ap.name) as `author_name`,
