@@ -5,6 +5,7 @@ log = logging.getLogger(__name__)
 
 from flask import request, url_for, redirect, jsonify
 from flask.ext.login import login_required
+from flask.ext import htauth
 from sqlalchemy.orm import subqueryload
 from sqlalchemy.sql import func
 
@@ -53,9 +54,8 @@ def api_group_entities(group):
     return jsonify({'entities': [e.json() for e in entities]})
 
 @app.route('/api/feeds/sources/political-parties')
+@htauth.authenticated
 def api_feed_sources():
-    # TODO: lock this down
-
     from dexter.models.views import DocumentSourcesView, DocumentsView
 
     end_date = datetime.utcnow()

@@ -63,6 +63,13 @@ def load_user(userid):
 
     return user
 
+# htpasswd-based basic auth for API access
+from flask.ext import htauth
+app.config['HTAUTH_HTPASSWD_PATH'] = './resources/nginx/htpasswd'
+app.config['HTAUTH_REALM'] = 'Dexter'
+htauth.HTAuth(app)
+
+
 # attach the user id to logs
 from flask import request_started, session
 from logs import UserIdFilter
