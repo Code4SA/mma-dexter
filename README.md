@@ -42,7 +42,31 @@ export CALAIS_API_KEY=anotherkey
 * clone the repo
 * install a virtual env and activate it: `virtualenv --system-site-packages env; source env/bin/activate`
 * install requirements: `pip install -r requirements.txt`
-* setup the database
+
+### Database
+
+* setup the database by [installing mysql 5.6](https://rtcamp.com/tutorials/mysql/mysql-5-6-ubuntu-12-04/)
+* Add the DB user: 
+
+```
+CREATE DATABASE mma;
+GRANT ALL ON mma.* TO 'mma'@'localhost' identified by 'PASSWORD';
+GRANT SELECT ON *.* TO 'reports'@'%' identified by 'PASSWORD' require ssl;
+```
+
+* restore the database from a backup, if available.
+* copy the ssl cert key into /home/mma/mma-dexter/resources/mysql/server-key.pem
+* edit my.cnf:
+
+```
+default_time_zone = +02:00
+...
+ssl-ca=/home/mma/mma-dexter/resources/mysql/ca-cert.pem
+ssl-cert=/home/mma/mma-dexter/resources/mysql/server-cert.pem
+ssl-key=/home/mma/mma-dexter/resources/mysql/server-key.pem
+```
+
+### Configuration
 
 Create a file for sensitive configuration settings called `production-settings.sh` and the appropriate
 configuration entries.
@@ -82,11 +106,18 @@ And start it:
 
 ``sudo start dexter``
 
+### Database backups
+
+* Install s3cmd: `sudo apt-get install s3cmd`
+* Setup the s3 creds: `s3cmd --configure`
+* Install the crontab: `crontab -i resources/cron/backups.crontab`
+
 ### Logging
 
 nginx's production logs are in ``~mma/log/access.log``
 
 The dexter application logs are in ``~mma/log/dexter.log``
+
 
 ### Deploying changes
 
@@ -104,4 +135,4 @@ If you have made changes to the nginx config, you'll need to restart nginx too:
 
 The server expects MySQL 5.6 because it uses the CURRENT_TIMESTAMP default value
 on a DATETIME column, [as described here](http://shankargopal.blogspot.com/2013/03/mysql-566-timestamp-columns-and-default.html).
-This means on some systems you'll need to upgrade from 5.5 to 5.6.
+This means on some systems you'll need to [upgrade from 5.5 to 5.6](https://rtcamp.com/tutorials/mysql/mysql-5-6-ubuntu-12-04/).
