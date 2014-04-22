@@ -106,6 +106,12 @@ And start it:
 
 ``sudo start dexter``
 
+### log rotation
+
+```bash
+sudo ln -s /home/mma/mma-dexter/resources/logrotate/dexter /etc/logrotate.d/
+```
+
 ### Database backups
 
 * Install s3cmd: `sudo apt-get install s3cmd`
