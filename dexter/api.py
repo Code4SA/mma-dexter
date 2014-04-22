@@ -53,25 +53,13 @@ def api_group_entities(group):
 
     return jsonify({'entities': [e.json() for e in entities]})
 
+
 @app.route('/api/feeds/sources/political-parties')
 @htauth.authenticated
 def api_feed_sources():
     from dexter.models.views import DocumentSourcesView, DocumentsView
 
-    end_date = datetime.utcnow()
-    try:
-        end_date = parse(request.args.get('end-date', ''), default=end_date, yearfirst=True)
-    except ValueError:
-        pass
-
-    start_date = end_date - timedelta(days=7)
-    try:
-        start_date = parse(request.args.get('start-date', ''), default=start_date, yearfirst=True)
-    except ValueError:
-        pass
-
-    end_date = end_date.strftime("%Y/%m/%d")
-    start_date = start_date.strftime("%Y/%m/%d")
+    start_date, end_date = api_date_range(request)
 
     query = db.session.query(
                 func.count(DocumentSourcesView.c.document_id).label("record_count"),
@@ -108,3 +96,82 @@ def api_feed_sources():
     }
 
     return jsonify(results)
+
+
+@app.route('/api/feeds/topics')
+@htauth.authenticated
+def api_feed_topics():
+    from dexter.models.views import DocumentSourcesView, DocumentsView
+
+    start_date, end_date = api_date_range(request)
+
+    query = db.session.query(
+                func.count(DocumentsView.c.document_id).label("record_count"),
+                DocumentsView.c.topic.label("topic"),
+                DocumentsView.c.medium_group.label("medium_group"),
+                DocumentsView.c.medium_type.label("medium_type"),
+            )\
+            .group_by(
+                DocumentsView.c.topic.label("topic"),
+                DocumentsView.c.medium_group.label("medium_group"),
+                DocumentsView.c.medium_type.label("medium_type"),
+            )\
+            .filter(DocumentsView.c.published_at >= start_date)\
+            .filter(DocumentsView.c.published_at <= end_date)
+
+    results = {
+        "date-start": start_date,
+        "date-end": end_date,
+        "cells": [r._asdict() for r in query.all()]
+    }
+
+    return jsonify(results)
+
+
+@app.route('/api/feeds/origins')
+@htauth.authenticated
+def api_feed_origins():
+    from dexter.models.views import DocumentSourcesView, DocumentsView
+
+    start_date, end_date = api_date_range(request)
+
+    query = db.session.query(
+                func.count(DocumentsView.c.document_id).label("record_count"),
+                DocumentsView.c.origin.label("origin"),
+                DocumentsView.c.medium_group.label("medium_group"),
+                DocumentsView.c.medium_type.label("medium_type"),
+            )\
+            .group_by(
+                DocumentsView.c.origin.label("origin"),
+                DocumentsView.c.medium_group.label("medium_group"),
+                DocumentsView.c.medium_type.label("medium_type"),
+            )\
+            .filter(DocumentsView.c.published_at >= start_date)\
+            .filter(DocumentsView.c.published_at <= end_date)
+
+    results = {
+        "date-start": start_date,
+        "date-end": end_date,
+        "cells": [r._asdict() for r in query.all()]
+    }
+
+    return jsonify(results)
+
+
+def api_date_range(request):
+    end_date = datetime.utcnow()
+    try:
+        end_date = parse(request.args.get('end-date', ''), default=end_date, yearfirst=True)
+    except ValueError:
+        pass
+
+    start_date = end_date - timedelta(days=7)
+    try:
+        start_date = parse(request.args.get('start-date', ''), default=start_date, yearfirst=True)
+    except ValueError:
+        pass
+
+    end_date = end_date.strftime("%Y/%m/%d")
+    start_date = start_date.strftime("%Y/%m/%d")
+
+    return (start_date, end_date)
