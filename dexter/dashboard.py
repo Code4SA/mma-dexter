@@ -89,8 +89,8 @@ def activity():
         for row in query.all():
             if not keys:
                 keys = row.keys()
-                body.append(';'.join(keys))
-            body.append(u';'.join('"%s"' % (unicode(x) if x is not None else '',) for x in row))
+                body.append(','.join(keys))
+            body.append(u','.join('"%s"' % (unicode(x) if x is not None else '',) for x in row))
 
         response = make_response(u"\r\n".join(body).encode('utf-8'))
         response.headers["Content-Disposition"] = "attachment; filename=%s" % form.filename()
