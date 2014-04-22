@@ -1,0 +1,9 @@
+/home/mma/mma-dexter/log/dexter.log {
+    rotate 999
+    daily
+    missingok
+    notifempty
+    sharedscripts
+    copytruncate
+    compress
+}

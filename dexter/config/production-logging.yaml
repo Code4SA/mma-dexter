@@ -1,10 +1,9 @@
 version: 1
 handlers:
   file:
-    class: logging.handlers.TimedRotatingFileHandler
+    class: logging.FileHandler
     formatter: normal
     filename: 'log/dexter.log'
-    when: 'd'
     filters: [userid]
 filters:
   userid:
