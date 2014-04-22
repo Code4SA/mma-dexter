@@ -21,33 +21,33 @@ class Medium(db.Model):
     @classmethod
     def create_defaults(cls):
         text = """
-Beeld|daily|beeld.com|
-Business Day|daily|bdlive.co.za|
-Cape Argus|daily|iol.co.za/capeargus|
-Cape Times|daily|iol.co.za/capetimes|
-City Press|weekly|citypress.co.za|
-Daily Dispatch|daily|dispatch.co.za|
+Beeld|print - daily|beeld.com|
+Business Day|print - daily|bdlive.co.za|
+Cape Argus|print - daily|iol.co.za/capeargus|
+Cape Times|print - daily|iol.co.za/capetimes|
+City Press|print - weekly|citypress.co.za|
+Daily Dispatch|print - daily|dispatch.co.za|
 Daily Maverick|daily|dailymaverick.co.za|
-Daily Sun|daily|dailysun.mobi|
-Daily Voice|daily|iol.co.za/2.1894|
-Die Burger|daily|dieburger.com|
+Daily Sun|print - daily|dailysun.mobi|
+Daily Voice|print - daily|iol.co.za/2.1894|
+Die Burger|print - daily|dieburger.com|
 Etv English News|television||etv
 Etv Sunrise|television||etv
-Grocott's Mail|daily|grocotts.co.za|
+Grocott's Mail|print - daily|grocotts.co.za|
 Ilanga|ONLINE|ilanganews.co.za|
-IOL|daily|iol.co.za|
-Isolezwe|daily|iol.co.za/isolezwe|
+IOL|online|iol.co.za|
+Isolezwe|print - daily|iol.co.za/isolezwe|
 Kaya FM|radio||
 Lesedi FM|radio||
 Ligwalagwala FM|radio||
 Lotus FM|radio||
-Mail and Guardian|weekly|mg.co.za|
+Mail and Guardian|print - weekly|mg.co.za|
 Metro FM|radio||
 Motsweding FM|radio||
 Munghana Lonene FM|radio||
-News24|daily|news24.com|
+News24|online|news24.com|
 Phalaphala FM|radio||
-Post|daily|iol.co.za/thepost|
+Post|print - daily|iol.co.za/thepost|
 Power FM|radio||
 Public Eye|ONLINE|publiceye.co.ls|
 RSG FM|radio||
@@ -62,32 +62,32 @@ SABC 2 Special Elections Programs|television||SABC 2
 SABC 2 Xitsonga/Tschivenda News|television||SABC 2
 SABC 3 English News|television||SABC 3
 SAfm|radio||
-Saturday Star|weekly|iol.co.za/saturday-star|
-Sowetan|daily|sowetanlive.co.za|
-Sunday Independent|weekly|iol.co.za/sundayindependant|
-Sunday Sun|weekly||
-Sunday Times|weekly|timeslive.co.za/sundaytimes|
+Saturday Star|print - weekly|iol.co.za/saturday-star|
+Sowetan|print - daily|sowetanlive.co.za|
+Sunday Independent|print - weekly|iol.co.za/sundayindependant|
+Sunday Sun|print - weekly||
+Sunday Times|print - weekly|timeslive.co.za/sundaytimes|
 Sunday Tribune|ONLINE|iol.co.za/sunday-tribune|
-Sunday World|weekly|sundayworld.co.za|
+Sunday World|print - weekly|sundayworld.co.za|
 Talk Radio 702|radio||
-Citizen|daily|citizen.co.za|
-The Daily News|daily|iol.co.za/dailynews|
+Citizen|print - daily|citizen.co.za|
+The Daily News|print - daily|iol.co.za/dailynews|
 The Free State Times|PRINT|fstimes.co.za|
-The Herald|daily|heraldlive.co.za|
-The Independent on Saturday|weekly|iol.co.za/ios|
-The Mercury|daily|iol.co.za/mercury|
-The New Age|daily|thenewage.co.za|
-The Star|daily|iol.co.za/the-star|
-The Witness|daily|witness.co.za|
+The Herald|print - daily|heraldlive.co.za|
+The Independent on Saturday|print - weekly|iol.co.za/ios|
+The Mercury|print - daily|iol.co.za/mercury|
+The New Age|print - daily|thenewage.co.za|
+The Star|print - daily|iol.co.za/the-star|
+The Witness|print - daily|witness.co.za|
 Thobela FM|radio||
-Times|daily|timeslive.co.za|
+Times|print - daily|timeslive.co.za|
 Ukhozi FM|radio||
 Umhlobo Wenene FM|radio||
 Unknown|other||
-Volksbad|daily|volksblad.com|
-Weekend Argus|weekly||
-Weekend Dispatch|weekly||
-Weekend Post|daily|weekendpost.co.za|
+Volksbad|print - daily|volksblad.com|
+Weekend Argus|print - weekly||
+Weekend Dispatch|print - weekly||
+Weekend Post|print - daily|weekendpost.co.za|
             """
 
         mediums = []

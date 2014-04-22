@@ -129,7 +129,7 @@ class MediumView(MyModelView):
         medium_type=macro('render_medium_type'),
         )
     choices = []
-    for choice in ["daily", "radio", "television", "weekly", "other"]:
+    for choice in ["online", "print - daily", "print - weekly", "radio", "television", "other"]:
         choices.append((choice, choice.title()))
 
     form_overrides = dict(medium_type=SelectField)
