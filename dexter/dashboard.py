@@ -9,7 +9,7 @@ from sqlalchemy.sql import func
 
 from dexter.models import db, Document, Entity, Medium, User
 
-from wtforms import validators, HiddenField
+from wtforms import validators, HiddenField, TextField
 from wtforms.fields.html5 import DateField
 from .forms import Form, SelectField
 
@@ -112,10 +112,8 @@ def activity():
 class ActivityForm(Form):
     user_id     = SelectField('User', [validators.Optional()], default='')
     medium_id   = SelectField('Medium', [validators.Optional()], default='') 
-    created_from   = DateField('Added on or after', [validators.Optional()], default=lambda: datetime.utcnow() - timedelta(days=14))
-    created_to     = DateField('Added on or before', [validators.Optional()], default=lambda: datetime.utcnow())
-    published_from   = DateField('Published on or after', [validators.Optional()], default='')
-    published_to     = DateField('Published on or before', [validators.Optional()], default='')
+    created_at  = TextField('Added', [validators.Optional()])
+    published_at   = TextField('Published', [validators.Optional()])
     format         = HiddenField('format', default='html') 
 
     def __init__(self, *args, **kwargs):
@@ -147,6 +145,35 @@ class ActivityForm(Form):
 
         return self.filter_query(query)
 
+    
+    @property
+    def created_from(self):
+        if self.created_at.data:
+            return self.created_at.data.split(' - ')[0].strip()
+        else:
+            return None
+
+    @property
+    def created_to(self):
+        if self.created_at.data:
+            return self.created_at.data.split(' - ')[1].strip()
+        else:
+            return None
+
+    @property
+    def published_from(self):
+        if self.published_at.data:
+            return self.published_at.data.split(' - ')[0].strip()
+        else:
+            return None
+
+    @property
+    def published_to(self):
+        if self.published_at.data:
+            return self.published_at.data.split(' - ')[1].strip()
+        else:
+            return None
+
 
     def filter_query(self, query):
         if self.medium_id.data:
@@ -155,35 +182,29 @@ class ActivityForm(Form):
         if self.user_id.data:
             query = query.filter(Document.created_by_user_id == self.user_id.data)
 
-        if self.created_from.data:
-            query = query.filter(Document.created_at >= self.created_from.data)
+        if self.created_from:
+            query = query.filter(Document.created_at >= self.created_from)
 
-        if self.created_to.data:
-            query = query.filter(Document.created_at <= self.created_to.data)
+        if self.created_to:
+            query = query.filter(Document.created_at <= self.created_to)
 
-        if self.published_from.data:
-            query = query.filter(Document.published_at >= self.published_from.data)
+        if self.published_from:
+            query = query.filter(Document.published_at >= self.published_from)
 
-        if self.published_to.data:
-            query = query.filter(Document.published_at <= self.published_to.data)
+        if self.published_to:
+            query = query.filter(Document.published_at <= self.published_to)
 
         return query
 
     def filename(self):
         filename = ['documents']
 
-        if self.created_from.data or self.created_to.data:
+        if self.created_at.data:
             filename.append('added')
-            if self.created_from.data:
-                filename.append(self.created_from.data.strftime("%Y-%m-%d"))
-            if self.created_to.data:
-                filename.append(self.created_to.data.strftime("%Y-%m-%d"))
+            filename.append(self.created_at.data.replace(' ', ''))
 
-        if self.published_from.data or self.published_to.data:
+        if self.published_at.data:
             filename.append('published')
-            if self.published_from.data:
-                filename.append(self.published_from.data.strftime("%Y-%m-%d"))
-            if self.published_to.data:
-                filename.append(self.published_to.data.strftime("%Y-%m-%d"))
+            filename.append(self.published_at.data.replace(' ', ''))
 
         return "%s.csv" % '-'.join(filename)

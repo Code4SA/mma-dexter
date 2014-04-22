@@ -17,6 +17,7 @@ assets.register('css',
       'css/chosen.min.css',
       'css/datepicker3.css',
       'css/bootstrap-datetimepicker.min.css',
+      'css/daterangepicker-bs3.css',
       Bundle(
         'css/*.scss',
         filters='pyscss',
@@ -32,7 +33,6 @@ assets.register('js',
     Bundle(
       'js/jquery-1.10.2.min.js',
       'js/bootstrap-3.0.3.min.js',
-      'js/bootstrap-datepicker.js',
       'js/typeahead.bundle-0.10.1.min.js',
       'js/ujs.js',
       'js/chosen.jquery.min.js',
@@ -40,7 +40,9 @@ assets.register('js',
       'js/document.js',
       'js/person.js',
       'js/moment.min.js',
+      'js/bootstrap-datepicker.js',
       'js/bootstrap-datetimepicker.min.js',
+      'js/daterangepicker-1.3.5.js',
       output='js/app.%(version)s.js'))
 
 # Helper that is available in templates, and returns the

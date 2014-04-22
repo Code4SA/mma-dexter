@@ -20,6 +20,30 @@ $(function() {
   });
 });
 
+$(function() {
+  var now = moment();
+
+  $('.use-daterangepicker').daterangepicker({
+    format: 'YYYY/MM/DD',
+    opens: 'left',
+    maxDate: now,
+    ranges: {
+      'Last 7 days': [now.clone().subtract(moment.duration(7, 'days')), now],
+      'Last 14 days': [now.clone().subtract(moment.duration(14, 'days')), now],
+      'Last 30 days': [now.clone().subtract(moment.duration(30, 'days')), now],
+      'Last 90 days': [now.clone().subtract(moment.duration(90, 'days')), now]
+    }
+  });
+});
+
+$(function() {
+  // show
+  $('button[data-clear="input-group"]').on('click', function(e) {
+    e.preventDefault();
+    $('input', $(this).closest('.input-group')).val('');
+  });
+});
+
 // globally prevent enter key from submitting forms
 $(function() {
   $(document).on('keydown', 'input[type!="submit"], select', function(event) {
