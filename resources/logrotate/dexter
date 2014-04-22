@@ -1,9 +1,23 @@
 /home/mma/mma-dexter/log/dexter.log {
-    rotate 999
-    daily
-    missingok
-    notifempty
-    sharedscripts
-    copytruncate
-    compress
+  rotate 999
+  daily
+  missingok
+  notifempty
+  sharedscripts
+  copytruncate
+  compress
+}
+
+/home/mma/mma-dexter/log/access.log {
+  rotate 52
+  daily
+  missingok
+  notifempty
+  create 0640 www-data adm
+  sharedscripts
+  postrotate
+    [ ! -f /var/run/nginx.pid ] || kill -USR1 `cat /var/run/nginx.pid`
+  endscript
+  compress
+  delaycompress
 }
