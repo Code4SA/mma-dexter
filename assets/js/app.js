@@ -26,7 +26,7 @@ $(function() {
   $('.use-daterangepicker').daterangepicker({
     format: 'YYYY/MM/DD',
     opens: 'left',
-    maxDate: now,
+    maxDate: now.clone().add(moment.duration(1, 'days')),
     ranges: {
       'Last 7 days': [now.clone().subtract(moment.duration(7, 'days')), now],
       'Last 14 days': [now.clone().subtract(moment.duration(14, 'days')), now],
