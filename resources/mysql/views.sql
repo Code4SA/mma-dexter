@@ -11,7 +11,8 @@ select
   a.code as `affiliation_code`,
   sf.name as `function`,
   ds.quoted as `quoted`,
-  ds.doc_id as `document_id`
+  ds.doc_id as `document_id`,
+  ds.id as `document_source_id`
 from
   document_sources ds
   left join affiliations a on ds.affiliation_id = a.id

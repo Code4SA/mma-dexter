@@ -137,9 +137,11 @@ class ActivityForm(Form):
 
     def make_query(self):
         if self.format.data == 'csv':
-            from dexter.models.views import DocumentsView
+            from dexter.models.views import DocumentsView, DocumentSourcesView
             # return csv
-            query = db.session.query(DocumentsView).join(Document)
+            query = db.session.query(DocumentsView, DocumentSourcesView)\
+                    .join(Document)\
+                    .join(DocumentSourcesView)
         else:
             query = Document.query
 
