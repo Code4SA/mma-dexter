@@ -10,7 +10,8 @@ from sqlalchemy.orm import subqueryload
 from sqlalchemy.sql import func
 
 from .app import app
-from .models import db, Author, Person, Entity
+from .models import db, Author, Person, Entity, Document
+from .processing import BiasCalculator
 
 @app.route('/api/authors')
 @login_required
@@ -153,6 +154,32 @@ def api_feed_origins():
         "date-start": start_date,
         "date-end": end_date,
         "cells": [r._asdict() for r in query.all()]
+    }
+
+    return jsonify(results)
+
+
+@app.route('/api/feeds/bias')
+@htauth.authenticated
+def api_feed_bias():
+    start_date, end_date = api_date_range(request)
+
+    documents = Document.query\
+            .filter(Document.published_at >= start_date)\
+            .filter(Document.published_at <= end_date)
+
+    scores = BiasCalculator().calculate_bias_scores(documents.all(), key=lambda d: d.medium.group_name())
+
+    cells = []
+    for score in scores:
+        cell = score.asdict()
+        cell['medium_group'] = score.key
+        cells.append(cell)
+
+    results = {
+        "date-start": start_date,
+        "date-end": end_date,
+        "cells": cells,
     }
 
     return jsonify(results)

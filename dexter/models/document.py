@@ -180,6 +180,9 @@ class Document(db.Model):
 
         return warnings
 
+    def is_fair(self):
+        return not self.fairness or (len(self.fairness) == 1 and self.fairness[0].fairness.name == 'Fair')
+
 
     def __repr__(self):
         return "<Document id=%s, url=%s>" % (self.id, self.url)

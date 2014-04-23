@@ -18,6 +18,9 @@ class Medium(db.Model):
     medium_type  = Column(String(100), index=True, nullable=False)
     medium_group = Column(String(100))
 
+    def group_name(self):
+        return self.medium_group or self.name
+
     @classmethod
     def create_defaults(cls):
         text = """
