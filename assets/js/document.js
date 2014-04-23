@@ -98,6 +98,23 @@
         return;
       }
 
+      self.$form
+        .on('ajax:success', function(e, data, status, xhr) {
+          // success, reload the page
+          $('input[data-disable-with]', self.$form).removeAttr('data-disable-with');
+          document.location = document.location;
+        })
+        .on('ajax:error', function(e, xhr, status, error) {
+          console.log(xhr.status);
+          if (xhr.status == 500) {
+            $('#error-box').text('Hmm, something went wrong, please try again. (' + xhr.status + ': ' + error + ')').show();
+          } else {
+            // problem, do a non-ajax submit
+            $('input[data-disable-with]', self.$form).removeAttr('data-disable-with');
+            self.$form.removeData('remote').removeAttr('data-remote').submit();
+          }
+        });
+
       // source person name autocomplete
       self.personHound = new Bloodhound({
         name: 'people',

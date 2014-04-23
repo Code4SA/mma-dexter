@@ -145,6 +145,7 @@ def edit_article_analysis(id):
         flash("You're not allowed to edit this article.", 'error')
         return redirect(url_for('show_article', id=id))
 
+    status = 200
     form = DocumentAnalysisForm(obj=document)
 
     # forms for existing sources
@@ -220,9 +221,17 @@ def edit_article_analysis(id):
             db.session.commit()
 
             flash('Analysis updated.')
-            return redirect(url_for('edit_article_analysis', id=id))
+
+            # if it's an ajax request, we're just going to return a 200
+            if not request.is_xhr:
+                return redirect(url_for('edit_article_analysis', id=id))
+
+            status = 200
         else:
-            flash('Please correct the problems below and try again.')
+            if request.is_xhr:
+                status = 412
+            else:
+                flash('Please correct the problems below and try again.', 'warning')
     else:
         # wtforms turns None values into None, which sucks
         if form.topic_id.data == 'None':
@@ -232,7 +241,9 @@ def edit_article_analysis(id):
         # ensure that checkboxes can be pre-populated
         form.issues.data = [str(i.id) for i in document.issues]
 
-    resp = make_response(render_template('articles/edit_analysis.haml',
+    # only render if it's not an ajax request
+    if not request.is_xhr:
+        resp = make_response(render_template('articles/edit_analysis.haml',
             form=form,
             source_forms=source_forms,
             new_source_form=new_source_form,
@@ -240,8 +251,9 @@ def edit_article_analysis(id):
             new_fairness_form=new_fairness_form,
             fairness_forms=fairness_forms,
             document=document))
+    else:
+        resp = ''
 
-    # ensure the browser refreshes the page when Back is pressed
-    resp.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
-
-    return resp
+    return (resp, status,
+            # ensure the browser refreshes the page when Back is pressed
+            {'Cache-Control': 'no-cache, no-store, must-revalidate'})

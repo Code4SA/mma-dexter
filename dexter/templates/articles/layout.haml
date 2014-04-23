@@ -1,5 +1,7 @@
 %%inherit(file="../layout.haml")
 
+%p#error-box.alert.alert-danger
+
 %article.document-container
   %section.heading
     - if document.can_user_edit(current_user):
