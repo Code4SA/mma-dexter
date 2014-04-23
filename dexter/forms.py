@@ -57,5 +57,5 @@ class SelectField(WTFSelectField):
 
         if hasattr(obj, name):
             val = getattr(obj, name, None)
-            if val == '':
+            if val == '' or val == 'None':
                 setattr(obj, name, None)
