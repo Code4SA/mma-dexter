@@ -1,7 +1,7 @@
 import logging
 log = logging.getLogger(__name__)
 
-from flask import request, url_for, flash, redirect
+from flask import request, url_for, flash, redirect, make_response
 from flask.ext.mako import render_template
 from flask.ext.login import login_required, current_user
 
@@ -232,11 +232,16 @@ def edit_article_analysis(id):
         # ensure that checkboxes can be pre-populated
         form.issues.data = [str(i.id) for i in document.issues]
 
-    return render_template('articles/edit_analysis.haml',
+    resp = make_response(render_template('articles/edit_analysis.haml',
             form=form,
             source_forms=source_forms,
             new_source_form=new_source_form,
             new_sources=new_sources,
             new_fairness_form=new_fairness_form,
             fairness_forms=fairness_forms,
-            document=document)
+            document=document))
+
+    # ensure the browser refreshes the page when Back is pressed
+    resp.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+
+    return resp
