@@ -17,7 +17,7 @@
   .col-sm-9
     %article
       %%include(file='activity_list.haml')
-      = paginator('activity', paged_docs, user_id=form.user_id.data, medium_id=form.medium_id.data)
+      = paginator('activity', paged_docs, user_id=form.user_id.data, medium_id=form.medium_id.data, created_at=form.created_at.data, published_at=form.published_at.data)
 
   .col-sm-3
     %form.activity-refine(action=url_for('activity'), method='GET')
