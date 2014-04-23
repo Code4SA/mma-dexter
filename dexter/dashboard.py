@@ -158,7 +158,7 @@ class ActivityForm(Form):
     @property
     def created_to(self):
         if self.created_at.data:
-            return self.created_at.data.split(' - ')[1].strip()
+            return self.created_at.data.split(' - ')[1].strip() + ' 23:59:59'
         else:
             return None
 
@@ -172,7 +172,7 @@ class ActivityForm(Form):
     @property
     def published_to(self):
         if self.published_at.data:
-            return self.published_at.data.split(' - ')[1].strip()
+            return self.published_at.data.split(' - ')[1].strip() + ' 23:59:59'
         else:
             return None
 
