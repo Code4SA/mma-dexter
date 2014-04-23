@@ -22,12 +22,15 @@ $(function() {
 
 $(function() {
   var now = moment();
+  var yesterday = now.clone().subtract(moment.duration(1, 'days'));
 
   $('.use-daterangepicker').daterangepicker({
     format: 'YYYY/MM/DD',
     opens: 'left',
     maxDate: now.clone().add(moment.duration(1, 'days')),
     ranges: {
+      'Today': [now, now],
+      'Yesterday': [yesterday, yesterday],
       'Last 7 days': [now.clone().subtract(moment.duration(7, 'days')), now],
       'Last 14 days': [now.clone().subtract(moment.duration(14, 'days')), now],
       'Last 30 days': [now.clone().subtract(moment.duration(30, 'days')), now],
