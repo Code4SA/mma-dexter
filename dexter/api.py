@@ -165,6 +165,10 @@ def api_feed_bias():
     start_date, end_date = api_date_range(request)
 
     documents = Document.query\
+            .options(
+                subqueryload(Document.sources),
+                subqueryload(Document.fairness),
+                subqueryload(Document.medium))\
             .filter(Document.published_at >= start_date)\
             .filter(Document.published_at <= end_date)
 
@@ -173,7 +177,7 @@ def api_feed_bias():
     cells = []
     for score in scores:
         cell = score.asdict()
-        cell['medium_group'] = score.key
+        cell['medium_group'] = score.group
         cells.append(cell)
 
     results = {
