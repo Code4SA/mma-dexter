@@ -157,10 +157,10 @@ class ActivityForm(Form):
 
     @property
     def created_to(self):
-        if self.created_at.data:
+        if self.created_at.data and ' - ' in self.created_at.data:
             return self.created_at.data.split(' - ')[1].strip() + ' 23:59:59'
         else:
-            return None
+            return self.created_from
 
     @property
     def published_from(self):
@@ -171,10 +171,10 @@ class ActivityForm(Form):
 
     @property
     def published_to(self):
-        if self.published_at.data:
+        if self.published_at.data and ' - ' in self.published_at.data:
             return self.published_at.data.split(' - ')[1].strip() + ' 23:59:59'
         else:
-            return None
+            return self.published_from
 
 
     def filter_query(self, query):
