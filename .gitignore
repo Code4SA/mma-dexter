@@ -7,3 +7,4 @@ log
 dexter/public
 .idea
 cache
+server.key
