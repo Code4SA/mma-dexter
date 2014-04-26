@@ -172,12 +172,13 @@ def api_feed_bias():
             .filter(Document.published_at >= start_date)\
             .filter(Document.published_at <= end_date)
 
-    scores = BiasCalculator().calculate_bias_scores(documents.all(), key=lambda d: d.medium.group_name())
+    scores = BiasCalculator().calculate_bias_scores(documents.all(), key=lambda d: (d.medium.group_name(), d.medium.medium_type))
 
     cells = []
     for score in scores:
         cell = score.asdict()
-        cell['medium_group'] = score.group
+        cell['medium_group'] = score.group[0]
+        cell['medium_type'] = score.group[1]
         cells.append(cell)
 
     results = {
