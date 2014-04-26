@@ -6,11 +6,11 @@ log = logging.getLogger(__name__)
 from flask import request, url_for, redirect, jsonify
 from flask.ext.login import login_required
 from flask.ext import htauth
-from sqlalchemy.orm import subqueryload
+from sqlalchemy.orm import joinedload, lazyload
 from sqlalchemy.sql import func
 
 from .app import app
-from .models import db, Author, Person, Entity, Document
+from .models import db, Author, Person, Entity, Document, DocumentSource
 from .processing import BiasCalculator
 
 @app.route('/api/authors')
@@ -23,7 +23,7 @@ def api_authors():
 @login_required
 def api_people():
     people = Person.query\
-        .options(subqueryload(Person.affiliation))\
+        .options(joinedload(Person.affiliation))\
         .order_by(Person.name)\
         .all()
     return jsonify({'people': [p.json() for p in people]})
@@ -164,15 +164,20 @@ def api_feed_origins():
 def api_feed_bias():
     start_date, end_date = api_date_range(request)
 
+    log.info("Loading documents for bias calculation")
     documents = Document.query\
             .options(
-                subqueryload(Document.sources),
-                subqueryload(Document.fairness),
-                subqueryload(Document.medium))\
+                joinedload(Document.sources),
+                joinedload(Document.fairness),
+                joinedload(Document.medium),
+                lazyload('sources.person'),
+                lazyload('sources.unnamed_gender'),
+                lazyload('sources.unnamed_race'))\
             .filter(Document.published_at >= start_date)\
-            .filter(Document.published_at <= end_date)
+            .filter(Document.published_at <= end_date).all()
+    log.info("Loaded %d docs" % len(documents))
 
-    scores = BiasCalculator().calculate_bias_scores(documents.all(), key=lambda d: (d.medium.group_name(), d.medium.medium_type))
+    scores = BiasCalculator().calculate_bias_scores(documents, key=lambda d: (d.medium.group_name(), d.medium.medium_type))
 
     cells = []
     for score in scores:
