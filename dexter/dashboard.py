@@ -130,6 +130,10 @@ class ActivityForm(Form):
 
         self.medium_id.choices = [['', '(any)']] + [(str(m.id), m.name) for m in Medium.query.order_by(Medium.name).all()]
 
+        # dynamic default
+        if not self.created_at.data and not self.published_at.data and not self.user_id.data and not self.medium_id.data:
+            self.created_at.data = ' - '.join(d.strftime("%Y/%m/%d") for d in [datetime.utcnow() - timedelta(days=14), datetime.utcnow()])
+
 
     def user(self):
         if self.user_id.data:
