@@ -29,21 +29,29 @@ assets.register('admin-css',
       'css/admin.css',
     ))
 
-assets.register('js',
+
+js = Bundle(
+    'js/jquery-1.10.2.min.js',
+    'js/bootstrap-3.0.3.min.js',
+    'js/typeahead.bundle-0.10.1.min.js',
+    'js/ujs.js',
+    'js/chosen.jquery.min.js',
+    'js/app.js',
+    'js/document.js',
+    'js/person.js',
+    'js/moment.min.js',
+    'js/bootstrap-datepicker.js',
+    'js/bootstrap-datetimepicker.min.js',
+    'js/daterangepicker-1.3.5.js',
+    output='js/app.%(version)s.js')
+assets.register('js', js)
+
+assets.register('activity',
     Bundle(
-      'js/jquery-1.10.2.min.js',
-      'js/bootstrap-3.0.3.min.js',
-      'js/typeahead.bundle-0.10.1.min.js',
-      'js/ujs.js',
-      'js/chosen.jquery.min.js',
-      'js/app.js',
-      'js/document.js',
-      'js/person.js',
-      'js/moment.min.js',
-      'js/bootstrap-datepicker.js',
-      'js/bootstrap-datetimepicker.min.js',
-      'js/daterangepicker-1.3.5.js',
-      output='js/app.%(version)s.js'))
+        'js/highcharts-4.0.1.js',
+        'js/underscore-1.6.0.js',
+        'js/activity.js',
+        output='js/activity.%(version)s.js'))
 
 # Helper that is available in templates, and returns the
 # urls to the named assets.

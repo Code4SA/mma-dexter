@@ -1,0 +1,15 @@
+#charts {
+  .chart {
+    height: 200px;
+  }
+
+  .chart.chart-created,
+  .chart.chart-published {
+    height: 150px;
+  }
+
+  .chart.chart-users,
+  .chart.chart-media {
+    height: 250px;
+  }
+}

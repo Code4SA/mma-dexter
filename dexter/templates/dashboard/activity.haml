@@ -13,42 +13,90 @@
     - if form.medium():
       from ${form.medium().name|h}
 
-.row
-  .col-sm-9
-    %article
-      %%include(file='activity_list.haml')
-      = paginator('activity', paged_docs, user_id=form.user_id.data, medium_id=form.medium_id.data, created_at=form.created_at.data, published_at=form.published_at.data)
+  .row
+    .col-sm-9
+      %section#charts
+        .row
+          .col-sm-6
+            .panel.panel-default
+              .panel-heading
+                %h4.panel-title Date added
+              .panel-body
+                .chart.chart-created
+                  Loading...
 
-  .col-sm-3
-    %form.activity-refine(action=url_for('activity'), method='GET')
+          .col-sm-6
+            .panel.panel-default
+              .panel-heading
+                %h4.panel-title Publication date
+              .panel-body
+                .chart.chart-published
+                  Loading...
 
-      .panel.panel-default
-        .panel-heading
-          %h3.panel-title
-            Refine
+        .row
+          .col-sm-6
+            .panel.panel-default
+              .panel-heading
+                %h4.panel-title User activity
+              .panel-body
+                .chart.chart-users
+                  Loading...
 
-        .panel-body
-          = vertical_field(form.user_id)
-          = vertical_field(form.medium_id)
-          .form-group
-            = form.created_at.label()
-            .input-group
-              = form.created_at(class_='form-control use-daterangepicker')
-              %span.input-group-btn
-                %button.btn.btn-default(dataClear='input-group')
-                  %i.fa.fa-times
-          .form-group
-            = form.published_at.label()
-            .input-group
-              = form.published_at(class_='form-control use-daterangepicker')
-              %span.input-group-btn
-                %button.btn.btn-default(dataClear='input-group')
-                  %i.fa.fa-times
+          .col-sm-6
+            .panel.panel-default
+              .panel-heading
+                %h4.panel-title Media
+              .panel-body
+                .chart.chart-media
+                  Loading...
 
-        .panel-footer
-          .pull-right
-            %button.btn.btn-default.download
-              %i.fa.fa-download
-              Download CSV
-          %input.btn.btn-success(type='Submit', value='Update')
+        .row
+          .col-sm-6
+            .panel.panel-default
+              .panel-heading
+                %h4.panel-title Problems
+              .panel-body
+                .chart.chart-problems
+                  Loading...
+
+    .col-sm-3
+      %form.activity-refine(action=url_for('activity'), method='GET')
+
+        .panel.panel-default
+          .panel-heading
+            %h3.panel-title
+              Refine
+
+          .panel-body
+            = vertical_field(form.user_id)
+            = vertical_field(form.medium_id)
+            .form-group
+              = form.created_at.label()
+              .input-group
+                = form.created_at(class_='form-control use-daterangepicker')
+                %span.input-group-btn
+                  %button.btn.btn-default(dataClear='input-group')
+                    %i.fa.fa-times
+            .form-group
+              = form.published_at.label()
+              .input-group
+                = form.published_at(class_='form-control use-daterangepicker')
+                %span.input-group-btn
+                  %button.btn.btn-default(dataClear='input-group')
+                    %i.fa.fa-times
+
+          .panel-footer
+            .pull-right
+              %button.btn.btn-default.download
+                %i.fa.fa-download
+                Download CSV
+            %input.btn.btn-success(type='Submit', value='Update')
+
+      %%block(name='extra_javascript')
+        - for url in webassets('activity'):
+          %script(src=url)
+
+  %section
+    %%include(file='activity_list.haml')
+    = paginator('activity', paged_docs, user_id=form.user_id.data, medium_id=form.medium_id.data, created_at=form.created_at.data, published_at=form.published_at.data)
 
