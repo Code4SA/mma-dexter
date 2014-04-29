@@ -157,6 +157,8 @@ class ActivityForm(Form):
                         .options(
                             joinedload(Document.created_by),
                             joinedload(Document.medium),
+                            joinedload(Document.topic),
+                            joinedload(Document.origin),
                         )
 
         return self.filter_query(query)
