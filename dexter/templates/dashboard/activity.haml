@@ -13,36 +13,46 @@
     - if form.medium():
       from ${form.medium().name|h}
 
-  %section#charts
-    .row
-      .col-sm-6
-        %h4 Date captured
-        .chart.chart-created
-
-      .col-sm-6
-        %h4 Publication date
-        .chart.chart-published
-
-    .row
-      .col-sm-6
-        %h4 User activity
-        .chart.chart-users
-
-      .col-sm-6
-        %h4 Media
-        .chart.chart-media
-
-    .row
-      .col-sm-6
-        %h4 Problems
-        .chart.chart-problems
-
-  %section
   .row
     .col-sm-9
-      %article
-        %%include(file='activity_list.haml')
-        = paginator('activity', paged_docs, user_id=form.user_id.data, medium_id=form.medium_id.data, created_at=form.created_at.data, published_at=form.published_at.data)
+      %section#charts
+        .row
+          .col-sm-6
+            .panel.panel-default
+              .panel-heading
+                %h4.panel-title Date added
+              .panel-body
+                .chart.chart-created
+
+          .col-sm-6
+            .panel.panel-default
+              .panel-heading
+                %h4.panel-title Publication date
+              .panel-body
+                .chart.chart-published
+
+        .row
+          .col-sm-6
+            .panel.panel-default
+              .panel-heading
+                %h4.panel-title User activity
+              .panel-body
+                .chart.chart-users
+
+          .col-sm-6
+            .panel.panel-default
+              .panel-heading
+                %h4.panel-title Media
+              .panel-body
+                .chart.chart-media
+
+        .row
+          .col-sm-6
+            .panel.panel-default
+              .panel-heading
+                %h4.panel-title Problems
+              .panel-body
+                .chart.chart-problems
 
     .col-sm-3
       %form.activity-refine(action=url_for('activity'), method='GET')
@@ -80,3 +90,8 @@
       %%block(name='extra_javascript')
         - for url in webassets('activity'):
           %script(src=url)
+
+  %section
+    %%include(file='activity_list.haml')
+    = paginator('activity', paged_docs, user_id=form.user_id.data, medium_id=form.medium_id.data, created_at=form.created_at.data, published_at=form.published_at.data)
+

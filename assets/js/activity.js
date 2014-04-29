@@ -65,14 +65,20 @@
     };
 
     self.drawCharts = function(charts) {
+      // transform {"YYYY/MM/DD": 10} into [Date, 10]
+      var datePairs = function(data) {
+        return _.map(data, function(val, key) { 
+          var parts = key.split("/");
+          return [Date.UTC(parts[0], parts[1], parts[2]), val];
+        });
+      };
+
       // time of creation
       var data = charts.charts.created.values;
-      var cats = _.keys(data);
-      var vals = _.map(cats, function(k) { return data[k]; });
       $('.chart-created').highcharts({
         chart: {type: 'line'},
-        xAxis: {categories: cats},
-        series: [{data: vals}],
+        xAxis: {type: 'datetime'},
+        series: [{data: datePairs(data)}],
       });
 
       // time of publication
@@ -81,8 +87,8 @@
       vals = _.map(cats, function(k) { return data[k]; });
       $('.chart-published').highcharts({
         chart: {type: 'column'},
-        xAxis: {categories: cats},
-        series: [{data: vals}],
+        xAxis: {type: 'datetime'},
+        series: [{data: datePairs(data)}],
       });
 
       // user
@@ -90,7 +96,7 @@
       cats = _.sortBy(_.keys(data), function(k) { return -data[k]; });
       vals = _.map(cats, function(k) { return data[k]; });
       $('.chart-users').highcharts({
-        chart: {type: 'column'},
+        chart: {type: 'bar'},
         xAxis: {categories: cats},
         series: [{data: vals}],
       });
@@ -113,12 +119,6 @@
         chart: {type: 'column'},
         xAxis: {categories: cats},
         series: [{data: vals}],
-      });
-    };
-
-    self.values = function(data, cats) {
-      return $.map(cats, function(i, key) {
-        return data[key];
       });
     };
   };
