@@ -1,11 +1,13 @@
 from itertools import groupby
 from datetime import datetime, timedelta
+from collections import Counter
 
 from dexter.app import app
-from flask import request, url_for, flash, redirect, make_response
+from flask import request, url_for, flash, redirect, make_response, jsonify
 from flask.ext.mako import render_template
 from flask.ext.login import login_required, current_user
 from sqlalchemy.sql import func
+from sqlalchemy.orm import joinedload
 
 from dexter.models import db, Document, Entity, Medium, User
 
@@ -96,6 +98,10 @@ def activity():
         response.headers["Content-Disposition"] = "attachment; filename=%s" % form.filename()
         return response
 
+    elif form.format.data == 'chart-json':
+        # chart data in json format
+        return jsonify(ActivityChartHelper(query.all()).chart_data())
+
         
     paged_docs = query.order_by(Document.created_at.desc()).paginate(page, per_page)
 
@@ -143,7 +149,11 @@ class ActivityForm(Form):
                     .join(Document)\
                     .join(DocumentSourcesView)
         else:
-            query = Document.query
+            query = Document.query\
+                        .options(
+                            joinedload(Document.created_by),
+                            joinedload(Document.medium),
+                        )
 
         return self.filter_query(query)
 
@@ -210,3 +220,55 @@ class ActivityForm(Form):
             filename.append(self.published_at.data.replace(' ', ''))
 
         return "%s.csv" % '-'.join(filename)
+
+
+class ActivityChartHelper:
+    def __init__(self, docs):
+        self.docs = docs
+
+
+    def chart_data(self):
+        return {
+            'charts': {
+                'created': self.created_chart(),
+                'published': self.published_chart(),
+                'users': self.users_chart(),
+                'media': self.media_chart(),
+                'problems': self.problems_chart(),
+            },
+            'summary': {
+                'documents': len(self.docs)
+            }
+        }
+
+
+    def created_chart(self):
+        return {
+            'values': dict(Counter(d.created_at.strftime('%Y/%m/%d') for d in self.docs))
+        }
+
+    def published_chart(self):
+        return {
+            'values': dict(Counter(d.published_at.strftime('%Y/%m/%d') for d in self.docs))
+        }
+
+    def users_chart(self):
+        return {
+            'values': dict(Counter(d.created_by.short_name() if d.created_by else '' for d in self.docs))
+        }
+
+    def media_chart(self):
+        return {
+            'values': dict(Counter(d.medium.name for d in self.docs))
+        }
+
+    def problems_chart(self):
+        counts = Counter()
+        for d in self.docs:
+            counts.update(
+                    s.replace('This article needs', 'Missing')\
+                     .replace('.', '') for s in d.analysis_warnings())
+
+        return {
+            'values': dict(counts)
+        }
