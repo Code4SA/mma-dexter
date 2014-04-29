@@ -1,4 +1,5 @@
 import logging
+import urlparse
 from datetime import datetime, timedelta
 from dateutil.parser import parse
 log = logging.getLogger(__name__)
@@ -10,7 +11,7 @@ from sqlalchemy.orm import joinedload, lazyload
 from sqlalchemy.sql import func
 
 from .app import app
-from .models import db, Author, Person, Entity, Document, DocumentSource
+from .models import db, Author, Person, Entity, Document, DocumentSource, Medium, Location, Topic, Affiliation
 from .processing import BiasCalculator
 
 @app.route('/api/authors')
@@ -57,7 +58,7 @@ def api_group_entities(group):
 
 @app.route('/api/feeds/sources/political-parties')
 @htauth.authenticated
-def api_feed_sources():
+def api_feed_parties():
     from dexter.models.views import DocumentSourcesView, DocumentsView
 
     start_date, end_date = api_date_range(request)
@@ -193,6 +194,40 @@ def api_feed_bias():
     }
 
     return jsonify(results)
+
+
+@app.route('/api/feeds/metadata')
+@htauth.authenticated
+def api_feed_metadata():
+    data = {}
+
+    media = Medium.query.all()
+    data['media'] = {
+        "bias_feed_url": "%s" % urlparse.urljoin(request.url_root, url_for('api_feed_bias')),
+        "names": [m.name for m in media],
+        "groups": list(set(m.group_name() for m in media)),
+    }
+
+    data['origins'] = {
+        "names": [x.name for x in Location.query.all()],
+        "feed_url": "%s" % urlparse.urljoin(request.url_root, url_for('api_feed_origins')),
+    }
+
+    data['topics'] = {
+        "names": [x.name for x in Topic.query.all()],
+        "feed_url": "%s" % urlparse.urljoin(request.url_root, url_for('api_feed_topics')),
+    }
+
+    data['affiliations'] = {
+        "names": [x.name for x in Affiliation.query.all()],
+    }
+
+    data['political-parties'] = {
+        "names": [x.name for x in Affiliation.query.filter(Affiliation.code.like("4.%")).all()],
+        "feed_url": "%s" % urlparse.urljoin(request.url_root, url_for('api_feed_parties')),
+    }
+
+    return jsonify({"metadata": data})
 
 
 def api_date_range(request):
