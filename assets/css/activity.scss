@@ -8,8 +8,15 @@
     height: 150px;
   }
 
-  .chart.chart-users,
-  .chart.chart-media {
+  .chart.chart-users {
     height: 250px;
+  }
+
+  .chart.chart-problems {
+    height: 100px;
+  }
+
+  .chart.chart-media {
+    height: 600px;
   }
 }

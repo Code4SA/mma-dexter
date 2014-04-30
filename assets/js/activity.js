@@ -97,7 +97,10 @@
       vals = _.map(cats, function(k) { return data[k]; });
       $('.chart-users').highcharts({
         chart: {type: 'bar'},
-        xAxis: {categories: cats},
+        xAxis: {
+          categories: cats,
+          labels: {step: 1},
+        },
         series: [{data: vals}],
       });
 
@@ -107,7 +110,19 @@
       vals = _.map(cats, function(k) { return data[k]; });
       $('.chart-media').highcharts({
         chart: {type: 'bar'},
-        xAxis: {categories: cats},
+        xAxis: {
+          categories: cats,
+          labels: {
+            step: 1,
+            formatter: function(v) {
+              if (this.value.length > 15) {
+                return this.value.slice(0, 15) + "...";
+              } else {
+                return this.value;
+              }
+            }
+          }
+        },
         series: [{data: vals}],
       });
 
