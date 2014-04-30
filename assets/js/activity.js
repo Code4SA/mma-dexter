@@ -69,7 +69,7 @@
       var datePairs = function(data) {
         return _.map(data, function(val, key) { 
           var parts = key.split("/");
-          return [Date.UTC(parts[0], parts[1], parts[2]), val];
+          return [Date.UTC(parseInt(parts[0]), parseInt(parts[1])-1, parseInt(parts[2])), val];
         });
       };
 
