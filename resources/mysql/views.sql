@@ -73,9 +73,11 @@ from
 create or replace view documents_fairness_view as
 select 
   d.id as `document_id`,
-  f.name as `fairness`,
+  ifnull(f.name, 'Fair') as `fairness`,
   af_favour.name as `favour`,
-  af_oppose.name as `oppose`
+  af_favour.code as `favour_code`,
+  af_oppose.name as `oppose`,
+  af_oppose.code as `oppose_code`
 from
   documents d
   left join document_fairness df on df.doc_id = d.id
