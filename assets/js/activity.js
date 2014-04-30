@@ -75,7 +75,7 @@
     self.datePairs = function(data) {
       // transform {"YYYY/MM/DD": 10} into [msecs, 10], sorted by date
       return _.map(_.keys(data).sort(), function(key) {
-        return [moment(key, 'YYYY/MM/DD').valueOf(), data[key]];
+        return [moment.utc(key, 'YYYY/MM/DD').valueOf(), data[key]];
       });
     };
 
