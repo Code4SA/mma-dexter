@@ -25,6 +25,8 @@ class XLSXBuilder:
         self.documents_worksheet(workbook)
         self.sources_worksheet(workbook)
         self.bias_worksheet(workbook)
+        self.fairness_worksheet(workbook)
+        self.everything_worksheet(workbook)
 
 
         workbook.close()
@@ -74,32 +76,41 @@ class XLSXBuilder:
 
         ws = wb.add_worksheet('documents')
         docs = self.filter(db.session.query(DocumentsView).join(Document)).all()
-
-        if docs:
-            keys = docs[0].keys()
-            data = [list(doc) for doc in docs]
-
-            ws.add_table(0, 0, len(docs)-1, len(keys)-1, {
-                'name': 'Documents',
-                'columns': [{'header': k} for k in keys],
-                'data': data,
-                })
+        self.write_table(ws, 'Documents', docs)
 
     def sources_worksheet(self, wb):
         from dexter.models.views import DocumentSourcesView
 
         ws = wb.add_worksheet('sources')
-        docs = self.filter(db.session.query(DocumentSourcesView).join(Document)).all()
+        rows = self.filter(db.session.query(DocumentSourcesView).join(Document)).all()
+        self.write_table(ws, 'Sources', rows)
 
-        if docs:
-            keys = docs[0].keys()
-            data = [list(doc) for doc in docs]
+    def fairness_worksheet(self, wb):
+        from dexter.models.views import DocumentsView, DocumentFairnessView
 
-            ws.add_table(0, 0, len(docs)-1, len(keys)-1, {
-                'name': 'Sources',
-                'columns': [{'header': k} for k in keys],
-                'data': data,
-                })
+        ws = wb.add_worksheet('fairness')
+        rows = self.filter(db.session.query(DocumentsView, DocumentFairnessView)\
+                    .join(Document)\
+                    .join(DocumentFairnessView)).all()
+        if rows:
+            # joining the two views can result in columns with the same name,
+            # we simply de-dup them here
+            keys = sorted(list(set(rows[0].keys())))
+            self.write_table(ws, 'Fairness', rows, keys)
+
+    def everything_worksheet(self, wb):
+        from dexter.models.views import DocumentsView, DocumentSourcesView, DocumentFairnessView
+
+        ws = wb.add_worksheet('everything')
+        rows = self.filter(db.session.query(DocumentsView, DocumentFairnessView, DocumentSourcesView)\
+                    .join(Document)\
+                    .join(DocumentFairnessView)\
+                    .join(DocumentSourcesView)).all()
+        if rows:
+            # joining the two views can result in columns with the same name,
+            # we simply de-dup them here
+            keys = sorted(list(set(rows[0].keys())))
+            self.write_table(ws, 'Everything', rows, keys)
 
     def bias_worksheet(self, wb):
         ws = wb.add_worksheet('bias')
@@ -126,6 +137,22 @@ class XLSXBuilder:
             ws.write(5, col, score.fair)
             ws.write(6, col, score.score)
 
+    def write_table(self, ws, name, rows, keys=None):
+        if rows:
+            if not keys:
+                keys = rows[0].keys()
+                data = [list(doc) for doc in rows]
+            else:
+                data = []
+                for row in rows:
+                    info = row._asdict()
+                    data.append([info[k] for k in keys])
+
+            ws.add_table(0, 0, len(rows), len(keys)-1, {
+                'name': name,
+                'columns': [{'header': k} for k in keys],
+                'data': data,
+                })
 
     def filter(self, query):
         return self.form.filter_query(query)
