@@ -3,7 +3,7 @@ import StringIO
 from datetime import datetime
 from dateutil.parser import parse
 
-from ..models import Document
+from ..models import Document, db
 
 class XLSXBuilder:
     def __init__(self, form):
@@ -20,6 +20,8 @@ class XLSXBuilder:
         self.formats['date'] = workbook.add_format({'num_format': 'yyyy/mm/dd'})
 
         self.summary_worksheet(workbook)
+        self.documents_worksheet(workbook)
+        self.sources_worksheet(workbook)
 
 
         workbook.close()
@@ -60,8 +62,39 @@ class XLSXBuilder:
 
         ws.write('A10', 'Summary')
         ws.write('A11', 'articles')
-        ws.write('B11', self.count_docs())
+        ws.write('B11', self.filter(Document.query).count())
 
+    def documents_worksheet(self, wb):
+        from dexter.models.views import DocumentsView
 
-    def count_docs(self):
-        return self.form.filter_query(Document.query).count()
+        ws = wb.add_worksheet('documents')
+        docs = self.filter(db.session.query(DocumentsView).join(Document)).all()
+
+        if docs:
+            keys = docs[0].keys()
+            data = [list(doc) for doc in docs]
+
+            ws.add_table(0, 0, len(docs)-1, len(keys)-1, {
+                'name': 'Documents',
+                'columns': [{'header': k} for k in keys],
+                'data': data,
+                })
+
+    def sources_worksheet(self, wb):
+        from dexter.models.views import DocumentSourcesView
+
+        ws = wb.add_worksheet('sources')
+        docs = self.filter(db.session.query(DocumentSourcesView).join(Document)).all()
+
+        if docs:
+            keys = docs[0].keys()
+            data = [list(doc) for doc in docs]
+
+            ws.add_table(0, 0, len(docs)-1, len(keys)-1, {
+                'name': 'Sources',
+                'columns': [{'header': k} for k in keys],
+                'data': data,
+                })
+
+    def filter(self, query):
+        return self.form.filter_query(query)
