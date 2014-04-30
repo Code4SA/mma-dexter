@@ -106,7 +106,16 @@
 
       // media
       data = charts.charts.media.values;
-      cats = _.sortBy(_.keys(data), function(k) { return -data[k]; });
+      types = charts.charts.media.types;
+
+      // sort by media type, then by data values
+      cats = _.keys(data).sort(function(a, b) {
+        if (types[a] == types[b]) {
+          return data[b] - data[a];
+        } else {
+          return types[a] < types[b] ? -1 : 1;
+        }
+      });
       vals = _.map(cats, function(k) { return data[k]; });
       $('.chart-media').highcharts({
         chart: {type: 'bar'},

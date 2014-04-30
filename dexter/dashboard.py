@@ -265,7 +265,8 @@ class ActivityChartHelper:
 
     def media_chart(self):
         return {
-            'values': dict(Counter(d.medium.name for d in self.docs))
+            'values': dict(Counter(d.medium.name for d in self.docs)),
+            'types': dict([d.medium.name, d.medium.medium_type] for d in self.docs)
         }
 
     def problems_chart(self):
