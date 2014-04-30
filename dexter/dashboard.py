@@ -160,6 +160,7 @@ class ActivityForm(Form):
                             joinedload(Document.topic),
                             joinedload(Document.origin),
                             joinedload(Document.fairness),
+                            joinedload(Document.sources),
                         )
 
         return self.filter_query(query)
@@ -286,7 +287,8 @@ class ActivityChartHelper:
         counts = Counter()
         for d in self.docs:
             counts.update(
-                    s.replace('This article needs', 'Missing')\
+                    s.replace('This article needs', 'missing')\
+                     .replace('This article has a ', '')\
                      .replace('.', '') for s in d.analysis_warnings())
 
         return {

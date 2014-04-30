@@ -178,6 +178,12 @@ class Document(db.Model):
         if self.origin is None:
             warnings.append("This article needs an origin.")
 
+        if any(ds.affiliation is None for ds in self.sources):
+            warnings.append("This article has a source without an affiliation.")
+
+        if any(ds.function is None for ds in self.sources):
+            warnings.append("This article has a source without a function.")
+
         return warnings
 
     def is_fair(self):
