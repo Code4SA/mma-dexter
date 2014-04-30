@@ -172,7 +172,7 @@
       // problems
       data = charts.charts.problems.values;
       var holder = $('.chart-problems');
-      if (data.length > 0) {
+      if (!_.isEmpty(data)) {
         holder.empty();
         _.map(data, function(val, cat) {
           holder.append('<div class="problem"><h3>' + val + '</h3><h4>' + cat + '</div>');
