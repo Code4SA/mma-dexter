@@ -64,21 +64,35 @@
       $.getJSON(self.chartUrl(), self.drawCharts);
     };
 
-    self.drawCharts = function(charts) {
-      // transform {"YYYY/MM/DD": 10} into [Date, 10]
-      var datePairs = function(data) {
-        return _.map(data, function(val, key) { 
-          var parts = key.split("/");
-          return [Date.UTC(parseInt(parts[0]), parseInt(parts[1])-1, parseInt(parts[2])), val];
-        });
-      };
+    self.datePairs = function(data) {
+      // transform {"YYYY/MM/DD": 10} into [msecs, 10], sorted by date
+      return _.map(_.keys(data).sort(), function(key) {
+        return [moment(key, 'YYYY/MM/DD').valueOf(), data[key]];
+      });
+    };
 
+    self.fillDates = function(data) {
+      // ensure that we have datapoints for all dates in this range
+      var keys = _.keys(data).sort();
+      var min = moment(keys[0], 'YYYY-MM-DD'),
+          max = moment(keys[keys.length-1], 'YYYY-MM-DD');
+
+      for (var d = min.clone(); !d.isAfter(max); d.add(1, 'days')) {
+        var s = d.format('YYYY/MM/DD');
+        if (!(s in data)) {
+          data[s] = 0;
+        }
+      }
+    };
+
+    self.drawCharts = function(charts) {
       // time of creation
       var data = charts.charts.created.values;
+      self.fillDates(data);
       $('.chart-created').highcharts({
         chart: {type: 'line'},
         xAxis: {type: 'datetime'},
-        series: [{data: datePairs(data)}],
+        series: [{data: self.datePairs(data) }],
       });
 
       // time of publication
@@ -88,7 +102,7 @@
       $('.chart-published').highcharts({
         chart: {type: 'column'},
         xAxis: {type: 'datetime'},
-        series: [{data: datePairs(data)}],
+        series: [{data: self.datePairs(data)}],
       });
 
       // user
