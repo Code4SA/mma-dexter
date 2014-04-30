@@ -163,13 +163,15 @@
 
       // problems
       data = charts.charts.problems.values;
-      cats = _.sortBy(_.keys(data), function(k) { return -data[k]; });
-      vals = _.map(cats, function(k) { return data[k]; });
-      $('.chart-problems').highcharts({
-        chart: {type: 'column'},
-        xAxis: {categories: cats},
-        series: [{data: vals}],
-      });
+      var holder = $('.chart-problems');
+      if (data.length > 0) {
+        holder.empty();
+        _.map(data, function(val, cat) {
+          holder.append('<div class="problem"><h3>' + val + '</h3><h4>' + cat + '</div>');
+        });
+      } else {
+        holder.html('None');
+      }
     };
   };
 })(jQuery, window);

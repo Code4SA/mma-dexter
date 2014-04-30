@@ -288,7 +288,7 @@ class ActivityChartHelper:
         for d in self.docs:
             counts.update(
                     s.replace('This article needs', 'missing')\
-                     .replace('This article has a ', '')\
+                     .replace('This article has', '')\
                      .replace('.', '') for s in d.analysis_warnings())
 
         return {

@@ -12,7 +12,20 @@
     height: 250px;
   }
 
-  .chart.chart-problems,
+  .chart.chart-problems {
+    height: auto;
+
+    h3, h4 {
+      margin: 0px;
+    }
+
+    .problem {
+      float: left;
+      width: 50%;
+      margin-bottom: 20px;
+      padding-right: 5px;
+    }
+  }
   .chart.chart-fairness {
     height: 100px;
   }
