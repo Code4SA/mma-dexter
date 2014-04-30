@@ -135,6 +135,18 @@
         series: [{data: vals}],
       });
 
+      // fairness
+      data = charts.charts.fairness.values;
+      // don't plot Fair documents, it dominates too much
+      delete data.Fair;
+      cats = _.sortBy(_.keys(data), function(k) { return -data[k]; });
+      vals = _.map(cats, function(k) { return data[k]; });
+      $('.chart-fairness').highcharts({
+        chart: {type: 'column'},
+        xAxis: {categories: cats},
+        series: [{data: vals}],
+      });
+
       // problems
       data = charts.charts.problems.values;
       cats = _.sortBy(_.keys(data), function(k) { return -data[k]; });

@@ -159,6 +159,7 @@ class ActivityForm(Form):
                             joinedload(Document.medium),
                             joinedload(Document.topic),
                             joinedload(Document.origin),
+                            joinedload(Document.fairness),
                         )
 
         return self.filter_query(query)
@@ -241,6 +242,7 @@ class ActivityChartHelper:
                 'users': self.users_chart(),
                 'media': self.media_chart(),
                 'problems': self.problems_chart(),
+                'fairness': self.fairness_chart(),
             },
             'summary': {
                 'documents': len(self.docs)
@@ -261,6 +263,17 @@ class ActivityChartHelper:
     def users_chart(self):
         return {
             'values': dict(Counter(d.created_by.short_name() if d.created_by else '' for d in self.docs))
+        }
+
+    def fairness_chart(self):
+        counts = Counter()
+        for d in self.docs:
+            if d.is_fair():
+                counts.update(['Fair'])
+            else:
+                counts.update(f.fairness.name for f in d.fairness)
+        return {
+            'values': dict(counts)
         }
 
     def media_chart(self):
