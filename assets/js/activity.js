@@ -7,6 +7,14 @@
     var self = this;
 
     self.init = function() {
+      $('form.activity-refine .btn.download').on('click', function(e) {
+        e.preventDefault();
+
+        $('form.activity-refine').append('<input type="hidden" name="format" value="xlsx">');
+        $('form.activity-refine').submit();
+        $('form.activity-refine input[name="format"]').remove();
+      });
+
       Highcharts.setOptions({
         chart: {
           animation: false,

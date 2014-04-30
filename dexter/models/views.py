@@ -17,3 +17,8 @@ DocumentSourcesView = Table("document_sources_view", db.metadata,
         Column("document_source_id", Integer, ForeignKey("document_sources.id")),
         Column("document_id", Integer, ForeignKey("documents.id")),
         autoload=True, autoload_with=db.engine)
+
+# helper across document fairness
+DocumentFairnessView = Table("documents_fairness_view", db.metadata,
+        Column("document_id", Integer, ForeignKey("documents.id")),
+        autoload=True, autoload_with=db.engine)

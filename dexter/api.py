@@ -164,21 +164,15 @@ def api_feed_origins():
 @htauth.authenticated
 def api_feed_bias():
     start_date, end_date = api_date_range(request)
+    calc = BiasCalculator()
 
     log.info("Loading documents for bias calculation")
-    documents = Document.query\
-            .options(
-                joinedload(Document.sources),
-                joinedload(Document.fairness),
-                joinedload(Document.medium),
-                lazyload('sources.person'),
-                lazyload('sources.unnamed_gender'),
-                lazyload('sources.unnamed_race'))\
+    documents = calc.get_query()\
             .filter(Document.published_at >= start_date)\
             .filter(Document.published_at <= end_date).all()
     log.info("Loaded %d docs" % len(documents))
 
-    scores = BiasCalculator().calculate_bias_scores(documents, key=lambda d: (d.medium.group_name(), d.medium.medium_type))
+    scores = calc.calculate_bias_scores(documents, key=lambda d: (d.medium.group_name(), d.medium.medium_type))
 
     cells = []
     for score in scores:

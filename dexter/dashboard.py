@@ -14,6 +14,7 @@ from dexter.models import db, Document, Entity, Medium, User
 from wtforms import validators, HiddenField, TextField
 from wtforms.fields.html5 import DateField
 from .forms import Form, SelectField
+from .processing.xlsx import XLSXBuilder
 
 @app.route('/dashboard')
 @login_required
@@ -101,6 +102,15 @@ def activity():
     elif form.format.data == 'chart-json':
         # chart data in json format
         return jsonify(ActivityChartHelper(query.all()).chart_data())
+
+    elif form.format.data == 'xlsx':
+        # excel spreadsheet
+        excel = XLSXBuilder(form).build()
+
+        response = make_response(excel)
+        response.headers["Content-Disposition"] = "attachment; filename=%s" % form.filename()
+        response.headers["Content-Type"] = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        return response
 
         
     paged_docs = query.order_by(Document.created_at.desc()).paginate(page, per_page)
@@ -227,7 +237,7 @@ class ActivityForm(Form):
             filename.append('published')
             filename.append(self.published_at.data.replace(' ', ''))
 
-        return "%s.csv" % '-'.join(filename)
+        return "%s.%s" % ('-'.join(filename), self.format.data)
 
 
 class ActivityChartHelper:
