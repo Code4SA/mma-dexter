@@ -4,12 +4,27 @@ from itertools import groupby
 import math
 import logging
 
+from sqlalchemy.orm import joinedload, lazyload
+
+from ..models import Document
+
 class BiasCalculator:
     """
     Helper class for running bias calculations across
     documents.
     """
     log = logging.getLogger(__name__)
+
+    def get_query(self):
+        return Document.query\
+            .options(
+                joinedload(Document.sources),
+                joinedload(Document.fairness),
+                joinedload(Document.medium),
+                lazyload('sources.person'),
+                lazyload('sources.unnamed_gender'),
+                lazyload('sources.unnamed_race'))
+
 
     def calculate_bias_scores(self, docs, key):
         """

@@ -3,6 +3,7 @@ import StringIO
 from datetime import datetime
 from dateutil.parser import parse
 
+from .bias import BiasCalculator
 from ..models import Document, db
 
 class XLSXBuilder:
@@ -22,6 +23,7 @@ class XLSXBuilder:
         self.summary_worksheet(workbook)
         self.documents_worksheet(workbook)
         self.sources_worksheet(workbook)
+        self.bias_worksheet(workbook)
 
 
         workbook.close()
@@ -34,10 +36,12 @@ class XLSXBuilder:
 
         ws.write('D1', 'Generated')
         ws.write_datetime('E1', datetime.now(), self.formats['date'])
+        ws.set_column('E:E', 10)
 
         ws.write('A3', 'Filters')
         ws.write('B4', 'from')
         ws.write('B5', 'to')
+        ws.set_column('B:C', 10)
 
         ws.write('A5', 'added')
         if self.form.created_from:
@@ -95,6 +99,32 @@ class XLSXBuilder:
                 'columns': [{'header': k} for k in keys],
                 'data': data,
                 })
+
+    def bias_worksheet(self, wb):
+        ws = wb.add_worksheet('bias')
+
+        calc = BiasCalculator()
+        docs = self.filter(calc.get_query()).all()
+        scores = calc.calculate_bias_scores(docs, key=lambda d: d.medium.group_name())
+
+        ws.write(1, 0, 'oppose')
+        ws.write(2, 0, 'favour')
+        ws.write(3, 0, 'discrepancy')
+        ws.write(4, 0, 'parties')
+        ws.write(5, 0, 'fair')
+        ws.write(6, 0, 'bias')
+
+        for i, score in enumerate(scores):
+            col = i + 1
+
+            ws.write(0, col, score.group)
+            ws.write(1, col, score.oppose)
+            ws.write(2, col, score.favour)
+            ws.write(3, col, score.discrepancy)
+            ws.write(4, col, score.parties)
+            ws.write(5, col, score.fair)
+            ws.write(6, col, score.score)
+
 
     def filter(self, query):
         return self.form.filter_query(query)
