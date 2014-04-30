@@ -19,6 +19,7 @@ class XLSXBuilder:
         workbook = xlsxwriter.Workbook(output)
 
         self.formats['date'] = workbook.add_format({'num_format': 'yyyy/mm/dd'})
+        self.formats['bold'] = workbook.add_format({'bold': True})
 
         self.summary_worksheet(workbook)
         self.documents_worksheet(workbook)
@@ -38,9 +39,9 @@ class XLSXBuilder:
         ws.write_datetime('E1', datetime.now(), self.formats['date'])
         ws.set_column('E:E', 10)
 
-        ws.write('A3', 'Filters')
+        ws.write('A3', 'Filters', self.formats['bold'])
         ws.write('B4', 'from')
-        ws.write('B5', 'to')
+        ws.write('C4', 'to')
         ws.set_column('B:C', 10)
 
         ws.write('A5', 'added')
@@ -64,7 +65,7 @@ class XLSXBuilder:
             ws.write('B8', self.form.user().full_name())
 
 
-        ws.write('A10', 'Summary')
+        ws.write('A10', 'Summary', self.formats['bold'])
         ws.write('A11', 'articles')
         ws.write('B11', self.filter(Document.query).count())
 
