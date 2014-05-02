@@ -11,6 +11,10 @@ class XLSXBuilder:
         self.form = form
         self.formats = {}
 
+        # we use these to filter our queries, rather than trying to pull
+        # complex filter logic into our view queries
+        self.doc_ids = [d.id for d in form.filter_query(Document.query).all()]
+
     def build(self):
         """
         Generate an Excel spreadsheet and return it as a string.
@@ -159,4 +163,4 @@ class XLSXBuilder:
                 })
 
     def filter(self, query):
-        return self.form.filter_query(query)
+        return query.filter(Document.id.in_(self.doc_ids))
