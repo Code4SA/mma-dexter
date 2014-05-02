@@ -6,7 +6,8 @@ from dexter.app import app
 from flask import request, url_for, flash, redirect, make_response, jsonify
 from flask.ext.mako import render_template
 from flask.ext.login import login_required, current_user
-from sqlalchemy.sql import func
+from flask.ext.sqlalchemy import Pagination
+from sqlalchemy.sql import func, distinct
 from sqlalchemy.orm import joinedload
 
 from dexter.models import db, Document, Entity, Medium, User, DocumentSource
@@ -84,7 +85,17 @@ def activity():
     except ValueError:
         page = 1
 
-    query = form.make_query()
+    query = Document.query\
+                .options(
+                    joinedload(Document.created_by),
+                    joinedload(Document.medium),
+                    joinedload(Document.topic),
+                    joinedload(Document.origin),
+                    joinedload(Document.fairness),
+                    joinedload(Document.sources),
+                )
+    query = form.filter_query(query)
+
 
     if form.format.data == 'chart-json':
         # chart data in json format
@@ -99,9 +110,15 @@ def activity():
         response.headers["Content-Type"] = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
         return response
 
-        
-    paged_docs = query.order_by(Document.created_at.desc()).paginate(page, per_page)
+    # do manual pagination
+    query = query.order_by(Document.created_at.desc())
+    items = query.limit(per_page).offset((page - 1) * per_page).all()
+    if not items and page != 1 and error_out:
+        abort(404)
+    total = form.filter_query(db.session.query(func.count(distinct(Document.id)))).scalar()
+    paged_docs = Pagination(query, page, min(per_page, len(items)), total, items)
 
+    # group by date added
     doc_groups = []
     for date, group in groupby(paged_docs.items, lambda d: d.created_at.date()):
         doc_groups.append([date, list(group)])
@@ -143,21 +160,6 @@ class ActivityForm(Form):
             return Medium.query.get(self.medium_id.data)
         return None
 
-    def make_query(self):
-        query = Document.query\
-                    .join(DocumentSource)\
-                    .options(
-                        joinedload(Document.created_by),
-                        joinedload(Document.medium),
-                        joinedload(Document.topic),
-                        joinedload(Document.origin),
-                        joinedload(Document.fairness),
-                        joinedload(Document.sources),
-                    )
-
-        return self.filter_query(query)
-
-    
     @property
     def created_from(self):
         if self.created_at.data:
@@ -285,7 +287,7 @@ class ActivityChartHelper:
     def problems_chart(self):
         counts = Counter()
         for d in self.docs:
-            counts.update(w.short_desc for w in d.analysis_warnings())
+            counts.update(w.short_desc for w in d.analysis_problems())
 
         return {
             'values': dict(counts)
