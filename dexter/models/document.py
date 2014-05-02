@@ -167,8 +167,8 @@ class Document(db.Model):
             person.relearn_affiliation()
 
 
-    def analysis_warnings(self):
-        """ A list of warnings (possibly empty) for critical things
+    def analysis_problems(self):
+        """ A list of problems (possibly empty) for critical things
         missing from this document. """
         return DocumentAnalysisProblem.for_document(self)
 
@@ -330,7 +330,9 @@ class SourceWithoutFunction(DocumentAnalysisProblem):
 
     def filter_query(self, query):
         from . import DocumentSource
-        return query.filter(DocumentSource.function == None)
+        return query\
+                .join(DocumentSource)\
+                .filter(DocumentSource.function == None)
 
 
 class SourceWithoutAffiliation(DocumentAnalysisProblem):
@@ -343,4 +345,6 @@ class SourceWithoutAffiliation(DocumentAnalysisProblem):
 
     def filter_query(self, query):
         from . import DocumentSource
-        return query.filter(DocumentSource.affiliation == None)
+        return query\
+                .join(DocumentSource)\
+                .filter(DocumentSource.affiliation == None)

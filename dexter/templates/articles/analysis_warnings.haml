@@ -1,8 +1,8 @@
-- warnings = document.analysis_warnings()
-- if warnings:
-  %section.warnings
+- problems = document.analysis_problems()
+- if problems:
+  %section.problems
     .alert.alert-warning
       %h4 There are problems with the analysis
       %ul.list-unstyled
-        - for warning in warnings:
-          %li&= warning.long_desc
+        - for p in problems:
+          %li&= p.long_desc
