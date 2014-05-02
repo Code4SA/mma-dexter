@@ -66,10 +66,14 @@ class XLSXBuilder:
         if self.form.user():
             ws.write('B8', self.form.user().full_name())
 
+        ws.write('A9', 'problems')
+        if self.form.problems.data:
+            ws.write('B9', ', '.join(p.short_desc for p in self.form.get_problems()))
 
-        ws.write('A10', 'Summary', self.formats['bold'])
-        ws.write('A11', 'articles')
-        ws.write('B11', self.filter(Document.query).count())
+
+        ws.write('A11', 'Summary', self.formats['bold'])
+        ws.write('A12', 'articles')
+        ws.write('B12', self.filter(Document.query).count())
 
     def documents_worksheet(self, wb):
         from dexter.models.views import DocumentsView

@@ -160,6 +160,11 @@ class ActivityForm(Form):
             return Medium.query.get(self.medium_id.data)
         return None
 
+
+    def get_problems(self):
+        return [DocumentAnalysisProblem.lookup(code) for code in self.problems.data]
+
+
     @property
     def created_from(self):
         if self.created_at.data:
