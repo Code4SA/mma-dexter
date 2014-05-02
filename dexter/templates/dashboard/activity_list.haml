@@ -15,7 +15,7 @@
             %td
               - warnings = doc.analysis_warnings()
               - if warnings:
-                %i.text-danger.fa.fa-warning(title=' '.join(warnings))
+                %i.text-danger.fa.fa-warning(title=' '.join([w.long_desc for w in warnings]))
               - elif doc.checked_by:
                 %i.fa.fa-check-circle(title='Checked by %s' % doc.checked_by.short_name())
 

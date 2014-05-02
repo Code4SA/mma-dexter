@@ -170,21 +170,8 @@ class Document(db.Model):
     def analysis_warnings(self):
         """ A list of warnings (possibly empty) for critical things
         missing from this document. """
-        warnings = []
+        return DocumentAnalysisProblem.for_document(self)
 
-        if self.topic is None:
-            warnings.append("This article needs a topic.")
-
-        if self.origin is None:
-            warnings.append("This article needs an origin.")
-
-        if any(ds.affiliation is None for ds in self.sources):
-            warnings.append("This article has a source without an affiliation.")
-
-        if any(ds.function is None for ds in self.sources):
-            warnings.append("This article has a source without a function.")
-
-        return warnings
 
     def is_fair(self):
         return not self.fairness or (len(self.fairness) == 1 and self.fairness[0].fairness.name == 'Fair')
@@ -274,3 +261,86 @@ class DocumentAnalysisForm(Form):
         self.issues.choices = [(str(issue.id), issue.name) for issue in db.session.query(Issue).order_by('name')]
         self.origin_location_id.choices = [['', '(none)']] + [
                 [str(loc.id), loc.name] for loc in Location.query.order_by(Location.name).all()]
+
+
+class DocumentAnalysisProblem(object):
+    """
+    A helper class that describes a problem with a document's analysis.
+    It has support for filtering SQL queries to find documents with that
+    problem, describing the problem, etc.
+    """
+    _problems = {}
+
+    def check(self, doc):
+        raise NotImplementedError()
+
+    def filter_query(self, query):
+        raise NotImplementedError()
+
+    @classmethod
+    def all(cls):
+        if not cls._problems:
+            cls._problems = dict((k.code, k()) for k in cls.__subclasses__())
+        return sorted(cls._problems.values(), key=lambda k: k.short_desc)
+
+    @classmethod
+    def for_document(cls, doc):
+        return [p for p in cls.all() if p.check(doc)]
+
+    @classmethod
+    def for_select(cls):
+        return [[k.code, k.short_desc] for k in cls.all()]
+
+    @classmethod
+    def lookup(cls, key):
+        return cls._problems[key]
+
+
+class MissingTopic(DocumentAnalysisProblem):
+    code = 'missing-topic'
+    short_desc = 'missing a topic'
+    long_desc  = 'This document is missing a topic.'
+
+    def check(self, doc):
+        return doc.topic is None
+
+    def filter_query(self, query):
+        return query.filter(Document.topic == None)
+
+
+class MissingOrigin(DocumentAnalysisProblem):
+    code = 'missing-origin'
+    short_desc = 'missing an origin'
+    long_desc  = 'This document is missing an origin.'
+
+    def check(self, doc):
+        return doc.origin is None
+
+    def filter_query(self, query):
+        return query.filter(Document.origin == None)
+
+
+class SourceWithoutFunction(DocumentAnalysisProblem):
+    code = 'source-without-function'
+    short_desc = 'source without a function'
+    long_desc  = 'This document has a source without a function.'
+
+    def check(self, doc):
+        return any(ds.function is None for ds in doc.sources)
+
+    def filter_query(self, query):
+        from . import DocumentSource
+        return query.filter(DocumentSource.function == None)
+
+
+class SourceWithoutAffiliation(DocumentAnalysisProblem):
+    code = 'source-without-affiliation'
+    short_desc = 'source without an affiliation'
+    long_desc  = 'This document has a source without an affiliation.'
+
+    def check(self, doc):
+        return any(ds.affiliation is None for ds in doc.sources)
+
+    def filter_query(self, query):
+        from . import DocumentSource
+        return query.filter(DocumentSource.affiliation == None)

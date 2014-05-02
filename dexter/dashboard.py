@@ -9,11 +9,12 @@ from flask.ext.login import login_required, current_user
 from sqlalchemy.sql import func
 from sqlalchemy.orm import joinedload
 
-from dexter.models import db, Document, Entity, Medium, User
+from dexter.models import db, Document, Entity, Medium, User, DocumentSource
+from dexter.models.document import DocumentAnalysisProblem
 
 from wtforms import validators, HiddenField, TextField
 from wtforms.fields.html5 import DateField
-from .forms import Form, SelectField
+from .forms import Form, SelectField, MultiCheckboxField
 from .processing.xlsx import XLSXBuilder
 
 @app.route('/dashboard')
@@ -85,21 +86,7 @@ def activity():
 
     query = form.make_query()
 
-    if form.format.data == 'csv':
-        # return csv
-        body = []
-        keys = None
-        for row in query.all():
-            if not keys:
-                keys = row.keys()
-                body.append(','.join(keys))
-            body.append(u','.join('"%s"' % (unicode(x) if x is not None else '',) for x in row))
-
-        response = make_response(u"\r\n".join(body).encode('utf-8'))
-        response.headers["Content-Disposition"] = "attachment; filename=%s" % form.filename()
-        return response
-
-    elif form.format.data == 'chart-json':
+    if form.format.data == 'chart-json':
         # chart data in json format
         return jsonify(ActivityChartHelper(query.all()).chart_data())
 
@@ -130,6 +117,7 @@ class ActivityForm(Form):
     medium_id   = SelectField('Medium', [validators.Optional()], default='') 
     created_at  = TextField('Added', [validators.Optional()])
     published_at   = TextField('Published', [validators.Optional()])
+    problems       = MultiCheckboxField('Article problems', [validators.Optional()], choices=DocumentAnalysisProblem.for_select())
     format         = HiddenField('format', default='html') 
 
     def __init__(self, *args, **kwargs):
@@ -156,22 +144,16 @@ class ActivityForm(Form):
         return None
 
     def make_query(self):
-        if self.format.data == 'csv':
-            from dexter.models.views import DocumentsView, DocumentSourcesView
-            # return csv
-            query = db.session.query(DocumentsView, DocumentSourcesView)\
-                    .join(Document)\
-                    .join(DocumentSourcesView)
-        else:
-            query = Document.query\
-                        .options(
-                            joinedload(Document.created_by),
-                            joinedload(Document.medium),
-                            joinedload(Document.topic),
-                            joinedload(Document.origin),
-                            joinedload(Document.fairness),
-                            joinedload(Document.sources),
-                        )
+        query = Document.query\
+                    .join(DocumentSource)\
+                    .options(
+                        joinedload(Document.created_by),
+                        joinedload(Document.medium),
+                        joinedload(Document.topic),
+                        joinedload(Document.origin),
+                        joinedload(Document.fairness),
+                        joinedload(Document.sources),
+                    )
 
         return self.filter_query(query)
 
@@ -224,6 +206,10 @@ class ActivityForm(Form):
         if self.published_to:
             query = query.filter(Document.published_at <= self.published_to)
 
+        if self.problems.data:
+            for code in self.problems.data:
+                query = DocumentAnalysisProblem.lookup(code).filter_query(query)
+
         return query
 
     def filename(self):
@@ -238,6 +224,9 @@ class ActivityForm(Form):
             filename.append(self.published_at.data.replace(' ', ''))
 
         return "%s.%s" % ('-'.join(filename), self.format.data)
+
+    def as_dict(self):
+        return dict((f.name, f.data) for f in self if f.name != 'csrf_token')
 
 
 class ActivityChartHelper:
@@ -296,10 +285,7 @@ class ActivityChartHelper:
     def problems_chart(self):
         counts = Counter()
         for d in self.docs:
-            counts.update(
-                    s.replace('This article needs', 'missing')\
-                     .replace('This article ', '')\
-                     .replace('.', '') for s in d.analysis_warnings())
+            counts.update(w.short_desc for w in d.analysis_warnings())
 
         return {
             'values': dict(counts)
