@@ -113,7 +113,7 @@ def activity():
     # do manual pagination
     query = query.order_by(Document.created_at.desc())
     items = query.limit(per_page).offset((page - 1) * per_page).all()
-    if not items and page != 1 and error_out:
+    if not items and page != 1:
         abort(404)
     total = form.filter_query(db.session.query(func.count(distinct(Document.id)))).scalar()
     paged_docs = Pagination(query, page, min(per_page, len(items)), total, items)
