@@ -7,7 +7,8 @@
 
 %article#activity
   %h3
-    Articles
+    &= paged_docs.total
+    Article${'' if paged_docs.total == 1 else 's'}
     - if form.user():
       added by ${form.user().short_name()|h}
     - if form.medium():
@@ -89,6 +90,13 @@
                 %span.input-group-btn
                   %button.btn.btn-default(dataClear='input-group')
                     %i.fa.fa-times
+            .form-group
+              = form.problems.label()
+              .input-group
+                - for fld in form.problems:
+                  .checkbox
+                    = fld
+                    = fld.label()
 
           .panel-footer
             .pull-right
@@ -103,5 +111,4 @@
 
   %section
     %%include(file='activity_list.haml')
-    = paginator('activity', paged_docs, user_id=form.user_id.data, medium_id=form.medium_id.data, created_at=form.created_at.data, published_at=form.published_at.data)
-
+    = paginator('activity', paged_docs, **form.as_dict())

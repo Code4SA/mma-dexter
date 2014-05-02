@@ -6,14 +6,16 @@ from dexter.app import app
 from flask import request, url_for, flash, redirect, make_response, jsonify
 from flask.ext.mako import render_template
 from flask.ext.login import login_required, current_user
-from sqlalchemy.sql import func
+from flask.ext.sqlalchemy import Pagination
+from sqlalchemy.sql import func, distinct
 from sqlalchemy.orm import joinedload
 
-from dexter.models import db, Document, Entity, Medium, User
+from dexter.models import db, Document, Entity, Medium, User, DocumentSource
+from dexter.models.document import DocumentAnalysisProblem
 
 from wtforms import validators, HiddenField, TextField
 from wtforms.fields.html5 import DateField
-from .forms import Form, SelectField
+from .forms import Form, SelectField, MultiCheckboxField
 from .processing.xlsx import XLSXBuilder
 
 @app.route('/dashboard')
@@ -83,23 +85,19 @@ def activity():
     except ValueError:
         page = 1
 
-    query = form.make_query()
+    query = Document.query\
+                .options(
+                    joinedload(Document.created_by),
+                    joinedload(Document.medium),
+                    joinedload(Document.topic),
+                    joinedload(Document.origin),
+                    joinedload(Document.fairness),
+                    joinedload(Document.sources),
+                )
+    query = form.filter_query(query)
 
-    if form.format.data == 'csv':
-        # return csv
-        body = []
-        keys = None
-        for row in query.all():
-            if not keys:
-                keys = row.keys()
-                body.append(','.join(keys))
-            body.append(u','.join('"%s"' % (unicode(x) if x is not None else '',) for x in row))
 
-        response = make_response(u"\r\n".join(body).encode('utf-8'))
-        response.headers["Content-Disposition"] = "attachment; filename=%s" % form.filename()
-        return response
-
-    elif form.format.data == 'chart-json':
+    if form.format.data == 'chart-json':
         # chart data in json format
         return jsonify(ActivityChartHelper(query.all()).chart_data())
 
@@ -112,9 +110,15 @@ def activity():
         response.headers["Content-Type"] = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
         return response
 
-        
-    paged_docs = query.order_by(Document.created_at.desc()).paginate(page, per_page)
+    # do manual pagination
+    query = query.order_by(Document.created_at.desc())
+    items = query.limit(per_page).offset((page - 1) * per_page).all()
+    if not items and page != 1 and error_out:
+        abort(404)
+    total = form.filter_query(db.session.query(func.count(distinct(Document.id)))).scalar()
+    paged_docs = Pagination(query, page, min(per_page, len(items)), total, items)
 
+    # group by date added
     doc_groups = []
     for date, group in groupby(paged_docs.items, lambda d: d.created_at.date()):
         doc_groups.append([date, list(group)])
@@ -130,6 +134,7 @@ class ActivityForm(Form):
     medium_id   = SelectField('Medium', [validators.Optional()], default='') 
     created_at  = TextField('Added', [validators.Optional()])
     published_at   = TextField('Published', [validators.Optional()])
+    problems       = MultiCheckboxField('Article problems', [validators.Optional()], choices=DocumentAnalysisProblem.for_select())
     format         = HiddenField('format', default='html') 
 
     def __init__(self, *args, **kwargs):
@@ -155,27 +160,6 @@ class ActivityForm(Form):
             return Medium.query.get(self.medium_id.data)
         return None
 
-    def make_query(self):
-        if self.format.data == 'csv':
-            from dexter.models.views import DocumentsView, DocumentSourcesView
-            # return csv
-            query = db.session.query(DocumentsView, DocumentSourcesView)\
-                    .join(Document)\
-                    .join(DocumentSourcesView)
-        else:
-            query = Document.query\
-                        .options(
-                            joinedload(Document.created_by),
-                            joinedload(Document.medium),
-                            joinedload(Document.topic),
-                            joinedload(Document.origin),
-                            joinedload(Document.fairness),
-                            joinedload(Document.sources),
-                        )
-
-        return self.filter_query(query)
-
-    
     @property
     def created_from(self):
         if self.created_at.data:
@@ -224,6 +208,10 @@ class ActivityForm(Form):
         if self.published_to:
             query = query.filter(Document.published_at <= self.published_to)
 
+        if self.problems.data:
+            for code in self.problems.data:
+                query = DocumentAnalysisProblem.lookup(code).filter_query(query)
+
         return query
 
     def filename(self):
@@ -238,6 +226,9 @@ class ActivityForm(Form):
             filename.append(self.published_at.data.replace(' ', ''))
 
         return "%s.%s" % ('-'.join(filename), self.format.data)
+
+    def as_dict(self):
+        return dict((f.name, f.data) for f in self if f.name != 'csrf_token')
 
 
 class ActivityChartHelper:
@@ -296,10 +287,7 @@ class ActivityChartHelper:
     def problems_chart(self):
         counts = Counter()
         for d in self.docs:
-            counts.update(
-                    s.replace('This article needs', 'missing')\
-                     .replace('This article ', '')\
-                     .replace('.', '') for s in d.analysis_warnings())
+            counts.update(w.short_desc for w in d.analysis_problems())
 
         return {
             'values': dict(counts)

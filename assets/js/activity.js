@@ -174,8 +174,25 @@
       var holder = $('.chart-problems');
       if (!_.isEmpty(data)) {
         holder.empty();
+
         _.map(data, function(val, cat) {
-          holder.append('<div class="problem"><h3>' + val + '</h3><h4>' + cat + '</div>');
+          var html = $('<div class="problem"><h3>' + val + '</h3><h4><a href="#">' + cat + '</a></div>');
+          holder.append(html);
+        });
+
+        // when the user clicks on a problem, narrow down to it
+        holder.on('click', 'a', function(e) {
+          e.preventDefault();
+
+          // check the matching form element and submit the form
+          var cat = $(this).text();
+          $('form.activity-refine .checkbox label').each(function(i) {
+            if ($(this).text() == cat) {
+              $('#' + $(this).attr('for')).prop('checked', true);
+            }
+          });
+
+          $('form.activity-refine').submit();
         });
       } else {
         holder.html('None');
