@@ -144,7 +144,13 @@ class BiasCalculator:
                     p = p * math.log(p)
                 total_p += p
 
-            entropy[col] = -(1 / math.log(len(row_labels))) * total_p
+            if len(row_labels) == 1:
+                # avoid 1/0
+                log = 1
+            else:
+                log = 1 / math.log(len(row_labels))
+
+            entropy[col] = -log * total_p
 
         self.log.debug("Done")
 
