@@ -11,3 +11,4 @@ from .location import Location
 from .issue import Issue
 from .fairness import Fairness, Affiliation, DocumentFairness
 from .user import User
+from .place import Place, DocumentPlace

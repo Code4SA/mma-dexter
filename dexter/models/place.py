@@ -4,14 +4,18 @@ from sqlalchemy import (
     DateTime,
     ForeignKey,
     Integer,
+    Float,
     String,
     func,
+    or_,
     )
+from sqlalchemy.orm import relationship, backref
 
 import logging
 log = logging.getLogger(__name__)
 
 from .support import db
+from .with_offsets import WithOffsets
 
 class Place(db.Model):
     """
@@ -58,3 +62,83 @@ class Place(db.Model):
 
     lat = Column(String(10))
     lng = Column(String(10))
+
+    @property
+    def full_name(self):
+        parents = [self.subplace_name, self.mainplace_name, self.municipality_name, self.province_name]
+        return ', '.join(x for x in parents if x)
+        
+
+    def __repr__(self):
+        return "<Place level=%s, province=%s, muni=%s, mainplace='%s', subplace='%s'>" % (
+                self.level, self.province_code, self.municipality_code,
+                self.mainplace_name, self.subplace_name)
+
+
+    @classmethod
+    def find(cls, term):
+        """
+        See if we have a place that matches this name.
+        """
+        p = Place.query\
+                .filter(Place.level == 'province')\
+                .filter(Place.province_name == term).first()
+        if p:
+            return p
+
+        p = Place.query\
+                .filter(Place.level == 'municipality')\
+                .filter(or_(
+                    Place.municipality_name == term,
+                    Place.municipality_name == 'City of %s' % term)).first()
+        if p:
+            return p
+
+        p = Place.query\
+                .filter(Place.level == 'mainplace')\
+                .filter(or_(
+                    Place.mainplace_name == term,
+                    Place.mainplace_name == '%s MP' % term)).first()
+        if p:
+            return p
+
+        p = Place.query\
+                .filter(Place.level == 'subplace')\
+                .filter(or_(
+                    Place.subplace_name == term,
+                    Place.subplace_name == '%s SP' % term)).first()
+        if p:
+            return p
+
+        p = Place.query\
+                .filter(Place.level == 'subplace')\
+                .filter(or_(
+                    Place.subplace_name == term,
+                    Place.subplace_name == '%s SP' % term)).first()
+
+        return p
+
+
+class DocumentPlace(db.Model, WithOffsets):
+    """
+    Place in an article.
+    """
+    __tablename__ = "document_places"
+
+    id        = Column(Integer, primary_key=True)
+    doc_id    = Column(Integer, ForeignKey('documents.id', ondelete='CASCADE'), index=True, nullable=False)
+
+    place_id  = Column(Integer, ForeignKey('places.id'), index=True, nullable=False)
+    relevance = Column(Float, index=True, nullable=True)
+
+    # offsets in the document, a space-separated list of offset:length pairs.
+    offset_list  = Column(String(1024))
+    
+    created_at   = Column(DateTime(timezone=True), index=True, unique=False, nullable=False, server_default=func.now())
+    updated_at   = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.current_timestamp())
+
+    # Associations
+    place        = relationship('Place', lazy=False)
+
+    def __repr__(self):
+        return "<DocumentPlace id=%s, place=%s, relevance=%s, doc=%s>" % (self.id, self.place, self.relevance, self.document)

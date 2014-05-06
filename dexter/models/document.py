@@ -63,6 +63,7 @@ class Document(db.Model):
     keywords    = relationship("DocumentKeyword", backref=backref('document'), cascade='all', passive_deletes=True, order_by="desc(DocumentKeyword.relevance)")
     sources     = relationship("DocumentSource", backref=backref('document'), cascade='all, delete-orphan', passive_deletes=True)
     fairness    = relationship("DocumentFairness", backref=backref('document'), cascade='all, delete-orphan', passive_deletes=True)
+    places      = relationship("DocumentPlace", backref=backref('document'), cascade='all, delete-orphan', passive_deletes=True)
     issues      = relationship("Issue", secondary='document_issues', passive_deletes=True)
     medium      = relationship("Medium")
     topic       = relationship("Topic")
@@ -82,7 +83,7 @@ class Document(db.Model):
         return [e for e in self.entities if e.entity.group == 'organization']
 
 
-    def places(self):
+    def place_entities(self):
         return [e for e in self.entities if e.entity.group in Document.PLACE_ENTITY_GROUPS]
 
 
@@ -135,6 +136,17 @@ class Document(db.Model):
                 return False
                 
         self.sources.append(source)
+        return True
+
+
+    def add_place(self, doc_place):
+        """ Add a new DocumentPlace to this document, but only
+        if it doesn't already exist."""
+        for dp in self.places:
+            if dp.place == doc_place.place:
+                return False
+
+        self.places.append(doc_place)
         return True
 
 
