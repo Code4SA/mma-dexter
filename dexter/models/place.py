@@ -67,7 +67,32 @@ class Place(db.Model):
     def full_name(self):
         parents = [self.subplace_name, self.mainplace_name, self.municipality_name, self.province_name]
         return ', '.join(x for x in parents if x)
-        
+
+    @property
+    def name(self):
+        return getattr(self, '%s_name' % self.level)
+
+    @property
+    def code(self):
+        return getattr(self, '%s_code' % self.level)
+
+    @property
+    def geo_type(self):
+        """ What type of geo is this, a point or an id? """
+        if self.lat and self.lng:
+            return "point"
+        else:
+            return "id"
+
+    @property
+    def geo_data(self):
+        """ Data for this place. If it's a point, a lat,lng string.
+        Otherwise a level-id string."""
+        if self.lat and self.lng:
+            return '%s, %s' % (self.lat, self.lng)
+        else:
+            return '%s-%s' % (self.level, self.code)
+
 
     def __repr__(self):
         return "<Place level=%s, province=%s, muni=%s, mainplace='%s', subplace='%s'>" % (

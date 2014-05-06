@@ -18,6 +18,8 @@
     - for url in webassets('css'):
       %link(rel="stylesheet", href=url)
 
+    %%block(name="extra_header_tags")
+
   %body
     %header
       .navbar.navbar-default

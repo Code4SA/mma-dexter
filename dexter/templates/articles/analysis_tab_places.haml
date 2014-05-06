@@ -1,8 +1,18 @@
+%%block(name="extra_header_tags")
+  %link(rel="stylesheet", href="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.css")
+  %script(src="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.js")
+  %script(src="http://d3js.org/d3.v3.min.js")
+  %script(src="http://d3js.org/topojson.v1.min.js")
+  
+
 #places-tab.tab-pane
   %h4 Places
+
+  #slippy-map(style="height: 280px; width: 100%")
+
   %table.table.table-striped.table-condensed.offsets.entities
     - for p in document.places:
-      %tr(dataOffsets=p.offset_list)
+      %tr.geo-feature(dataOffsets=p.offset_list, dataGeoType=p.place.geo_type, dataGeoData=p.place.geo_data)
         %td&= p.place.full_name
         %td&= p.relevance
 
