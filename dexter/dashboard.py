@@ -101,6 +101,10 @@ def activity():
         # chart data in json format
         return jsonify(ActivityChartHelper(query.all()).chart_data())
 
+    elif form.format.data == 'places-json':
+        docs = [d.places_dict() for d in query.all()]
+        return jsonify({'documents': docs})
+
     elif form.format.data == 'xlsx':
         # excel spreadsheet
         excel = XLSXBuilder(form).build()

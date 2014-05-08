@@ -23,48 +23,54 @@
         attribution: 'Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'});	
       self.map.addLayer(osm);
 
-      self.drawFeatures();
+      self.loadAndDrawPlaces();
     };
 
-    self.drawFeatures = function() {
-      $('.geo-feature').each(function(i, feat) {
-        console.log(feat);
+    self.placesUrl = function() {
+      var url = document.location;
 
-        var $feat = $(feat);
-        var geo = $feat.data('geo-data');
-        var parts;
+      if (document.location.search === "") {
+        url = url + "?";
+      } else {
+        url = url + "&";
+      }
 
-        if ($feat.data('geo-type') == 'point') {
-          parts = geo.split(',');
-          var lat = parseFloat(parts[0]),
-              lng = parseFloat(parts[1]);
+      return url + "format=places-json";
+    };
+  
+    self.loadAndDrawPlaces = function() {
+      $.getJSON(self.placesUrl(), self.drawPlaces);
+    };
 
-          L.marker([lat, lng])
-            .addTo(self.map)
-            .bindPopup($('td:first-child', $feat).text());
+    self.drawPlaces = function(data) {
+      _.each(data.documents, function(doc) {
+        _.each(doc.places, function(place) {
+          if (place.type == 'point') {
+            // it's a point
+            L.marker(place.coordinates)
+              .addTo(self.map)
+              .bindPopup(place.full_name);
 
-        } else {
-          parts = geo.split('-');
-          var level = parts[0],
-              code = parts[1];
+          } else {
+            // it's a region
+            d3.json("http://maps.code4sa.org/political/2011/" + place.level + '?filter[' + place.level + ']=' + place.code + '&quantization=5000', function(error, topo) {
+              if (!topo)
+                return;
 
-          d3.json("http://maps.code4sa.org/political/2011/" + level + '?filter[' + level + ']=' + code + '&quantization=5000', function(error, topo) {
-            if (!topo)
-              return;
-
-            var featureLayer = L.geoJson(topojson.feature(topo, topo.objects.demarcation), {
-              style: {
-                "clickable": false,
-                "color": "#00d",
-                "fillColor": "#ccc",
-                "weight": 1.0,
-                "opacity": 0.5,
-                "fillOpacity": 0.5,
-              },
+              var featureLayer = L.geoJson(topojson.feature(topo, topo.objects.demarcation), {
+                style: {
+                  "clickable": false,
+                  "color": "#00d",
+                  "fillColor": "#ccc",
+                  "weight": 1.0,
+                  "opacity": 0.5,
+                  "fillOpacity": 0.5,
+                },
+              });
+              self.map.addLayer(featureLayer);
             });
-            self.map.addLayer(featureLayer);
-          });
-        }
+          }
+        });
       });
     };
   };

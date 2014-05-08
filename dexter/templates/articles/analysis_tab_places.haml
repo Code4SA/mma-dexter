@@ -5,6 +5,6 @@
 
   %table.table.table-striped.table-condensed.offsets.entities
     - for p in document.places:
-      %tr.geo-feature(dataOffsets=p.offset_list, dataGeoType=p.place.geo_type, dataGeoData=p.place.geo_data)
+      %tr
         %td&= p.place.full_name
         %td&= p.relevance

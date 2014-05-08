@@ -77,12 +77,16 @@ class Place(db.Model):
         return getattr(self, '%s_code' % self.level)
 
     @property
+    def geo_id(self):
+        return '%s-%s' % (self.level, self.code)
+
+    @property
     def geo_type(self):
         """ What type of geo is this, a point or an id? """
         if self.lat and self.lng:
             return "point"
         else:
-            return "id"
+            return "region"
 
     @property
     def geo_data(self):
@@ -92,6 +96,22 @@ class Place(db.Model):
             return '%s, %s' % (self.lat, self.lng)
         else:
             return '%s-%s' % (self.level, self.code)
+
+
+    def as_dict(self):
+        d = {
+            'type': self.geo_type,
+            'id': self.geo_id,
+            'level': self.level,
+            'code': self.code,
+            'full_name': self.full_name,
+            'name': self.name,
+        }
+
+        if d['type'] == 'point':
+            d['coordinates'] = [self.lat, self.lng]
+
+        return d
 
 
     def __repr__(self):
@@ -164,6 +184,11 @@ class DocumentPlace(db.Model, WithOffsets):
 
     # Associations
     place        = relationship('Place', lazy=False)
+
+    def as_dict(self):
+        p = self.place.as_dict()
+        p['relevance'] = self.relevance
+        return p
 
     def __repr__(self):
         return "<DocumentPlace id=%s, place=%s, relevance=%s, doc=%s>" % (self.id, self.place, self.relevance, self.document)

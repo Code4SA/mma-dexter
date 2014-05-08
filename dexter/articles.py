@@ -1,7 +1,7 @@
 import logging
 log = logging.getLogger(__name__)
 
-from flask import request, url_for, flash, redirect, make_response
+from flask import request, url_for, flash, redirect, make_response, jsonify
 from flask.ext.mako import render_template
 from flask.ext.login import login_required, current_user
 
@@ -18,6 +18,10 @@ from .processing import DocumentProcessor, ProcessingError
 @login_required
 def show_article(id):
     document = Document.query.get_or_404(id)
+
+    if request.args.get('format') == 'places-json':
+        return jsonify({'documents': [document.places_dict()]})
+
     return render_template('articles/show.haml',
             document=document)
 

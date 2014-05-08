@@ -188,6 +188,13 @@ class Document(db.Model):
     def is_fair(self):
         return not self.fairness or (len(self.fairness) == 1 and self.fairness[0].fairness.name == 'Fair')
 
+    
+    def places_dict(self):
+        return {
+            'doc_id': self.id,
+            'places': [p.as_dict() for p in self.places]
+        }
+
 
     def __repr__(self):
         return "<Document id=%s, url=%s>" % (self.id, self.url)
