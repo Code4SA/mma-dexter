@@ -13,7 +13,7 @@ class XLSXBuilder:
 
         # we use these to filter our queries, rather than trying to pull
         # complex filter logic into our view queries
-        self.doc_ids = [d.id for d in form.filter_query(Document.query).all()]
+        self.doc_ids = [d[0] for d in form.filter_query(db.session.query(Document.id)).all()]
 
     def build(self):
         """
