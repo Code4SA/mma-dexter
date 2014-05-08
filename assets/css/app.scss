@@ -211,6 +211,17 @@ table.fairness {
   margin-left: 10px;
 }
 
+#slippy-map {
+  width: 100%;
+  height: 400px;
+}
+
+#places-tab {
+  #slippy-map {
+    height: 280px;
+  }
+}
+
 .activity-list {
   section {
     margin-bottom: 30px;

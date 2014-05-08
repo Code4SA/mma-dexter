@@ -7,6 +7,13 @@
         return;
       }
 
+      // resize maps when a tab is toggled
+      $('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
+        $($(this).attr('href') + ' .leaflet-container').each(function(i, map) {
+          self.map.invalidateSize(false);
+        });
+      });
+
       self.map = L.map('slippy-map');
       self.map.setView({lat: -28.4796, lng: 24.698445}, 5);
 
@@ -17,10 +24,6 @@
       self.map.addLayer(osm);
 
       self.drawFeatures();
-
-      $('a[data-toggle="tab"][href="#places-tab"]').on('shown.bs.tab', function(e) {
-        self.map.invalidateSize(false);
-      });
     };
 
     self.drawFeatures = function() {
