@@ -17,7 +17,7 @@
       self.map = L.map('slippy-map');
       self.map.setView({lat: -28.4796, lng: 24.698445}, 5);
 
-      var osm = new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      var osm = new L.TileLayer('//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         minZoom: 1,
         maxZoom: 16,
         attribution: 'Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'});	
@@ -66,7 +66,7 @@
           self.drawPlaceMarker(place, place.coordinates, radius);
         } else {
           // it's a region, get the centroid
-          d3.json("http://maps.code4sa.org/political/2011/" + place.level + '?filter[' + place.level + ']=' + place.code + '&quantization=5000', function(error, topo) {
+          d3.json("//maps.code4sa.org/political/2011/" + place.level + '?filter[' + place.level + ']=' + place.code + '&quantization=5000', function(error, topo) {
             if (!topo)
               return;
 
