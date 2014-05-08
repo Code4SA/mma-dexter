@@ -99,7 +99,7 @@ def activity():
 
     if form.format.data == 'chart-json':
         # chart data in json format
-        return jsonify(ActivityChartHelper(query.all()).chart_data())
+        return jsonify(ActivityChartHelper(form, query.all()).chart_data())
 
     elif form.format.data == 'places-json':
         # places in json format
@@ -246,8 +246,13 @@ class ActivityForm(Form):
 
 
 class ActivityChartHelper:
-    def __init__(self, docs):
+    def __init__(self, form, docs):
         self.docs = docs
+        self.form = form
+
+        # we use these to filter our queries, rather than trying to pull
+        # complex filter logic into our view queries
+        self.doc_ids = [d[0] for d in form.filter_query(db.session.query(Document.id)).all()]
 
 
     def chart_data(self):
@@ -267,16 +272,37 @@ class ActivityChartHelper:
 
 
     def created_chart(self):
+        query = db.session.query(
+                  func.count(Document.id),
+                  func.date_format(Document.created_at, '%Y/%m/%d').label('t'),
+                )\
+                .group_by('t')
+
         return {
-            'values': dict(Counter(d.created_at.strftime('%Y/%m/%d') for d in self.docs))
+            'values': dict(self.filter(query).all())
         }
 
     def published_chart(self):
+        query = db.session.query(
+                  func.count(Document.id),
+                  func.date_format(Document.published_at, '%Y/%m/%d').label('t'),
+                )\
+                .group_by('t')
+
         return {
-            'values': dict(Counter(d.published_at.strftime('%Y/%m/%d') for d in self.docs))
+            'values': dict(self.filter(query).all())
         }
 
     def users_chart(self):
+        query = db.session.query(
+                  Document.created_by_user_id,
+                  func.count(Document.id),
+                )\
+                .group_by(Document.created_by_user_id)
+        rows = self.filter(query).all()
+
+
+
         return {
             'values': dict(Counter(d.created_by.short_name() if d.created_by else '' for d in self.docs))
         }
@@ -306,3 +332,6 @@ class ActivityChartHelper:
         return {
             'values': dict(counts)
         }
+
+    def filter(self, query):
+        return query.filter(Document.id.in_(self.doc_ids))
