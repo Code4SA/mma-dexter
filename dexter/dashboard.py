@@ -10,7 +10,7 @@ from flask.ext.sqlalchemy import Pagination
 from sqlalchemy.sql import func, distinct
 from sqlalchemy.orm import joinedload
 
-from dexter.models import db, Document, Entity, Medium, User, DocumentSource
+from dexter.models import db, Document, Entity, Medium, User, DocumentSource, DocumentPlace
 from dexter.models.document import DocumentAnalysisProblem
 
 from wtforms import validators, HiddenField, TextField
@@ -102,8 +102,7 @@ def activity():
         return jsonify(ActivityChartHelper(query.all()).chart_data())
 
     elif form.format.data == 'places-json':
-        docs = [d.places_dict() for d in query.all()]
-        return jsonify({'documents': docs})
+        return jsonify(DocumentPlace.summary_for_docs(query.all()))
 
     elif form.format.data == 'xlsx':
         # excel spreadsheet

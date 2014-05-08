@@ -190,5 +190,33 @@ class DocumentPlace(db.Model, WithOffsets):
         p['relevance'] = self.relevance
         return p
 
+
     def __repr__(self):
         return "<DocumentPlace id=%s, place=%s, relevance=%s, doc=%s>" % (self.id, self.place, self.relevance, self.document)
+
+
+    @classmethod
+    def summary_for_docs(cls, docs):
+        """
+        Generate a summary description for places in these docs for plotting on maps.
+        """
+        mentions = {}
+        origins = {}
+
+        for d in docs:
+            # TODO: origin
+
+            # TODO: filter by relevance
+            for dp in d.places:
+                geo_id = dp.place.geo_id
+
+                if not geo_id in mentions:
+                    mentions[geo_id] = dp.place.as_dict()
+                    mentions[geo_id]['documents'] = []
+
+                mentions[geo_id]['documents'].append(d.id)
+
+        return {
+            'mentions': mentions.values(),
+            'origins': origins,
+        }

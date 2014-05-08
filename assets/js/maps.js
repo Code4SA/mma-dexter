@@ -43,34 +43,32 @@
     };
 
     self.drawPlaces = function(data) {
-      _.each(data.documents, function(doc) {
-        _.each(doc.places, function(place) {
-          if (place.type == 'point') {
-            // it's a point
-            L.marker(place.coordinates)
-              .addTo(self.map)
-              .bindPopup(place.full_name);
+      _.each(data.mentions, function(place) {
+        if (place.type == 'point') {
+          // it's a point
+          L.marker(place.coordinates)
+            .addTo(self.map)
+            .bindPopup(place.full_name + " (" + place.documents.length + ")");
 
-          } else {
-            // it's a region
-            d3.json("http://maps.code4sa.org/political/2011/" + place.level + '?filter[' + place.level + ']=' + place.code + '&quantization=5000', function(error, topo) {
-              if (!topo)
-                return;
+        } else {
+          // it's a region
+          d3.json("http://maps.code4sa.org/political/2011/" + place.level + '?filter[' + place.level + ']=' + place.code + '&quantization=5000', function(error, topo) {
+            if (!topo)
+              return;
 
-              var featureLayer = L.geoJson(topojson.feature(topo, topo.objects.demarcation), {
-                style: {
-                  "clickable": false,
-                  "color": "#00d",
-                  "fillColor": "#ccc",
-                  "weight": 1.0,
-                  "opacity": 0.5,
-                  "fillOpacity": 0.5,
-                },
-              });
-              self.map.addLayer(featureLayer);
+            var featureLayer = L.geoJson(topojson.feature(topo, topo.objects.demarcation), {
+              style: {
+                "clickable": false,
+                "color": "#00d",
+                "fillColor": "#ccc",
+                "weight": 1.0,
+                "opacity": 0.5,
+                "fillOpacity": 0.5,
+              },
             });
-          }
-        });
+            self.map.addLayer(featureLayer);
+          });
+        }
       });
     };
   };
