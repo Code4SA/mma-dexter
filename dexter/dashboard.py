@@ -102,6 +102,8 @@ def activity():
         return jsonify(ActivityChartHelper(query.all()).chart_data())
 
     elif form.format.data == 'places-json':
+        # places in json format
+        query = query.options(joinedload(Document.places))
         return jsonify(DocumentPlace.summary_for_docs(query.all()))
 
     elif form.format.data == 'xlsx':
