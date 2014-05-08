@@ -10,7 +10,7 @@ from flask.ext.sqlalchemy import Pagination
 from sqlalchemy.sql import func, distinct
 from sqlalchemy.orm import joinedload
 
-from dexter.models import db, Document, Entity, Medium, User, DocumentSource, DocumentPlace
+from dexter.models import db, Document, Entity, Medium, User, DocumentSource, DocumentPlace, DocumentFairness, Fairness
 from dexter.models.document import DocumentAnalysisProblem
 
 from wtforms import validators, HiddenField, TextField
@@ -85,27 +85,14 @@ def activity():
     except ValueError:
         page = 1
 
-    query = Document.query\
-                .options(
-                    joinedload(Document.created_by),
-                    joinedload(Document.medium),
-                    joinedload(Document.topic),
-                    joinedload(Document.origin),
-                    joinedload(Document.fairness),
-                    joinedload(Document.sources).lazyload('*')
-                )
-    query = form.filter_query(query)
-
-
     if form.format.data == 'chart-json':
         # chart data in json format
-        return jsonify(ActivityChartHelper(form, query.all()).chart_data())
+        return jsonify(ActivityChartHelper(form).chart_data())
 
     elif form.format.data == 'places-json':
         # places in json format
         query = Document.query\
-                  .options(
-                    joinedload('places').joinedload('place'))
+                  .options(joinedload('places').joinedload('place'))
         query = form.filter_query(query)
 
         return jsonify(DocumentPlace.summary_for_docs(query.all()))
@@ -118,6 +105,18 @@ def activity():
         response.headers["Content-Disposition"] = "attachment; filename=%s" % form.filename()
         response.headers["Content-Type"] = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
         return response
+
+
+    query = Document.query\
+                .options(
+                    joinedload(Document.created_by),
+                    joinedload(Document.medium),
+                    joinedload(Document.topic),
+                    joinedload(Document.origin),
+                    joinedload(Document.fairness),
+                    joinedload(Document.sources).lazyload('*')
+                )
+    query = form.filter_query(query)
 
     # do manual pagination
     query = query.order_by(Document.created_at.desc())
@@ -246,8 +245,7 @@ class ActivityForm(Form):
 
 
 class ActivityChartHelper:
-    def __init__(self, form, docs):
-        self.docs = docs
+    def __init__(self, form):
         self.form = form
 
         # we use these to filter our queries, rather than trying to pull
@@ -266,15 +264,15 @@ class ActivityChartHelper:
                 'fairness': self.fairness_chart(),
             },
             'summary': {
-                'documents': len(self.docs)
+                'documents': len(self.doc_ids)
             }
         }
 
 
     def created_chart(self):
         query = db.session.query(
-                  func.count(Document.id),
                   func.date_format(Document.created_at, '%Y/%m/%d').label('t'),
+                  func.count(Document.id),
                 )\
                 .group_by('t')
 
@@ -284,8 +282,8 @@ class ActivityChartHelper:
 
     def published_chart(self):
         query = db.session.query(
-                  func.count(Document.id),
                   func.date_format(Document.published_at, '%Y/%m/%d').label('t'),
+                  func.count(Document.id),
                 )\
                 .group_by('t')
 
@@ -300,37 +298,54 @@ class ActivityChartHelper:
                 )\
                 .group_by(Document.created_by_user_id)
         rows = self.filter(query).all()
-
-
+        users = dict((u.id, u.short_name()) for u in User.query.filter(User.id.in_(r[0] for r in rows)))
 
         return {
-            'values': dict(Counter(d.created_by.short_name() if d.created_by else '' for d in self.docs))
+            'values': dict((users[r[0]], r[1]) for r in rows)
         }
 
     def fairness_chart(self):
-        counts = Counter()
-        for d in self.docs:
-            if d.is_fair():
-                counts.update(['Fair'])
-            else:
-                counts.update(f.fairness.name for f in d.fairness)
+        query = db.session.query(
+                    Fairness.name.label('t'),
+                    func.count(distinct(DocumentFairness.doc_id)))\
+                .join(DocumentFairness)\
+                .join(Document, DocumentFairness.doc_id == Document.id)\
+                .group_by('t')
+
+        rows = self.filter(query).all()
+        counts = dict(rows)
+        counts.setdefault('Fair', 0)
+
+        # missing documents are considered fair
+        counts['Fair'] += len(self.doc_ids) - sum(counts.itervalues())
+
         return {
-            'values': dict(counts)
+            'values': counts
         }
 
     def media_chart(self):
+        query = db.session.query(
+                    Medium.name,
+                    func.count(Document.id))\
+                    .join(Document)\
+                    .group_by(Medium.name)
+        rows = self.filter(query).all()
+
         return {
-            'values': dict(Counter(d.medium.name for d in self.docs)),
-            'types': dict([d.medium.name, d.medium.medium_type] for d in self.docs)
+            'values': dict(rows),
+            'types': dict([m.name, m.medium_type] for m in Medium.query.all())
         }
 
     def problems_chart(self):
-        counts = Counter()
-        for d in self.docs:
-            counts.update(w.short_desc for w in d.analysis_problems())
+        counts = {}
+
+        for p in DocumentAnalysisProblem.all():
+            query = db.session.query(func.count(distinct(Document.id)))
+            query = self.filter(p.filter_query(query))
+            counts[p.short_desc] = query.scalar()
 
         return {
-            'values': dict(counts)
+            'values': counts
         }
 
     def filter(self, query):
