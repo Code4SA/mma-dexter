@@ -103,7 +103,11 @@ def activity():
 
     elif form.format.data == 'places-json':
         # places in json format
-        query = query.options(joinedload(Document.places))
+        query = Document.query\
+                  .options(
+                    joinedload('places').joinedload('place'))
+        query = form.filter_query(query)
+
         return jsonify(DocumentPlace.summary_for_docs(query.all()))
 
     elif form.format.data == 'xlsx':
