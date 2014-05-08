@@ -70,8 +70,9 @@
             if (!topo)
               return;
 
-            var region = L.geoJson(topojson.feature(topo, topo.objects.demarcation));
-            self.drawPlaceMarker(place, region.getBounds().getCenter(), radius);
+            var region = topojson.feature(topo, topo.objects.demarcation);
+            var coords = d3.geo.centroid(region);
+            self.drawPlaceMarker(place, [coords[1], coords[0]], radius);
           });
         }
       });
