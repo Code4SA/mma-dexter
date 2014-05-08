@@ -364,7 +364,7 @@ class SourceWithoutFunction(DocumentAnalysisProblem):
     long_desc  = 'This document has a source without a function.'
 
     def check(self, doc):
-        return any(ds.function is None for ds in doc.sources)
+        return any(ds.source_function_id is None for ds in doc.sources)
 
     def filter_query(self, query):
         from . import DocumentSource
@@ -379,7 +379,7 @@ class SourceWithoutAffiliation(DocumentAnalysisProblem):
     long_desc  = 'This document has a source without an affiliation.'
 
     def check(self, doc):
-        return any(ds.affiliation is None for ds in doc.sources)
+        return any(ds.affiliation_id is None for ds in doc.sources)
 
     def filter_query(self, query):
         from . import DocumentSource

@@ -92,7 +92,7 @@ def activity():
                     joinedload(Document.topic),
                     joinedload(Document.origin),
                     joinedload(Document.fairness),
-                    joinedload(Document.sources),
+                    joinedload(Document.sources).lazyload('*')
                 )
     query = form.filter_query(query)
 
