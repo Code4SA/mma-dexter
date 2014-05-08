@@ -202,21 +202,26 @@ class DocumentPlace(db.Model, WithOffsets):
         """
         mentions = {}
         origins = {}
+        count = 0
 
         for d in docs:
             # TODO: origin
 
-            # TODO: filter by relevance
-            for dp in d.get_places():
-                geo_id = dp.place.geo_id
+            places = d.get_places()
+            if places:
+                count += 1
 
-                if not geo_id in mentions:
-                    mentions[geo_id] = dp.place.as_dict()
-                    mentions[geo_id]['documents'] = []
+                for dp in places:
+                    geo_id = dp.place.geo_id
 
-                mentions[geo_id]['documents'].append(d.id)
+                    if not geo_id in mentions:
+                        mentions[geo_id] = dp.place.as_dict()
+                        mentions[geo_id]['documents'] = []
+
+                    mentions[geo_id]['documents'].append(d.id)
 
         return {
+            'document_count': count,
             'mentions': mentions.values(),
             'origins': origins,
         }

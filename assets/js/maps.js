@@ -42,31 +42,36 @@
       $.getJSON(self.placesUrl(), self.drawPlaces);
     };
 
+    self.drawPlaceMarker = function(place, coords, radius) {
+      L.circleMarker(coords, {
+          color: 'red',
+          fillColor: '#f03',
+          fillOpacity: 0.5
+        })
+        .setRadius(radius)
+        .addTo(self.map)
+        .bindPopup(place.full_name + " (" + place.documents.length + ")");
+    };
+
     self.drawPlaces = function(data) {
+      var total = data.document_count;
+
       _.each(data.mentions, function(place) {
+        // radius is between 5 and 25, based on the %age of all documents
+        // this place relates to
+        var radius = 5 + 30 * (place.documents.length / total);
+
         if (place.type == 'point') {
           // it's a point
-          L.marker(place.coordinates)
-            .addTo(self.map)
-            .bindPopup(place.full_name + " (" + place.documents.length + ")");
-
+          self.drawPlaceMarker(place, place.coordinates, radius);
         } else {
-          // it's a region
+          // it's a region, get the centroid
           d3.json("http://maps.code4sa.org/political/2011/" + place.level + '?filter[' + place.level + ']=' + place.code + '&quantization=5000', function(error, topo) {
             if (!topo)
               return;
 
-            var featureLayer = L.geoJson(topojson.feature(topo, topo.objects.demarcation), {
-              style: {
-                "clickable": false,
-                "color": "#00d",
-                "fillColor": "#ccc",
-                "weight": 1.0,
-                "opacity": 0.5,
-                "fillOpacity": 0.5,
-              },
-            });
-            self.map.addLayer(featureLayer);
+            var region = L.geoJson(topojson.feature(topo, topo.objects.demarcation));
+            self.drawPlaceMarker(place, region.getBounds().getCenter(), radius);
           });
         }
       });
