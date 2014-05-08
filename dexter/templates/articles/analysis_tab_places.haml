@@ -6,6 +6,6 @@
   %table.table.table-striped.table-condensed.offsets.entities
     - thresh = document.places_relevance_threshold()
     - for p in document.places:
-      %tr(class_='text-muted' if p.relevance is not None and p.relevance < thresh else '')
+      %tr(class_='text-muted' if p.relevance is not None and p.relevance < thresh else '', dataOffsets=p.offset_list)
         %td&= p.place.full_name
         %td&= p.relevance
