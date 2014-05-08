@@ -52,10 +52,9 @@ assets.register('js', Bundle(
 maps = Bundle(
         'js/underscore-1.6.0.js',
         'js/d3.v3.min.js',
-        'js/leaflet.js',
         'js/topojson.v1.min.js',
-        'js/maps.js',
-        output='js/maps.%(version)s.js')
+        'http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.js',
+        'js/maps.js')
 
 assets.register('activity',
     Bundle(
