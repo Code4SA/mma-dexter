@@ -5,6 +5,15 @@
 %%block(name='title')
   Recently added articles
 
+%%block(name="extra_header_tags")
+  - for url in webassets('maps-css'):
+    %link(rel="stylesheet", href=url)
+
+%%block(name='extra_javascript')
+  - for url in webassets('activity'):
+    %script(src=url)
+
+
 %article#activity
   %h3
     &= paged_docs.total
@@ -16,54 +25,65 @@
 
   .row
     .col-sm-9
-      %section#charts
-        .row
-          .col-sm-6
-            .panel.panel-default
-              .panel-heading
-                %h4.panel-title Date added
-              .panel-body
-                .chart.chart-created
-                  Loading...
+      %ul.nav.nav-tabs
+        %li.active
+          %a(href="#tab-charts", dataToggle="tab") Graphs
+        %li
+          %a(href="#tab-map", dataToggle="tab") Map
 
-          .col-sm-6
-            .panel.panel-default
-              .panel-heading
-                %h4.panel-title Publication date
-              .panel-body
-                .chart.chart-published
-                  Loading...
+      .tab-content
+        #tab-charts.tab-pane.active
+          %section#charts
+            .row
+              .col-sm-6
+                .panel.panel-default
+                  .panel-heading
+                    %h4.panel-title Date added
+                  .panel-body
+                    .chart.chart-created
+                      Loading...
 
-        .row
-          .col-sm-6
-            .panel.panel-default
-              .panel-heading
-                %h4.panel-title Media
-              .panel-body
-                .chart.chart-media
-                  Loading...
+              .col-sm-6
+                .panel.panel-default
+                  .panel-heading
+                    %h4.panel-title Publication date
+                  .panel-body
+                    .chart.chart-published
+                      Loading...
 
-          .col-sm-6
-            .panel.panel-default
-              .panel-heading
-                %h4.panel-title Users
-              .panel-body
-                .chart.chart-users
-                  Loading...
+            .row
+              .col-sm-6
+                .panel.panel-default
+                  .panel-heading
+                    %h4.panel-title Media
+                  .panel-body
+                    .chart.chart-media
+                      Loading...
 
-            .panel.panel-default
-              .panel-heading
-                %h4.panel-title Article problems
-              .panel-body
-                .chart.chart-problems
-                  Loading...
+              .col-sm-6
+                .panel.panel-default
+                  .panel-heading
+                    %h4.panel-title Users
+                  .panel-body
+                    .chart.chart-users
+                      Loading...
 
-            .panel.panel-default
-              .panel-heading
-                %h4.panel-title Fairness
-              .panel-body
-                .chart.chart-fairness
-                  Loading...
+                .panel.panel-default
+                  .panel-heading
+                    %h4.panel-title Article problems
+                  .panel-body
+                    .chart.chart-problems
+                      Loading...
+
+                .panel.panel-default
+                  .panel-heading
+                    %h4.panel-title Fairness
+                  .panel-body
+                    .chart.chart-fairness
+                      Loading...
+
+        #tab-map.tab-pane
+          #slippy-map
 
     .col-sm-3
       %form.activity-refine(action=url_for('activity'), method='GET')
@@ -104,10 +124,6 @@
                 %i.fa.fa-download
                 Download XLSX
             %input.btn.btn-success(type='Submit', value='Update')
-
-      %%block(name='extra_javascript')
-        - for url in webassets('activity'):
-          %script(src=url)
 
   %section
     %%include(file='activity_list.haml')

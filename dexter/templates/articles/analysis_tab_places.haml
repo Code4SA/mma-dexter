@@ -1,9 +1,11 @@
 #places-tab.tab-pane
   %h4 Places
-  %table.table.table-striped.table-condensed.offsets.entities
-    - for p in document.places():
-      %tr(dataOffsets=p.offset_list)
-        %td&= p.entity.name
-        %td&= p.entity.group
-        %td&= p.relevance
 
+  #slippy-map
+
+  %table.table.table-striped.table-condensed.offsets.entities
+    - thresh = document.places_relevance_threshold()
+    - for p in document.places:
+      %tr(class_='text-muted' if p.relevance is not None and p.relevance < thresh else '')
+        %td&= p.place.full_name
+        %td&= p.relevance

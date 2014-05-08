@@ -4,7 +4,7 @@ from ..models import Document, Entity, db, Gender, Person, DocumentType, Documen
 from ..processing import ProcessingError
 
 from .crawlers import MGCrawler, TimesLiveCrawler, IOLCrawler, CitizenCrawler, DailysunCrawler, News24Crawler, GenericCrawler
-from .extractors import AlchemyExtractor, CalaisExtractor, SourcesExtractor
+from .extractors import AlchemyExtractor, CalaisExtractor, SourcesExtractor, PlacesExtractor
 
 from requests.exceptions import HTTPError
 import logging
@@ -21,7 +21,11 @@ class DocumentProcessor:
                 News24Crawler(),
                 IOLCrawler(),
                 GenericCrawler()]
-        self.extractors = [AlchemyExtractor(), CalaisExtractor(), SourcesExtractor()]
+        self.extractors = [
+                AlchemyExtractor(),
+                CalaisExtractor(),
+                SourcesExtractor(),
+                PlacesExtractor()]
 
 
     def valid_url(self, url):

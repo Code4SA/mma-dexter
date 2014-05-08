@@ -1,3 +1,5 @@
+from __future__ import division
+
 import re
 import datetime
 
@@ -63,6 +65,7 @@ class Document(db.Model):
     keywords    = relationship("DocumentKeyword", backref=backref('document'), cascade='all', passive_deletes=True, order_by="desc(DocumentKeyword.relevance)")
     sources     = relationship("DocumentSource", backref=backref('document'), cascade='all, delete-orphan', passive_deletes=True)
     fairness    = relationship("DocumentFairness", backref=backref('document'), cascade='all, delete-orphan', passive_deletes=True)
+    places      = relationship("DocumentPlace", backref=backref('document'), cascade='all, delete-orphan', passive_deletes=True)
     issues      = relationship("Issue", secondary='document_issues', passive_deletes=True)
     medium      = relationship("Medium")
     topic       = relationship("Topic")
@@ -82,7 +85,7 @@ class Document(db.Model):
         return [e for e in self.entities if e.entity.group == 'organization']
 
 
-    def places(self):
+    def place_entities(self):
         return [e for e in self.entities if e.entity.group in Document.PLACE_ENTITY_GROUPS]
 
 
@@ -138,6 +141,17 @@ class Document(db.Model):
         return True
 
 
+    def add_place(self, doc_place):
+        """ Add a new DocumentPlace to this document, but only
+        if it doesn't already exist."""
+        for dp in self.places:
+            if dp.place == doc_place.place:
+                return False
+
+        self.places.append(doc_place)
+        return True
+
+
     def normalise_text(self):
         """ Run some normalisations on the document. """
         if self.text:
@@ -175,6 +189,30 @@ class Document(db.Model):
 
     def is_fair(self):
         return not self.fairness or (len(self.fairness) == 1 and self.fairness[0].fairness.name == 'Fair')
+
+    
+    def get_places(self, threshold=None):
+        """
+        Get a list of DocumentPlace instances for this document. If threshold is
+        numeric, only return those with a relevance greater than or equal to the
+        threshold. If it is None, calculate a suitable threshold. If it is 0,
+        return all places (same as +.places+).
+        """
+        if threshold is None:
+            threshold = self.places_relevance_threshold()
+
+        return [dp for dp in self.places if (threshold == 0 or dp.relevance >= threshold)]
+
+
+    def places_relevance_threshold(self):
+        # calculate threshold as average of all non-None relevances
+        count = 0
+        sum = 0
+        for dp in self.places:
+            if dp.relevance is not None:
+                count += 1
+                sum += dp.relevance
+        return sum/count if count > 0 else 0
 
 
     def __repr__(self):

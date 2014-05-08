@@ -29,29 +29,46 @@ assets.register('admin-css',
       'css/admin.css',
     ))
 
+assets.register('maps-css',
+    Bundle(
+      'css/leaflet-0.7.2.css',
+      output='css/maps.%(version)s.css'))
 
-js = Bundle(
+
+assets.register('js', Bundle(
     'js/jquery-1.10.2.min.js',
     'js/bootstrap-3.0.3.min.js',
     'js/typeahead.bundle-0.10.1.min.js',
     'js/ujs.js',
     'js/chosen.jquery.min.js',
     'js/app.js',
-    'js/document.js',
     'js/person.js',
     'js/moment.min.js',
     'js/bootstrap-datepicker.js',
     'js/bootstrap-datetimepicker.min.js',
     'js/daterangepicker-1.3.5.js',
-    output='js/app.%(version)s.js')
-assets.register('js', js)
+    output='js/app.%(version)s.js'))
+
+maps = Bundle(
+        'js/underscore-1.6.0.js',
+        'js/d3.v3.min.js',
+        'js/topojson.v1.min.js',
+        'http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.js',
+        'js/maps.js')
 
 assets.register('activity',
     Bundle(
+        maps,
         'js/highcharts-4.0.1.js',
         'js/underscore-1.6.0.js',
         'js/activity.js',
         output='js/activity.%(version)s.js'))
+
+assets.register('documents',
+    Bundle(
+        maps,
+        'js/document.js',
+        output='js/documents.%(version)s.js'))
 
 # Helper that is available in templates, and returns the
 # urls to the named assets.

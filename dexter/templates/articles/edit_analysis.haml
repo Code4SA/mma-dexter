@@ -4,6 +4,7 @@
 %%block(name="title")
   &= document.title
 
+
 .row
   .col-sm-5
     %%include(file="details.haml")
@@ -38,7 +39,7 @@
             %li
               %a(href="#places-tab", dataToggle="tab")
                 Places
-                %span.badge&= len(document.places())
+                %span.badge&= len(document.places)
             %li
               %a(href="#keywords-tab", dataToggle="tab")
                 Keywords
