@@ -207,7 +207,7 @@ class DocumentPlace(db.Model, WithOffsets):
             # TODO: origin
 
             # TODO: filter by relevance
-            for dp in d.places:
+            for dp in d.get_places():
                 geo_id = dp.place.geo_id
 
                 if not geo_id in mentions:

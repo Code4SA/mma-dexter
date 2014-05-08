@@ -1,3 +1,5 @@
+from __future__ import division
+
 import re
 import datetime
 
@@ -189,11 +191,28 @@ class Document(db.Model):
         return not self.fairness or (len(self.fairness) == 1 and self.fairness[0].fairness.name == 'Fair')
 
     
-    def places_dict(self):
-        return {
-            'doc_id': self.id,
-            'places': [p.as_dict() for p in self.places]
-        }
+    def get_places(self, threshold=None):
+        """
+        Get a list of DocumentPlace instances for this document. If threshold is
+        numeric, only return those with a relevance greater than or equal to the
+        threshold. If it is None, calculate a suitable threshold. If it is 0,
+        return all places (same as +.places+).
+        """
+        if threshold is None:
+            threshold = self.places_relevance_threshold()
+
+        return [dp for dp in self.places if (threshold == 0 or dp.relevance >= threshold)]
+
+
+    def places_relevance_threshold(self):
+        # calculate threshold as average of all non-None relevances
+        count = 0
+        sum = 0
+        for dp in self.places:
+            if dp.relevance is not None:
+                count += 1
+                sum += dp.relevance
+        return sum/count if count > 0 else 0
 
 
     def __repr__(self):
