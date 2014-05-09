@@ -142,6 +142,22 @@ class Person(db.Model):
         return False
 
 
+    def merge_into(self, other):
+        """
+        Merge this person into +other+, and delete
+        this person.
+        """
+        from . import Author, DocumentSource, Entity
+
+        if self.id is None or other.id is None:
+            raise ArgumentError("Both id's must be valid")
+
+        for m in [Author, DocumentSource, Entity]:
+            m.query.filter(m.person_id == self.id).update({'person_id': other.id})
+
+        db.session.delete(self)
+
+
     def __repr__(self):
         return "<Person id=%s, name=\"%s\">" % (self.id, self.name.encode('utf-8'))
 

@@ -1,12 +1,12 @@
 import unittest
 import datetime
 
-from dexter.models import Document, DocumentSource, Person, Affiliation
+from dexter.models import Document, DocumentSource, Person, Affiliation, Entity
 
 from dexter.models.support import db
 from dexter.models.seeds import seed_db
 
-from tests.fixtures import dbfixture, DocumentData, PersonData
+from tests.fixtures import dbfixture, DocumentData, PersonData, EntityData
 
 class TestDocument(unittest.TestCase):
     def setUp(self):
@@ -15,7 +15,7 @@ class TestDocument(unittest.TestCase):
         self.db.create_all()
         seed_db(db)
 
-        self.fx = dbfixture.data(PersonData, DocumentData)
+        self.fx = dbfixture.data(PersonData, DocumentData, EntityData)
         self.fx.setup()
 
     def tearDown(self):
@@ -81,3 +81,21 @@ class TestDocument(unittest.TestCase):
 
         self.assertFalse(zuma.relearn_affiliation())
         self.assertEqual(anc, zuma.affiliation)
+
+
+    def test_merge(self):
+        joe = Person.query.get(self.fx.PersonData.joe_author.id)
+        zuma = Person.query.get(self.fx.PersonData.zuma.id)
+
+        joe.merge_into(zuma)
+        db.session.flush()
+
+        author = Entity.query.get(self.fx.AuthorData.joe_author.id)
+        self.assertEqual(author.person, zuma)
+
+        entity = Entity.query.get(self.fx.EntityData.joe_author.id)
+        self.assertEqual(entity.person, zuma)
+
+        # should be deleted
+        joe = Person.query.filter(Person.id == joe.id).first()
+        self.assertIsNone(joe)
