@@ -10,9 +10,9 @@ from sqlalchemy import (
     Index
     )
 from sqlalchemy.orm import relationship, backref
-import nltk
 
 from .support import db
+from ..utils import levenshtein
 
 class Utterance(db.Model):
     """
@@ -40,24 +40,9 @@ class Utterance(db.Model):
 
 
     def similarity(self, other):
-        """
-        Return a similarity ratio of two quotes. 0 means the strings are not similar at all,
-        1.0 means they're identical. This is the Levenshtein ratio:
-
-          (lensum - ldist) / lensum
-
-        where lensum is the sum of the length of the two strings and ldist is the
-        Levenshtein distance (edit distance).
-
-        See https://groups.google.com/forum/#!topic/nltk-users/u94RFDWbGyw
-        """
-        lensum = len(self.quote) + len(other.quote)
-        ldist = nltk.edit_distance(self.quote, other.quote)
-
-        if lensum == 0:
-            return 0
-
-        return (lensum - ldist) / lensum
+        """ Return a similarity ratio of two quotes. 0 means the strings are not similar at all,
+        1.0 means they're identical. """
+        return levenshtein(self.quote, other.quote)
 
 
     def __eq__(self, other):
