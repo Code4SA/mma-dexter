@@ -13,5 +13,6 @@ GUNICORN_WORKERS=3
 exec gunicorn \
     -w $GUNICORN_WORKERS \
     -b unix:$GUNICORN_SOCKET \
+    --timeout 120
     app:app
     2>&1
