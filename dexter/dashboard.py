@@ -301,7 +301,7 @@ class ActivityChartHelper:
         users = dict((u.id, u.short_name()) for u in User.query.filter(User.id.in_(r[0] for r in rows)))
 
         return {
-            'values': dict((users[r[0]], r[1]) for r in rows)
+            'values': dict((users.get(r[0], 'None'), r[1]) for r in rows)
         }
 
     def fairness_chart(self):
