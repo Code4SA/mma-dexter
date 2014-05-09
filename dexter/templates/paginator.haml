@@ -4,10 +4,10 @@
       - if page:
         - if page != pagination.page:
           %li
-            %a(href=url_for('activity', page=page, **kwargs))&= page
+            %a(href=url_for(endpoint, page=page, **kwargs))&= page
         - else:
           %li.active
-            %a(href=url_for('activity', page=page, **kwargs))&= page
+            %a(href=url_for(endpoint, page=page, **kwargs))&= page
       - else:
         %li.disabled
           %a(href="#") ...

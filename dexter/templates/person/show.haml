@@ -1,5 +1,6 @@
 %%inherit(file="../layout.haml")
 %%namespace(file="../bootstrap_wtf.haml", **{'import': '*'})
+%%namespace(file="../paginator.haml", **{'import': '*'})
 
 %%block(name="title")
   &= person.name
@@ -79,8 +80,12 @@
                   %li&= entity.name
 
     %section
+      %h4
+        Mentions
+        %span.badge.badge-default&= pagination.total
+
       %ul.list-unstyled
-        - for doc in documents:
+        - for doc in docs:
           %li.list-item-document
             %i.fa.fa-chevron-right
             &=doc.published_at.strftime('%e %B %Y') + ' - '
@@ -93,3 +98,5 @@
                 %li.list-item-utterance
                   %blockquote
                     %em&=utterance.quote
+
+      = paginator('show_person', pagination, id=person.id)

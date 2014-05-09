@@ -5,10 +5,12 @@ from flask import request, url_for, flash, redirect, make_response
 from flask.ext.mako import render_template
 from flask.ext.login import login_required, current_user
 from sqlalchemy.orm import subqueryload
+from sqlalchemy import distinct
 
 from .app import app
 from .models import db, Document, Entity, Utterance, DocumentEntity, Person
 from .models.person import PersonForm
+from .utils import paginate
 
 import urllib
 
@@ -25,13 +27,20 @@ def show_entity(group, name):
     if entity.person:
         return redirect(url_for('show_person', id=entity.person.id))
 
-    documents = Document.query\
-        .join(DocumentEntity)\
-        .options(subqueryload(Document.utterances))\
-        .filter(DocumentEntity.entity_id==entity.id)\
-        .order_by(Document.published_at.desc()).all()
+    query = db.session.query(distinct(Document.id))\
+              .join(DocumentEntity)\
+              .filter(DocumentEntity.entity_id == entity.id)\
+              .order_by(Document.published_at.desc())
+    pagination = paginate(query, int(request.args.get('page', 1)), 50)
+    doc_ids = [r[0] for r in pagination.items]
 
-    return render_template('entities/show.haml', entity=entity, documents=documents)
+    docs = Document.query\
+        .options(subqueryload(Document.utterances))\
+        .filter(Document.id.in_(doc_ids))\
+        .order_by(Document.published_at.desc())\
+        .all()
+
+    return render_template('entities/show.haml', entity=entity, docs=docs, pagination=pagination)
 
 
 @app.route('/people/<int:id>/', methods=['GET', 'POST'])
@@ -59,17 +68,24 @@ def show_person(id):
             db.session.commit()
             return redirect(url_for('show_person', id=id))
 
+    query = db.session.query(distinct(Document.id))\
+              .join(DocumentEntity)\
+              .filter(DocumentEntity.entity_id.in_(person.alias_entity_ids))\
+              .order_by(Document.published_at.desc())
+    pagination = paginate(query, int(request.args.get('page', 1)), 50)
+    doc_ids = [r[0] for r in pagination.items]
 
-    documents = Document.query\
-        .join(DocumentEntity)\
+    docs = Document.query\
         .options(subqueryload(Document.utterances))\
-        .filter(DocumentEntity.entity_id.in_(person.alias_entity_ids))\
-        .order_by(Document.published_at.desc()).all()
+        .filter(Document.id.in_(doc_ids))\
+        .order_by(Document.published_at.desc())\
+        .all()
 
     return render_template('person/show.haml',
         person=person,
         form=form,
-        documents=documents)
+        docs=docs,
+        pagination=pagination)
 
 @app.route('/people/new', methods=['POST'])
 @login_required
