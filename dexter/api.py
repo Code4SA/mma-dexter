@@ -67,6 +67,8 @@ def api_feed_parties():
                 func.count(DocumentSourcesView.c.document_id).label("record_count"),
                 DocumentSourcesView.c.affiliation.label("affiliation"),
                 DocumentSourcesView.c.source_name.label("source_name"),
+                DocumentSourcesView.c.gender.label("gender"),
+                DocumentSourcesView.c.race.label("race"),
                 DocumentsView.c.medium_group.label("medium_group"),
                 DocumentsView.c.medium_type.label("medium_type"),
             )\
@@ -74,6 +76,8 @@ def api_feed_parties():
             .group_by(
                 DocumentSourcesView.c.affiliation.label("affiliation"),
                 DocumentSourcesView.c.source_name.label("source_name"),
+                DocumentSourcesView.c.gender.label("gender"),
+                DocumentSourcesView.c.race.label("race"),
                 DocumentsView.c.medium_group.label("medium_group"),
                 DocumentsView.c.medium_type.label("medium_type"),
             )\
