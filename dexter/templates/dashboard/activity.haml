@@ -9,6 +9,7 @@
   - for url in webassets('maps-css'):
     %link(rel="stylesheet", href=url)
 
+
 %%block(name='extra_javascript')
   - for url in webassets('activity'):
     %script(src=url)
@@ -20,8 +21,6 @@
     Article${'' if paged_docs.total == 1 else 's'}
     - if form.user():
       added by ${form.user().short_name()|h}
-    - if form.medium():
-      from ${form.medium().name|h}
 
   .row
     .col-sm-9
@@ -95,7 +94,7 @@
 
           .panel-body
             = vertical_field(form.user_id)
-            = vertical_field(form.medium_id)
+            = vertical_field(form.medium_id, class_='select2')
             .form-group
               = form.created_at.label()
               .input-group

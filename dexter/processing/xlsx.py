@@ -63,8 +63,9 @@ class XLSXBuilder:
             ws.write_datetime('C6', parse(self.form.published_to, yearfirst=True, dayfirst=True), self.formats['date'])
 
         ws.write('A7', 'medium')
-        if self.form.medium():
-            ws.write('B7', self.form.medium().name)
+        media = self.form.media()
+        if media:
+            ws.write('B7', ', '.join(x.name for x in media))
 
         ws.write('A8', 'user')
         if self.form.user():

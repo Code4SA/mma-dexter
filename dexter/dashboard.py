@@ -13,7 +13,7 @@ from sqlalchemy.orm import joinedload
 from dexter.models import db, Document, Entity, Medium, User, DocumentSource, DocumentPlace, DocumentFairness, Fairness
 from dexter.models.document import DocumentAnalysisProblem
 
-from wtforms import validators, HiddenField, TextField
+from wtforms import validators, HiddenField, TextField, SelectMultipleField
 from wtforms.fields.html5 import DateField
 from .forms import Form, SelectField, MultiCheckboxField
 from .processing.xlsx import XLSXBuilder
@@ -139,7 +139,7 @@ def activity():
 
 class ActivityForm(Form):
     user_id     = SelectField('User', [validators.Optional()], default='')
-    medium_id   = SelectField('Medium', [validators.Optional()], default='') 
+    medium_id   = SelectMultipleField('Medium', [validators.Optional()], default='') 
     created_at  = TextField('Added', [validators.Optional()])
     published_at   = TextField('Published', [validators.Optional()])
     problems       = MultiCheckboxField('Article problems', [validators.Optional()], choices=DocumentAnalysisProblem.for_select())
@@ -151,7 +151,7 @@ class ActivityForm(Form):
         self.user_id.choices = [['', '(any)']] + [
                 [str(u.id), u.short_name()] for u in sorted(User.query.all(), key=lambda u: u.short_name())]
 
-        self.medium_id.choices = [['', '(any)']] + [(str(m.id), m.name) for m in Medium.query.order_by(Medium.name).all()]
+        self.medium_id.choices = [(str(m.id), m.name) for m in Medium.query.order_by(Medium.name).all()]
 
         # dynamic default
         if not self.created_at.data and not self.published_at.data and not self.user_id.data and not self.medium_id.data:
@@ -163,10 +163,11 @@ class ActivityForm(Form):
             return User.query.get(self.user_id.data)
         return None
 
-    def medium(self):
+    def media(self):
         if self.medium_id.data:
-            return Medium.query.get(self.medium_id.data)
-        return None
+            return Medium.query.filter(Medium.id.in_(self.medium_id.data))
+        else:
+            return None
 
 
     def get_problems(self):
@@ -204,7 +205,7 @@ class ActivityForm(Form):
 
     def filter_query(self, query):
         if self.medium_id.data:
-            query = query.filter(Document.medium_id == self.medium_id.data)
+            query = query.filter(Document.medium_id.in_(self.medium_id.data))
 
         if self.user_id.data:
             query = query.filter(Document.created_by_user_id == self.user_id.data)
