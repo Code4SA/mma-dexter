@@ -19,7 +19,7 @@
       %form#edit-person(action=url_for('show_person', id=person.id), method='POST')
         = form.csrf_token
         .row
-          .col-sm-6
+          .col-sm-5
             .gender-race-controls
               .row
                 .col-sm-4
@@ -47,7 +47,7 @@
                   \—
                   %a.edit(href="#") Edit
 
-          .col-sm-6
+          .col-sm-3
             .aliases-controls
               %strong Aliases
               %section
@@ -78,6 +78,22 @@
               %ul.list-inline
                 - for entity in person.entities:
                   %li&= entity.name
+
+          .col-sm-3
+            .dups-controls
+              %strong Potential duplicates
+            .dups
+              %strong Potential duplicates
+              - if current_user.admin:
+                %span.edit-link
+                  \—
+                  %a.edit(href="#") Edit
+
+              .buttons
+                %input.btn.btn-default(type="submit", value="Save")
+                or
+                %a.cancel(href="#") cancel
+
 
     %section
       %h4
