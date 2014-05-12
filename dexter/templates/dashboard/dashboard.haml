@@ -2,51 +2,17 @@
 %%block(name='title')
   Dashboard
 
-.row
-  .col-md-8
-    %h1 MMA-Dexter
-    %p.lead
-      Navigate media reports relating to people/organizations of interest.
-    %hr
+%h1 MMA-Dexter
+%p.lead
+  Navigate media reports relating to people/organizations of interest.
+%hr
 
-    %section
-      %h3
-        Recently added articles
-        %a(href=url_for('activity')) view all &rarr;
+%section
+  %h3
+    Recently added articles
+    %a(href=url_for('activity')) view all &rarr;
 
-      %%include(file='activity_list.haml')
+  %%include(file='activity_list.haml')
 
-      %p
-        %a(href=url_for('activity')) View recent activity &rarr;
-
-
-  .col-md-4
-    #index-overview.well
-      %h4 Index overview
-      %p
-        Documents added to the index:
-        %span.badge.pull-right&=document_count
-      - if document_count > 0:
-        %p
-          People identified:
-          %span.badge.pull-right
-            &=group_counts.get('person')
-
-        %p
-          Companies &amp; organisations:
-          %span.badge.pull-right
-            &=group_counts.get('company') + group_counts.get('organization')
-
-        %h4 Top sources
-        - for medium_name, medium_count in medium_counts:
-          %p
-            &= str(medium_name)
-            %span.badge.pull-right
-              &= medium_count
-
-        %h4 Publication dates
-        %p Most recent:
-          %strong.pull-right&=latest
-        %p Earliest:
-          %strong.pull-right&=earliest
-
+  %p
+    %a(href=url_for('activity')) View recent activity &rarr;
