@@ -49,6 +49,7 @@ assets.register('js', Bundle(
     'js/bootstrap-datepicker.js',
     'js/bootstrap-datetimepicker.min.js',
     'js/daterangepicker-1.3.5.js',
+    'js/select2-3.4.8.min.js',
     output='js/app.%(version)s.js'))
 
 maps = Bundle(
@@ -63,7 +64,6 @@ assets.register('activity',
         maps,
         'js/highcharts-4.0.1.js',
         'js/underscore-1.6.0.js',
-        'js/select2-3.4.8.min.js',
         'js/activity.js',
         output='js/activity.%(version)s.js'))
 
