@@ -1,6 +1,7 @@
 from .base import BaseExtractor
 from ...processing import ProcessingError
-from ...models import DocumentSource, Gender
+from ...models import DocumentSource, Gender, Person
+from ...utils import levenshtein
 
 import logging
 
@@ -13,8 +14,33 @@ class SourcesExtractor(BaseExtractor):
     log = logging.getLogger(__name__)
 
     def extract(self, doc):
+        self.discover_people(doc)
         self.extract_sources(doc)
         self.guess_genders(doc)
+
+
+    def discover_people(self, doc):
+        """
+        If we have entities that are very similar to a person's
+        name but isn't already linked, then auto link it.
+        """
+        tomatch = [u.entity for u in doc.utterances if not u.entity.person]
+        if tomatch:
+            people = Person.query.all()
+
+            # we could already have found matching people during this loop,
+            # so protect against it
+            for entity in (e for e in tomatch if not e.person):
+                # calculate distance to all other names
+                candidates = ((p, levenshtein(p.name, entity.name)) for p in people)
+                # limit to only the good ones
+                candidates = [(p, x) for p, x in candidates if x >= 0.95]
+
+                if candidates:
+                    best = max(candidates, key=lambda p: p[1])
+                    self.log.info("Matched entity %s to person %s" % (entity, best[0]))
+                    entity.person = best[0]
+
 
     def extract_sources(self, doc):
         """

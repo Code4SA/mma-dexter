@@ -50,3 +50,23 @@ class TestSourcesExtractor(unittest.TestCase):
         self.ex.extract_sources(d)
         self.assertEqual(['Jacob Zuma'], [s.person.name for s in d.sources])
 
+    def test_match_people(self):
+        d = Document()
+        d.text = 'Fred Astair did something. He also did something else.'
+
+        u = Utterance()
+        u.entity = Entity()
+        u.entity.group = 'people'
+        u.entity.name = 'Jacob Zume' # will fix to zuma
+        u.document = d
+
+        u2 = Utterance()
+        u2.entity = Entity()
+        u2.entity.group = 'people'
+        u2.entity.name = 'Jacob Zooma' # too different
+        u2.document = d
+
+        self.ex.discover_people(d)
+        self.assertEqual('Jacob Zuma', u.entity.person.name)
+        self.assertIsNone(u2.entity.person)
+
