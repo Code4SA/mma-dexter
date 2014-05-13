@@ -24,6 +24,10 @@ class PlacesExtractor(BaseExtractor):
         places_added = 0
 
         for de in doc.entities:
+            # don't look for a place if we know it's a person
+            if de.entity.person:
+                continue
+
             place = Place.find(de.entity.name)
 
             if place:

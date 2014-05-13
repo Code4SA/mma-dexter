@@ -85,3 +85,28 @@ from
   left join affiliations af_favour on df.bias_favour_affiliation_id = af_favour.id
   left join affiliations af_oppose on df.bias_oppose_affiliation_id = af_oppose.id
 ;
+
+
+-- documents_places_view:
+--   places for documents
+create or replace view documents_places_view as
+select
+  dp.doc_id as `document_id`,
+  p.province_code as `province_code`,
+  p.province_name as `province_name`,
+  p.municipality_code as `municipality_code`,
+  p.municipality_name as `municipality_name`,
+  p.level,
+  case p.level
+  when 'province' then p.province_name
+  when 'municipality' then p.municipality_name
+  when 'mainplace' then p.mainplace_name
+  when 'subplace' then p.subplace_name
+  end as `name`,
+  dp.relevance
+from
+  document_places dp
+  inner join places p on dp.place_id = p.id
+where
+  dp.relevance > 0.5
+;

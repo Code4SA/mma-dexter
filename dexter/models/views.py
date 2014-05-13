@@ -22,3 +22,8 @@ DocumentSourcesView = Table("document_sources_view", db.metadata,
 DocumentFairnessView = Table("documents_fairness_view", db.metadata,
         Column("document_id", Integer, ForeignKey("documents.id")),
         autoload=True, autoload_with=db.engine)
+
+# helper across document places
+DocumentPlacesView = Table("documents_places_view", db.metadata,
+        Column("document_id", Integer, ForeignKey("documents.id")),
+        autoload=True, autoload_with=db.engine)
