@@ -16,6 +16,20 @@ section {
   margin-bottom: 20px;
 }
 
+#show-person {
+  .dup-people ul {
+    a.btn {
+      display: none;
+    }
+
+    li:hover {
+      a.btn {
+        display: block;
+      }
+    }
+  }
+}
+
 form#edit-person {
   .gender-race-controls {
     display: none;

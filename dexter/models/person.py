@@ -17,6 +17,7 @@ from wtforms import StringField, validators, SelectField, HiddenField
 
 from .support import db
 from ..forms import Form, MultiCheckboxField
+from ..utils import levenshtein
 
 class Person(db.Model):
     """
@@ -142,20 +143,31 @@ class Person(db.Model):
         return False
 
 
-    def merge_into(self, other):
+    def merge_into(self, dest):
         """
-        Merge this person into +other+, and delete
+        Merge this person into +dest+, and delete
         this person.
         """
         from . import Author, DocumentSource, Entity
 
-        if self.id is None or other.id is None:
+        if self.id is None or dest.id is None:
             raise ArgumentError("Both id's must be valid")
 
         for m in [Author, DocumentSource, Entity]:
-            m.query.filter(m.person_id == self.id).update({'person_id': other.id})
+            m.query.filter(m.person_id == self.id).update({'person_id': dest.id})
+
+        self.log.info("Merged %s into %s" % (self, dest))
 
         db.session.delete(self)
+
+
+    def similarly_named_people(self, threshold=0.8):
+        """
+        Return a list of (Person, similarity) tuples for instances that have similar names,
+        within +threshold+.
+        """
+        candidates = ((p, levenshtein(p.name, self.name)) for p in Person.query.all() if p != self)
+        return [(p, x) for p, x in candidates if x >= threshold]
 
 
     def __repr__(self):

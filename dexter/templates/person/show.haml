@@ -19,80 +19,78 @@
       %form#edit-person(action=url_for('show_person', id=person.id), method='POST')
         = form.csrf_token
         .row
-          .col-sm-5
-            .gender-race-controls
-              .row
-                .col-sm-4
-                  = vertical_field(form.gender_id)
-                .col-sm-4
-                  = vertical_field(form.race_id)
-                .col-sm-4.buttons
+          .col-sm-6
+            %section
+              .gender-race-controls
+                .row
+                  .col-sm-4
+                    = vertical_field(form.gender_id)
+                  .col-sm-4
+                    = vertical_field(form.race_id)
+                  .col-sm-4.buttons
+                    %input.btn.btn-default(type="submit", value="Save")
+                    or
+                    %a.cancel(href="#") cancel
+
+              .gender-race
+                %strong.text-muted
+                  - if person.gender:
+                    &= person.gender.name + ", "
+                  -else:
+                    &= "Unknown gender, "
+
+                  - if person.race:
+                    &= person.race.name
+                  - else:
+                    &= "unknown race"
+                - if current_user.admin:
+                  %span.edit-link
+                    \—
+                    %a.edit(href="#") Edit
+
+            %section
+              .aliases-controls
+                %strong Aliases
+                %section
+                  - if form.alias_entity_ids.errors:
+                    %ul.list-unstyled
+                      - for error in form.alias_entity_ids.errors:
+                        %li.text-warning.text-center Error:
+                          &=error
+                  %ul.list-unstyled.alias-list
+                    - for subfield in form.alias_entity_ids:
+                      %li
+                        = subfield()
+                        = subfield.label()
+
+                  %input.form-control.new-alias-name(type='text', name='new-alias')
+
+                .buttons
                   %input.btn.btn-default(type="submit", value="Save")
                   or
                   %a.cancel(href="#") cancel
 
-            .gender-race
-              %strong.text-muted
-                - if person.gender:
-                  &= person.gender.name + ", "
-                -else:
-                  &= "Unknown gender, "
+              .aliases
+                %strong Aliases
+                - if current_user.admin:
+                  %span.edit-link
+                    \—
+                    %a.edit(href="#") Edit
+                %ul.list-inline
+                  - for entity in person.entities:
+                    %li&= entity.name
 
-                - if person.race:
-                  &= person.race.name
-                - else:
-                  &= "unknown race"
-              - if current_user.admin:
-                %span.edit-link
-                  \—
-                  %a.edit(href="#") Edit
-
-          .col-sm-3
-            .aliases-controls
-              %strong Aliases
-              %section
-                - if form.alias_entity_ids.errors:
-                  %ul.list-unstyled
-                    - for error in form.alias_entity_ids.errors:
-                      %li.text-warning.text-center Error:
-                        &=error
-                %ul.list-unstyled.alias-list
-                  - for subfield in form.alias_entity_ids:
+          - if current_user.admin and dups:
+            .col-sm-4
+              %section.dup-people
+                %h4 Similarly named people
+                %ul.list-unstyled
+                  - for dup in dups:
                     %li
-                      = subfield()
-                      = subfield.label()
+                      %a(href=url_for('show_person', id=dup.id))&= dup.name
+                      .pull-right
+                        %a.btn.btn-default.btn-xs(href=url_for('show_person', id=person.id, mergein=dup.id), dataMethod='post', dataConfirm='Do you want to merge %s into %s?\n\nYou cannot undo this.\n\nAre you sure?' % (dup.name, person.name)) Same person
 
-                %input.form-control.new-alias-name(type='text', name='new-alias')
-
-              .buttons
-                %input.btn.btn-default(type="submit", value="Save")
-                or
-                %a.cancel(href="#") cancel
-
-            .aliases
-              %strong Aliases
-              - if current_user.admin:
-                %span.edit-link
-                  \—
-                  %a.edit(href="#") Edit
-              %ul.list-inline
-                - for entity in person.entities:
-                  %li&= entity.name
-
-          .col-sm-3
-            .dups-controls
-              %strong Potential duplicates
-            .dups
-              %strong Potential duplicates
-              - if current_user.admin:
-                %span.edit-link
-                  \—
-                  %a.edit(href="#") Edit
-
-              .buttons
-                %input.btn.btn-default(type="submit", value="Save")
-                or
-                %a.cancel(href="#") cancel
 
 
     %section

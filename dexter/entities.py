@@ -56,6 +56,15 @@ def show_person(id):
             key=lambda t: t[1])
 
     if request.method == 'POST' and current_user.admin:
+        if 'mergein' in request.args:
+            # merge someone into this person
+            dup = Person.query.get(request.args['mergein'])
+            if dup:
+                dup.merge_into(person)
+                flash('Merged %s into %s.' % (dup.name, person.name))
+                db.session.commit()
+            return redirect(url_for('show_person', id=id))
+
         if form.validate():
             form.populate_obj(person)
 
@@ -68,6 +77,11 @@ def show_person(id):
             db.session.commit()
             return redirect(url_for('show_person', id=id))
 
+    # possible misspellings
+    dups = [p for p, _ in person.similarly_named_people(0.8)]
+    dups.sort(key=lambda p: p.name)
+
+    # docs where this person is a source
     query = db.session.query(distinct(Document.id))\
               .join(DocumentSource)\
               .filter(DocumentSource.person == person)\
@@ -85,6 +99,7 @@ def show_person(id):
         person=person,
         form=form,
         docs=docs,
+        dups=dups,
         pagination=pagination)
 
 @app.route('/people/new', methods=['POST'])
