@@ -1,0 +1,31 @@
+%%namespace(file="../bootstrap_wtf.haml", **{'import': '*'})
+
+.modal-dialog
+  .modal-content
+    .modal-header
+      %h4.modal-title
+        Replace
+        &= person.name
+
+    .modal-body
+      %p.lead
+        Who is the
+        %strong real
+        ${person.name|h}?
+
+      %p.alert.alert-danger
+        All articles for ${person.name|h} will be moved to the new person, and the old ${person.name|h} will be deleted.
+        %strong This cannot be undone!
+
+      %p
+        Choose a person below to replace ${person.name|h}.
+
+      %ul.list-inline
+        - for dup in dups:
+          %li.col-sm-6.pull-left
+            %a(href=url_for('merge_person', id=dup.id, mergein=person.id), dataMethod='POST', dataConfirm='Are you sure?')&= dup.name
+
+      .clearfix
+
+    .modal-footer
+      %a.btn.btn-default(dataDismiss='modal') Cancel
