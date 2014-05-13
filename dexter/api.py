@@ -11,7 +11,7 @@ from sqlalchemy.orm import joinedload, lazyload
 from sqlalchemy.sql import func
 
 from .app import app
-from .models import db, Author, Person, Entity, Document, DocumentSource, Medium, Location, Topic, Affiliation
+from .models import db, Author, Person, Entity, Document, DocumentSource, Medium, Location, Topic, Affiliation, DocumentPlace, Place
 from .processing import BiasCalculator
 
 @app.route('/api/authors')
@@ -59,7 +59,7 @@ def api_group_entities(group):
 @app.route('/api/feeds/sources/political-parties')
 @htauth.authenticated
 def api_feed_parties():
-    from dexter.models.views import DocumentSourcesView, DocumentsView
+    from dexter.models.views import DocumentSourcesView, DocumentsView, DocumentPlacesView
 
     start_date, end_date = api_date_range(request)
 
@@ -71,8 +71,13 @@ def api_feed_parties():
                 DocumentSourcesView.c.race.label("race"),
                 DocumentsView.c.medium_group.label("medium_group"),
                 DocumentsView.c.medium_type.label("medium_type"),
+                DocumentPlacesView.c.province_code,
+                DocumentPlacesView.c.province_name,
+                DocumentPlacesView.c.municipality_code,
+                DocumentPlacesView.c.municipality_name,
             )\
             .join(DocumentsView, DocumentSourcesView.c.document_id == DocumentsView.c.document_id)\
+            .outerjoin(DocumentPlacesView, DocumentPlacesView.c.document_id == DocumentsView.c.document_id)\
             .group_by(
                 DocumentSourcesView.c.affiliation.label("affiliation"),
                 DocumentSourcesView.c.source_name.label("source_name"),
@@ -80,6 +85,10 @@ def api_feed_parties():
                 DocumentSourcesView.c.race.label("race"),
                 DocumentsView.c.medium_group.label("medium_group"),
                 DocumentsView.c.medium_type.label("medium_type"),
+                DocumentPlacesView.c.province_code,
+                DocumentPlacesView.c.province_name,
+                DocumentPlacesView.c.municipality_code,
+                DocumentPlacesView.c.municipality_name,
             )\
             .filter(DocumentSourcesView.c.affiliation_code.like('4.%'))\
             .filter(DocumentsView.c.published_at >= start_date)\
@@ -107,7 +116,7 @@ def api_feed_parties():
 @app.route('/api/feeds/topics')
 @htauth.authenticated
 def api_feed_topics():
-    from dexter.models.views import DocumentSourcesView, DocumentsView
+    from dexter.models.views import DocumentSourcesView, DocumentsView, DocumentPlacesView
 
     start_date, end_date = api_date_range(request)
 
@@ -116,11 +125,20 @@ def api_feed_topics():
                 DocumentsView.c.topic.label("topic"),
                 DocumentsView.c.medium_group.label("medium_group"),
                 DocumentsView.c.medium_type.label("medium_type"),
+                DocumentPlacesView.c.province_code,
+                DocumentPlacesView.c.province_name,
+                DocumentPlacesView.c.municipality_code,
+                DocumentPlacesView.c.municipality_name,
             )\
+            .outerjoin(DocumentPlacesView, DocumentPlacesView.c.document_id == DocumentsView.c.document_id)\
             .group_by(
                 DocumentsView.c.topic.label("topic"),
                 DocumentsView.c.medium_group.label("medium_group"),
                 DocumentsView.c.medium_type.label("medium_type"),
+                DocumentPlacesView.c.province_code,
+                DocumentPlacesView.c.province_name,
+                DocumentPlacesView.c.municipality_code,
+                DocumentPlacesView.c.municipality_name,
             )\
             .filter(DocumentsView.c.published_at >= start_date)\
             .filter(DocumentsView.c.published_at <= end_date)
