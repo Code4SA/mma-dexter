@@ -8,7 +8,7 @@ from sqlalchemy.orm import subqueryload
 from sqlalchemy import distinct
 
 from .app import app
-from .models import db, Document, Entity, Utterance, DocumentEntity, Person
+from .models import db, Document, Entity, Utterance, DocumentEntity, DocumentSource, Person
 from .models.person import PersonForm
 from .utils import paginate
 
@@ -69,8 +69,8 @@ def show_person(id):
             return redirect(url_for('show_person', id=id))
 
     query = db.session.query(distinct(Document.id))\
-              .join(DocumentEntity)\
-              .filter(DocumentEntity.entity_id.in_(person.alias_entity_ids))\
+              .join(DocumentSource)\
+              .filter(DocumentSource.person == person)\
               .order_by(Document.published_at.desc())
     pagination = paginate(query, int(request.args.get('page', 1)), 50)
     doc_ids = [r[0] for r in pagination.items]
