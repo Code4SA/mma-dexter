@@ -147,21 +147,16 @@ class Place(db.Model):
         if p:
             return p
 
-        p = Place.query\
-                .filter(Place.level == 'subplace')\
-                .filter(or_(
-                    Place.subplace_name == term,
-                    Place.subplace_name == '%s SP' % term)).first()
-        if p:
-            return p
+        # subplaces are almost always wrong, since they have names like 'Paris' and 'Zuma'
+        #p = Place.query\
+        #        .filter(Place.level == 'subplace')\
+        #        .filter(or_(
+        #            Place.subplace_name == term,
+        #            Place.subplace_name == '%s SP' % term)).first()
+        #if p:
+        #    return p
 
-        p = Place.query\
-                .filter(Place.level == 'subplace')\
-                .filter(or_(
-                    Place.subplace_name == term,
-                    Place.subplace_name == '%s SP' % term)).first()
-
-        return p
+        return None
 
 
 class DocumentPlace(db.Model, WithOffsets):
