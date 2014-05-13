@@ -5,9 +5,16 @@
 %%block(name="title")
   &= person.name
 
+#merge-modal
+  .modal-dialog
+    .modal-content
+
 #show-person
   %article
     %section.heading
+      .pull-right
+        %a.btn.btn-default(href=url_for('merge_person', id=person.id), dataToggle='modal', dataTarget='#merge-modal') This person is incorrectly named
+
       %h2
         &= person.name
 
