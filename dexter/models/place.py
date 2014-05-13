@@ -173,6 +173,7 @@ class DocumentPlace(db.Model, WithOffsets):
 
     place_id  = Column(Integer, ForeignKey('places.id'), index=True, nullable=False)
     relevance = Column(Float, index=True, nullable=True)
+    relevant  = Column(Boolean, index=True, default=False)
 
     # offsets in the document, a space-separated list of offset:length pairs.
     offset_list  = Column(String(1024))

@@ -39,4 +39,12 @@ class PlacesExtractor(BaseExtractor):
                 if doc.add_place(dp):
                     places_added += 1
 
+        if places_added:
+            # work out which places we consider relevant, based
+            # on their relevance scores
+            threshold = doc.places_relevance_threshold()
+            for dp in doc.places:
+                if dp.relevance >= threshold:
+                    dp.relevant = True
+
         self.log.info("Added %d places for %s" % (places_added, doc))

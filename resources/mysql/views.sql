@@ -102,11 +102,10 @@ select
   when 'municipality' then p.municipality_name
   when 'mainplace' then p.mainplace_name
   when 'subplace' then p.subplace_name
-  end as `name`,
-  dp.relevance
+  end as `name`
 from
   document_places dp
   inner join places p on dp.place_id = p.id
 where
-  dp.relevance > 0.5
+  dp.relevant = 1
 ;

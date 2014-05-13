@@ -191,17 +191,12 @@ class Document(db.Model):
         return not self.fairness or (len(self.fairness) == 1 and self.fairness[0].fairness.name == 'Fair')
 
     
-    def get_places(self, threshold=None):
+    def get_places(self, relevant=True):
         """
-        Get a list of DocumentPlace instances for this document. If threshold is
-        numeric, only return those with a relevance greater than or equal to the
-        threshold. If it is None, calculate a suitable threshold. If it is 0,
-        return all places (same as +.places+).
+        Get a list of DocumentPlace instances for this document. If relevant is
+        true, only fetch those that are relevant.
         """
-        if threshold is None:
-            threshold = self.places_relevance_threshold()
-
-        return [dp for dp in self.places if (threshold == 0 or dp.relevance >= threshold)]
+        return [dp for dp in self.places if not relevant or dp.relevant]
 
 
     def places_relevance_threshold(self):

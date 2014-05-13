@@ -149,6 +149,9 @@ def edit_article_analysis(id):
         flash("You're not allowed to edit this article.", 'error')
         return redirect(url_for('show_article', id=id))
 
+    if request.args.get('format') == 'places-json':
+        return jsonify(DocumentPlace.summary_for_docs([document]))
+
     status = 200
     form = DocumentAnalysisForm(obj=document)
 
