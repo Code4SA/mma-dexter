@@ -11,8 +11,9 @@
 #show-person
   %article
     %section.heading
-      .pull-right
-        %a.btn.btn-default(href=url_for('merge_person', id=person.id), dataToggle='modal', dataTarget='#merge-modal') This is not the real ${person.name|h}
+      - if current_user.admin:
+        .pull-right
+          %a.btn.btn-default(href=url_for('merge_person', id=person.id), dataToggle='modal', dataTarget='#merge-modal') This is not the real ${person.name|h}
 
       %h2
         &= person.name
