@@ -28,6 +28,11 @@
             %a.navbar-brand(href="/")
               Dexter
 
+          .navbar-nav.navbar-btn
+            %a.btn.btn-primary(href=url_for('new_article'))
+              %i.fa.fa-plus
+              Add article
+
           %ul.nav.navbar-nav
             %li(class_=('active' if request.url_rule.endpoint == 'activity' else ''))
               %a.btn.btn-link(href=url_for('activity'))
@@ -36,10 +41,10 @@
               %a.btn.btn-link(href=url_for('monitor_dashboard'))
                 My Dashboard
 
-          .navbar-nav.navbar-btn
-            %a.btn.btn-primary(href=url_for('new_article'))
-              %i.fa.fa-plus
-              Add article
+            - if current_user.admin:
+              %li
+                %a.btn.btn-link(href='/admin/')
+                  Dexter Admin
 
           - if current_user.is_authenticated():
             .navbar-nav.navbar-right
@@ -56,12 +61,10 @@
                       %a(href=url_for('user_logout'), dataMethod='post')
                         Logout
 
-              - if current_user.admin:
-                .navbar-btn.pull-right
-                  %a.btn.btn-default(href='/admin/')
-                    Dexter Admin
-
-
+          %form.navbar-form.navbar-right(action=url_for('search'))
+            .form-group
+              %input.form-control.allow-enter(type='text', name='q', placeholder='Find people')
+            %button.btn.btn-default(type='submit') Go
 
     .container
       -# show flash messages

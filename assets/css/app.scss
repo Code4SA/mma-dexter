@@ -12,6 +12,10 @@
   }
 }
 
+.navbar-nav {
+  margin-left: 20px;
+}
+
 section {
   margin-bottom: 20px;
 }
@@ -253,6 +257,20 @@ table.fairness {
 #activity {
   .tab-pane {
     margin-top: 20px;
+  }
+}
+
+#search-page {
+  #search-form {
+    margin-bottom: 40px;
+  }
+
+  .search-results {
+    li {
+      .extra {
+        margin-left: 10px;
+      }
+    }
   }
 }
 

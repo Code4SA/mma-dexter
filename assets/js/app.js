@@ -51,7 +51,7 @@ $(function() {
 // globally prevent enter key from submitting forms
 $(function() {
   $(document).on('keydown', 'input[type!="submit"], select', function(event) {
-    if(event.keyCode == 13) {
+    if (!$(this).hasClass('allow-enter') && event.keyCode == 13) {
       event.preventDefault();
       return false;
     }
