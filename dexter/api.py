@@ -23,10 +23,19 @@ def api_authors():
 @app.route('/api/people')
 @login_required
 def api_people():
-    people = Person.query\
-        .options(joinedload(Person.affiliation))\
-        .order_by(Person.name)\
-        .all()
+    q = request.args.get('q', '').strip()
+
+    if q and request.args.get('similar'):
+        people = [p for p, _ in Person.similarly_named_to(q, 0.7)]
+    else:
+        query = Person.query\
+            .options(joinedload(Person.affiliation))\
+            .order_by(Person.name)
+        if q:
+            q = '%' + q.replace('%', '%%').replace(' ', '%') + '%'
+            query = query.filter(Person.name.like(q))
+        people = query.all()
+
     return jsonify({'people': [p.json() for p in people]})
 
 @app.route('/api/entities')

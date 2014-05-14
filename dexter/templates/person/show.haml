@@ -5,15 +5,15 @@
 %%block(name="title")
   &= person.name
 
-#merge-modal.modal
-  .modal-content
+#show-person(dataPersonId=person.id, dataPersonName=person.name)
+  #merge-modal.modal.fade
+    %%include(file='merge.haml')
 
-#show-person
   %article
     %section.heading
       - if current_user.admin:
         .pull-right
-          %a.btn.btn-default(href=url_for('merge_person', id=person.id), dataToggle='modal', dataTarget='#merge-modal') This is not the real ${person.name|h}
+          %button.btn.btn-default(dataToggle='modal', dataTarget='#merge-modal') This is not the real ${person.name|h}
 
       %h2
         &= person.name

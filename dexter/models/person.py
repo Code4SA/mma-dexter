@@ -166,7 +166,11 @@ class Person(db.Model):
         Return a list of (Person, similarity) tuples for instances that have similar names,
         within +threshold+.
         """
-        candidates = ((p, levenshtein(p.name, self.name)) for p in Person.query.all() if p != self)
+        return [(p, x) for p, x in Person.similarly_named_to(p.name, threshold) if p != self]
+
+    @classmethod
+    def similarly_named_to(cls, name, threshold=0.8):
+        candidates = ((p, levenshtein(p.name, name)) for p in Person.query.all())
         return [(p, x) for p, x in candidates if x >= threshold]
 
 

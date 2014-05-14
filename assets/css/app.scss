@@ -32,6 +32,15 @@ section {
       }
     }
   }
+
+  #merge-modal {
+    ul.suggestions {
+      li {
+        float: left;
+        width: 50%;
+      }
+    }
+  }
 }
 
 form#edit-person {
