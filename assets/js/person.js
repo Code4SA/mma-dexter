@@ -112,7 +112,7 @@
 
         $.each(data.people.slice(0, 50), function(i, p) {
           if (p.id != self.personId) {
-            holder.append('<li><a data-method="post" data-confirm="Are you sure?" href="/people/' + p.id + '/?mergein=' + self.personId + '">' + p.name);
+            holder.append('<li><a data-method="post" data-confirm="Are you sure?" href="/people/' + p.id + '/merge?mergein=' + self.personId + '">' + p.name);
           }
         });
       });
