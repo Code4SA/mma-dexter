@@ -1,0 +1,40 @@
+%%inherit(file="../layout.haml")
+%%namespace(file="../bootstrap_wtf.haml", **{'import': '*'})
+%%namespace(file="../paginator.haml", **{'import': '*'})
+
+%%block(name="title")
+  &= q or 'Search'
+
+
+#search-page
+  %h2 Search Dexter
+
+  %form#search-form(action=url_for('search'), method='GET')
+    .row
+      .col-sm-6
+        %input.form-control.allow-enter(type="text", placeholder='Search for people', name='q', value=q, autofocus='autofocus')
+      .col-sm-2
+        %input.btn.btn-primary(type="submit", value='Go')
+
+  - if q:
+    %article.results
+      %section.people
+        %h4
+          People
+          - if paged_people.items:
+            (1 - ${min(paged_people.total, paged_people.per_page)} of ${paged_people.total})
+
+        - if paged_people.items:
+          %ul.search-results.list-unstyled
+            - for p in paged_people.items:
+              %li
+                %a(href=url_for('show_person', id=p.id))&= p.name
+                %span.extra.text-muted
+                  - if p.affiliation:
+                    &= p.affiliation.name
+
+
+        - else:
+          %p.text-muted
+            Nothing found :(
+
