@@ -113,10 +113,18 @@ class XLSXBuilder:
         self.write_table(ws, 'Fairness', rows)
 
     def places_worksheet(self, wb):
-        from dexter.models.views import DocumentPlacesView
+        from dexter.models.views import DocumentsView, DocumentPlacesView
 
         ws = wb.add_worksheet('places')
-        rows = self.filter(db.session.query(DocumentPlacesView).join(Document)).all()
+
+        tables = OrderedDict()
+        tables['doc'] = DocumentsView
+        tables['places'] = DocumentPlacesView
+
+        rows = self.filter(db.session\
+                    .query(*self.merge_views(tables, ['document_id']))\
+                    .join(Document)\
+                    .outerjoin(DocumentPlacesView)).all()
         self.write_table(ws, 'Places', rows)
 
     def everything_worksheet(self, wb):
