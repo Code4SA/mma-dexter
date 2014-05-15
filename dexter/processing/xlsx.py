@@ -124,7 +124,7 @@ class XLSXBuilder:
         rows = self.filter(db.session\
                     .query(*self.merge_views(tables, ['document_id']))\
                     .join(Document)\
-                    .outerjoin(DocumentPlacesView)).all()
+                    .join(DocumentPlacesView)).all()
         self.write_table(ws, 'Places', rows)
 
     def everything_worksheet(self, wb):
