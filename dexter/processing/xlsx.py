@@ -1,3 +1,5 @@
+from collections import OrderedDict
+
 import xlsxwriter
 import StringIO
 from datetime import datetime
@@ -30,6 +32,7 @@ class XLSXBuilder:
         self.sources_worksheet(workbook)
         self.bias_worksheet(workbook)
         self.fairness_worksheet(workbook)
+        self.places_worksheet(workbook)
         self.everything_worksheet(workbook)
 
 
@@ -98,28 +101,42 @@ class XLSXBuilder:
         from dexter.models.views import DocumentsView, DocumentFairnessView
 
         ws = wb.add_worksheet('fairness')
-        rows = self.filter(db.session.query(DocumentsView, DocumentFairnessView)\
+
+        tables = OrderedDict()
+        tables['doc'] = DocumentsView
+        tables['fairness'] = DocumentFairnessView
+
+        rows = self.filter(db.session\
+                    .query(*self.merge_views(tables, ['document_id']))\
                     .join(Document)\
                     .join(DocumentFairnessView)).all()
-        if rows:
-            # joining the two views can result in columns with the same name,
-            # we simply de-dup them here
-            keys = sorted(list(set(rows[0].keys())))
-            self.write_table(ws, 'Fairness', rows, keys)
+        self.write_table(ws, 'Fairness', rows)
+
+    def places_worksheet(self, wb):
+        from dexter.models.views import DocumentPlacesView
+
+        ws = wb.add_worksheet('places')
+        rows = self.filter(db.session.query(DocumentPlacesView).join(Document)).all()
+        self.write_table(ws, 'Places', rows)
 
     def everything_worksheet(self, wb):
-        from dexter.models.views import DocumentsView, DocumentSourcesView, DocumentFairnessView
+        from dexter.models.views import DocumentsView, DocumentSourcesView, DocumentFairnessView, DocumentPlacesView
 
         ws = wb.add_worksheet('everything')
-        rows = self.filter(db.session.query(DocumentsView, DocumentFairnessView, DocumentSourcesView)\
+
+        tables = OrderedDict()
+        tables['doc'] = DocumentsView
+        tables['fairness'] = DocumentFairnessView
+        tables['sources'] = DocumentSourcesView
+        tables['places'] = DocumentPlacesView
+
+        rows = self.filter(db.session\
+                    .query(*self.merge_views(tables, ['document_id']))\
                     .join(Document)\
-                    .join(DocumentFairnessView)\
-                    .join(DocumentSourcesView)).all()
-        if rows:
-            # joining the two views can result in columns with the same name,
-            # we simply de-dup them here
-            keys = sorted(list(set(rows[0].keys())))
-            self.write_table(ws, 'Everything', rows, keys)
+                    .outerjoin(DocumentFairnessView)\
+                    .outerjoin(DocumentSourcesView)\
+                    .outerjoin(DocumentPlacesView)).all()
+        self.write_table(ws, 'Everything', rows)
 
     def bias_worksheet(self, wb):
         ws = wb.add_worksheet('bias')
@@ -165,3 +182,18 @@ class XLSXBuilder:
 
     def filter(self, query):
         return query.filter(Document.id.in_(self.doc_ids))
+
+
+    def merge_views(self, tables, singletons=None):
+        singletons = set(singletons or [])
+        included = set()
+
+        # we need to alias columns so they don't clash
+        cols = []
+        for alias, table in tables.iteritems():
+            for col in table.c:
+                if not col.name in singletons or not col.name in included:
+                    included.add(col.name)
+                    cols.append(col.label('%s_%s' % (alias, col.name)))
+
+        return cols
