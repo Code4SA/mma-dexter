@@ -21,7 +21,7 @@
 
             %td.title
               %a(href=url_for('show_article', id=doc.id))
-                %strong&= doc.title
+                %strong&= doc.title or '(none)'
             %td.published_at
               &=doc.published_at.strftime('%e %B %Y')
             %td.medium
