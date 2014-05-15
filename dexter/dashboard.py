@@ -10,7 +10,7 @@ from flask.ext.sqlalchemy import Pagination
 from sqlalchemy.sql import func, distinct
 from sqlalchemy.orm import joinedload
 
-from dexter.models import db, Document, Entity, Medium, User, DocumentSource, DocumentPlace, DocumentFairness, Fairness
+from dexter.models import db, Document, Entity, Medium, User, DocumentSource, DocumentPlace, DocumentFairness, Fairness, Topic
 from dexter.models.document import DocumentAnalysisProblem
 
 from wtforms import validators, HiddenField, TextField, SelectMultipleField
@@ -21,7 +21,17 @@ from .processing.xlsx import XLSXBuilder
 @app.route('/dashboard')
 @login_required
 def dashboard():
-    latest_docs = Document.query.order_by(Document.created_at.desc()).limit(30)
+    latest_docs = [x.id for x in Document.query.order_by(Document.created_at.desc()).limit(30)]
+
+    latest_docs = Document.query\
+        .options(
+            joinedload('created_by'),
+            joinedload('sources'),
+            joinedload('topic'),
+            joinedload('medium'),
+        )\
+        .filter(Document.id.in_(latest_docs))\
+        .order_by(Document.created_at.desc())
 
     doc_groups = []
     for date, group in groupby(latest_docs, lambda d: d.created_at.date()):
@@ -34,7 +44,18 @@ def dashboard():
 @app.route('/monitor-dashboard')
 @login_required
 def monitor_dashboard():
-    docs = Document.query.filter(Document.created_by_user_id == current_user.id).order_by(Document.created_at.desc()).limit(30)
+    docs = [x.id for x in Document.query.filter(Document.created_by_user_id == current_user.id)\
+        .order_by(Document.created_at.desc()).limit(30)]
+
+    docs = Document.query\
+        .options(
+            joinedload('created_by'),
+            joinedload('sources'),
+            joinedload('topic'),
+            joinedload('medium'),
+        )\
+        .filter(Document.id.in_(docs))\
+        .order_by(Document.created_at.desc())
 
     doc_groups = []
     for date, group in groupby(docs, lambda d: d.created_at.date()):
