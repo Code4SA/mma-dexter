@@ -156,6 +156,10 @@ class Person(db.Model):
         for m in [Author, DocumentSource, Entity]:
             m.query.filter(m.person_id == self.id).update({'person_id': dest.id})
 
+        # ensure we remember the old person as an alias of the new one
+        e = Entity.get_or_create('person', self.name)
+        e.person = dest
+
         self.log.info("Merged %s into %s" % (self, dest))
 
         db.session.delete(self)

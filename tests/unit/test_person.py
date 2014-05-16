@@ -84,6 +84,7 @@ class TestDocument(unittest.TestCase):
 
 
     def test_merge(self):
+        # we're going to merge joe into zuma
         joe = Person.query.get(self.fx.PersonData.joe_author.id)
         zuma = Person.query.get(self.fx.PersonData.zuma.id)
 
@@ -99,3 +100,7 @@ class TestDocument(unittest.TestCase):
         # should be deleted
         joe = Person.query.filter(Person.id == joe.id).first()
         self.assertIsNone(joe)
+
+        # new entity should exist
+        e = Entity.query.filter(Entity.group == 'person', Entity.name == self.fx.PersonData.joe_author.name).one()
+        self.assertEqual(zuma, e.person)
