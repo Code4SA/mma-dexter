@@ -39,7 +39,7 @@ class TestEditArticleAnalysis(TestCase):
         doc = Document.query.get(self.fx.DocumentData.simple.id)
         self.assertEqual(0, len(doc.issues))
 
-        f = res.forms[0]
+        f = res.forms[1]
 
         # select an issue
         f.fields['issues'] = ['2', ]

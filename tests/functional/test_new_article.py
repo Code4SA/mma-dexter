@@ -56,7 +56,7 @@ class TestNewArticle(TestCase):
         """
         MGCrawler.fetch = MagicMock(return_value=html)
 
-        f = res.forms[0]
+        f = res.forms[1]
         f.fields['url'] = 'http://mg.co.za/article/2013-12-22-foo'
         res = f.submit(self.client)
 
@@ -66,7 +66,7 @@ class TestNewArticle(TestCase):
         res = self.client.get('/articles/new')
         self.assert200(res)
 
-        f = res.forms[1]
+        f = res.forms[2]
         f.fields['url'] = 'http://fake'
         f.fields['title'] = 'headline'
         f.fields['published_at'] = '2013/12/22 00:00'
@@ -82,7 +82,7 @@ class TestNewArticle(TestCase):
         res = self.client.get('/articles/new')
         self.assert200(res)
 
-        f = res.forms[1]
+        f = res.forms[2]
         f.fields['url'] = 'http://fake'
         f.fields['title'] = 'headline'
         f.fields['published_at'] = '2013/12/22 00:00'

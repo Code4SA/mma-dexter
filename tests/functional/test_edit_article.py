@@ -38,7 +38,7 @@ class TestEditArticle(TestCase):
         res = self.client.get('/articles/%s/edit' % self.fx.DocumentData.simple.id)
         self.assert200(res)
 
-        f = res.forms[0]
+        f = res.forms[1]
         f.fields['author-name'] = 'Sue Skosana'
         f.fields['author-person_gender_id'] = '1'
         f.fields['author-person_race_id'] = '1'
