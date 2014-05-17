@@ -1,4 +1,4 @@
 SHELL=/bin/bash
 
-# Run everday at 2am
-* 2 * * * $HOME/mma-dexter/bin/run-mysql-s3-backup.sh >> $HOME/mma-dexter/log/backups.log 2>&1
+# Run everday at 2:05am
+5 2 * * * $HOME/mma-dexter/bin/run-mysql-s3-backup.sh >> $HOME/mma-dexter/log/backups.log 2>&1
