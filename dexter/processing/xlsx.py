@@ -91,10 +91,18 @@ class XLSXBuilder:
         self.write_table(ws, 'Documents', docs)
 
     def sources_worksheet(self, wb):
-        from dexter.models.views import DocumentSourcesView
+        from dexter.models.views import DocumentsView, DocumentSourcesView
 
         ws = wb.add_worksheet('sources')
-        rows = self.filter(db.session.query(DocumentSourcesView).join(Document)).all()
+
+        tables = OrderedDict()
+        tables['doc'] = DocumentsView
+        tables['source'] = DocumentSourcesView
+
+        rows = self.filter(db.session\
+                    .query(*self.merge_views(tables, ['document_id']))\
+                    .join(Document)\
+                    .join(DocumentSourcesView)).all()
         self.write_table(ws, 'Sources', rows)
 
     def fairness_worksheet(self, wb):

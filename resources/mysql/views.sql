@@ -9,6 +9,8 @@ select
   if(race_person.id is not null, race_person.name, race_unnamed.name) as `race`,
   a.name as `affiliation`,
   a.code as `affiliation_code`,
+  -- affiliation parent
+  if(ap.code IS NULL, NULL, concat(ap.code, ' - ', ap.name)) as `affiliation_group`,
   sf.name as `function`,
   ds.quoted as `quoted`,
   ds.doc_id as `document_id`,
@@ -22,6 +24,7 @@ from
   left join races race_person on p.race_id = race_person.id
   left join races race_unnamed on ds.unnamed_race_id = race_unnamed.id
   left join source_functions sf on ds.source_function_id = sf.id
+  left join affiliations ap on ap.code = substring_index(a.code, '.', 1)
 ;
 
 -- documents_view:
@@ -39,6 +42,7 @@ create or replace view documents_view as select
   m.name as `medium`,
   m.medium_type as `medium_type`,
   if(m.medium_group IS NULL OR m.medium_group = '', m.name, m.medium_group) as `medium_group`,
+  if(m.parent_org IS NULL OR m.parent_org = '', m.name, m.parent_org) as `parent_org`,
   t.name as `topic`,
   l.name as `origin`,
   if (a.person_id is null, a.name, ap.name) as `author_name`,

@@ -17,6 +17,7 @@ class Medium(db.Model):
     domain       = Column(String(100), unique=True)
     medium_type  = Column(String(100), index=True, nullable=False)
     medium_group = Column(String(100))
+    parent_org   = Column(String(100))
 
     def group_name(self):
         return self.medium_group or self.name
