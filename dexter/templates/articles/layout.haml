@@ -9,15 +9,16 @@
     %script(src=url)
 
 %%block(name='pre_content')
-  %section.fixed-header
+  .fixed-header
     .container
-      - if document.can_user_edit(current_user):
-        .pull-right
-          %a.btn.btn-default(href=url_for('edit_article', id=document.id))
-            %i.fa.fa-pencil
-            Edit article
-
-      %h2&= document.title
+      .row
+        .col-sm-9
+          %h3&= document.title
+        - if document.can_user_edit(current_user):
+          .col-sm-3.text-right
+            %a.btn.btn-default(href=url_for('edit_article', id=document.id))
+              %i.fa.fa-pencil
+              Edit article
 
 %article.document-container.below-fixed-header
   .url
