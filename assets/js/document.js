@@ -34,6 +34,10 @@
         return;
       }
 
+      $('button.submit').on('click', function(e) {
+        $('#edit-document form').submit();
+      });
+
       // author name autocomplete
       self.$authorWidget = $('.author-widget');
       self.authorHound = new Bloodhound({
@@ -120,6 +124,10 @@
       if (self.$form.length === 0) {
         return;
       }
+
+      $('button.submit').on('click', function(e) {
+        self.$form.submit();
+      });
 
       self.$form
         .on('ajax:success', function(e, data, status, xhr) {

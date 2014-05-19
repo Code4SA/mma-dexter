@@ -3,20 +3,13 @@
 
 .panel.panel-default.analysis
   .panel-heading
-    .row
-      .col-sm-8
-        %h3.panel-title
-          %i.fa(class_=document.analysis_nature.icon())
-          &= document.analysis_nature.name.title()
-          Analysis
-          - if document.checked_by:
-            by
-            &= document.checked_by.short_name()
-      .col-sm-4.text-right
-        - if document.can_user_edit(current_user):
-          %a.btn.btn-default(href=url_for('edit_article_analysis', id=document.id))
-            %i.fa.fa-pencil
-            Edit analysis
+    %h3.panel-title
+      %i.fa(class_=document.analysis_nature.icon())
+      &= document.analysis_nature.name.title()
+      Analysis
+      - if document.checked_by:
+        by
+        &= document.checked_by.short_name()
 
   .panel-body
     %section
@@ -195,9 +188,3 @@
         %%include(file='analysis_tab_mentions.haml')
         %%include(file='analysis_tab_places.haml')
         %%include(file='analysis_tab_keywords.haml')
-
-  .panel-footer
-    .text-right
-      %a.btn.btn-default(href=url_for('edit_article_analysis', id=document.id))
-        %i.fa.fa-pencil
-        Edit analysis

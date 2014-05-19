@@ -7,6 +7,15 @@
 %%block(name="title")
   &= document.title
 
+%%block(name="article_header_controls")
+  %a.btn.btn-default(href=url_for('edit_article', id=document.id))
+    %i.fa.fa-pencil
+    Edit article
+  %button.btn.btn-success.submit(type='button', dataDisableWith='Saving...')
+    %i.fa.fa-tasks
+    Save analysis
+  %br
+  %a.btn.btn-link(href=url_for('show_article', id=document.id)) Cancel
 
 .row
   .col-sm-5
@@ -18,18 +27,13 @@
 
       .panel.panel-default.analysis
         .panel-heading
-          .row
-            .col-sm-5
-              %h3.panel-title
-                %i.fa(class_=document.analysis_nature.icon())
-                &= document.analysis_nature.name.title()
-                Analysis
-                - if document.checked_by:
-                  by
-                  &= document.checked_by.short_name()
-            .col-sm-7.text-right
-              %a.btn.btn-default(href=url_for('show_article', id=document.id)) Close
-              %input.btn.btn-success(type='submit', value='Save changes', dataDisableWith='Saving...')
+          %h3.panel-title
+            %i.fa(class_=document.analysis_nature.icon())
+            &= document.analysis_nature.name.title()
+            Analysis
+            - if document.checked_by:
+              by
+              &= document.checked_by.short_name()
 
         .panel-body
           %ul.nav.nav-tabs
@@ -170,8 +174,3 @@
             %%include(file='analysis_tab_mentions.haml')
             %%include(file='analysis_tab_places.haml')
             %%include(file='analysis_tab_keywords.haml')
-
-        .panel-footer
-          .text-right
-            %a.btn.btn-default(href=url_for('show_article', id=document.id)) Close
-            %input.btn.btn-success(type='submit', value='Save changes', dataDisableWith='Saving...')

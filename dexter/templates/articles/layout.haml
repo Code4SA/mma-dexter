@@ -12,15 +12,13 @@
   .fixed-header
     .container
       .row
-        .col-sm-9
+        .col-sm-8
           %h3&= document.title
           .url
             %a(href=document.url, target='_blank')&= document.url
-        - if document.can_user_edit(current_user):
-          .col-sm-3.text-right
-            %a.btn.btn-default(href=url_for('edit_article', id=document.id))
-              %i.fa.fa-pencil
-              Edit article
+
+        .col-sm-4.text-right
+          %%block(name="article_header_controls")
 
 %article.document-container
   %p#error-box.alert.alert-danger
