@@ -21,7 +21,13 @@ class AnalysisNature(db.Model):
     name        = Column(String(100), nullable=False, index=True, unique=True)
 
     # associations
-    topics      = relationship("Topic", order_by="Topic.name")
+    topics      = relationship("Topic", backref="analysis_nature", order_by="Topic.name")
+
+    def __str__(self):
+        return self.name
+
+    def __repr__(self):
+        return "<AnalysisNature name='%s'>" % (self.name.encode('utf-8'),)
 
 
     @classmethod

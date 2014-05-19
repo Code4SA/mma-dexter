@@ -62,8 +62,8 @@
             #analysis-tab.tab-pane.active
               %section.form-horizontal
                 %h4 Analysis
-                = field(form.topic_id, class_='chosen-select')
-                = field(form.origin_location_id, class_='chosen-select')
+                = field(form.topic_id, class_='select2')
+                = field(form.origin_location_id, class_='select2')
               %hr
               %section
                 %%include(file='edit_analysis_sources.haml')
