@@ -63,7 +63,7 @@ $(function() {
   if ($text.length > 0) {
     $text.affix({
       offset: {
-        top: $text.offset().top - 20,
+        top: $text.offset().top - 120,
       }
     });
   }
