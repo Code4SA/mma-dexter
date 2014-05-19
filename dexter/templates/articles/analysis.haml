@@ -21,13 +21,13 @@
         %li.active
           %a(href="#analysis-tab", dataToggle="tab") Analysis
         %li
-          %a(href="#mentions-tab", dataToggle="tab")
-            Mentions
-            %span.badge&= len(document.people()) + len(document.organisations())
-        %li
           %a(href="#places-tab", dataToggle="tab")
             Places
             %span.badge&= len(document.places)
+        %li
+          %a(href="#mentions-tab", dataToggle="tab")
+            Mentions
+            %span.badge&= len(document.people()) + len(document.organisations())
         %li
           %a(href="#keywords-tab", dataToggle="tab")
             Keywords
