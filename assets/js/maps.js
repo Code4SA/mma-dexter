@@ -1,4 +1,7 @@
 (function($, exports) {
+  if (typeof exports.Dexter == 'undefined') exports.Dexter = {};
+  var Dexter = exports.Dexter;
+
   Dexter.Maps = function() {
     var self = this;
 
@@ -6,13 +9,6 @@
       if ($('#slippy-map').length === 0) {
         return;
       }
-
-      // resize maps when a tab is toggled
-      $('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
-        $($(this).attr('href') + ' .leaflet-container').each(function(i, map) {
-          self.map.invalidateSize(false);
-        });
-      });
 
       self.map = L.map('slippy-map');
       self.map.setView({lat: -28.4796, lng: 24.698445}, 5);
@@ -22,8 +18,10 @@
         maxZoom: 16,
         attribution: 'Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'});	
       self.map.addLayer(osm);
+    };
 
-      self.loadAndDrawPlaces();
+    self.invalidate = function() {
+      self.map.invalidateSize(false);
     };
 
     self.placesUrl = function() {
@@ -81,5 +79,6 @@
 })(jQuery, window);
 
 $(function() {
-  new Dexter.Maps().init();
+  Dexter.maps = new Dexter.Maps();
+  Dexter.maps.init();
 });

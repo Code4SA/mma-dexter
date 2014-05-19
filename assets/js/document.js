@@ -2,6 +2,29 @@
   if (typeof exports.Dexter == 'undefined') exports.Dexter = {};
   var Dexter = exports.Dexter;
 
+  // basic document view
+  Dexter.DocumentView = function() {
+    var self = this;
+
+    self.placesSetup = false;
+
+    self.init = function() {
+      $('a[href="#places-tab"][data-toggle="tab"]').on('shown.bs.tab', self.onPlacesTabShown);
+    };
+
+    self.onPlacesTabShown = function(e) {
+      // invalidate the map so that it gets resized correctly
+      $($(this).attr('href') + ' .leaflet-container').each(function(i, map) {
+        Dexter.maps.invalidate();
+      });
+
+      if (!self.placesSetup) {
+        Dexter.maps.loadAndDrawPlaces();
+        self.placesSetup = true;
+      }
+    };
+  };
+
   // view when editing document details (NOT the analysis)
   Dexter.EditDocumentView = function() {
     var self = this;
@@ -328,6 +351,7 @@
 })(jQuery, window);
 
 $(function() {
+  new Dexter.DocumentView().init();
   new Dexter.EditDocumentView().init();
   new Dexter.EditDocumentAnalysisView().init();
 });

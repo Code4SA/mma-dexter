@@ -6,6 +6,8 @@
   Dexter.ActivityView = function() {
     var self = this;
 
+    self.placesSetup = false;
+
     self.init = function() {
       $('form.activity-refine .btn.download').on('click', function(e) {
         e.preventDefault();
@@ -14,6 +16,9 @@
         $('form.activity-refine').submit();
         $('form.activity-refine input[name="format"]').remove();
       });
+
+      // toggle maps
+      $('a[href="#tab-map"][data-toggle="tab"]').on('shown.bs.tab', self.onMapTabShown);
 
       Highcharts.setOptions({
         chart: {
@@ -53,6 +58,18 @@
         }
       });
       self.updateCharts();
+    };
+
+    self.onMapTabShown = function(e) {
+      // invalidate the map so that it gets resized correctly
+      $($(this).attr('href') + ' .leaflet-container').each(function(i, map) {
+        Dexter.maps.invalidate();
+      });
+
+      if (!self.placesSetup) {
+        Dexter.maps.loadAndDrawPlaces();
+        self.placesSetup = true;
+      }
     };
 
     self.chartUrl = function() {
