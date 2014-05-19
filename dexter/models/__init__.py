@@ -1,7 +1,8 @@
 from .support import db
 from .document import Document, DocumentType
 from .entity import DocumentEntity, Entity
-from .keyword import DocumentKeyword, Topic
+from .keyword import DocumentKeyword
+from .topic import Topic
 from .utterance import Utterance
 from .medium import Medium
 from .source import DocumentSource, SourceFunction

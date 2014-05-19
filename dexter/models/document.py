@@ -299,7 +299,9 @@ class DocumentAnalysisForm(Form):
 
         from . import Topic, Location, Issue
 
-        self.topic_id.choices = [['', '(none)']] + [[str(t.id), t.name] for t in Topic.query.order_by(Topic.name).all()]
+        nature = self._obj.analysis_nature
+
+        self.topic_id.choices = [['', '(none)']] + [[str(t.id), t.name] for t in nature.topics]
         self.issues.choices = [(str(issue.id), issue.name) for issue in db.session.query(Issue).order_by('name')]
         self.origin_location_id.choices = [['', '(none)']] + [
                 [str(loc.id), loc.name] for loc in Location.query.order_by(Location.name).all()]

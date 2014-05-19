@@ -4,6 +4,8 @@ from sqlalchemy import (
     String,
     )
 
+from sqlalchemy.orm import relationship
+
 from .support import db
 
 class AnalysisNature(db.Model):
@@ -12,11 +14,15 @@ class AnalysisNature(db.Model):
     """
     __tablename__ = "analysis_natures"
 
+    ELECTIONS = 1
+    CHILDREN  = 2
+
     id          = Column(Integer, primary_key=True)
     name        = Column(String(100), nullable=False, index=True, unique=True)
 
-    ELECTIONS = 1
-    CHILDREN  = 2
+    # associations
+    topics      = relationship("Topic", order_by="Topic.name")
+
 
     @classmethod
     def lookup(cls, name):
