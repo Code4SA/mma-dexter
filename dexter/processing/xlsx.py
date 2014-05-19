@@ -201,6 +201,14 @@ class XLSXBuilder:
 
 
     def merge_views(self, tables, singletons=None):
+        """
+        Merge a name-to-table map into an array of
+        aliased column objects that can be used in a query.
+        This ensures that if two tables have columns with the
+        same name, that they get renamed to be unique.
+        The +singletons+ array is a list of column names
+        which should only be included once (useful for common PK columns).
+        """
         singletons = set(singletons or [])
         included = set()
 
