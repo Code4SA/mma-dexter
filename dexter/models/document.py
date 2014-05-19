@@ -47,7 +47,6 @@ class Document(db.Model):
 
     author_id         = Column(Integer, ForeignKey('authors.id'), index=True)
     medium_id         = Column(Integer, ForeignKey('mediums.id'), index=True)
-    topic_id          = Column(Integer, ForeignKey('topics.id'), index=True)
     document_type_id  = Column(Integer, ForeignKey('document_types.id'), index=True)
     origin_location_id = Column(Integer, ForeignKey('locations.id'), index=True)
 
@@ -57,6 +56,12 @@ class Document(db.Model):
     published_at = Column(DateTime(timezone=True), index=True, unique=False, nullable=False)
     created_at   = Column(DateTime(timezone=True), index=True, unique=False, nullable=False, server_default=func.now())
     updated_at   = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.current_timestamp())
+
+    # the type of analysis that this document is subject to
+    analysis_nature_id = Column(Integer, ForeignKey('analysis_natures.id'), index=True, nullable=False, default=1)
+
+    # analysis details
+    topic_id           = Column(Integer, ForeignKey('topics.id'), index=True)
 
     # Associations
     author      = relationship("Author")
@@ -71,8 +76,12 @@ class Document(db.Model):
     topic       = relationship("Topic")
     document_type = relationship("DocumentType")
     origin      = relationship("Location")
+
+    analysis_nature = relationship("AnalysisNature")
+
     created_by  = relationship("User", backref=backref('created_documents'), foreign_keys=[created_by_user_id])
     checked_by  = relationship("User", backref=backref('checked_documents'), foreign_keys=[checked_by_user_id])
+
 
 
     PLACE_ENTITY_GROUPS = set(['city', 'province_or_state', 'region'])

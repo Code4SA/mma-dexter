@@ -10,6 +10,7 @@ from .models import db, Document, Issue, Person, DocumentPlace
 from .models.document import DocumentForm, DocumentAnalysisForm
 from .models.source import DocumentSource, DocumentSourceForm
 from .models.fairness import DocumentFairness, DocumentFairnessForm
+from .models.analysis_nature import AnalysisNature
 from .models.author import AuthorForm
 
 from .processing import DocumentProcessor, ProcessingError
@@ -257,10 +258,28 @@ def edit_article_analysis(id):
             new_sources=new_sources,
             new_fairness_form=new_fairness_form,
             fairness_forms=fairness_forms,
-            document=document))
+            document=document,
+            natures=AnalysisNature.all()))
     else:
         resp = ''
 
     return (resp, status,
             # ensure the browser refreshes the page when Back is pressed
             {'Cache-Control': 'no-cache, no-store, must-revalidate'})
+
+@app.route('/articles/<id>/analysis/nature', methods=['POST'])
+@login_required
+def edit_article_analysis_nature(id):
+    document = Document.query.get_or_404(id)
+
+    # can this user do this?
+    if not document.can_user_edit(current_user):
+        flash("You're not allowed to edit this article.", 'error')
+        return redirect(url_for('show_article', id=id))
+
+    nature = AnalysisNature.lookup(request.args.get('nature', ''))
+    if nature:
+        document.analysis_nature = nature
+        db.session.commit()
+
+    return redirect(url_for('edit_article_analysis', id=id))

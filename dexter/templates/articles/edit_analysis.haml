@@ -23,6 +23,19 @@
                   by
                   &= document.checked_by.short_name()
             .col-sm-8.text-right
+              .btn-group.text-left
+                %button.btn.btn-default.dropdown-toggle(type="button", dataToggle='dropdown')
+                  &= document.analysis_nature.name
+                  %span.caret
+                %ul.dropdown-menu
+                  - for nature in natures:
+                    %li(class_ = 'disabled' if document.analysis_nature == nature else '')
+                      %a(href=url_for('edit_article_analysis_nature', id=document.id, nature=nature.name), dataMethod='post', dataConfirm='Change to %s analysis?' % nature.name)
+                        - if document.analysis_nature == nature:
+                          %i.fa.fa-check
+                        &= nature.name
+
+
               %a.btn.btn-default(href=url_for('show_article', id=document.id)) Close
               %input.btn.btn-success(type='submit', value='Save changes', dataDisableWith='Saving...')
 
