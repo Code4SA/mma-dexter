@@ -10,13 +10,6 @@
         &= document.created_by.short_name()
       on ${document.created_at.strftime('%Y-%m-%d')}
 
-    - if document.checked_by:
-      %li
-        %i.fa.fa-check-circle
-        %span.label.label-success.label-lg
-          Analysis by
-          &= document.checked_by.short_name()
-
 %section
   .row
     .col-sm-6
