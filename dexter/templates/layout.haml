@@ -22,7 +22,7 @@
 
   %body
     %header
-      .navbar.navbar-default
+      .navbar.navbar-default.navbar-fixed-top
         .container
           .navbar-header
             %a.navbar-brand(href="/")
@@ -65,6 +65,8 @@
             .form-group
               %input.form-control.allow-enter(type='text', name='q', placeholder='Find people')
             %button.btn.btn-default(type='submit') Go
+
+    %%block(name='pre_content')
 
     .container
       -# show flash messages

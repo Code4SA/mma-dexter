@@ -8,18 +8,21 @@
   - for url in webassets('documents'):
     %script(src=url)
 
-%p#error-box.alert.alert-danger
+%%block(name='pre_content')
+  %section.fixed-header
+    .container
+      - if document.can_user_edit(current_user):
+        .pull-right
+          %a.btn.btn-default(href=url_for('edit_article', id=document.id))
+            %i.fa.fa-pencil
+            Edit article
 
-%article.document-container
-  %section.heading
-    - if document.can_user_edit(current_user):
-      .pull-right
-        %a.btn.btn-default(href=url_for('edit_article', id=document.id))
-          %i.fa.fa-pencil
-          Edit article
+      %h2&= document.title
 
-    %h2&= document.title
-    .url
-      %a(href=document.url, target='_blank')&= document.url
+%article.document-container.below-fixed-header
+  .url
+    %a(href=document.url, target='_blank')&= document.url
+
+  %p#error-box.alert.alert-danger
 
   ${next.body()}

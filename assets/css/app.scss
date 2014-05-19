@@ -1,5 +1,38 @@
+body {
+  padding-top: 70px;
+}
+
+article, section {
+  h1, h2, h3, h4, h5 {
+    &:first-child {
+      margin-top: 0px;
+    }
+  }
+}
+
 #error-box {
   display: none;
+}
+
+.fixed-header {
+  position: fixed;
+  margin-top: -20px;
+  padding-top: 20px;
+  width: 100%;
+
+  background: white;
+  z-index: 1000;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.15),0 1px 5px rgba(0,0,0,0.075);
+  height: 70px;
+
+  h2 {
+    padding: 0px;
+    margin: 0px;
+  }
+}
+
+.below-fixed-header {
+  margin-top: 60px;
 }
 
 #new-document {
@@ -66,17 +99,6 @@ form#edit-person {
 }
 
 .document-container {
-  .heading {
-    margin-bottom: 20px;
-
-    h2 {
-      border-bottom: 1px solid #ddd;
-      padding-bottom: 5px;
-      margin-top: 0px;
-      margin-bottom: 5px;
-    }
-  }
-
   .article-summary {
     margin-top: 10px;
   }
@@ -341,8 +363,8 @@ table.fairness {
   }
 }
 
-#activity {
-  .tab-pane {
+.tab-content {
+  &> .tab-pane {
     margin-top: 20px;
   }
 }
