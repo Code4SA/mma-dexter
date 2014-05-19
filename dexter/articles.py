@@ -280,6 +280,11 @@ def edit_article_analysis_nature(id):
     nature = AnalysisNature.lookup(request.args.get('nature', ''))
     if nature:
         document.analysis_nature = nature
+
+        # change default for this user
+        if current_user.is_authenticated():
+            current_user.default_analysis_nature = nature
+
         db.session.commit()
 
     return redirect(url_for('edit_article_analysis', id=id))
