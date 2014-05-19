@@ -11,8 +11,8 @@ assets.url        = '/public'
 
 assets.register('css',
     Bundle(
-      'css/bootstrap-3.0.3.min.css',
-      'css/bootstrap-3.0.3-theme.min.css',
+      'css/bootstrap-3.1.1.min.css',
+      'css/bootstrap-3.1.1-theme.min.css',
       'css/font-awesome-4.1.0.min.css',
       'css/datepicker3.css',
       'css/bootstrap-datetimepicker.min.css',
@@ -38,7 +38,7 @@ assets.register('maps-css',
 
 assets.register('js', Bundle(
     'js/jquery-1.10.2.min.js',
-    'js/bootstrap-3.0.3.min.js',
+    'js/bootstrap-3.1.1.min.js',
     'js/typeahead.bundle-0.10.1.min.js',
     'js/ujs.js',
     'js/app.js',

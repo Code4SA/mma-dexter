@@ -1,7 +1,3 @@
-body {
-  padding-top: 70px;
-}
-
 article, section {
   h1, h2, h3, h4, h5 {
     &:first-child {
@@ -15,14 +11,21 @@ article, section {
 }
 
 .fixed-header {
-  position: fixed;
   z-index: 1000;
+
+  width: 100%;
+  height: 80px;
 
   margin-top: -20px;
   padding-top: 15px;
 
-  width: 100%;
-  height: 80px;
+  &.affix {
+    top: 20px;
+
+    &+.container {
+      margin-top: 95px;
+    }
+  }
 
   background: #e8e8e8;
   background-repeat: repeat-x;
@@ -41,7 +44,7 @@ article, section {
   }
 
   &+.container {
-    margin-top: 80px;
+    margin-top: 20px;
   }
 }
 
@@ -55,8 +58,12 @@ article, section {
   }
 }
 
-.navbar-nav {
-  margin-left: 20px;
+.navbar {
+  border-radius: 0px;
+
+  .navbar-nav {
+    margin-left: 20px;
+  }
 }
 
 section {
@@ -120,7 +127,11 @@ form#edit-person {
     overflow-y: auto;
 
     &.affix {
-      top: 140px;
+      top: 100px;
+
+      & + .container {
+        margin-top: 20px;
+      }
     }
   }
 

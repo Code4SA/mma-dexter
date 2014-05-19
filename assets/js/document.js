@@ -10,6 +10,22 @@
 
     self.init = function() {
       $('a[href="#places-tab"][data-toggle="tab"]').on('shown.bs.tab', self.onPlacesTabShown);
+
+      var $text = $('.document-container .article-text');
+      if ($text.length > 0) {
+        $text.affix({
+          offset: {
+            top: $text.offset().top - 100,
+          }
+        });
+      }
+
+      $('.fixed-header')
+        .affix({
+          offset: {
+            top: 55,
+          }
+        });
     };
 
     self.onPlacesTabShown = function(e) {
