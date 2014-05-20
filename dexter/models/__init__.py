@@ -14,3 +14,4 @@ from .fairness import Fairness, Affiliation, DocumentFairness
 from .user import User
 from .place import Place, DocumentPlace
 from .analysis_nature import AnalysisNature
+from .role import SourceRole

@@ -155,12 +155,12 @@ def edit_article_analysis(id):
 
     status = 200
     form = document.make_analysis_form()
+    nature = document.analysis_nature
 
     # forms for existing sources
     source_forms = []
     for source in document.sources:
         f = DocumentSourceForm(prefix='source[%d]' % source.id, obj=source)
-        f.source = source
         source_forms.append(f)
     source_forms.sort(key=lambda f: f.source.sort_key())
 
@@ -168,7 +168,7 @@ def edit_article_analysis(id):
     # 'source-new[0]-name'. This form is used as a template for these
     # new source forms.
     new_sources = []
-    new_source_form = DocumentSourceForm(prefix='source-new', csrf_enabled=False)
+    new_source_form = DocumentSourceForm(prefix='source-new', csrf_enabled=False, nature=nature)
 
     # fairness forms
     new_fairness_form = DocumentFairnessForm(prefix='fairness-new', csrf_enabled=False)
@@ -184,7 +184,7 @@ def edit_article_analysis(id):
         # find new sources and build forms for them.
         # the field names are like: source-new[2]-name
         for key in sorted(set('-'.join(key.split('-', 3)[0:2]) for key in request.form.keys() if key.startswith('source-new['))):
-            src_form = DocumentSourceForm(prefix=key)
+            src_form = DocumentSourceForm(prefix=key, nature=nature)
             # skip new sources that have an empty name
             if src_form.source_type.data not in ('person', 'secondary') or src_form.name.data != '':
                 new_sources.append(src_form)

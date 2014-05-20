@@ -17,8 +17,7 @@ class Form(BaseForm):
     _decorated = False
 
     def __init__(self, *args, **kwargs):
-        if 'obj' in kwargs:
-            self._obj = kwargs['obj']
+        self._obj = kwargs.get('obj')
         super(Form, self).__init__(*args, **kwargs)
 
     def process(self, *args, **kwargs):

@@ -39,6 +39,8 @@ class DocumentSource(db.Model, WithOffsets):
     name         = Column(String(100))
 
     source_function_id = Column(Integer, ForeignKey('source_functions.id', ondelete='SET NULL'))
+    source_role_id     = Column(Integer, ForeignKey('source_roles.id', ondelete='SET NULL'))
+
     quoted       = Column(Boolean)
 
     # was this source added manually or was it inferred by machine learning?
@@ -54,6 +56,7 @@ class DocumentSource(db.Model, WithOffsets):
     person      = relationship("Person", foreign_keys=[person_id], lazy=False)
     function    = relationship("SourceFunction", lazy=False)
     affiliation = relationship("Affiliation", lazy=False)
+    role        = relationship("SourceRole", lazy=False)
     unnamed_gender = relationship("Gender", lazy=False)
     unnamed_race   = relationship("Race", lazy=False)
 
@@ -191,17 +194,24 @@ class DocumentSourceForm(Form):
     quoted            = BooleanField('Quoted', default=False)
 
     source_function_id  = SelectField('Function', default='')
+    source_role_id      = SelectField('Role', default='')
     affiliation_id      = SelectField('Affiliation', default='')
 
     deleted           = HiddenField('deleted', default='0')
 
-    # the associated source object, if any
-    source = None
-
     def __init__(self, *args, **kwargs):
         super(DocumentSourceForm, self).__init__(*args, **kwargs)
 
+        if 'nature' in kwargs:
+            nature = kwargs['nature']
+        elif self.source:
+            nature = self.source.document.analysis_nature
+        else:
+            raise ArgumentError("Missing analysis nature. Either pass in obj or nature")
+
+
         self.source_function_id.choices = [['', '(none)']] + [[str(s.id), s.name] for s in SourceFunction.query.order_by(SourceFunction.name).all()]
+        self.source_role_id.choices = [['', '(none)']] + [[str(s.id), s.name] for s in nature.roles]
 
         from . import Gender, Race
         self.unnamed_gender_id.choices = [['', '(unknown gender)']] + [[str(g.id), g.name] for g in Gender.query.order_by(Gender.name).all()]
@@ -213,6 +223,12 @@ class DocumentSourceForm(Form):
         orgs = [i for i in Affiliation.query.all() if i.code.count('.') <= 1]
         orgs.sort(key=Affiliation.sort_key)
         self.affiliation_id.choices = [['', '(none)']] + [[str(s.id), s.full_name()] for s in orgs]
+
+
+    @property
+    def source(self):
+        """ the associated source object, if any """
+        return self._obj
 
 
     def is_new(self):

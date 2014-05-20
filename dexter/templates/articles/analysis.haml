@@ -59,8 +59,8 @@
                   %th
                     .row
                       .col-sm-4 Name
-                      .col-sm-3 Function
-                      .col-sm-3 Affiliation
+                      .col-sm-3
+                      .col-sm-3
                       .col-sm-1 Quoted?
               %tbody
                 - sources = sorted(document.sources, key=lambda s: s.sort_key())
@@ -90,6 +90,12 @@
                         .col-sm-3
                           - if ds.affiliation:
                             &=ds.affiliation.full_name()
+
+                        - if document.analysis_nature == AnalysisNature.CHILDREN:
+                          -# XXX: only show this for children
+                          .col-sm-3
+                            &= ds.role.name
+
                         .col-sm-1
                           - if not ds.quoted:
                             no

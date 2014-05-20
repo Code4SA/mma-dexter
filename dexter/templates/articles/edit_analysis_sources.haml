@@ -1,5 +1,7 @@
 %%namespace(file="../bootstrap_wtf.haml", **{'import': '*'})
 
+- from dexter.models import AnalysisNature
+
 %h4 Sources
 
 -# helper template to show a source form
@@ -57,6 +59,10 @@
             = vertical_field(f.unnamed_race_id)
 
     = vertical_field(f.affiliation_id, class_='chosen-select' if f.source else 'chosen-select-delayed')
+
+    - if document.analysis_nature == AnalysisNature.CHILDREN:
+      = vertical_field(f.source_role_id, class_='chosen-select' if f.source else 'chosen-select-delayed')
+
     .row
       .col-xs-6
         = vertical_field(f.source_function_id)
