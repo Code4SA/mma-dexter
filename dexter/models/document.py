@@ -236,6 +236,10 @@ class Document(db.Model):
         return sum/count if count > 0 else 0
 
 
+    def make_analysis_form(self):
+        return self.analysis_nature.form(obj=self)
+
+
     def __repr__(self):
         return "<Document id=%s, url=%s>" % (self.id, self.url)
 

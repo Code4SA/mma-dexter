@@ -50,6 +50,27 @@ class ChildrenAnalysisForm(ElectionsAnalysisForm):
     ethics_identified     = BooleanField("Child's identity is disclosed")
     ethics_abuse          = BooleanField('Child is a victim of abuse')
 
+    @property
+    def quality_fields(self):
+        return [
+            self.quality_basic_context,
+            self.quality_indepth_context,
+            self.quality_why,
+            self.quality_legislation,
+            self.quality_solutions,
+            self.quality_consequences,
+            self.quality_self_help,
+        ]
+
+    @property
+    def ethics_fields(self):
+        return [
+            self.ethics_source,
+            self.ethics_identified,
+            self.ethics_abuse,
+        ]
+
+
 
 class AnalysisNature(db.Model):
     """

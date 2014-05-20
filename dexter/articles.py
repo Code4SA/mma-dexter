@@ -154,7 +154,7 @@ def edit_article_analysis(id):
         return jsonify(DocumentPlace.summary_for_docs([document]))
 
     status = 200
-    form = document.analysis_nature.form(obj=document)
+    form = document.make_analysis_form()
 
     # forms for existing sources
     source_forms = []

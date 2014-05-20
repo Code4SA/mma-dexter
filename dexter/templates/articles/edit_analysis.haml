@@ -102,20 +102,14 @@
                   .col-sm-6
                     %section
                       %h4 Quality
-                      = field_input(form.quality_basic_context)
-                      = field_input(form.quality_indepth_context)
-                      = field_input(form.quality_why)
-                      = field_input(form.quality_legislation)
-                      = field_input(form.quality_solutions)
-                      = field_input(form.quality_consequences)
-                      = field_input(form.quality_self_help)
+                      - for f in form.quality_fields:
+                        = field_input(f)
 
                   .col-sm-6
                     %section
                       %h4 Ethics
-                      = field_input(form.ethics_source)
-                      = field_input(form.ethics_identified)
-                      = field_input(form.ethics_abuse)
+                      - for f in form.ethics_fields:
+                        = field_input(f)
 
               - if document.analysis_nature == AnalysisNature.ELECTIONS:
                 %hr
