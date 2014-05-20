@@ -41,9 +41,8 @@
   - else:
     -# it's a new source
     - for fld in f.source_type:
-      %label.radio-inline
+      .radio-inline
         = field_input(fld)
-        = fld.label
       
     .person-name
       = vertical_field(f.name)
@@ -70,9 +69,7 @@
             - if len(ds.utterances()) > 0:
               %span.badge&= len(ds.utterances())
           - else:
-            %label
-              &= field_input(f.quoted)
-              Quoted?
+            &= field_input(f.quoted)
 
 
 %table.table.table-striped.table-condensed.offsets.sources

@@ -1,7 +1,12 @@
 %%def(name="field(fld, **kwargs)")
+  - from wtforms.widgets import CheckboxInput, RadioInput
+  - chkbox = isinstance(fld.widget, (CheckboxInput, RadioInput))
+
   .form-group(class_=('has-error' if fld.errors else ''))
-    = fld.label(class_="control-label col-sm-2")
-    .col-sm-10
+    - if not chkbox:
+      = fld.label(class_="control-label col-sm-2")
+
+    .col-sm-10(class_='col-sm-offset-2' if chkbox else '')
       = field_input(fld, **kwargs)
 
 %%def(name="vertical_field(fld, **kwargs)")
@@ -11,18 +16,26 @@
 
 %%def(name="field_input(fld, **kwargs)")
   - from wtforms.widgets import CheckboxInput, RadioInput
-
+  - chkbox = isinstance(fld.widget, (CheckboxInput, RadioInput))
   - if 'required' in kwargs and not kwargs['required']:
     - del kwargs['required']
+  - kwargs['class_'] = kwargs.get('class_', '')
+  - if not chkbox:
+    - kwargs['class_'] = kwargs['class_'] + ' form-control'
 
   %span(class_=('has-error' if fld.errors else ''))
-    - kwargs['class_'] = kwargs.get('class_', '')
-    - if not isinstance(fld.widget, (CheckboxInput, RadioInput)):
-      - kwargs['class_'] = kwargs['class_'] + ' form-control'
-
-    = fld(**kwargs)
-    - if fld.errors:
-      %p.help-block
-        - for err in fld.errors:
-          &= err
-              
+    - if chkbox:
+      .checkbox
+        = fld(**kwargs)
+        = fld.label()
+        - if fld.errors:
+          %p.help-block
+            - for err in fld.errors:
+              &= err
+    - else:
+        = fld(**kwargs)
+        - if fld.errors:
+          %p.help-block
+            - for err in fld.errors:
+              &= err
+                  
