@@ -1,6 +1,8 @@
 %%inherit(file="layout.haml")
 %%namespace(file="../bootstrap_wtf.haml", **{'import': '*'})
 
+- from dexter.models import AnalysisNature
+
 %%block(name="title")
   &= document.title
 
@@ -62,8 +64,13 @@
             #analysis-tab.tab-pane.active
               %section.form-horizontal
                 %h4 Analysis
+
                 = field(form.topic_id, class_='select2')
                 = field(form.origin_location_id, class_='select2')
+
+                - if document.analysis_nature == AnalysisNature.CHILDREN:
+                  = field(form.child_focus)
+
               %hr
               %section
                 %%include(file='edit_analysis_sources.haml')

@@ -6,7 +6,7 @@ import datetime
 from wtforms import StringField, TextAreaField, validators, DateTimeField, HiddenField
 from wtforms.fields.html5 import URLField
 
-from ..forms import Form, MultiCheckboxField, IntegerField, SelectField
+from ..forms import Form, IntegerField, SelectField
 
 from sqlalchemy import (
     Table,
@@ -287,24 +287,6 @@ class DocumentType(db.Model):
             types.append(t)
 
         return types
-
-
-class DocumentAnalysisForm(Form):
-    topic_id            = SelectField('Topic')
-    issues              = MultiCheckboxField('Issues')
-    origin_location_id  = SelectField('Origin')
-
-    def __init__(self, *args, **kwargs):
-        super(DocumentAnalysisForm, self).__init__(*args, **kwargs)
-
-        from . import Topic, Location, Issue
-
-        nature = self._obj.analysis_nature
-
-        self.topic_id.choices = [['', '(none)']] + Topic.for_select_widget(nature.topics)
-        self.issues.choices = [(str(issue.id), issue.name) for issue in nature.issues]
-        self.origin_location_id.choices = [['', '(none)']] + [
-                [str(loc.id), loc.name] for loc in Location.query.order_by(Location.name).all()]
 
 
 class DocumentAnalysisProblem(object):

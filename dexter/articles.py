@@ -7,7 +7,7 @@ from flask.ext.login import login_required, current_user
 
 from .app import app
 from .models import db, Document, Issue, Person, DocumentPlace
-from .models.document import DocumentForm, DocumentAnalysisForm
+from .models.document import DocumentForm
 from .models.source import DocumentSource, DocumentSourceForm
 from .models.fairness import DocumentFairness, DocumentFairnessForm
 from .models.analysis_nature import AnalysisNature
@@ -154,7 +154,7 @@ def edit_article_analysis(id):
         return jsonify(DocumentPlace.summary_for_docs([document]))
 
     status = 200
-    form = DocumentAnalysisForm(obj=document)
+    form = document.analysis_nature.form(obj=document)
 
     # forms for existing sources
     source_forms = []
