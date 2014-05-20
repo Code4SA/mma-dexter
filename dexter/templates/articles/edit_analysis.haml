@@ -68,25 +68,26 @@
               %section
                 %%include(file='edit_analysis_sources.haml')
 
-              %hr
-              %section.form-horizontal
-                %h4 Issues Raised
-                - if form.issues.errors:
-                  %ul.list-unstyled
-                    - for error in form.issues.errors:
-                      %li.text-warning.text-center Error:
-                        =error
-                .row.checkbox-multi-select
-                  - rows = len(list(form.issues))/3
-                  - tmp_list = list(form.issues)
-                  - tmp1, tmp2, tmp3 = tmp_list[0:rows], tmp_list[rows:2*rows], tmp_list[2*rows::]
-                  - for field_list in [tmp1, tmp2, tmp3]:
-                    .col-sm-4
-                      - for subfield in field_list:
-                        %div.checkbox-container
-                          = subfield()
-                          = subfield.label()
-                          %br
+              - if form.issues.choices:
+                %hr
+                %section.form-horizontal
+                  %h4 Issues Raised
+                  - if form.issues.errors:
+                    %ul.list-unstyled
+                      - for error in form.issues.errors:
+                        %li.text-warning.text-center Error:
+                          =error
+                  .row.checkbox-multi-select
+                    - rows = len(list(form.issues))/3
+                    - tmp_list = list(form.issues)
+                    - tmp1, tmp2, tmp3 = tmp_list[0:rows], tmp_list[rows:2*rows], tmp_list[2*rows::]
+                    - for field_list in [tmp1, tmp2, tmp3]:
+                      .col-sm-4
+                        - for subfield in field_list:
+                          %div.checkbox-container
+                            = subfield()
+                            = subfield.label()
+                            %br
               %hr
               %section
                 %h4 Bias

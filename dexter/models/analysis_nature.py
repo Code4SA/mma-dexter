@@ -22,6 +22,7 @@ class AnalysisNature(db.Model):
 
     # associations
     topics      = relationship("Topic", backref="analysis_nature", order_by="Topic.name")
+    issues      = relationship("Issue", backref="analysis_nature", order_by="Issue.name")
 
     def __str__(self):
         return self.name
