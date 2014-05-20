@@ -18,7 +18,8 @@ from sqlalchemy import (
     Float,
     Text,
     func,
-    Index
+    Index,
+    Boolean,
     )
 from sqlalchemy.orm import relationship, backref
 from .support import db
@@ -61,7 +62,23 @@ class Document(db.Model):
     analysis_nature_id = Column(Integer, ForeignKey('analysis_natures.id'), index=True, nullable=False, default=1)
 
     # analysis details
-    topic_id           = Column(Integer, ForeignKey('topics.id'), index=True)
+    # XXX: at some point we must move these into their own table, based on the nature of the analysis
+    topic_id              = Column(Integer, ForeignKey('topics.id'), index=True)
+
+    child_focus           = Column(Boolean)
+
+    quality_basic_context = Column(Boolean)
+    quality_indepth_context = Column(Boolean)
+    quality_why           = Column(Boolean)
+    quality_legislation   = Column(Boolean)
+    quality_solutions     = Column(Boolean)
+    quality_consequences  = Column(Boolean)
+    quality_self_help     = Column(Boolean)
+
+    ethics_source         = Column(Boolean)
+    ethics_identified     = Column(Boolean)
+    ethics_abuse          = Column(Boolean)
+
 
     # Associations
     author      = relationship("Author")

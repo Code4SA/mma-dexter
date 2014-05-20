@@ -95,38 +95,59 @@
                             = subfield()
                             = subfield.label()
                             %br
-              %hr
-              %section
-                %h4 Bias
 
-                %table.table.table-striped.table-condensed.fairness
-                  %tbody
-                    %tr
-                      %th Bias
-                      %th Favour
-                      %th Disfavour
-                      %th
-                    - for f in fairness_forms + [new_fairness_form]:
-                      - class_ = ''
-                      - class_ += ' template' if f == new_fairness_form else ''
-                      - class_ += ' new' if f.is_new() else ''
-                      - class_ += ' deleted' if f.deleted.data == '1' else ''
+              - if document.analysis_nature == AnalysisNature.CHILDREN:
+                %hr
+                .row
+                  .col-sm-6
+                    %section
+                      %h4 Quality
+                      = field_input(form.quality_basic_context)
+                      = field_input(form.quality_indepth_context)
+                      = field_input(form.quality_why)
+                      = field_input(form.quality_legislation)
+                      = field_input(form.quality_solutions)
+                      = field_input(form.quality_consequences)
+                      = field_input(form.quality_self_help)
 
-                      %tr(class_=class_, dataFairnessId=f.document_fairness.id if not f.is_new() and f.document_fairness else '')
-                        %td
-                          = f.deleted
-                          = field_input(f.fairness_id)
-                        %td
-                          = field_input(f.bias_favour_affiliation_id, class_='chosen-select' if f != new_fairness_form else 'chosen-select-delayed')
-                        %td
-                          = field_input(f.bias_oppose_affiliation_id, class_='chosen-select' if f != new_fairness_form else 'chosen-select-delayed')
-                        %td
-                          %a.btn.btn-link.delete(href="#", title='delete this')
-                            %i.fa.fa-times-circle
-                          - if not f.is_new():
-                            %a.btn.btn-link.undo-delete(href="#", title='re-add this') undo
+                  .col-sm-6
+                    %section
+                      %h4 Ethics
+                      = field_input(form.ethics_source)
+                      = field_input(form.ethics_identified)
+                      = field_input(form.ethics_abuse)
 
-              %hr
+              - if document.analysis_nature == AnalysisNature.ELECTIONS:
+                %hr
+                %section
+                  %h4 Bias
+
+                  %table.table.table-striped.table-condensed.fairness
+                    %tbody
+                      %tr
+                        %th Bias
+                        %th Favour
+                        %th Disfavour
+                        %th
+                      - for f in fairness_forms + [new_fairness_form]:
+                        - class_ = ''
+                        - class_ += ' template' if f == new_fairness_form else ''
+                        - class_ += ' new' if f.is_new() else ''
+                        - class_ += ' deleted' if f.deleted.data == '1' else ''
+
+                        %tr(class_=class_, dataFairnessId=f.document_fairness.id if not f.is_new() and f.document_fairness else '')
+                          %td
+                            = f.deleted
+                            = field_input(f.fairness_id)
+                          %td
+                            = field_input(f.bias_favour_affiliation_id, class_='chosen-select' if f != new_fairness_form else 'chosen-select-delayed')
+                          %td
+                            = field_input(f.bias_oppose_affiliation_id, class_='chosen-select' if f != new_fairness_form else 'chosen-select-delayed')
+                          %td
+                            %a.btn.btn-link.delete(href="#", title='delete this')
+                              %i.fa.fa-times-circle
+                            - if not f.is_new():
+                              %a.btn.btn-link.undo-delete(href="#", title='re-add this') undo
 
             %%include(file='analysis_tab_mentions.haml')
             %%include(file='analysis_tab_places.haml')
