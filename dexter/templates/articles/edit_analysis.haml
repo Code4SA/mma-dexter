@@ -18,13 +18,14 @@
       .panel.panel-default.analysis
         .panel-heading
           .row
-            .col-sm-4
+            .col-sm-5
               %h3.panel-title
+                &= document.analysis_nature.name.title()
                 Analysis
                 - if document.checked_by:
                   by
                   &= document.checked_by.short_name()
-            .col-sm-8.text-right
+            .col-sm-7.text-right
               .btn-group.text-left
                 %button.btn.btn-default.dropdown-toggle(type="button", dataToggle='dropdown')
                   &= document.analysis_nature.name
@@ -68,9 +69,6 @@
                 = field(form.topic_id, class_='select2')
                 = field(form.origin_location_id, class_='select2')
 
-                - if document.analysis_nature == AnalysisNature.CHILDREN:
-                  = field(form.child_focus)
-
               %hr
               %section
                 %%include(file='edit_analysis_sources.haml')
@@ -107,6 +105,10 @@
 
                   .col-sm-6
                     %section
+                      %h4 General
+                      - if document.analysis_nature == AnalysisNature.CHILDREN:
+                        = field_input(form.child_focus)
+
                       %h4 Ethics
                       - for f in form.ethics_fields:
                         = field_input(f)
