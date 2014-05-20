@@ -10,7 +10,8 @@ select
   a.name as `affiliation`,
   a.code as `affiliation_code`,
   -- affiliation parent
-  if(ap.code IS NULL, NULL, concat(ap.code, ' - ', ap.name)) as `affiliation_group`,
+  ap.name as `affiliation_group`,
+  ap.code as `affiliation_group_code`,
   sf.name as `function`,
   ds.quoted as `quoted`,
   ds.doc_id as `document_id`,
