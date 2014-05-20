@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 from dateutil.parser import parse
 log = logging.getLogger(__name__)
 
-from flask import request, url_for, redirect, jsonify
+from flask import request, url_for, redirect, jsonify, abort
 from flask.ext.login import login_required
 from flask.ext import htauth
 from sqlalchemy.orm import joinedload, lazyload
@@ -65,10 +65,14 @@ def api_group_entities(group):
     return jsonify({'entities': [e.json() for e in entities]})
 
 
-@app.route('/api/feeds/sources/political-parties')
+@app.route('/api/feeds/sources')
+@app.route('/api/feeds/sources/<string:group>')
 @htauth.authenticated
-def api_feed_parties():
+def api_feed_parties(group=None):
     from dexter.models.views import DocumentSourcesView, DocumentsView, DocumentPlacesView
+
+    if group and not group in ['political-parties']:
+        abort(404)
 
     start_date, end_date = api_date_range(request)
 
@@ -99,9 +103,12 @@ def api_feed_parties():
                 DocumentPlacesView.c.municipality_code,
                 DocumentPlacesView.c.municipality_name,
             )\
-            .filter(DocumentSourcesView.c.affiliation_code.like('4.%'))\
             .filter(DocumentsView.c.published_at >= start_date)\
             .filter(DocumentsView.c.published_at <= end_date)
+
+    if group == 'political-parties':
+        query = query.filter(DocumentSourcesView.c.affiliation_code.like('4.%'))
+
 
     # {
     #   "date-start":"2014-04-03",
