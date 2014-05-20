@@ -1,3 +1,5 @@
+- from dexter.models import AnalysisNature
+
 .panel.panel-default.analysis
   .panel-heading
     .row
@@ -99,35 +101,37 @@
                     %tr.quotation(dataOffsets=('%d:%d' % (q.offset, q.length) if q.offset else ''))
                       %td&= q.quote
 
-          %hr
-          %section.issues
-            %h4 Issues Raised
-            - if not document.issues:
-              %p
-                No issues have been tagged.
+          - if document.analysis_nature == AnalysisNature.ELECTIONS:
+            %hr
+            %section.issues
+              %h4 Issues Raised
+              - if not document.issues:
+                %p
+                  No issues have been tagged.
 
-            - for issue in document.issues:
-              %span.label.label-info(title=issue.description, dataToggle="tooltip", dataContainer="body")&=issue.name
+              - for issue in document.issues:
+                %span.label.label-info(title=issue.description, dataToggle="tooltip", dataContainer="body")&=issue.name
 
-          %hr
-          %section.fairness
-            %h4 Bias
-            - if not document.fairness:
-              %p No fairness provided.
+          - if document.analysis_nature == AnalysisNature.ELECTIONS:
+            %hr
+            %section.fairness
+              %h4 Bias
+              - if not document.fairness:
+                %p No fairness provided.
 
-            - if document.fairness:
-              %table.table-striped.table-condensed
-                %thead
-                  %tr
-                    %th Bias
-                    %th Favour
-                    %th Disfavour
-                %tbody
-                  - for df in document.fairness:
+              - if document.fairness:
+                %table.table-striped.table-condensed
+                  %thead
                     %tr
-                      %td&= df.fairness.name if df.fairness else ''
-                      %td&= df.bias_favour.full_name() if df.bias_favour else ''
-                      %td&= df.bias_oppose.full_name() if df.bias_oppose else ''
+                      %th Bias
+                      %th Favour
+                      %th Disfavour
+                  %tbody
+                    - for df in document.fairness:
+                      %tr
+                        %td&= df.fairness.name if df.fairness else ''
+                        %td&= df.bias_favour.full_name() if df.bias_favour else ''
+                        %td&= df.bias_oppose.full_name() if df.bias_oppose else ''
 
         %%include(file='analysis_tab_mentions.haml')
         %%include(file='analysis_tab_places.haml')
