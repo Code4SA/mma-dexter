@@ -40,6 +40,7 @@ class DocumentSource(db.Model, WithOffsets):
 
     source_function_id = Column(Integer, ForeignKey('source_functions.id', ondelete='SET NULL'))
     source_role_id     = Column(Integer, ForeignKey('source_roles.id', ondelete='SET NULL'))
+    source_age_id      = Column(Integer, ForeignKey('source_ages.id', ondelete='SET NULL'))
 
     quoted       = Column(Boolean)
 
@@ -57,6 +58,7 @@ class DocumentSource(db.Model, WithOffsets):
     function    = relationship("SourceFunction", lazy=False)
     affiliation = relationship("Affiliation", lazy=False)
     role        = relationship("SourceRole", lazy=False)
+    age         = relationship("SourceAge", lazy=False)
     unnamed_gender = relationship("Gender", lazy=False)
     unnamed_race   = relationship("Race", lazy=False)
 
@@ -195,12 +197,15 @@ class DocumentSourceForm(Form):
 
     source_function_id  = SelectField('Function', default='')
     source_role_id      = SelectField('Role', default='')
+    source_age_id       = SelectField('Age', default='')
     affiliation_id      = SelectField('Affiliation', default='')
 
     deleted           = HiddenField('deleted', default='0')
 
     def __init__(self, *args, **kwargs):
         super(DocumentSourceForm, self).__init__(*args, **kwargs)
+
+        from . import SourceAge
 
         if 'nature' in kwargs:
             nature = kwargs['nature']
@@ -212,6 +217,7 @@ class DocumentSourceForm(Form):
 
         self.source_function_id.choices = [['', '(none)']] + [[str(s.id), s.name] for s in SourceFunction.query.order_by(SourceFunction.name).all()]
         self.source_role_id.choices = [['', '(none)']] + [[str(s.id), s.name] for s in nature.roles]
+        self.source_age_id.choices = [['', '(none)']] + [[str(s.id), s.name] for s in SourceAge.query.order_by(SourceAge.name).all()]
 
         from . import Gender, Race
         self.unnamed_gender_id.choices = [['', '(unknown gender)']] + [[str(g.id), g.name] for g in Gender.query.order_by(Gender.name).all()]

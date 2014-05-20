@@ -75,14 +75,17 @@
                             -# it's a proper person
                             %a(href=url_for('show_person', id=ds.person.id))&=ds.person.name
 
-                          - if ds.gender():
-                            %span.text-muted(title=ds.gender().name)
-                              %strong&=
-                                " - " + ds.gender().abbr()
-                          - if ds.race():
-                            %span.text-muted(title=ds.race().name)
-                              %strong&=
-                                " (" + ds.race().abbr() + ")"
+                          %span.text-muted
+                            - if ds.gender():
+                              •
+                              %span(title=ds.gender().name)&= ds.gender().abbr()
+                            - if ds.race():
+                              •
+                              %span(title=ds.race().name)&= ds.race().abbr()
+                            - if document.analysis_nature == AnalysisNature.CHILDREN and ds.age:
+                              •
+                              %span(title='age')&= ds.age.name
+
 
                         .col-sm-3.function
                           - if ds.function:
@@ -94,7 +97,7 @@
                         - if document.analysis_nature == AnalysisNature.CHILDREN:
                           -# XXX: only show this for children
                           .col-sm-3
-                            &= ds.role.name
+                            &= ds.role and ds.role.name or ''
 
                         .col-sm-1
                           - if not ds.quoted:

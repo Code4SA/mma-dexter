@@ -86,3 +86,38 @@ Teenage Mother|2
             roles.append(r)
 
         return roles
+
+
+class SourceAge(db.Model):
+    """
+    An age linked to a document source.
+    """
+    __tablename__ = "source_ages"
+
+    id          = Column(Integer, primary_key=True)
+    name        = Column(String(100), index=True, nullable=False, unique=True)
+
+    def __repr__(self):
+        return "<SourceAge name='%s'>" % (self.name.encode('utf-8'),)
+
+    @classmethod
+    def create_defaults(self):
+        text = """
+0 to 1
+1 to 2
+3 to 9
+10 to 12
+13 to 18
+Adult
+Unknown
+Many
+Not identified
+        """
+
+        ages = []
+        for x in text.strip().split("\n"):
+            a = SourceAge()
+            a.name = x
+            ages.append(a)
+
+        return ages
