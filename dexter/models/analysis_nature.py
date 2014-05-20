@@ -38,6 +38,18 @@ class ChildrenAnalysisForm(ElectionsAnalysisForm):
     """
     child_focus     = BooleanField('Children are a central focus')
 
+    quality_basic_context = BooleanField('Basic context')
+    quality_indepth_context = BooleanField('In-depth context')
+    quality_why           = BooleanField('Why: explanations')
+    quality_legislation   = BooleanField('Relevant legislation is mentioned')
+    quality_solutions     = BooleanField('Solutions are offered')
+    quality_consequences  = BooleanField('Consequences are mentioned')
+    quality_self_help     = BooleanField('Self-help')
+
+    ethics_source         = BooleanField('Child is a source')
+    ethics_identified     = BooleanField("Child's identity is disclosed")
+    ethics_abuse          = BooleanField('Child is a victim of abuse')
+
 
 class AnalysisNature(db.Model):
     """
