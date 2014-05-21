@@ -111,6 +111,12 @@ table.sources {
     td { padding-left: 25px; }
   }
 
+  .core {
+    i.fa {
+      width: 15px;
+    }
+  }
+
   .btn.delete, .btn.undo-delete {
     padding: 0px;
   }
@@ -178,7 +184,8 @@ table.sources {
     .unnamed,
     .role,
     .age,
-    .gender-race { display: none }
+    .gender,
+    .race { display: none }
   }
 }
 

@@ -25,19 +25,27 @@
     %input(type="hidden", name=f.unnamed_gender_id.name, value=f.unnamed_gender_id.data)
     %input(type="hidden", name=f.unnamed_race_id.name, value=f.unnamed_race_id.data)
 
-    - if f.source.person:
-      %a(href=url_for('show_person', id=f.source.person.id))&=f.source.person.name
-    - else:
-      &= f.source.friendly_name()
-      %span.label.label-default&=f.source.source_type
+    .core
+      - if ds.source_type == 'person':
+        %i.fa.fa-user.text-muted
+      - if ds.source_type == 'child':
+        %i.fa.fa-child.text-muted
+      - if ds.source_type == 'secondary':
+        %i.fa.fa-file.text-muted
 
-    %span.text-muted
-      - if f.source.gender():
-        •
-        %span(title=f.source.gender().name)&= f.source.gender().abbr()
-      - if f.source.race():
-        •
-        %span(title=f.source.race().name)&= f.source.race().abbr()
+      - if f.source.person:
+        %a(href=url_for('show_person', id=f.source.person.id))&=f.source.person.name
+      - else:
+        &= f.source.friendly_name()
+        %span.label.label-default&=f.source.source_type
+
+      %span.text-muted
+        - if f.source.gender():
+          •
+          %span(title=f.source.gender().name)&= f.source.gender().abbr()
+        - if f.source.race():
+          •
+          %span(title=f.source.race().name)&= f.source.race().abbr()
 
   - else:
     -# it's a new source

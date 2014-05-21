@@ -68,7 +68,14 @@
                   %tr(dataOffsets=ds.offset_list, class_='source-%s' % ds.source_type)
                     %td
                       .row
-                        .col-sm-4
+                        .col-sm-4.core
+                          - if ds.source_type == 'person':
+                            %i.fa.fa-user.text-muted
+                          - if ds.source_type == 'child':
+                            %i.fa.fa-child.text-muted
+                          - if ds.source_type == 'secondary':
+                            %i.fa.fa-file.text-muted
+
                           - if not ds.person:
                             &= ds.friendly_name()
                             %span.label.label-default&=ds.source_type
