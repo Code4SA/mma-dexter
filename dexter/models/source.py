@@ -6,7 +6,6 @@ from sqlalchemy import (
     Integer,
     String,
     func,
-    event,
     )
 from sqlalchemy.orm import relationship
 from wtforms import StringField, validators, HiddenField, BooleanField, RadioField
@@ -139,23 +138,6 @@ class DocumentSource(db.Model, WithOffsets):
         return "<DocumentSource doc=%s, person=%s, unnamed=%s, name='%s'>" % (self.document, self.person, self.unnamed, self.name.encode('utf-8'))
 
 
-@event.listens_for(DocumentSource.source_type, 'set')
-def source_type_set(target, value, oldvalue, initiator):
-    if value == 'person':
-        target.source_role_id = None
-        target.source_age_id = None
-
-    elif value == 'child':
-        target.person = None
-
-    elif value == 'secondary':
-        target.person = None
-        target.unnamed_gender_id = None
-        target.unnamed_race_id = None
-        target.source_role_id = None
-        target.source_age_id = None
-
-
 class SourceFunction(db.Model):
     """
     In what role/function was the source for a document accessed?
@@ -241,6 +223,33 @@ class DocumentSourceForm(Form):
         orgs = [i for i in Affiliation.query.all() if i.code.count('.') <= 1]
         orgs.sort(key=Affiliation.sort_key)
         self.affiliation_id.choices = [['', '(none)']] + [[str(s.id), s.full_name()] for s in orgs]
+
+    def validate(self):
+        result = super(DocumentSourceForm, self).validate()
+
+        # ignore some data, based on the source type
+
+        if self.source_type.data == 'person':
+            self.source_role_id.data = None
+            self.source_age_id.data = None
+            if not self.unnamed.data:
+                # it's not an anonymous source, so ignore these
+                # settings
+                self.unnamed_gender_id.data = None
+                self.unnamed_race_id.data = None
+
+        elif self.source_type.data == 'child':
+            self.source_function_id = None
+            self.source_affiliation_id = None
+
+        elif self.source_type.data == 'secondary':
+            self.source_role_id.data = None
+            self.unnamed_gender_id = None
+            self.unnamed_race_id = None
+            self.source_role_id = None
+            self.source_age_id = None
+
+        return result
 
 
     @property
