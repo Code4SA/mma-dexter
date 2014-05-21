@@ -302,7 +302,7 @@
 
     self.toggleAnonymous = function(e) {
       var $row = $(this).closest('tr');
-      $('.name').toggle($(this).prop('checked'));
+      $('.name', $row).toggle($(this).prop('checked'));
     };
 
     // when the user starts adding a new fairness, duplicate the row to keep a fresh
