@@ -184,6 +184,7 @@
       $row.removeClass('template').addClass('new');
 
       self.newSourceCount++;
+      self.personTypeaheadEnabled = false;
 
       // change form field name and 'for' prefixes to be new[ix]
       $('input, select, textarea, label', $row).each(function() {
@@ -200,13 +201,16 @@
 
       $('.chosen-select-delayed', $row).chosen();
 
-      self.personTypeaheadEnabled = false;
-      self.enablePersonTypeahead($row);
+      // trigger the source type toggle
+      $('input:radio[name$="-source_type"]', $row)
+        .first()
+        .prop('checked', true)
+        .trigger('change');
     };
 
     self.enablePersonTypeahead = function($row) {
       if (!self.personTypeaheadEnabled) {
-        $('.person-name input', $row).
+        $('.name input', $row).
           val('').
           typeahead({
             highlight: true,
@@ -222,7 +226,7 @@
     };
 
     self.disablePersonTypeahead = function($row) {
-      $('.person-name input', $row).typeahead('destroy').val('');
+      $('.name input', $row).typeahead('destroy').val('');
       self.personTypeaheadEnabled = false;
     };
 
@@ -270,27 +274,39 @@
       $('input[name$="-deleted"]', $row).val('0');
     };
 
-    // should we show the unnamed-details area?
+    // the source type has changed, update what fields are visible
     self.toggleSourceType = function(e) {
       var $row = $(this).closest('tr');
       var sourceType = $(this).val();
 
-      if (sourceType == 'unnamed') {
-        $('.person-name', $row).hide();
-        $('.unnamed-details', $row).show();
+      if (sourceType == 'person') {
+        $('.unnamed', $row).show();
+        $('.affiliation-function', $row).show();
 
-      } else {
-        $('.person-name', $row).show();
-        $('.unnamed-details', $row).hide();
-
-        if (sourceType == 'person') {
-          self.enablePersonTypeahead($row);
-        } else {
-          self.disablePersonTypeahead($row);
-        }
-
-        $('.person-name input', $row).focus();
+        $('.gender-race', $row).hide();
+        $('.role-age', $row).hide();
+        self.enablePersonTypeahead($row);
       }
+
+      if (sourceType == 'child') {
+        $('.unnamed', $row).show();
+        $('.gender-race', $row).show();
+        $('.role-age', $row).show();
+
+        $('.affiliation-function', $row).hide();
+        self.disablePersonTypeahead($row);
+      }
+
+      if (sourceType == 'secondary') {
+        $('.affiliation-function', $row).show();
+
+        $('.gender-race', $row).hide();
+        $('.role-age', $row).hide();
+        $('.unnamed', $row).hide();
+        self.disablePersonTypeahead($row);
+      }
+
+      $('.name input', $row).focus();
     };
 
     // when the user starts adding a new fairness, duplicate the row to keep a fresh

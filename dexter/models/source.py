@@ -6,6 +6,7 @@ from sqlalchemy import (
     Integer,
     String,
     func,
+    event,
     )
 from sqlalchemy.orm import relationship
 from wtforms import StringField, validators, HiddenField, BooleanField, RadioField
@@ -27,6 +28,29 @@ class DocumentSource(db.Model, WithOffsets):
 
     id        = Column(Integer, primary_key=True)
     doc_id    = Column(Integer, ForeignKey('documents.id', ondelete='CASCADE'), index=True, nullable=False)
+
+    # The type of this source. This impacts which other fields are valid and how they're interpreted.
+    # 
+    # person:
+    #   - if unnamed is False, then
+    #     - person_id is valid and links to the person
+    #   - if unnamed is True, then
+    #     - person_id is not valid
+    #     - unnamed_* are all valid
+    #   - source_function and affiliation are valid
+    #   - quoted is valid
+    #   - everything else (role, age, etc.) are ignored
+    #
+    # child:
+    #   - unnamed is valid and, if False, 'name' has the source name
+    #   - race and gender are valid
+    #   - age and role are valid
+    #   - quoted is alid
+    #   - affiliation and function are ignored
+    #
+    # secondary:
+    #   - only name, affiliation and function are valid
+    source_type = Column(String(50), nullable=False, default='person')
 
     person_id = Column(Integer, ForeignKey('people.id', ondelete='CASCADE'), index=True)
 
@@ -100,36 +124,6 @@ class DocumentSource(db.Model, WithOffsets):
 
 
     @property
-    def source_type(self):
-        if self.person_id:
-            return 'person'
-
-        if self.unnamed:
-            return 'unnamed'
-
-        return 'secondary'
-
-    @source_type.setter
-    def source_type(self, typ):
-        if typ == 'person':
-            self.unnamed = False
-            self.name = None
-            self.unnamed_gender_id = None
-            self.unnamed_race_id = None
-
-        elif typ == 'unnamed':
-            self.unnamed = True
-            self.person = None
-            self.name = None
-
-        elif typ == 'secondary':
-            self.unnamed = False
-            self.person = None
-            self.unnamed_gender_id = None
-            self.unnamed_race_id = None
-
-
-    @property
     def offset_list(self):
         """ String of offset:length pairs of places in this document the entity
         is mentioned or quoted, may be empty. """
@@ -143,6 +137,23 @@ class DocumentSource(db.Model, WithOffsets):
 
     def __repr__(self):
         return "<DocumentSource doc=%s, person=%s, unnamed=%s, name='%s'>" % (self.document, self.person, self.unnamed, self.name.encode('utf-8'))
+
+
+@event.listens_for(DocumentSource.source_type, 'set')
+def source_type_set(target, value, oldvalue, initiator):
+    if value == 'person':
+        target.source_role_id = None
+        target.source_age_id = None
+
+    elif value == 'child':
+        target.person = None
+
+    elif value == 'secondary':
+        target.person = None
+        target.unnamed_gender_id = None
+        target.unnamed_race_id = None
+        target.source_role_id = None
+        target.source_age_id = None
 
 
 class SourceFunction(db.Model):
@@ -188,10 +199,11 @@ def none_coerce(v):
 
 class DocumentSourceForm(Form):
     name              = StringField('Name', [validators.Length(max=100)])
+    unnamed           = BooleanField('Anonymous', [validators.Optional()], default=False)
     unnamed_gender_id = SelectField('Gender', [validators.Optional()], default='', coerce=none_coerce)
     unnamed_race_id   = SelectField('Race', [validators.Optional()], default='', coerce=none_coerce)
 
-    source_type       = RadioField('Type', default='person', choices=[['person', 'Person'], ['unnamed', 'Unnamed person'], ['secondary', 'Secondary (not person)']])
+    source_type       = RadioField('Type', default='person', choices=[['person', 'Person/Adult'], ['child', 'Child'], ['secondary', 'Secondary (not person)']])
 
     quoted            = BooleanField('Quoted', default=False)
 

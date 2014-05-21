@@ -45,38 +45,43 @@
     - for fld in f.source_type:
       .radio-inline
         = field_input(fld)
-      
-    .person-name
-      = vertical_field(f.name)
 
   .source-details
-    - if not f.source:
-      .unnamed-details
-        .row
-          .col-sm-6
-            = vertical_field(f.unnamed_gender_id)
-          .col-sm-6
-            = vertical_field(f.unnamed_race_id)
+    - if f.is_new():
 
-    = vertical_field(f.affiliation_id, class_='chosen-select' if f.source else 'chosen-select-delayed')
+      .unnamed
+        = field_input(f.unnamed)
 
-    - if document.analysis_nature == AnalysisNature.CHILDREN:
-      = vertical_field(f.source_role_id, class_='chosen-select' if f.source else 'chosen-select-delayed')
-      = vertical_field(f.source_age_id, class_='chosen-select' if f.source else 'chosen-select-delayed')
+      .name
+        = vertical_field(f.name)
 
-    .row
-      .col-xs-6
-        = vertical_field(f.source_function_id)
-      .col-xs-4
-        .quoted
-          -# don't allow editing of directly quoted sources
-          - if f.source and ds.utterances():
-            %input(type='hidden', name=f.quoted.name, value=f.quoted.data)
-            &= 'quoted' if f.source.quoted else 'not quoted'
-            - if len(ds.utterances()) > 0:
-              %span.badge&= len(ds.utterances())
-          - else:
-            &= field_input(f.quoted)
+      .row.gender-race
+        .col-sm-6
+          = vertical_field(f.unnamed_gender_id)
+        .col-sm-6
+          = vertical_field(f.unnamed_race_id)
+
+    .row.affiliation-function
+      .col-sm-7
+        = vertical_field(f.affiliation_id, class_='chosen-select' if f.source else 'chosen-select-delayed')
+      .col-sm-5
+        = vertical_field(f.source_function_id, class_='chosen-select' if f.source else 'chosen-select-delayed')
+
+    .row.role-age
+      .col-sm-7
+        = vertical_field(f.source_role_id, class_='chosen-select' if f.source else 'chosen-select-delayed')
+      .col-sm-5
+        = vertical_field(f.source_age_id, class_='chosen-select' if f.source else 'chosen-select-delayed')
+
+    .quoted
+      -# don't allow editing of directly quoted sources
+      - if f.source and ds.utterances():
+        %input(type='hidden', name=f.quoted.name, value=f.quoted.data)
+        &= 'quoted' if f.source.quoted else 'not quoted'
+        - if len(ds.utterances()) > 0:
+          %span.badge&= len(ds.utterances())
+      - else:
+        &= field_input(f.quoted)
 
 
 %table.table.table-striped.table-condensed.offsets.sources
