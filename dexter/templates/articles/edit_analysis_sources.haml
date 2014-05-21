@@ -31,15 +31,13 @@
       &= f.source.friendly_name()
       %span.label.label-default&=f.source.source_type
 
-    - if f.source.gender():
-      %span.text-muted(title=f.source.gender().name)
-        %strong&=
-          " - " + f.source.gender().abbr()
-
-    - if f.source.race():
-      %span.text-muted(title=f.source.race().name)
-        %strong&=
-          " (" + f.source.race().abbr() + ")"
+    %span.text-muted
+      - if f.source.gender():
+        •
+        %span(title=f.source.gender().name)&= f.source.gender().abbr()
+      - if f.source.race():
+        •
+        %span(title=f.source.race().name)&= f.source.race().abbr()
 
   - else:
     -# it's a new source
