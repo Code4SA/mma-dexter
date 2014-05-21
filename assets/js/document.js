@@ -199,7 +199,7 @@
         }
       });
 
-      $('.chosen-select-delayed', $row).chosen();
+      $('.select2', $row).select2();
 
       // trigger the source type toggle
       $('input:radio[name$="-source_type"]', $row)
@@ -242,9 +242,9 @@
         attr('value') || '';
 
       // choose the affiliation
-      $select.
-        val(affiliationId).
-        trigger('chosen:updated');
+      $select
+        .val(affiliationId)
+        .trigger('change');
 
       // clear the source function
       $('select[name$="source_function_id"]', $row).val('');
@@ -325,7 +325,7 @@
         }
       });
 
-      $('.chosen-select-delayed', $row).chosen();
+      $('.select2', $row).select2();
     };
 
     // delete button was clicked

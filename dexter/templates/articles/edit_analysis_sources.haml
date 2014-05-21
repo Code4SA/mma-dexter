@@ -61,15 +61,15 @@
 
     .row.affiliation.function
       .col-sm-7
-        = vertical_field(f.affiliation_id, class_='chosen-select' if f.source else 'chosen-select-delayed')
+        = vertical_field(f.affiliation_id, class_='select2')
       .col-sm-5
-        = vertical_field(f.source_function_id, class_='chosen-select' if f.source else 'chosen-select-delayed')
+        = vertical_field(f.source_function_id, class_='select2')
 
     .row.role.age
       .col-sm-7
-        = vertical_field(f.source_role_id, class_='chosen-select' if f.source else 'chosen-select-delayed')
+        = vertical_field(f.source_role_id, class_='select2')
       .col-sm-5
-        = vertical_field(f.source_age_id, class_='chosen-select' if f.source else 'chosen-select-delayed')
+        = vertical_field(f.source_age_id, class_='select2')
 
     .quoted
       -# don't allow editing of directly quoted sources
