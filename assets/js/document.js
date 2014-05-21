@@ -165,7 +165,8 @@
       $('table.sources', self.$form).
         on('click', '.btn.delete', self.deleteSource).
         on('click', '.btn.undo-delete', self.undoDeleteSource).
-        on('change', 'input:radio[name$="-source_type"]', self.toggleSourceType);
+        on('change', 'input:radio[name$="-source_type"]', self.toggleSourceType).
+        on('change', 'input:checkbox[name$="-named"]', self.toggleAnonymous);
 
       self.newFairnessCount = $('.fairness tr.new', self.$form).length;
       $('table.fairness', self.$form).
@@ -292,11 +293,16 @@
       }
 
       if (sourceType == 'secondary') {
-        $('input[name$="-named"]', $row).prop('checked', true);
+        $('input[name$="-named"]', $row).prop('checked', true).trigger('change');
         self.disablePersonTypeahead($row);
       }
 
       $('.name input', $row).focus();
+    };
+
+    self.toggleAnonymous = function(e) {
+      var $row = $(this).closest('tr');
+      $('.name').toggle($(this).prop('checked'));
     };
 
     // when the user starts adding a new fairness, duplicate the row to keep a fresh
