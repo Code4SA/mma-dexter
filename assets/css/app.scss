@@ -153,6 +153,30 @@ table.sources {
       background-color: #faebcc;
     }
   }
+
+  tr.source-person {
+    .unnamed,
+    .affiliation-function { display: block }
+
+    .gender-race,
+    .role-age { display: none }
+  }
+
+  tr.source-child {
+    .unnamed,
+    .role-age,
+    .gender-race { display: block }
+
+    .affiliation-function { display: none }
+  }
+
+  tr.source-secondary {
+    .affiliation-function { display: block }
+
+    .unnamed,
+    .role-age,
+    .gender-race { display: none }
+  }
 }
 
 table.fairness {

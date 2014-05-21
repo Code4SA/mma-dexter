@@ -21,6 +21,7 @@
     -# source exists, it's not new
     %input(type="hidden", name=f.source_type.name, value=f.source_type.data)
     %input(type="hidden", name=f.name.name, value=f.name.data)
+    %input(type="hidden", name=f.named.name, value=f.named.data)
     %input(type="hidden", name=f.unnamed_gender_id.name, value=f.unnamed_gender_id.data)
     %input(type="hidden", name=f.unnamed_race_id.name, value=f.unnamed_race_id.data)
 
@@ -48,7 +49,6 @@
 
   .source-details
     - if f.is_new():
-
       .unnamed
         = field_input(f.named)
 
@@ -88,8 +88,10 @@
   %tbody
     - for source_form in source_forms:
       - ds = source_form.source
+      - class_ = 'source-%s' % ds.source_type
+      - class_ = class_ + (' deleted' if source_form.deleted.data == '1' else '')
 
-      %tr(dataOffsets=ds.offset_list, dataSourceId=ds.id, class_='deleted' if source_form.deleted.data == '1' else '')
+      %tr(dataOffsets=ds.offset_list, dataSourceId=ds.id, class_=class_)
         %td
           - show_source_form(source_form)
       - for q in ds.utterances():

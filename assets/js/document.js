@@ -279,31 +279,20 @@
       var $row = $(this).closest('tr');
       var sourceType = $(this).val();
 
-      if (sourceType == 'person') {
-        $('.unnamed', $row).show();
-        $('.affiliation-function', $row).show();
+      $row
+        .removeClass('source-child source-person source-secondary')
+        .addClass('source-' + sourceType);
 
-        $('.gender-race', $row).hide();
-        $('.role-age', $row).hide();
+      if (sourceType == 'person') {
         self.enablePersonTypeahead($row);
       }
 
       if (sourceType == 'child') {
-        $('.unnamed', $row).show();
-        $('.gender-race', $row).show();
-        $('.role-age', $row).show();
-
-        $('.affiliation-function', $row).hide();
         self.disablePersonTypeahead($row);
       }
 
       if (sourceType == 'secondary') {
-        $('.affiliation-function', $row).show();
         $('input[name$="-named"]', $row).prop('checked', true);
-
-        $('.gender-race', $row).hide();
-        $('.role-age', $row).hide();
-        $('.unnamed', $row).hide();
         self.disablePersonTypeahead($row);
       }
 
