@@ -186,7 +186,7 @@ def edit_article_analysis(id):
         for key in sorted(set('-'.join(key.split('-', 3)[0:2]) for key in request.form.keys() if key.startswith('source-new['))):
             src_form = DocumentSourceForm(prefix=key, nature=nature)
             # skip new sources that have an empty name but aren't anonymous
-            if src_form.unnamed.data or src_form.name.data:
+            if not src_form.named.data or src_form.name.data:
                 new_sources.append(src_form)
 
         # new fairness

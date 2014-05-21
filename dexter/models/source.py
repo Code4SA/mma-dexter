@@ -181,7 +181,7 @@ def none_coerce(v):
 
 class DocumentSourceForm(Form):
     name              = StringField('Name', [validators.Length(max=100)])
-    unnamed           = BooleanField('Anonymous', [validators.Optional()], default=False)
+    named             = BooleanField('This source is named', default=True)
     unnamed_gender_id = SelectField('Gender', [validators.Optional()], default='', coerce=none_coerce)
     unnamed_race_id   = SelectField('Race', [validators.Optional()], default='', coerce=none_coerce)
 
@@ -224,32 +224,42 @@ class DocumentSourceForm(Form):
         orgs.sort(key=Affiliation.sort_key)
         self.affiliation_id.choices = [['', '(none)']] + [[str(s.id), s.full_name()] for s in orgs]
 
-    def validate(self):
-        result = super(DocumentSourceForm, self).validate()
+        if self.source:
+            self.named.data = not self.source.unnamed
 
+
+    def validate(self):
         # ignore some data, based on the source type
+        if not self.named.data:
+            # it's anonymous, so ignore the name field
+            self.name.data = ''
 
         if self.source_type.data == 'person':
-            self.source_role_id.data = None
-            self.source_age_id.data = None
-            if not self.unnamed.data:
+            self.source_role_id.data = ''
+            self.source_age_id.data = ''
+            if self.named.data:
                 # it's not an anonymous source, so ignore these
                 # settings
-                self.unnamed_gender_id.data = None
-                self.unnamed_race_id.data = None
+                self.unnamed_gender_id.data = ''
+                self.unnamed_race_id.data = ''
 
         elif self.source_type.data == 'child':
-            self.source_function_id = None
-            self.source_affiliation_id = None
+            self.source_function_id.data = ''
+            self.affiliation_id.data = ''
 
         elif self.source_type.data == 'secondary':
-            self.source_role_id.data = None
-            self.unnamed_gender_id = None
-            self.unnamed_race_id = None
-            self.source_role_id = None
-            self.source_age_id = None
+            self.source_role_id.data = ''
+            self.unnamed_gender_id.data = ''
+            self.unnamed_race_id.data = ''
+            self.source_role_id.data = ''
+            self.source_age_id.data = ''
 
-        return result
+        return super(DocumentSourceForm, self).validate()
+
+
+    def populate_obj(self, obj):
+        super(DocumentSourceForm, self).populate_obj(obj)
+        obj.unnamed = not self.named.data
 
 
     @property
@@ -283,7 +293,7 @@ class DocumentSourceForm(Form):
         src.manual = True
         
         # link to person if they chose that option
-        if self.source_type.data == 'person':
+        if self.source_type.data == 'person' and self.named.data:
             src.person = Person.get_or_create(self.name.data)
 
             # override the 'quoted' attribute if we know this entity has utterances in

@@ -299,6 +299,7 @@
 
       if (sourceType == 'secondary') {
         $('.affiliation-function', $row).show();
+        $('input[name$="-named"]', $row).prop('checked', true);
 
         $('.gender-race', $row).hide();
         $('.role-age', $row).hide();
