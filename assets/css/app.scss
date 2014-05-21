@@ -152,25 +152,32 @@ table.sources {
 
   tr.source-person {
     .unnamed,
-    .affiliation-function { display: block }
+    .affiliation
+    .function { display: block }
 
-    .gender-race,
-    .role-age { display: none }
+    .gender,
+    .race,
+    .role,
+    .age { display: none }
   }
 
   tr.source-child {
     .unnamed,
-    .role-age,
+    .role,
+    .age,
     .gender-race { display: block }
 
-    .affiliation-function { display: none }
+    .affiliation,
+    .function { display: none }
   }
 
   tr.source-secondary {
-    .affiliation-function { display: block }
+    .affiliation,
+    .function { display: block }
 
     .unnamed,
-    .role-age,
+    .role,
+    .age,
     .gender-race { display: none }
   }
 }
