@@ -13,7 +13,7 @@ assets.register('css',
     Bundle(
       'css/bootstrap-3.0.3.min.css',
       'css/bootstrap-3.0.3-theme.min.css',
-      'css/font-awesome-4.0.3.min.css',
+      'css/font-awesome-4.1.0.min.css',
       'css/chosen.min.css',
       'css/datepicker3.css',
       'css/bootstrap-datetimepicker.min.css',
