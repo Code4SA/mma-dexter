@@ -49,9 +49,17 @@
 
   - else:
     -# it's a new source
-    - for fld in f.source_type:
-      .radio-inline
-        = field_input(fld)
+    .btn-group(dataToggle='buttons')
+      - for fld in f.source_type:
+        %label.btn.btn-default(class_='active' if fld.checked else '')
+          = fld()
+          - if fld.data == 'person':
+            %i.fa.fa-user
+          - if fld.data == 'child':
+            %i.fa.fa-child
+          - if fld.data == 'secondary':
+            %i.fa.fa-file
+          &= fld.label.text
 
   .source-details
     - if f.is_new():
