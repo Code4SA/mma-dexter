@@ -1,6 +1,7 @@
 %%namespace(file="../bootstrap_wtf.haml", **{'import': '*'})
 
 - from dexter.models import AnalysisNature
+- from dexter.helpers import source_icon
 
 %h4 Sources
 
@@ -26,12 +27,7 @@
     %input(type="hidden", name=f.unnamed_race_id.name, value=f.unnamed_race_id.data)
 
     .core
-      - if ds.source_type == 'person':
-        %i.fa.fa-user.text-muted
-      - if ds.source_type == 'child':
-        %i.fa.fa-child.text-muted
-      - if ds.source_type == 'secondary':
-        %i.fa.fa-file.text-muted
+      %i.text-muted.fa(class_=source_icon(ds.source_type))
 
       - if f.source.person:
         %a(href=url_for('show_person', id=f.source.person.id))&=f.source.person.name
@@ -49,17 +45,13 @@
 
   - else:
     -# it's a new source
-    .btn-group(dataToggle='buttons')
-      - for fld in f.source_type:
-        %label.btn.btn-default(class_='active' if fld.checked else '')
-          = fld()
-          - if fld.data == 'person':
-            %i.fa.fa-user
-          - if fld.data == 'child':
-            %i.fa.fa-child
-          - if fld.data == 'secondary':
-            %i.fa.fa-file
-          &= fld.label.text
+    .source-type
+      .btn-group(dataToggle='buttons')
+        - for fld in f.source_type:
+          %label.btn.btn-default(class_='active' if fld.checked else '')
+            = fld()
+            %i.fa(class_=source_icon(fld.data))
+            &= fld.label.text
 
   .source-details
     - if f.is_new():
@@ -112,18 +104,21 @@
         %tr.quotation(dataOffsets=('%d:%d' % (q.offset, q.length) if q.offset else ''))
           %td(colspan="3")&= q.quote
 
-%table.table.table-striped.table-condensed.sources
+%table.table.table-condensed.sources.new-sources
   %tbody
     - for f in new_sources:
       %tr.new
         %td
-          - show_source_form(f)
+          .source-owner
+            - show_source_form(f)
 
     %tr.template
       %td
-        - show_source_form(new_source_form)
+        .source-owner
+          - show_source_form(new_source_form)
 
-%a.btn.btn-default.add-source(href="#")
-  %i.fa.fa-plus
-  Add new source
+.buttons
+  %a.btn.btn-default.add-source(href="#")
+    %i.fa.fa-plus
+    Add new source
 

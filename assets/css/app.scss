@@ -106,55 +106,14 @@ form#edit-person {
   }
 }
 
+section.sources {
+  .buttons {
+    text-align: center;
+  }
+}
+
 table.sources {
-  tr.quotation {
-    td { padding-left: 25px; }
-  }
-
-  .core {
-    i.fa {
-      width: 15px;
-    }
-  }
-
-  .btn.delete, .btn.undo-delete {
-    padding: 0px;
-  }
-
-  .template {
-    display: none;
-  }
-
-  .unnamed-details {
-    display: none
-  }
-
-  .btn.undo-delete {
-    display: none;
-  }
-
-  .source-details {
-    margin-left: 20px;
-  }
-
-  .function {
-    word-break: break-all;
-  }
-
-  tr.deleted {
-    td {
-      background-color: #f2dede;
-      text-decoration: line-through;
-      .btn.delete { display: none; }
-      .btn.undo-delete { display: inline-block; text-decoration: none }
-    }
-  }
-
-  tr.new {
-    td {
-      background-color: #faebcc;
-    }
-  }
+  border-bottom: 1px solid #ddd;
 
   tr.source-person {
     .unnamed,
@@ -186,6 +145,71 @@ table.sources {
     .age,
     .gender,
     .race { display: none }
+  }
+
+  tr.quotation {
+    td { padding-left: 25px; }
+  }
+
+  .core {
+    i.fa {
+      width: 15px;
+    }
+  }
+
+  .btn.delete, .btn.undo-delete {
+    padding: 0px;
+  }
+
+  .btn.undo-delete {
+    display: none;
+  }
+
+  .source-details {
+    margin-left: 20px;
+  }
+
+  .function {
+    word-break: break-all;
+  }
+
+  tr.deleted {
+    td {
+      background-color: #f2dede;
+      text-decoration: line-through;
+      .btn.delete { display: none; }
+      .btn.undo-delete { display: inline-block; text-decoration: none }
+    }
+  }
+
+  &.new-sources {
+    border-bottom: 0px;
+
+    .template {
+      display: none;
+    }
+    
+    tr {
+      &> td {
+        border-top: 0px;
+        padding: 0px;
+      }
+
+      .source-owner {
+        background-color: #faebcc;
+        border-radius: 5px;
+        padding: 5px;
+        margin-bottom: 10px;
+      }
+
+      .source-type {
+        text-align: center;
+      }
+
+      .source-details {
+        margin: 0px;
+      }
+    }
   }
 }
 

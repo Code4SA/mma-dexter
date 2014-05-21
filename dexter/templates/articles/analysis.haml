@@ -1,4 +1,5 @@
 - from dexter.models import AnalysisNature
+- from dexter.helpers import source_icon
 
 .panel.panel-default.analysis
   .panel-heading
@@ -69,12 +70,7 @@
                     %td
                       .row
                         .col-sm-4.core
-                          - if ds.source_type == 'person':
-                            %i.fa.fa-user.text-muted
-                          - if ds.source_type == 'child':
-                            %i.fa.fa-child.text-muted
-                          - if ds.source_type == 'secondary':
-                            %i.fa.fa-file.text-muted
+                          %i.text-muted.fa(class_=source_icon(ds.source_type))
 
                           - if not ds.person:
                             &= ds.friendly_name()
