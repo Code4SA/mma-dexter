@@ -1,4 +1,5 @@
 - from dexter.models import AnalysisNature
+- from dexter.helpers import source_icon
 
 .panel.panel-default.analysis
   .panel-heading
@@ -65,12 +66,15 @@
               %tbody
                 - sources = sorted(document.sources, key=lambda s: s.sort_key())
                 - for ds in sources:
-                  %tr(dataOffsets=ds.offset_list)
+                  %tr(dataOffsets=ds.offset_list, class_='source-%s' % ds.source_type)
                     %td
                       .row
-                        .col-sm-4
+                        .col-sm-4.core
+                          %i.text-muted.fa(class_=source_icon(ds.source_type))
+
                           - if not ds.person:
                             &= ds.friendly_name()
+                            %span.label.label-default&=ds.source_type
                           - else:
                             -# it's a proper person
                             %a(href=url_for('show_person', id=ds.person.id))&=ds.person.name
@@ -82,22 +86,21 @@
                             - if ds.race():
                               •
                               %span(title=ds.race().name)&= ds.race().abbr()
-                            - if document.analysis_nature == AnalysisNature.CHILDREN and ds.age:
-                              •
-                              %span(title='age')&= ds.age.name
 
 
                         .col-sm-3.function
                           - if ds.function:
                             &=ds.function.name
-                        .col-sm-3
+
+                        .col-sm-3.affiliation
                           - if ds.affiliation:
                             &=ds.affiliation.full_name()
 
-                        - if document.analysis_nature == AnalysisNature.CHILDREN:
-                          -# XXX: only show this for children
-                          .col-sm-3
-                            &= ds.role and ds.role.name or ''
+                        .col-sm-3.age
+                          &= ('%s years' % ds.age.name) if ds.age else ''
+
+                        .col-sm-3.role
+                          &= ds.role and ds.role.name or ''
 
                         .col-sm-1
                           - if not ds.quoted:

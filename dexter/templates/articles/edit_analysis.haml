@@ -70,7 +70,7 @@
                 = field(form.origin_location_id, class_='select2')
 
               %hr
-              %section
+              %section.sources
                 %%include(file='edit_analysis_sources.haml')
 
               - if form.issues.choices:
@@ -136,9 +136,9 @@
                             = f.deleted
                             = field_input(f.fairness_id)
                           %td
-                            = field_input(f.bias_favour_affiliation_id, class_='chosen-select' if f != new_fairness_form else 'chosen-select-delayed')
+                            = field_input(f.bias_favour_affiliation_id, class_='select2')
                           %td
-                            = field_input(f.bias_oppose_affiliation_id, class_='chosen-select' if f != new_fairness_form else 'chosen-select-delayed')
+                            = field_input(f.bias_oppose_affiliation_id, class_='select2')
                           %td
                             %a.btn.btn-link.delete(href="#", title='delete this')
                               %i.fa.fa-times-circle

@@ -165,7 +165,8 @@
       $('table.sources', self.$form).
         on('click', '.btn.delete', self.deleteSource).
         on('click', '.btn.undo-delete', self.undoDeleteSource).
-        on('change', 'input:radio[name$="-source_type"]', self.toggleSourceType);
+        on('change', 'input:radio[name$="-source_type"]', self.toggleSourceType).
+        on('change', 'input:checkbox[name$="-named"]', self.toggleAnonymous);
 
       self.newFairnessCount = $('.fairness tr.new', self.$form).length;
       $('table.fairness', self.$form).
@@ -184,6 +185,7 @@
       $row.removeClass('template').addClass('new');
 
       self.newSourceCount++;
+      self.personTypeaheadEnabled = false;
 
       // change form field name and 'for' prefixes to be new[ix]
       $('input, select, textarea, label', $row).each(function() {
@@ -198,15 +200,18 @@
         }
       });
 
-      $('.chosen-select-delayed', $row).chosen();
+      $('.select2', $row).select2();
 
-      self.personTypeaheadEnabled = false;
-      self.enablePersonTypeahead($row);
+      // trigger the source type toggle
+      $('input:radio[name$="-source_type"]', $row)
+        .first()
+        .prop('checked', true)
+        .trigger('change');
     };
 
     self.enablePersonTypeahead = function($row) {
       if (!self.personTypeaheadEnabled) {
-        $('.person-name input', $row).
+        $('.name input', $row).
           val('').
           typeahead({
             highlight: true,
@@ -222,7 +227,7 @@
     };
 
     self.disablePersonTypeahead = function($row) {
-      $('.person-name input', $row).typeahead('destroy').val('');
+      $('.name input', $row).typeahead('destroy').val('');
       self.personTypeaheadEnabled = false;
     };
 
@@ -238,9 +243,9 @@
         attr('value') || '';
 
       // choose the affiliation
-      $select.
-        val(affiliationId).
-        trigger('chosen:updated');
+      $select
+        .val(affiliationId)
+        .trigger('change');
 
       // clear the source function
       $('select[name$="source_function_id"]', $row).val('');
@@ -270,27 +275,34 @@
       $('input[name$="-deleted"]', $row).val('0');
     };
 
-    // should we show the unnamed-details area?
+    // the source type has changed, update what fields are visible
     self.toggleSourceType = function(e) {
       var $row = $(this).closest('tr');
       var sourceType = $(this).val();
 
-      if (sourceType == 'unnamed') {
-        $('.person-name', $row).hide();
-        $('.unnamed-details', $row).show();
+      $row
+        .removeClass('source-child source-person source-secondary')
+        .addClass('source-' + sourceType);
 
-      } else {
-        $('.person-name', $row).show();
-        $('.unnamed-details', $row).hide();
-
-        if (sourceType == 'person') {
-          self.enablePersonTypeahead($row);
-        } else {
-          self.disablePersonTypeahead($row);
-        }
-
-        $('.person-name input', $row).focus();
+      if (sourceType == 'person') {
+        self.enablePersonTypeahead($row);
       }
+
+      if (sourceType == 'child') {
+        self.disablePersonTypeahead($row);
+      }
+
+      if (sourceType == 'secondary') {
+        $('input[name$="-named"]', $row).prop('checked', true).trigger('change');
+        self.disablePersonTypeahead($row);
+      }
+
+      $('.name input', $row).focus();
+    };
+
+    self.toggleAnonymous = function(e) {
+      var $row = $(this).closest('tr');
+      $('.name', $row).toggle($(this).prop('checked'));
     };
 
     // when the user starts adding a new fairness, duplicate the row to keep a fresh
@@ -319,7 +331,7 @@
         }
       });
 
-      $('.chosen-select-delayed', $row).chosen();
+      $('.select2', $row).select2();
     };
 
     // delete button was clicked

@@ -1,6 +1,7 @@
 %%namespace(file="../bootstrap_wtf.haml", **{'import': '*'})
 
 - from dexter.models import AnalysisNature
+- from dexter.helpers import source_icon
 
 %h4 Sources
 
@@ -21,88 +22,103 @@
     -# source exists, it's not new
     %input(type="hidden", name=f.source_type.name, value=f.source_type.data)
     %input(type="hidden", name=f.name.name, value=f.name.data)
+    %input(type="hidden", name=f.named.name, value=f.named.data)
     %input(type="hidden", name=f.unnamed_gender_id.name, value=f.unnamed_gender_id.data)
     %input(type="hidden", name=f.unnamed_race_id.name, value=f.unnamed_race_id.data)
 
-    - if f.source.person:
-      %a(href=url_for('show_person', id=f.source.person.id))&=f.source.person.name
-    - else:
-      &= f.source.friendly_name()
-      %span.label.label-default&=f.source.source_type
+    .core
+      %i.text-muted.fa(class_=source_icon(ds.source_type))
 
-    - if f.source.gender():
-      %span.text-muted(title=f.source.gender().name)
-        %strong&=
-          " - " + f.source.gender().abbr()
+      - if f.source.person:
+        %a(href=url_for('show_person', id=f.source.person.id))&=f.source.person.name
+      - else:
+        &= f.source.friendly_name()
+        %span.label.label-default&=f.source.source_type
 
-    - if f.source.race():
-      %span.text-muted(title=f.source.race().name)
-        %strong&=
-          " (" + f.source.race().abbr() + ")"
+      %span.text-muted
+        - if f.source.gender():
+          •
+          %span(title=f.source.gender().name)&= f.source.gender().abbr()
+        - if f.source.race():
+          •
+          %span(title=f.source.race().name)&= f.source.race().abbr()
 
   - else:
     -# it's a new source
-    - for fld in f.source_type:
-      .radio-inline
-        = field_input(fld)
-      
-    .person-name
-      = vertical_field(f.name)
+    .source-type
+      .btn-group(dataToggle='buttons')
+        - for fld in f.source_type:
+          %label.btn.btn-default(class_='active' if fld.checked else '')
+            = fld()
+            %i.fa(class_=source_icon(fld.data))
+            &= fld.label.text
 
   .source-details
-    - if not f.source:
-      .unnamed-details
-        .row
-          .col-sm-6
-            = vertical_field(f.unnamed_gender_id)
-          .col-sm-6
-            = vertical_field(f.unnamed_race_id)
+    - if f.is_new():
+      .named
+        = field_input(f.named)
 
-    = vertical_field(f.affiliation_id, class_='chosen-select' if f.source else 'chosen-select-delayed')
+      .name
+        = vertical_field(f.name)
 
-    - if document.analysis_nature == AnalysisNature.CHILDREN:
-      = vertical_field(f.source_role_id, class_='chosen-select' if f.source else 'chosen-select-delayed')
-      = vertical_field(f.source_age_id, class_='chosen-select' if f.source else 'chosen-select-delayed')
+      .row.gender.race
+        .col-sm-7
+          = vertical_field(f.unnamed_gender_id)
+        .col-sm-5
+          = vertical_field(f.unnamed_race_id)
 
-    .row
-      .col-xs-6
-        = vertical_field(f.source_function_id)
-      .col-xs-4
-        .quoted
-          -# don't allow editing of directly quoted sources
-          - if f.source and ds.utterances():
-            %input(type='hidden', name=f.quoted.name, value=f.quoted.data)
-            &= 'quoted' if f.source.quoted else 'not quoted'
-            - if len(ds.utterances()) > 0:
-              %span.badge&= len(ds.utterances())
-          - else:
-            &= field_input(f.quoted)
+    .row.affiliation.function
+      .col-sm-7
+        = vertical_field(f.affiliation_id, class_='select2')
+      .col-sm-5
+        = vertical_field(f.source_function_id, class_='select2')
+
+    .row.role.age
+      .col-sm-7
+        = vertical_field(f.source_role_id, class_='select2')
+      .col-sm-5
+        = vertical_field(f.source_age_id, class_='select2')
+
+    .quoted
+      -# don't allow editing of directly quoted sources
+      - if f.source and ds.utterances():
+        %input(type='hidden', name=f.quoted.name, value=f.quoted.data)
+        &= 'quoted' if f.source.quoted else 'not quoted'
+        - if len(ds.utterances()) > 0:
+          %span.badge&= len(ds.utterances())
+      - else:
+        &= field_input(f.quoted)
 
 
 %table.table.table-striped.table-condensed.offsets.sources
   %tbody
     - for source_form in source_forms:
       - ds = source_form.source
+      - class_ = 'source-%s' % ds.source_type
+      - class_ = class_ + (' deleted' if source_form.deleted.data == '1' else '')
 
-      %tr(dataOffsets=ds.offset_list, dataSourceId=ds.id, class_='deleted' if source_form.deleted.data == '1' else '')
+      %tr(dataOffsets=ds.offset_list, dataSourceId=ds.id, class_=class_)
         %td
           - show_source_form(source_form)
       - for q in ds.utterances():
         %tr.quotation(dataOffsets=('%d:%d' % (q.offset, q.length) if q.offset else ''))
           %td(colspan="3")&= q.quote
 
-%table.table.table-striped.table-condensed.sources
+%table.table.table-condensed.sources.new-sources
   %tbody
     - for f in new_sources:
       %tr.new
         %td
-          - show_source_form(f)
+          .source-owner
+            - show_source_form(f)
 
     %tr.template
       %td
-        - show_source_form(new_source_form)
+        .source-owner
+          - show_source_form(new_source_form)
 
-%a.btn.btn-default.add-source(href="#")
-  %i.fa.fa-plus
-  Add new source
+.buttons
+  %a.btn.btn-default.add-source(href="#")
+    %i.fa.fa-plus
+    Add new source
 
