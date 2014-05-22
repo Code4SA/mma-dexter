@@ -33,7 +33,6 @@
         %a(href=url_for('show_person', id=f.source.person.id))&=f.source.person.name
       - else:
         &= f.source.friendly_name()
-        %span.label.label-default&=f.source.source_type
 
       %span.text-muted
         - if f.source.gender():

@@ -9,7 +9,7 @@ from sqlalchemy.orm import relationship
 from .support import db
 
 from wtforms import StringField, TextAreaField, BooleanField, validators, DateTimeField, HiddenField
-from ..forms import Form, MultiCheckboxField, IntegerField, SelectField
+from ..forms import Form, MultiCheckboxField, IntegerField, SelectField, RadioField
 
 class ElectionsAnalysisForm(Form):
     """
@@ -39,19 +39,18 @@ class ChildrenAnalysisForm(ElectionsAnalysisForm):
     child_focus     = BooleanField('Children are a central focus')
 
     quality_basic_context = BooleanField('Basic context')
-    quality_indepth_context = BooleanField('In-depth context')
-    quality_why           = BooleanField('Why: explanations')
-    quality_legislation   = BooleanField('Relevant legislation is mentioned')
+    quality_causes        = BooleanField('Causes are mentioned')
+    quality_policies      = BooleanField('Relevant policies are mentioned')
     quality_solutions     = BooleanField('Solutions are offered')
     quality_consequences  = BooleanField('Consequences are mentioned')
-    quality_self_help     = BooleanField('Self-help')
+    quality_self_help     = BooleanField('Self-help offered')
 
-    ethics_source         = BooleanField('Child is a source')
-    ethics_identified     = BooleanField("Child's identity is disclosed")
-    ethics_abuse          = BooleanField('Child is a victim of abuse')
+    abuse_source         = BooleanField('Child is a source')
+    abuse_identified     = BooleanField("Child's identity is disclosed")
+    abuse_victim         = BooleanField('Child is a victim of abuse')
 
-    principle_supported_id = SelectField('Principle strongly supported', [validators.Optional()], default='')
-    principle_violated_id  = SelectField('Principle clearly violated', [validators.Optional()], default='')
+    principle_supported_id = RadioField('Principle strongly supported', [validators.Optional()], default='')
+    principle_violated_id  = RadioField('Principle clearly violated', [validators.Optional()], default='')
 
     def __init__(self, *args, **kwargs):
         super(ChildrenAnalysisForm, self).__init__(*args, **kwargs)
@@ -65,20 +64,19 @@ class ChildrenAnalysisForm(ElectionsAnalysisForm):
     def quality_fields(self):
         return [
             self.quality_basic_context,
-            self.quality_indepth_context,
-            self.quality_why,
-            self.quality_legislation,
-            self.quality_solutions,
+            self.quality_causes,
             self.quality_consequences,
+            self.quality_solutions,
+            self.quality_policies,
             self.quality_self_help,
         ]
 
     @property
-    def ethics_fields(self):
+    def abuse_fields(self):
         return [
-            self.ethics_source,
-            self.ethics_identified,
-            self.ethics_abuse,
+            self.abuse_source,
+            self.abuse_identified,
+            self.abuse_victim,
         ]
 
 

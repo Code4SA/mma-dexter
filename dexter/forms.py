@@ -1,5 +1,5 @@
 from flask_wtf import Form as BaseForm
-from wtforms import SelectMultipleField, widgets, SelectField as WTFSelectField
+from wtforms import SelectMultipleField, widgets, SelectField as WTFSelectField, RadioField as WTFRadioField
 from wtforms.fields.html5 import IntegerField as WTFIntegerField
 from wtforms.widgets import HTMLString, html_params
 from wtforms.widgets import Select as SelectWidget
@@ -90,7 +90,7 @@ class SelectField(WTFSelectField):
     widget = ExtendedSelectWidget()
 
     def populate_obj(self, obj, name):
-        super(WTFSelectField, self).populate_obj(obj, name)
+        super(SelectField, self).populate_obj(obj, name)
 
         if hasattr(obj, name):
             val = getattr(obj, name, None)
@@ -114,3 +114,16 @@ class SelectField(WTFSelectField):
                 if val == self.data:
                     return
         raise ValueError(self.gettext('Not a valid choice!'))
+
+class RadioField(WTFRadioField):
+    """
+    Update RadioField so that populate_obj sets empty values
+    to None, instead of 'None' or ''.
+    """
+    def populate_obj(self, obj, name):
+        super(RadioField, self).populate_obj(obj, name)
+
+        if hasattr(obj, name):
+            val = getattr(obj, name, None)
+            if val == '' or val == 'None':
+                setattr(obj, name, None)

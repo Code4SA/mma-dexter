@@ -186,7 +186,7 @@ class DocumentSourceForm(Form):
     unnamed_gender_id = SelectField('Gender', [validators.Optional()], default='', coerce=none_coerce)
     unnamed_race_id   = SelectField('Race', [validators.Optional()], default='', coerce=none_coerce)
 
-    source_type       = RadioField('Type', default='person', choices=[['person', 'Adult Person'], ['child', 'Child'], ['secondary', 'Secondary (not a person)']])
+    source_type       = RadioField('Type', default='person', choices=[['person', 'Adult'], ['child', 'Child'], ['secondary', 'Secondary (not a person)']])
 
     quoted            = BooleanField('Quoted', default=False)
     photographed      = BooleanField('Photographed', default=False)
