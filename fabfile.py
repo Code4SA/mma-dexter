@@ -12,7 +12,7 @@ PROD_HOSTS = ['wazimap.co.za']
 def prod():
     env.deploy_type = 'prod'
     env.deploy_dir = '/home/mma/'
-    env.branch = 'big-server'
+    env.branch = 'bigserver-children'
     env.hosts = PROD_HOSTS
     env.user = 'mma'
 
