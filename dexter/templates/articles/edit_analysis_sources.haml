@@ -79,15 +79,21 @@
       .col-sm-5
         = vertical_field(f.source_age_id, class_='select2')
 
-    .quoted
-      -# don't allow editing of directly quoted sources
-      - if f.source and ds.utterances():
-        %input(type='hidden', name=f.quoted.name, value=f.quoted.data)
-        &= 'quoted' if f.source.quoted else 'not quoted'
-        - if len(ds.utterances()) > 0:
-          %span.badge&= len(ds.utterances())
-      - else:
-        &= field_input(f.quoted)
+    .row
+      .col-sm-6
+        .quoted
+          -# don't allow editing of directly quoted sources
+          - if f.source and ds.utterances():
+            %input(type='hidden', name=f.quoted.name, value=f.quoted.data)
+            &= 'quoted' if f.source.quoted else 'not quoted'
+            - if len(ds.utterances()) > 0:
+              %span.badge&= len(ds.utterances())
+          - else:
+            &= field_input(f.quoted)
+
+      .col-sm-6
+        .photographed
+          &= field_input(f.photographed)
 
 
 %table.table.table-striped.table-condensed.offsets.sources

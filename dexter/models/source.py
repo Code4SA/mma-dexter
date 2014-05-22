@@ -66,6 +66,7 @@ class DocumentSource(db.Model, WithOffsets):
     source_age_id      = Column(Integer, ForeignKey('source_ages.id', ondelete='SET NULL'))
 
     quoted       = Column(Boolean)
+    photographed = Column(Boolean)
 
     # was this source added manually or was it inferred by machine learning?
     manual       = Column(Boolean, default=False, nullable=False)
@@ -188,6 +189,7 @@ class DocumentSourceForm(Form):
     source_type       = RadioField('Type', default='person', choices=[['person', 'Adult Person'], ['child', 'Child'], ['secondary', 'Secondary (not a person)']])
 
     quoted            = BooleanField('Quoted', default=False)
+    photographed      = BooleanField('Photographed', default=False)
 
     source_function_id  = SelectField('Function', default='')
     source_role_id      = SelectField('Role', default='')

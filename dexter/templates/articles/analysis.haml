@@ -55,14 +55,6 @@
           %section
             %h4 Sources
             %table.table.table-striped.table-condensed.offsets.sources
-              %thead
-                %tr
-                  %th
-                    .row
-                      .col-sm-4 Name
-                      .col-sm-3
-                      .col-sm-3
-                      .col-sm-1 Quoted?
               %tbody
                 - sources = sorted(document.sources, key=lambda s: s.sort_key())
                 - for ds in sources:
@@ -87,6 +79,17 @@
                               •
                               %span(title=ds.race().name)&= ds.race().abbr()
 
+                          - if ds.manual:
+                            %i.fa.fa-check-circle(title='Added manually by a monitor')
+
+                        .col-sm-2
+                          - if ds.quoted:
+                            %i.fa.fa-comment(title='quoted')
+                            - if len(ds.utterances()) > 0:
+                              %span.badge&= len(ds.utterances())
+
+                          - if ds.photographed:
+                            %i.fa.fa-camera(title='photographed')
 
                         .col-sm-3.function
                           - if ds.function:
@@ -102,18 +105,6 @@
                         .col-sm-3.role
                           &= ds.role and ds.role.name or ''
 
-                        .col-sm-1
-                          - if not ds.quoted:
-                            no
-                          - else:
-                            - if len(ds.utterances()) > 0:
-                              %span.badge&= len(ds.utterances())
-                            - else:
-                              yes
-
-                        .col-sm-1
-                          - if ds.manual:
-                            %i.fa.fa-check-circle(title='Added manually by a monitor')
 
                   - for q in ds.utterances():
                     %tr.quotation(dataOffsets=('%d:%d' % (q.offset, q.length) if q.offset else ''))
