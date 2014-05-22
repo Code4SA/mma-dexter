@@ -65,9 +65,9 @@ class ChildrenAnalysisForm(ElectionsAnalysisForm):
         return [
             self.quality_basic_context,
             self.quality_causes,
-            self.quality_policies,
-            self.quality_solutions,
             self.quality_consequences,
+            self.quality_solutions,
+            self.quality_policies,
             self.quality_self_help,
         ]
 
