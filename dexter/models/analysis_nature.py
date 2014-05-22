@@ -9,7 +9,7 @@ from sqlalchemy.orm import relationship
 from .support import db
 
 from wtforms import StringField, TextAreaField, BooleanField, validators, DateTimeField, HiddenField
-from ..forms import Form, MultiCheckboxField, IntegerField, SelectField
+from ..forms import Form, MultiCheckboxField, IntegerField, SelectField, RadioField
 
 class ElectionsAnalysisForm(Form):
     """
@@ -49,8 +49,8 @@ class ChildrenAnalysisForm(ElectionsAnalysisForm):
     abuse_identified     = BooleanField("Child's identity is disclosed")
     abuse_victim         = BooleanField('Child is a victim of abuse')
 
-    principle_supported_id = SelectField('Principle strongly supported', [validators.Optional()], default='')
-    principle_violated_id  = SelectField('Principle clearly violated', [validators.Optional()], default='')
+    principle_supported_id = RadioField('Principle strongly supported', [validators.Optional()], default='')
+    principle_violated_id  = RadioField('Principle clearly violated', [validators.Optional()], default='')
 
     def __init__(self, *args, **kwargs):
         super(ChildrenAnalysisForm, self).__init__(*args, **kwargs)

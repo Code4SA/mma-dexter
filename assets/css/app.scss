@@ -224,6 +224,13 @@ table.sources {
   }
 }
 
+table.principles {
+  input[type="radio"] {
+    width: 100%;
+    cursor: pointer;
+  }
+}
+
 table.fairness {
   .template {
     .btn.delete, select.select2 {
