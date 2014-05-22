@@ -62,14 +62,16 @@
                     %td
                       .row
                         .col-sm-4.core
-                          %i.text-muted.fa(class_=source_icon(ds.source_type))
+                          %i.text-muted.fa(class_=source_icon(ds.source_type), title='%s source' % ds.source_type)
 
                           - if not ds.person:
                             &= ds.friendly_name()
-                            %span.label.label-default&=ds.source_type
                           - else:
                             -# it's a proper person
                             %a(href=url_for('show_person', id=ds.person.id))&=ds.person.name
+
+                          - if ds.manual:
+                            %i.fa.fa-check-circle(title='Added manually by a monitor')
 
                           %span.text-muted
                             - if ds.gender():
@@ -78,9 +80,6 @@
                             - if ds.race():
                               •
                               %span(title=ds.race().name)&= ds.race().abbr()
-
-                          - if ds.manual:
-                            %i.fa.fa-check-circle(title='Added manually by a monitor')
 
                         .col-sm-2
                           - if ds.quoted:
