@@ -19,8 +19,6 @@
             Edit analysis
 
   .panel-body
-    %%include(file="analysis_warnings.haml")
-
     %section
       %ul.nav.nav-tabs
         %li.active
@@ -42,6 +40,8 @@
         #analysis-tab.tab-pane.active
           %section
             %h4 Analysis
+            %%include(file="analysis_warnings.haml")
+
             .row.topic-origin
               .col-sm-7
                 %dl
