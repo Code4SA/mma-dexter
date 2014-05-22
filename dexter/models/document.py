@@ -70,8 +70,8 @@ class Document(db.Model):
 
     quality_basic_context = Column(Boolean)
     quality_indepth_context = Column(Boolean)
-    quality_why           = Column(Boolean)
-    quality_legislation   = Column(Boolean)
+    quality_causes        = Column(Boolean)
+    quality_policies      = Column(Boolean)
     quality_solutions     = Column(Boolean)
     quality_consequences  = Column(Boolean)
     quality_self_help     = Column(Boolean)

@@ -40,11 +40,11 @@ class ChildrenAnalysisForm(ElectionsAnalysisForm):
 
     quality_basic_context = BooleanField('Basic context')
     quality_indepth_context = BooleanField('In-depth context')
-    quality_why           = BooleanField('Why: explanations')
-    quality_legislation   = BooleanField('Relevant legislation is mentioned')
+    quality_causes        = BooleanField('Causes are mentioned')
+    quality_policies      = BooleanField('Relevant policies are mentioned')
     quality_solutions     = BooleanField('Solutions are offered')
     quality_consequences  = BooleanField('Consequences are mentioned')
-    quality_self_help     = BooleanField('Self-help')
+    quality_self_help     = BooleanField('Self-help offered')
 
     ethics_source         = BooleanField('Child is a source')
     ethics_identified     = BooleanField("Child's identity is disclosed")
@@ -66,8 +66,8 @@ class ChildrenAnalysisForm(ElectionsAnalysisForm):
         return [
             self.quality_basic_context,
             self.quality_indepth_context,
-            self.quality_why,
-            self.quality_legislation,
+            self.quality_causes,
+            self.quality_policies,
             self.quality_solutions,
             self.quality_consequences,
             self.quality_self_help,
