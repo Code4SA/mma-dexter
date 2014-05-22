@@ -97,6 +97,11 @@ class AnalysisNature(db.Model):
         CHILDREN : ChildrenAnalysisForm
     }
 
+    ICONS = {
+        ELECTIONS: 'fa-check-square-o',
+        CHILDREN : 'fa-child',
+    }
+
     id          = Column(Integer, primary_key=True)
     name        = Column(String(100), nullable=False, index=True, unique=True)
 
@@ -108,6 +113,10 @@ class AnalysisNature(db.Model):
     @property
     def form(self):
         return self.FORMS[self.id]
+
+
+    def icon(self):
+        return self.ICONS.get(self.id)
 
 
     def __str__(self):

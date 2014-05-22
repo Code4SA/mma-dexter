@@ -6,6 +6,7 @@
     .row
       .col-sm-8
         %h3.panel-title
+          %i.fa(class_=document.analysis_nature.icon())
           &= document.analysis_nature.name.title()
           Analysis
           - if document.checked_by:
