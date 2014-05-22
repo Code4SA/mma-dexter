@@ -116,7 +116,7 @@ table.sources {
   border-bottom: 1px solid #ddd;
 
   tr.source-person {
-    .unnamed,
+    .named,
     .affiliation
     .function { display: block }
 
@@ -124,27 +124,33 @@ table.sources {
     .race,
     .role,
     .age { display: none }
+
+    .name label { display: none }
   }
 
   tr.source-child {
-    .unnamed,
+    .named,
     .role,
     .age,
     .gender-race { display: block }
 
     .affiliation,
     .function { display: none }
+
+    .name label { display: none }
   }
 
   tr.source-secondary {
     .affiliation,
     .function { display: block }
 
-    .unnamed,
+    .named,
     .role,
     .age,
     .gender,
     .race { display: none }
+
+    .name label { display: inline-block }
   }
 
   tr.quotation {
@@ -189,26 +195,31 @@ table.sources {
       display: none;
     }
     
-    tr {
-      &> td {
-        border-top: 0px;
-        padding: 0px;
-      }
+    tr > td {
+      border-top: 0px;
+      padding: 0px;
+    }
 
-      .source-owner {
-        background-color: #faebcc;
-        border-radius: 5px;
-        padding: 5px;
-        margin-bottom: 10px;
+    .named {
+      .checkbox {
+        margin-top: 0px;
+        margin-bottom: 5px;
       }
+    }
 
-      .source-type {
-        text-align: center;
-      }
+    .source-owner {
+      background-color: #faebcc;
+      border-radius: 5px;
+      padding: 5px;
+      margin-bottom: 10px;
+    }
 
-      .source-details {
-        margin: 0px;
-      }
+    .source-type {
+      text-align: center;
+    }
+
+    .source-details {
+      margin: 5px 0px 0px 0px;
     }
   }
 }

@@ -181,7 +181,7 @@ def none_coerce(v):
 
 class DocumentSourceForm(Form):
     name              = StringField('Name', [validators.Length(max=100)])
-    named             = BooleanField('This source is named', default=True)
+    named             = BooleanField('The source is named', default=True)
     unnamed_gender_id = SelectField('Gender', [validators.Optional()], default='', coerce=none_coerce)
     unnamed_race_id   = SelectField('Race', [validators.Optional()], default='', coerce=none_coerce)
 
