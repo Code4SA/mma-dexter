@@ -1,5 +1,4 @@
-from . import (Medium, Gender, Race, SourceFunction, Topic, DocumentType, AuthorType, Issue, Fairness, Affiliation,
-               AnalysisNature, SourceRole)
+from . import *
 
 def seed_db(db):
     """ Add seed entities to the database. """
@@ -37,6 +36,9 @@ def seed_db(db):
         db.session.add(x)
 
     for x in SourceRole.create_defaults():
+        db.session.add(x)
+
+    for x in Principle.create_defaults():
         db.session.add(x)
 
     db.session.commit()
