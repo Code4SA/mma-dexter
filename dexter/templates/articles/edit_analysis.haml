@@ -106,12 +106,16 @@
                   .col-sm-6
                     %section
                       %h4 General
-                      - if document.analysis_nature == AnalysisNature.CHILDREN:
-                        = field_input(form.child_focus)
+                      = field_input(form.child_focus)
 
                       %h4 Ethics
                       - for f in form.ethics_fields:
                         = field_input(f)
+                %hr
+                %section
+                  %h4 Journalistic Principles for Children
+                  = vertical_field(form.principle_supported_id, class_='select2')
+                  = vertical_field(form.principle_violated_id, class_='select2')
 
               - if document.analysis_nature == AnalysisNature.ELECTIONS:
                 %hr

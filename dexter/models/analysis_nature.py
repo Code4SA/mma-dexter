@@ -50,6 +50,17 @@ class ChildrenAnalysisForm(ElectionsAnalysisForm):
     ethics_identified     = BooleanField("Child's identity is disclosed")
     ethics_abuse          = BooleanField('Child is a victim of abuse')
 
+    principle_supported_id = SelectField('Principle strongly supported', [validators.Optional()], default='')
+    principle_violated_id  = SelectField('Principle clearly violated', [validators.Optional()], default='')
+
+    def __init__(self, *args, **kwargs):
+        super(ChildrenAnalysisForm, self).__init__(*args, **kwargs)
+
+        from . import Principle
+        self.principle_supported_id.choices = [['', '(none)']] + [(str(p.id), p.name) for p in Principle.query.all()]
+        self.principle_violated_id.choices = self.principle_supported_id.choices
+
+
     @property
     def quality_fields(self):
         return [

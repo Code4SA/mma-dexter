@@ -79,6 +79,9 @@ class Document(db.Model):
     ethics_identified     = Column(Boolean)
     ethics_abuse          = Column(Boolean)
 
+    principle_supported_id = Column(Integer, ForeignKey('principles.id'))
+    principle_violated_id  = Column(Integer, ForeignKey('principles.id'))
+
 
     # Associations
     author      = relationship("Author")
@@ -95,6 +98,9 @@ class Document(db.Model):
     origin      = relationship("Location")
 
     analysis_nature = relationship("AnalysisNature")
+
+    principle_supported = relationship("Principle", foreign_keys=[principle_supported_id])
+    principle_violated  = relationship("Principle", foreign_keys=[principle_violated_id])
 
     created_by  = relationship("User", backref=backref('created_documents'), foreign_keys=[created_by_user_id])
     checked_by  = relationship("User", backref=backref('checked_documents'), foreign_keys=[checked_by_user_id])

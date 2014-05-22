@@ -121,9 +121,9 @@
 
           - if document.analysis_nature == AnalysisNature.CHILDREN:
             %hr
-            .row
-              .col-sm-6
-                %section
+            %section
+              .row
+                .col-sm-6
                   %h4 Quality
                   %ul.fa-ul
                     - for f in document.make_analysis_form().quality_fields:
@@ -135,8 +135,7 @@
                           %i.fa-li.fa.fa-square-o
                         &= f.label.text
 
-              .col-sm-6
-                %section
+                .col-sm-6
                   %h4 General
                   %ul.fa-ul
                     %li
@@ -156,6 +155,18 @@
                         - else:
                           %i.fa-li.fa.fa-square-o
                         &= f.label.text
+
+            %hr
+            %section
+              %h4 Journalistic Principles for Children
+
+              .row
+                .col-sm-6
+                  %h5 Principle strongly supported
+                  &= document.principle_supported and document.principle_supported.name or '(none)'
+                .col-sm-6
+                  %h5 Principle clearly violated
+                  &= document.principle_violated and document.principle_violated.name or '(none)'
 
           - if document.analysis_nature == AnalysisNature.ELECTIONS:
             %hr
