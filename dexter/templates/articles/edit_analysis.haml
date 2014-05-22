@@ -122,17 +122,18 @@
                 %section
                   %h4 Journalistic Principles for Children
 
-                  %table.table-condensed.table-striped.principles
+                  %table.table-condensed.table-bordered.principles
                     %thead
                       %tr
+                        %th.support Supported
                         %th Principle
-                        %th Supported
-                        %th Violated
+                        %th.violate Violated
                     - for support_field, violate_field in izip(form.principle_supported_id, form.principle_violated_id):
                       %tr
-                        %td&= support_field.label.text
-                        %td= support_field
-                        %td= violate_field
+                        %td.support= support_field
+                        %td
+                          %span(title=form.principle_descriptions.get(support_field.label.text, ''))&= support_field.label.text
+                        %td.violate= violate_field
 
               - if document.analysis_nature == AnalysisNature.ELECTIONS:
                 %hr

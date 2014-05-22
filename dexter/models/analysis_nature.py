@@ -56,7 +56,11 @@ class ChildrenAnalysisForm(ElectionsAnalysisForm):
         super(ChildrenAnalysisForm, self).__init__(*args, **kwargs)
 
         from . import Principle
-        self.principle_supported_id.choices = [['', '(none)']] + [(str(p.id), p.name) for p in Principle.query.all()]
+
+        principles = Principle.query.all()
+        self.principle_descriptions = dict((p.name, p.description) for p in principles)
+
+        self.principle_supported_id.choices = [['', '(none)']] + [(str(p.id), p.name) for p in principles]
         self.principle_violated_id.choices = self.principle_supported_id.choices
 
 

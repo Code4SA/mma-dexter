@@ -225,10 +225,12 @@ table.sources {
 }
 
 table.principles {
-  input[type="radio"] {
-    width: 100%;
-    cursor: pointer;
+  th, td {
+    text-align: center;
   }
+
+  th.support, td.support { background-color: #dff0d8; }
+  th.violate, td.violate { background-color: #f2dede; }
 }
 
 table.fairness {
