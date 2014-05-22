@@ -22,17 +22,18 @@ DBS="mma"
 MYSQLDUMP="$(which mysqldump)"
 GZIP="$(which gzip)"
  
+# Get data in yyyy-mm-dd format
+NOW="$(date +"%Y-%m-%d")"
+ 
 # Backup Dest directory, change this if you have someother location
 BACKUP_ROOT="$HOME/mysql-backups"
+BACKUP_PREFIX="mysql-$NOW"
  
 # Main directory where backup will be stored
-DEST="$BACKUP_ROOT/mysql-$(date +"%Y-%m-%d")"
+DEST="$BACKUP_ROOT/$BACKUP_PREFIX"
  
 # Get hostname
 HOST="$(hostname)"
- 
-# Get data in yyyy-mm-dd format
-NOW="$(date +"%Y-%m-%d")"
  
 # File to store current backup file
 FILE=""
@@ -63,6 +64,6 @@ done
  
 # copy mysql backup directory to S3
 echo "Syncing with S3"
-s3cmd sync -rv --skip-existing $DEST s3://$S3Bucket/
+s3cmd put -v $FILE s3://$S3Bucket/$BACKUP_PREFIX/
 
 echo "Finished. Bye."

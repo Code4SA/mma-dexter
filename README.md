@@ -39,9 +39,11 @@ export CALAIS_API_KEY=anotherkey
 
 ## Production
 
-* clone the repo
-* install a virtual env and activate it: `virtualenv --system-site-packages env; source env/bin/activate`
-* install requirements: `pip install -r requirements.txt`
+Deploy the code using Fabric:
+
+```
+fab prod deploy
+```
 
 ### Database
 
@@ -79,44 +81,21 @@ export CALAIS_API_KEY=anotherkey
 
 **Note:** DO NOT commit `production-settings.sh` into source control!
 
-### nginx
-
-Install nginx:
-
-`sudo apt-get install nginx`
-
-Link in the dexter config:
-
-`sudo ln -s /home/mma/mma-dexter/resources/nginx/dexter.conf /etc/nginx/sites-enabled/`
-
-And restart nginx:
-
-`sudo service nginx restart`
-
-### upstart
-
-Tell upstart about the dexter gunicorn server:
-
-```bash
-sudo ln -s /home/mma/mma-dexter/resources/upstart/dexter.conf /etc/init/
-sudo initctl reload-configuration
-```
-
-And start it:
-
-``sudo start dexter``
-
-### log rotation
-
-```bash
-sudo ln -s /home/mma/mma-dexter/resources/logrotate/dexter /etc/logrotate.d/
-```
-
 ### Database backups
 
 * Install s3cmd: `sudo apt-get install s3cmd`
 * Setup the s3 creds: `s3cmd --configure`
 * Install the crontab: `crontab -i resources/cron/backups.crontab`
+
+#### Restoring from backups
+
+* download the latest backup:
+
+    s3cmd get `s3cmd ls --recursive s3://mma-dexter-backups/mysql- | tail -1 | awk '{print $4}'`
+
+* extract and restore
+
+    gunzip -c BACKUP-FILE | mysql -u mma -p mma
 
 ### Logging
 
@@ -129,13 +108,8 @@ The dexter application logs are in ``~mma/log/dexter.log``
 
 To deploy changes to the service,
 
-* make the changes elsewhere and commit to git
-* `git pull` on the production server
-* tell upstart to restart marley: `sudo restart dexter`
-
-If you have made changes to the nginx config, you'll need to restart nginx too:
-
-`sudo service nginx restart`
+* make the changes elsewhere, commit to git and push to github
+* `fab prod deploy`
 
 ## Database
 
