@@ -139,7 +139,7 @@
                 .col-sm-6
                   %h4 Secondary Victimisation
                   %ul.fa-ul
-                    - for f in document.make_analysis_form().ethics_fields:
+                    - for f in document.make_analysis_form().abuse_fields:
                       %li
                         - val = getattr(document, f.name)
                         - if val:

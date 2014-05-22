@@ -45,9 +45,9 @@ class ChildrenAnalysisForm(ElectionsAnalysisForm):
     quality_consequences  = BooleanField('Consequences are mentioned')
     quality_self_help     = BooleanField('Self-help offered')
 
-    ethics_source         = BooleanField('Child is a source')
-    ethics_identified     = BooleanField("Child's identity is disclosed")
-    ethics_abuse          = BooleanField('Child is a victim of abuse')
+    abuse_source         = BooleanField('Child is a source')
+    abuse_identified     = BooleanField("Child's identity is disclosed")
+    abuse_victim         = BooleanField('Child is a victim of abuse')
 
     principle_supported_id = SelectField('Principle strongly supported', [validators.Optional()], default='')
     principle_violated_id  = SelectField('Principle clearly violated', [validators.Optional()], default='')
@@ -72,11 +72,11 @@ class ChildrenAnalysisForm(ElectionsAnalysisForm):
         ]
 
     @property
-    def ethics_fields(self):
+    def abuse_fields(self):
         return [
-            self.ethics_source,
-            self.ethics_identified,
-            self.ethics_abuse,
+            self.abuse_source,
+            self.abuse_identified,
+            self.abuse_victim,
         ]
 
 

@@ -75,9 +75,9 @@ class Document(db.Model):
     quality_consequences  = Column(Boolean)
     quality_self_help     = Column(Boolean)
 
-    ethics_source         = Column(Boolean)
-    ethics_identified     = Column(Boolean)
-    ethics_abuse          = Column(Boolean)
+    abuse_source         = Column(Boolean)
+    abuse_identified     = Column(Boolean)
+    abuse_victim         = Column(Boolean)
 
     principle_supported_id = Column(Integer, ForeignKey('principles.id'))
     principle_violated_id  = Column(Integer, ForeignKey('principles.id'))
