@@ -69,7 +69,6 @@ class Document(db.Model):
     child_focus           = Column(Boolean)
 
     quality_basic_context = Column(Boolean)
-    quality_indepth_context = Column(Boolean)
     quality_causes        = Column(Boolean)
     quality_policies      = Column(Boolean)
     quality_solutions     = Column(Boolean)

@@ -39,7 +39,6 @@ class ChildrenAnalysisForm(ElectionsAnalysisForm):
     child_focus     = BooleanField('Children are a central focus')
 
     quality_basic_context = BooleanField('Basic context')
-    quality_indepth_context = BooleanField('In-depth context')
     quality_causes        = BooleanField('Causes are mentioned')
     quality_policies      = BooleanField('Relevant policies are mentioned')
     quality_solutions     = BooleanField('Solutions are offered')
@@ -65,7 +64,6 @@ class ChildrenAnalysisForm(ElectionsAnalysisForm):
     def quality_fields(self):
         return [
             self.quality_basic_context,
-            self.quality_indepth_context,
             self.quality_causes,
             self.quality_policies,
             self.quality_solutions,
