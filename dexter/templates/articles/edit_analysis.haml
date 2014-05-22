@@ -99,6 +99,10 @@
 
               - if document.analysis_nature == AnalysisNature.CHILDREN:
                 %hr
+                %section
+                  %h4 Child Focus
+                  = field_input(form.child_focus)
+
                 .row
                   .col-sm-6
                     %section
@@ -108,10 +112,7 @@
 
                   .col-sm-6
                     %section
-                      %h4 General
-                      = field_input(form.child_focus)
-
-                      %h4 Ethics
+                      %h4 Secondary Victimisation
                       - for f in form.ethics_fields:
                         = field_input(f)
                 %hr
