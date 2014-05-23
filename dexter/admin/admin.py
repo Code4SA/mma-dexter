@@ -19,7 +19,6 @@ class MyModelView(ModelView):
         return current_user.is_authenticated() and current_user.admin
 
 class MyIndexView(AdminIndexView):
-
     @expose('/')
     def index(self):
         document_count = Document.query.count()
@@ -51,10 +50,8 @@ class MyIndexView(AdminIndexView):
         return super(MyIndexView, self).index()
 
 class DocumentView(MyModelView):
-
     can_create = False
     can_edit = False
-    can_delete = False
     list_template = 'admin/custom_list_template.html'
     column_list = (
         'published_at',
@@ -89,14 +86,11 @@ class DocumentView(MyModelView):
         'title',
         'summary',
     )
-    page_size = 50
 
 
 class EntityView(MyModelView):
-
     can_create = False
     can_edit = False
-    can_delete = False
     list_template = 'admin/custom_list_template.html'
     column_list = (
         'name',
@@ -116,11 +110,9 @@ class EntityView(MyModelView):
         'name',
         'group'
     )
-    page_size = 50
 
 
 class MediumView(MyModelView):
-
     list_template = 'admin/custom_list_template.html'
     column_labels = dict(
         medium_type='Publication Type',
@@ -142,9 +134,6 @@ class MediumView(MyModelView):
       )
 
 class AffiliationView(MyModelView):
-    can_create = True
-    can_edit = True
-    can_delete = False
     list_template = 'admin/custom_list_template.html'
     column_list = (
         'code',
@@ -157,9 +146,6 @@ class AffiliationView(MyModelView):
     page_size = 100
 
 class IssueView(MyModelView):
-    can_create = True
-    can_edit = True
-    can_delete = False
     list_template = 'admin/custom_list_template.html'
     column_list = (
         'name',
@@ -172,11 +158,10 @@ class IssueView(MyModelView):
     form_create_rules = ('name', 'description')
     form_edit_rules = ('name', 'description')
 
-class UserView(MyModelView):
+class TopicView(MyModelView):
+    column_searchable_list = ('name', 'group')
 
-    can_create = True
-    can_edit = True
-    can_delete = False
+class UserView(MyModelView):
     list_template = 'admin/custom_list_template.html'
     column_list = (
         'first_name',
@@ -188,7 +173,6 @@ class UserView(MyModelView):
     column_searchable_list = (
         'email',
     )
-    page_size = 50
 
     def scaffold_form(self):
         form_class = super(UserView, self).scaffold_form()
@@ -205,7 +189,7 @@ admin_instance.add_view(UserView(User, db.session, name="Users", endpoint='user'
 
 admin_instance.add_view(MediumView(Medium, db.session, name="Media", endpoint="medium", category='Article Information'))
 admin_instance.add_view(MyModelView(DocumentType, db.session, name="Types", endpoint="type", category='Article Information'))
-admin_instance.add_view(MyModelView(Topic, db.session, name="Topics", endpoint="topic", category='Article Information'))
+admin_instance.add_view(TopicView(Topic, db.session, name="Topics", endpoint="topic", category='Article Information'))
 admin_instance.add_view(MyModelView(Location, db.session, name="Origins", endpoint="origins", category='Article Information'))
 admin_instance.add_view(EntityView(Entity, db.session, name="Entities", endpoint='entity', category='Article Information'))
 admin_instance.add_view(IssueView(Issue, db.session, name="Issues", endpoint="issues", category='Article Information'))
