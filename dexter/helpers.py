@@ -21,3 +21,13 @@ def format_paragraphs(text):
     text = lit_sub(newlines_re, "\n\n", text)
 
     return wh_format_paragraphs(text)
+
+def source_icon(source):
+    if source == 'person':
+        return 'fa-user'
+
+    if source == 'child':
+        return 'fa-child'
+
+    if source == 'secondary':
+        return 'fa-file-o'

@@ -28,6 +28,29 @@ class DocumentSource(db.Model, WithOffsets):
     id        = Column(Integer, primary_key=True)
     doc_id    = Column(Integer, ForeignKey('documents.id', ondelete='CASCADE'), index=True, nullable=False)
 
+    # The type of this source. This impacts which other fields are valid and how they're interpreted.
+    # 
+    # person:
+    #   - if unnamed is False, then
+    #     - person_id is valid and links to the person
+    #   - if unnamed is True, then
+    #     - person_id is not valid
+    #     - unnamed_* are all valid
+    #   - source_function and affiliation are valid
+    #   - quoted is valid
+    #   - everything else (role, age, etc.) are ignored
+    #
+    # child:
+    #   - unnamed is valid and, if False, 'name' has the source name
+    #   - race and gender are valid
+    #   - age and role are valid
+    #   - quoted is alid
+    #   - affiliation and function are ignored
+    #
+    # secondary:
+    #   - only name, affiliation and function are valid
+    source_type = Column(String(50), nullable=False, default='person')
+
     person_id = Column(Integer, ForeignKey('people.id', ondelete='CASCADE'), index=True)
 
     # if this is True, then person_id is ignored and this is an anonymous source
@@ -39,7 +62,11 @@ class DocumentSource(db.Model, WithOffsets):
     name         = Column(String(100))
 
     source_function_id = Column(Integer, ForeignKey('source_functions.id', ondelete='SET NULL'))
+    source_role_id     = Column(Integer, ForeignKey('source_roles.id', ondelete='SET NULL'))
+    source_age_id      = Column(Integer, ForeignKey('source_ages.id', ondelete='SET NULL'))
+
     quoted       = Column(Boolean)
+    photographed = Column(Boolean)
 
     # was this source added manually or was it inferred by machine learning?
     manual       = Column(Boolean, default=False, nullable=False)
@@ -54,6 +81,8 @@ class DocumentSource(db.Model, WithOffsets):
     person      = relationship("Person", foreign_keys=[person_id], lazy=False)
     function    = relationship("SourceFunction", lazy=False)
     affiliation = relationship("Affiliation", lazy=False)
+    role        = relationship("SourceRole", lazy=False)
+    age         = relationship("SourceAge", lazy=False)
     unnamed_gender = relationship("Gender", lazy=False)
     unnamed_race   = relationship("Race", lazy=False)
 
@@ -92,36 +121,6 @@ class DocumentSource(db.Model, WithOffsets):
         if self.person:
             return self.person.race
         return self.unnamed_race
-
-
-    @property
-    def source_type(self):
-        if self.person_id:
-            return 'person'
-
-        if self.unnamed:
-            return 'unnamed'
-
-        return 'secondary'
-
-    @source_type.setter
-    def source_type(self, typ):
-        if typ == 'person':
-            self.unnamed = False
-            self.name = None
-            self.unnamed_gender_id = None
-            self.unnamed_race_id = None
-
-        elif typ == 'unnamed':
-            self.unnamed = True
-            self.person = None
-            self.name = None
-
-        elif typ == 'secondary':
-            self.unnamed = False
-            self.person = None
-            self.unnamed_gender_id = None
-            self.unnamed_race_id = None
 
 
     @property
@@ -183,25 +182,38 @@ def none_coerce(v):
 
 class DocumentSourceForm(Form):
     name              = StringField('Name', [validators.Length(max=100)])
+    named             = BooleanField('The source is named', default=True)
     unnamed_gender_id = SelectField('Gender', [validators.Optional()], default='', coerce=none_coerce)
     unnamed_race_id   = SelectField('Race', [validators.Optional()], default='', coerce=none_coerce)
 
-    source_type       = RadioField('Type', default='person', choices=[['person', 'Person'], ['unnamed', 'Unnamed person'], ['secondary', 'Secondary (not person)']])
+    source_type       = RadioField('Type', default='person', choices=[['person', 'Adult'], ['child', 'Child'], ['secondary', 'Secondary (not a person)']])
 
     quoted            = BooleanField('Quoted', default=False)
+    photographed      = BooleanField('Photographed', default=False)
 
     source_function_id  = SelectField('Function', default='')
+    source_role_id      = SelectField('Role', default='')
+    source_age_id       = SelectField('Age', default='')
     affiliation_id      = SelectField('Affiliation', default='')
 
     deleted           = HiddenField('deleted', default='0')
 
-    # the associated source object, if any
-    source = None
-
     def __init__(self, *args, **kwargs):
         super(DocumentSourceForm, self).__init__(*args, **kwargs)
 
+        from . import SourceAge
+
+        if 'nature' in kwargs:
+            nature = kwargs['nature']
+        elif self.source:
+            nature = self.source.document.analysis_nature
+        else:
+            raise ArgumentError("Missing analysis nature. Either pass in obj or nature")
+
+
         self.source_function_id.choices = [['', '(none)']] + [[str(s.id), s.name] for s in SourceFunction.query.order_by(SourceFunction.name).all()]
+        self.source_role_id.choices = [['', '(none)']] + [[str(s.id), s.name] for s in nature.roles]
+        self.source_age_id.choices = [['', '(none)']] + [[str(s.id), s.name] for s in SourceAge.query.order_by(SourceAge.id).all()]
 
         from . import Gender, Race
         self.unnamed_gender_id.choices = [['', '(unknown gender)']] + [[str(g.id), g.name] for g in Gender.query.order_by(Gender.name).all()]
@@ -213,6 +225,49 @@ class DocumentSourceForm(Form):
         orgs = [i for i in Affiliation.query.all() if i.code.count('.') <= 1]
         orgs.sort(key=Affiliation.sort_key)
         self.affiliation_id.choices = [['', '(none)']] + [[str(s.id), s.full_name()] for s in orgs]
+
+        if self.source:
+            self.named.data = not self.source.unnamed
+
+
+    def validate(self):
+        # ignore some data, based on the source type
+        if not self.named.data:
+            # it's anonymous, so ignore the name field
+            self.name.data = ''
+
+        if self.source_type.data == 'person':
+            self.source_role_id.data = ''
+            self.source_age_id.data = ''
+            if self.named.data:
+                # it's not an anonymous source, so ignore these
+                # settings
+                self.unnamed_gender_id.data = ''
+                self.unnamed_race_id.data = ''
+
+        elif self.source_type.data == 'child':
+            self.source_function_id.data = ''
+            self.affiliation_id.data = ''
+
+        elif self.source_type.data == 'secondary':
+            self.source_role_id.data = ''
+            self.unnamed_gender_id.data = ''
+            self.unnamed_race_id.data = ''
+            self.source_role_id.data = ''
+            self.source_age_id.data = ''
+
+        return super(DocumentSourceForm, self).validate()
+
+
+    def populate_obj(self, obj):
+        super(DocumentSourceForm, self).populate_obj(obj)
+        obj.unnamed = not self.named.data
+
+
+    @property
+    def source(self):
+        """ the associated source object, if any """
+        return self._obj
 
 
     def is_new(self):
@@ -240,7 +295,7 @@ class DocumentSourceForm(Form):
         src.manual = True
         
         # link to person if they chose that option
-        if self.source_type.data == 'person':
+        if self.source_type.data == 'person' and self.named.data:
             src.person = Person.get_or_create(self.name.data)
 
             # override the 'quoted' attribute if we know this entity has utterances in

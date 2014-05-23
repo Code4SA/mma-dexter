@@ -1,6 +1,8 @@
 from flask_wtf import Form as BaseForm
-from wtforms import SelectMultipleField, widgets, SelectField as WTFSelectField
+from wtforms import SelectMultipleField, widgets, SelectField as WTFSelectField, RadioField as WTFRadioField
 from wtforms.fields.html5 import IntegerField as WTFIntegerField
+from wtforms.widgets import HTMLString, html_params
+from wtforms.widgets import Select as SelectWidget
 
 class StripFilter():
     def __call__(self, value):
@@ -15,8 +17,7 @@ class Form(BaseForm):
     _decorated = False
 
     def __init__(self, *args, **kwargs):
-        if 'obj' in kwargs:
-            self._obj = kwargs['obj']
+        self._obj = kwargs.get('obj')
         super(Form, self).__init__(*args, **kwargs)
 
     def process(self, *args, **kwargs):
@@ -51,9 +52,76 @@ class IntegerField(WTFIntegerField):
                 self.data = None
                 raise ValueError(self.gettext('Not a valid integer value'))
 
+
+# ---------------
+
+class ExtendedSelectWidget(SelectWidget):
+    """
+    Add support of choices with ``optgroup`` to the ``Select`` widget.
+    """
+    def __call__(self, field, **kwargs):
+        kwargs.setdefault('id', field.id)
+        if self.multiple:
+            kwargs['multiple'] = True
+        html = ['<select %s>' % html_params(name=field.name, **kwargs)]
+        for item1, item2 in field.choices:
+            if isinstance(item2, (list,tuple)):
+                group_label = item1
+                group_items = item2
+                html.append('<optgroup %s>' % html_params(label=group_label))
+                for inner_val, inner_label in group_items:
+                    html.append(self.render_option(inner_val, inner_label, inner_val == field.data))
+                html.append('</optgroup>')
+            else:
+                val = item1
+                label = item2
+                html.append(self.render_option(val, label, val == field.data))
+        html.append('</select>')
+        return HTMLString(''.join(html))
+
+
 class SelectField(WTFSelectField):
+    """
+    Update SelectField so that populate_obj sets empty values
+    to None, instead of 'None' or ''.
+
+    Also adds support for opt-groups.
+    """
+    widget = ExtendedSelectWidget()
+
     def populate_obj(self, obj, name):
-        super(WTFSelectField, self).populate_obj(obj, name)
+        super(SelectField, self).populate_obj(obj, name)
+
+        if hasattr(obj, name):
+            val = getattr(obj, name, None)
+            if val == '' or val == 'None':
+                setattr(obj, name, None)
+
+    def pre_validate(self, form):
+        """
+        Don't forget to validate also values from embedded lists.
+        """
+        for item1,item2 in self.choices:
+            if isinstance(item2, (list, tuple)):
+                group_label = item1
+                group_items = item2
+                for val,label in group_items:
+                    if val == self.data:
+                        return
+            else:
+                val = item1
+                label = item2
+                if val == self.data:
+                    return
+        raise ValueError(self.gettext('Not a valid choice!'))
+
+class RadioField(WTFRadioField):
+    """
+    Update RadioField so that populate_obj sets empty values
+    to None, instead of 'None' or ''.
+    """
+    def populate_obj(self, obj, name):
+        super(RadioField, self).populate_obj(obj, name)
 
         if hasattr(obj, name):
             val = getattr(obj, name, None)

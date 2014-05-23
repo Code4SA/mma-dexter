@@ -7,6 +7,7 @@ from sqlalchemy import (
     String,
     func,
     )
+from sqlalchemy.orm import relationship
 
 import logging
 log = logging.getLogger(__name__)
@@ -34,8 +35,13 @@ class User(db.Model, UserMixin):
     disabled    = Column(Boolean, default=False)
     encrypted_password = Column(String(100))
 
+    default_analysis_nature_id = Column(Integer, ForeignKey('analysis_natures.id'), default=1)
+
     created_at   = Column(DateTime(timezone=True), index=True, unique=False, nullable=False, server_default=func.now())
     updated_at   = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.current_timestamp())
+
+    # associations
+    default_analysis_nature = relationship("AnalysisNature")
 
     def get_password(self):
         return None

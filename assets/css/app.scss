@@ -106,21 +106,65 @@ form#edit-person {
   }
 }
 
+section.sources {
+  .buttons {
+    text-align: center;
+  }
+}
+
 table.sources {
+  border-bottom: 1px solid #ddd;
+
+  tr.source-person {
+    .named,
+    .affiliation
+    .function { display: block }
+
+    .gender,
+    .race,
+    .role,
+    .age { display: none }
+
+    .name label { display: none }
+  }
+
+  tr.source-child {
+    .named,
+    .role,
+    .age,
+    .gender-race { display: block }
+
+    .affiliation,
+    .function { display: none }
+
+    .name label { display: none }
+  }
+
+  tr.source-secondary {
+    .affiliation,
+    .function { display: block }
+
+    .named,
+    .role,
+    .age,
+    .gender,
+    .race { display: none }
+
+    .name label { display: inline-block }
+  }
+
   tr.quotation {
     td { padding-left: 25px; }
   }
 
+  .core {
+    i.fa {
+      width: 15px;
+    }
+  }
+
   .btn.delete, .btn.undo-delete {
     padding: 0px;
-  }
-
-  .template {
-    display: none;
-  }
-
-  .unnamed-details {
-    display: none
   }
 
   .btn.undo-delete {
@@ -129,10 +173,6 @@ table.sources {
 
   .source-details {
     margin-left: 20px;
-  }
-
-  .quoted {
-    margin-top: 30px;
   }
 
   .function {
@@ -148,16 +188,54 @@ table.sources {
     }
   }
 
-  tr.new {
-    td {
+  &.new-sources {
+    border-bottom: 0px;
+
+    .template {
+      display: none;
+    }
+    
+    tr > td {
+      border-top: 0px;
+      padding: 0px;
+    }
+
+    .named {
+      .checkbox {
+        margin-top: 0px;
+        margin-bottom: 5px;
+      }
+    }
+
+    .source-owner {
       background-color: #faebcc;
+      border-radius: 5px;
+      padding: 5px;
+      margin-bottom: 10px;
+    }
+
+    .source-type {
+      text-align: center;
+    }
+
+    .source-details {
+      margin: 5px 0px 0px 0px;
     }
   }
 }
 
+table.principles {
+  th, td {
+    text-align: center;
+  }
+
+  th.support, td.support { background-color: #dff0d8; }
+  th.violate, td.violate { background-color: #f2dede; }
+}
+
 table.fairness {
   .template {
-    .btn.delete, select.chosen-select-delayed {
+    .btn.delete, select.select2 {
       display: none;
     }
   }

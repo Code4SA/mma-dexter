@@ -7,9 +7,10 @@ from flask.ext.login import login_required, current_user
 
 from .app import app
 from .models import db, Document, Issue, Person, DocumentPlace
-from .models.document import DocumentForm, DocumentAnalysisForm
+from .models.document import DocumentForm
 from .models.source import DocumentSource, DocumentSourceForm
 from .models.fairness import DocumentFairness, DocumentFairnessForm
+from .models.analysis_nature import AnalysisNature
 from .models.author import AuthorForm
 
 from .processing import DocumentProcessor, ProcessingError
@@ -153,13 +154,13 @@ def edit_article_analysis(id):
         return jsonify(DocumentPlace.summary_for_docs([document]))
 
     status = 200
-    form = DocumentAnalysisForm(obj=document)
+    form = document.make_analysis_form()
+    nature = document.analysis_nature
 
     # forms for existing sources
     source_forms = []
     for source in document.sources:
         f = DocumentSourceForm(prefix='source[%d]' % source.id, obj=source)
-        f.source = source
         source_forms.append(f)
     source_forms.sort(key=lambda f: f.source.sort_key())
 
@@ -167,7 +168,7 @@ def edit_article_analysis(id):
     # 'source-new[0]-name'. This form is used as a template for these
     # new source forms.
     new_sources = []
-    new_source_form = DocumentSourceForm(prefix='source-new', csrf_enabled=False)
+    new_source_form = DocumentSourceForm(prefix='source-new', csrf_enabled=False, nature=nature)
 
     # fairness forms
     new_fairness_form = DocumentFairnessForm(prefix='fairness-new', csrf_enabled=False)
@@ -183,9 +184,9 @@ def edit_article_analysis(id):
         # find new sources and build forms for them.
         # the field names are like: source-new[2]-name
         for key in sorted(set('-'.join(key.split('-', 3)[0:2]) for key in request.form.keys() if key.startswith('source-new['))):
-            src_form = DocumentSourceForm(prefix=key)
-            # skip new sources that have an empty name
-            if src_form.source_type.data not in ('person', 'secondary') or src_form.name.data != '':
+            src_form = DocumentSourceForm(prefix=key, nature=nature)
+            # skip new sources that have an empty name but aren't anonymous
+            if not src_form.named.data or src_form.name.data:
                 new_sources.append(src_form)
 
         # new fairness
@@ -257,10 +258,33 @@ def edit_article_analysis(id):
             new_sources=new_sources,
             new_fairness_form=new_fairness_form,
             fairness_forms=fairness_forms,
-            document=document))
+            document=document,
+            natures=AnalysisNature.all()))
     else:
         resp = ''
 
     return (resp, status,
             # ensure the browser refreshes the page when Back is pressed
             {'Cache-Control': 'no-cache, no-store, must-revalidate'})
+
+@app.route('/articles/<id>/analysis/nature', methods=['POST'])
+@login_required
+def edit_article_analysis_nature(id):
+    document = Document.query.get_or_404(id)
+
+    # can this user do this?
+    if not document.can_user_edit(current_user):
+        flash("You're not allowed to edit this article.", 'error')
+        return redirect(url_for('show_article', id=id))
+
+    nature = AnalysisNature.lookup(request.args.get('nature', ''))
+    if nature:
+        document.analysis_nature = nature
+
+        # change default for this user
+        if current_user.is_authenticated():
+            current_user.default_analysis_nature = nature
+
+        db.session.commit()
+
+    return redirect(url_for('edit_article_analysis', id=id))

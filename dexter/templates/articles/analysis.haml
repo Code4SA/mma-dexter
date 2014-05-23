@@ -1,8 +1,13 @@
+- from dexter.models import AnalysisNature
+- from dexter.helpers import source_icon
+
 .panel.panel-default.analysis
   .panel-heading
     .row
       .col-sm-8
         %h3.panel-title
+          %i.fa(class_=document.analysis_nature.icon())
+          &= document.analysis_nature.name.title()
           Analysis
           - if document.checked_by:
             by
@@ -14,8 +19,6 @@
             Edit analysis
 
   .panel-body
-    %%include(file="analysis_warnings.haml")
-
     %section
       %ul.nav.nav-tabs
         %li.active
@@ -37,97 +40,157 @@
         #analysis-tab.tab-pane.active
           %section
             %h4 Analysis
-            %dl.dl-horizontal
-              %dt Topic
-              %dd&= document.topic.name if document.topic else '(none)'
-              %dt Origin
-              %dd&= document.origin.name if document.origin else '(none)'
+            %%include(file="analysis_warnings.haml")
+
+            .row.topic-origin
+              .col-sm-7
+                %dl
+                  %dt Topic
+                  %dd&= document.topic.name if document.topic else '(none)'
+              .col-sm-5
+                %dl
+                  %dt Origin
+                  %dd&= document.origin.name if document.origin else '(none)'
+
 
           %section
             %h4 Sources
             %table.table.table-striped.table-condensed.offsets.sources
-              %thead
-                %tr
-                  %th
-                    .row
-                      .col-sm-4 Name
-                      .col-sm-3 Function
-                      .col-sm-3 Affiliation
-                      .col-sm-1 Quoted?
               %tbody
                 - sources = sorted(document.sources, key=lambda s: s.sort_key())
                 - for ds in sources:
-                  %tr(dataOffsets=ds.offset_list)
+                  %tr(dataOffsets=ds.offset_list, class_='source-%s' % ds.source_type)
                     %td
                       .row
-                        .col-sm-4
+                        .col-sm-4.core
+                          %i.text-muted.fa(class_=source_icon(ds.source_type), title='%s source' % ds.source_type)
+
                           - if not ds.person:
                             &= ds.friendly_name()
                           - else:
                             -# it's a proper person
                             %a(href=url_for('show_person', id=ds.person.id))&=ds.person.name
 
-                          - if ds.gender():
-                            %span.text-muted(title=ds.gender().name)
-                              %strong&=
-                                " - " + ds.gender().abbr()
-                          - if ds.race():
-                            %span.text-muted(title=ds.race().name)
-                              %strong&=
-                                " (" + ds.race().abbr() + ")"
+                          - if ds.manual:
+                            %i.fa.fa-check-circle(title='Added manually by a monitor')
+
+                          %span.text-muted
+                            - if ds.gender():
+                              •
+                              %span(title=ds.gender().name)&= ds.gender().abbr()
+                            - if ds.race():
+                              •
+                              %span(title=ds.race().name)&= ds.race().abbr()
+
+                        .col-sm-2
+                          - if ds.quoted:
+                            %i.fa.fa-comment(title='quoted')
+                            - if len(ds.utterances()) > 0:
+                              %span.badge&= len(ds.utterances())
+
+                          - if ds.photographed:
+                            %i.fa.fa-camera(title='photographed')
 
                         .col-sm-3.function
                           - if ds.function:
                             &=ds.function.name
-                        .col-sm-3
+
+                        .col-sm-3.affiliation
                           - if ds.affiliation:
                             &=ds.affiliation.full_name()
-                        .col-sm-1
-                          - if not ds.quoted:
-                            no
-                          - else:
-                            - if len(ds.utterances()) > 0:
-                              %span.badge&= len(ds.utterances())
-                            - else:
-                              yes
 
-                        .col-sm-1
-                          - if ds.manual:
-                            %i.fa.fa-check-circle(title='Added manually by a monitor')
+                        .col-sm-3.age
+                          &= ('%s years' % ds.age.name) if ds.age else ''
+
+                        .col-sm-3.role
+                          &= ds.role and ds.role.name or ''
+
 
                   - for q in ds.utterances():
                     %tr.quotation(dataOffsets=('%d:%d' % (q.offset, q.length) if q.offset else ''))
                       %td&= q.quote
 
-          %hr
-          %section.issues
-            %h4 Issues Raised
-            - if not document.issues:
-              %p
-                No issues have been tagged.
+          - if document.analysis_nature == AnalysisNature.CHILDREN:
+            %hr
+            %section
+              %h4 Child Focus
+              %ul.fa-ul
+                %li
+                  - if document.child_focus:
+                    %i.fa-li.fa.fa-check-square-o
+                  - else:
+                    %i.fa-li.fa.fa-square-o
+                  Children are a central focus of this story
 
-            - for issue in document.issues:
-              %span.label.label-info(title=issue.description, dataToggle="tooltip", dataContainer="body")&=issue.name
+            %section
+              .row
+                .col-sm-6
+                  %h4 Quality
+                  %ul.fa-ul
+                    - for f in document.make_analysis_form().quality_fields:
+                      %li
+                        - val = getattr(document, f.name)
+                        - if val:
+                          %i.fa-li.fa.fa-check-square-o
+                        - else:
+                          %i.fa-li.fa.fa-square-o
+                        &= f.label.text
 
-          %hr
-          %section.fairness
-            %h4 Bias
-            - if not document.fairness:
-              %p No fairness provided.
+                .col-sm-6
+                  %h4 Secondary Victimisation
+                  %ul.fa-ul
+                    - for f in document.make_analysis_form().abuse_fields:
+                      %li
+                        - val = getattr(document, f.name)
+                        - if val:
+                          %i.fa-li.fa.fa-check-square-o
+                        - else:
+                          %i.fa-li.fa.fa-square-o
+                        &= f.label.text
 
-            - if document.fairness:
-              %table.table-striped.table-condensed
-                %thead
-                  %tr
-                    %th Bias
-                    %th Favour
-                    %th Disfavour
-                %tbody
-                  - for df in document.fairness:
+            %hr
+            %section
+              %h4 Journalistic Principles for Children
+
+              .row
+                .col-sm-6
+                  %h5 Principle strongly supported
+                  &= document.principle_supported and document.principle_supported.name or '(none)'
+                .col-sm-6
+                  %h5 Principle clearly violated
+                  &= document.principle_violated and document.principle_violated.name or '(none)'
+
+          - if document.analysis_nature == AnalysisNature.ELECTIONS:
+            %hr
+            %section.issues
+              %h4 Issues Raised
+              - if not document.issues:
+                %p
+                  No issues have been tagged.
+
+              - for issue in document.issues:
+                %span.label.label-info(title=issue.description, dataToggle="tooltip", dataContainer="body")&=issue.name
+
+          - if document.analysis_nature == AnalysisNature.ELECTIONS:
+            %hr
+            %section.fairness
+              %h4 Bias
+              - if not document.fairness:
+                %p No fairness provided.
+
+              - if document.fairness:
+                %table.table-striped.table-condensed
+                  %thead
                     %tr
-                      %td&= df.fairness.name if df.fairness else ''
-                      %td&= df.bias_favour.full_name() if df.bias_favour else ''
-                      %td&= df.bias_oppose.full_name() if df.bias_oppose else ''
+                      %th Bias
+                      %th Favour
+                      %th Disfavour
+                  %tbody
+                    - for df in document.fairness:
+                      %tr
+                        %td&= df.fairness.name if df.fairness else ''
+                        %td&= df.bias_favour.full_name() if df.bias_favour else ''
+                        %td&= df.bias_oppose.full_name() if df.bias_oppose else ''
 
         %%include(file='analysis_tab_mentions.haml')
         %%include(file='analysis_tab_places.haml')

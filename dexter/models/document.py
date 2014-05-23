@@ -6,7 +6,7 @@ import datetime
 from wtforms import StringField, TextAreaField, validators, DateTimeField, HiddenField
 from wtforms.fields.html5 import URLField
 
-from ..forms import Form, MultiCheckboxField, IntegerField, SelectField
+from ..forms import Form, IntegerField, SelectField
 
 from sqlalchemy import (
     Table,
@@ -18,10 +18,12 @@ from sqlalchemy import (
     Float,
     Text,
     func,
-    Index
+    Index,
+    Boolean,
     )
 from sqlalchemy.orm import relationship, backref
 from .support import db
+from .problems import DocumentAnalysisProblem
 
 import logging
 
@@ -47,7 +49,6 @@ class Document(db.Model):
 
     author_id         = Column(Integer, ForeignKey('authors.id'), index=True)
     medium_id         = Column(Integer, ForeignKey('mediums.id'), index=True)
-    topic_id          = Column(Integer, ForeignKey('topics.id'), index=True)
     document_type_id  = Column(Integer, ForeignKey('document_types.id'), index=True)
     origin_location_id = Column(Integer, ForeignKey('locations.id'), index=True)
 
@@ -57,6 +58,30 @@ class Document(db.Model):
     published_at = Column(DateTime(timezone=True), index=True, unique=False, nullable=False)
     created_at   = Column(DateTime(timezone=True), index=True, unique=False, nullable=False, server_default=func.now())
     updated_at   = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.current_timestamp())
+
+    # the type of analysis that this document is subject to
+    analysis_nature_id = Column(Integer, ForeignKey('analysis_natures.id'), index=True, nullable=False, default=1)
+
+    # analysis details
+    # XXX: at some point we must move these into their own table, based on the nature of the analysis
+    topic_id              = Column(Integer, ForeignKey('topics.id'), index=True)
+
+    child_focus           = Column(Boolean)
+
+    quality_basic_context = Column(Boolean)
+    quality_causes        = Column(Boolean)
+    quality_policies      = Column(Boolean)
+    quality_solutions     = Column(Boolean)
+    quality_consequences  = Column(Boolean)
+    quality_self_help     = Column(Boolean)
+
+    abuse_source         = Column(Boolean)
+    abuse_identified     = Column(Boolean)
+    abuse_victim         = Column(Boolean)
+
+    principle_supported_id = Column(Integer, ForeignKey('principles.id'))
+    principle_violated_id  = Column(Integer, ForeignKey('principles.id'))
+
 
     # Associations
     author      = relationship("Author")
@@ -71,8 +96,15 @@ class Document(db.Model):
     topic       = relationship("Topic")
     document_type = relationship("DocumentType")
     origin      = relationship("Location")
+
+    analysis_nature = relationship("AnalysisNature")
+
+    principle_supported = relationship("Principle", foreign_keys=[principle_supported_id])
+    principle_violated  = relationship("Principle", foreign_keys=[principle_violated_id])
+
     created_by  = relationship("User", backref=backref('created_documents'), foreign_keys=[created_by_user_id])
     checked_by  = relationship("User", backref=backref('checked_documents'), foreign_keys=[checked_by_user_id])
+
 
 
     PLACE_ENTITY_GROUPS = set(['city', 'province_or_state', 'region'])
@@ -210,6 +242,10 @@ class Document(db.Model):
         return sum/count if count > 0 else 0
 
 
+    def make_analysis_form(self):
+        return self.analysis_nature.form(obj=self)
+
+
     def __repr__(self):
         return "<Document id=%s, url=%s>" % (self.id, self.url)
 
@@ -278,106 +314,3 @@ class DocumentType(db.Model):
             types.append(t)
 
         return types
-
-
-class DocumentAnalysisForm(Form):
-    topic_id            = SelectField('Topic')
-    issues              = MultiCheckboxField('Issues')
-    origin_location_id  = SelectField('Origin')
-
-    def __init__(self, *args, **kwargs):
-        super(DocumentAnalysisForm, self).__init__(*args, **kwargs)
-
-        from . import Topic, Location, Issue
-
-        self.topic_id.choices = [['', '(none)']] + [[str(t.id), t.name] for t in Topic.query.order_by(Topic.name).all()]
-        self.issues.choices = [(str(issue.id), issue.name) for issue in db.session.query(Issue).order_by('name')]
-        self.origin_location_id.choices = [['', '(none)']] + [
-                [str(loc.id), loc.name] for loc in Location.query.order_by(Location.name).all()]
-
-
-class DocumentAnalysisProblem(object):
-    """
-    A helper class that describes a problem with a document's analysis.
-    It has support for filtering SQL queries to find documents with that
-    problem, describing the problem, etc.
-    """
-    _problems = {}
-
-    def check(self, doc):
-        raise NotImplementedError()
-
-    def filter_query(self, query):
-        raise NotImplementedError()
-
-    @classmethod
-    def all(cls):
-        if not cls._problems:
-            cls._problems = dict((k.code, k()) for k in cls.__subclasses__())
-        return sorted(cls._problems.values(), key=lambda k: k.short_desc)
-
-    @classmethod
-    def for_document(cls, doc):
-        return [p for p in cls.all() if p.check(doc)]
-
-    @classmethod
-    def for_select(cls):
-        return [[k.code, k.short_desc] for k in cls.all()]
-
-    @classmethod
-    def lookup(cls, key):
-        return cls._problems[key]
-
-
-class MissingTopic(DocumentAnalysisProblem):
-    code = 'missing-topic'
-    short_desc = 'missing a topic'
-    long_desc  = 'This document is missing a topic.'
-
-    def check(self, doc):
-        return doc.topic is None
-
-    def filter_query(self, query):
-        return query.filter(Document.topic == None)
-
-
-class MissingOrigin(DocumentAnalysisProblem):
-    code = 'missing-origin'
-    short_desc = 'missing an origin'
-    long_desc  = 'This document is missing an origin.'
-
-    def check(self, doc):
-        return doc.origin is None
-
-    def filter_query(self, query):
-        return query.filter(Document.origin == None)
-
-
-class SourceWithoutFunction(DocumentAnalysisProblem):
-    code = 'source-without-function'
-    short_desc = 'source without a function'
-    long_desc  = 'This document has a source without a function.'
-
-    def check(self, doc):
-        return any(ds.source_function_id is None for ds in doc.sources)
-
-    def filter_query(self, query):
-        from . import DocumentSource
-        return query\
-                .join(DocumentSource)\
-                .filter(DocumentSource.function == None)
-
-
-class SourceWithoutAffiliation(DocumentAnalysisProblem):
-    code = 'source-without-affiliation'
-    short_desc = 'source without an affiliation'
-    long_desc  = 'This document has a source without an affiliation.'
-
-    def check(self, doc):
-        return any(ds.affiliation_id is None for ds in doc.sources)
-
-    def filter_query(self, query):
-        from . import DocumentSource
-        return query\
-                .join(DocumentSource)\
-                .filter(DocumentSource.affiliation == None)
