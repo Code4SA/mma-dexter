@@ -69,6 +69,7 @@
       if (!self.placesSetup) {
         Dexter.maps.loadAndDrawPlaces();
         self.placesSetup = true;
+        Dexter.maps.drawProvinces();
       }
     };
 

@@ -16,7 +16,7 @@
       var osm = new L.TileLayer('//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         minZoom: 1,
         maxZoom: 16,
-        attribution: 'Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'});	
+        attribution: 'Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'});
       self.map.addLayer(osm);
     };
 
@@ -35,17 +35,17 @@
 
       return url + "format=places-json";
     };
-  
+
     self.loadAndDrawPlaces = function() {
       $.getJSON(self.placesUrl(), self.drawPlaces);
     };
 
     self.drawPlaceMarker = function(place, coords, radius) {
       L.circleMarker(coords, {
-          color: 'red',
-          fillColor: '#f03',
-          fillOpacity: 0.5
-        })
+        color: 'red',
+        fillColor: '#f03',
+        fillOpacity: 0.5
+      })
         .setRadius(radius)
         .addTo(self.map)
         .bindPopup(place.full_name + " (" + place.documents.length + ")");
@@ -75,6 +75,40 @@
         }
       });
     };
+    self.drawProvinces = function(){
+      // add province boundaries
+      $.getJSON("http://maps.code4sa.org/political/2011/province?quantization=1000", function (topo) {
+        if (!topo)
+          return;
+        var featureLayer = L.geoJson(topojson.feature(topo, topo.objects.demarcation), {
+          style: {
+            "clickable": true,
+            "color": "#00d",
+            "fillColor": "#ccc",
+            "weight": 1.0,
+            "opacity": 0.3,
+            "fillOpacity": 0.3,
+          },
+          onEachFeature: function (feature, layer) {
+            var name = feature.properties['province_name'];
+            var code = feature.properties['province'];
+
+            layer.on('mouseover', function () {
+              layer.setStyle({
+                "fillOpacity": 0.5,
+              });
+            });
+            layer.on('mouseout', function () {
+              layer.setStyle({
+                "fillOpacity": 0.3,
+              });
+            });
+            layer.bindPopup(name);
+          },
+        });
+        self.map.addLayer(featureLayer);
+      });
+    }
   };
 })(jQuery, window);
 
