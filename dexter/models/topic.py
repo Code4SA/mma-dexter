@@ -87,8 +87,6 @@ class Topic(db.Model):
 1|Sport
 1|Disabilities
 1|Other (Last Resort)
-"""
-        text = """
 2|1.1. Adoption - international local and other related issues|1. Adoption
 2|2.1. Child Labour - exploitation of children for work as cheap labour|2. Child Abuse
 2|2.2. Child Pornography|2. Child Abuse
@@ -148,8 +146,10 @@ class Topic(db.Model):
             t = Topic()
             t.analysis_nature_id = int(parts[0])
             t.name = parts[1].strip()
+
             if len(parts) > 2:
-              t.group = parts[2]
+              t.group = parts[2].strip()
+
             topics.append(t)
 
         return topics
