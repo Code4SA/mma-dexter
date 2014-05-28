@@ -38,6 +38,8 @@ def seed_db(db):
     for x in SourceRole.create_defaults():
         db.session.add(x)
 
+    db.session.commit()
+
     for x in Principle.create_defaults():
         db.session.add(x)
 
