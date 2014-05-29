@@ -76,7 +76,7 @@
       });
     };
 
-    self.drawProvinces = function(){
+    self.drawProvinces = function(fit_screen, click_callback){
       // add province boundaries
       $.getJSON("http://maps.code4sa.org/political/2011/province?quantization=1000", function (topo) {
         if (!topo)
@@ -106,21 +106,20 @@
                 "fillOpacity": 0.3,
               });
             });
-            layer.on('mouseover', function(e) {
-              console.log(feature.id)
-//              //open popup;
-//              var popup = L.popup()
-//                .setLatLng(e.latlng)
-//                .setContent(name + " (" + feature.id + ")")
-//                .openOn(self.map);
+            layer.on('click', function () {
+              click_callback(feature.id);
             });
           },
         });
         self.map.addLayer(featureLayer);
+        if(fit_screen)
+        {
+          self.map.fitBounds(featureLayer.getBounds());
+        }
       });
     }
 
-    self.drawMunicipalities = function(province_id){
+    self.drawMunicipalities = function(fit_screen, province_id, click_callback){
       // add province boundaries
       $.getJSON("http://maps.code4sa.org/political/2011/municipality?quantization=1000&filter[province]=" + province_id, function (topo) {
         if (!topo)
@@ -150,17 +149,16 @@
                 "fillOpacity": 0.3,
               });
             });
-            layer.on('mouseover', function(e) {
-              console.log(feature.id)
-//              //open popup;
-//              var popup = L.popup()
-//                .setLatLng(e.latlng)
-//                .setContent(name + " (" + feature.id + ")")
-//                .openOn(self.map);
+            layer.on('click', function () {
+              click_callback(feature.id);
             });
           },
         });
         self.map.addLayer(featureLayer);
+        if(fit_screen)
+        {
+          self.map.fitBounds(featureLayer.getBounds());
+        }
       });
     }
   };

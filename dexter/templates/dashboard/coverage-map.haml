@@ -17,10 +17,8 @@
 
 %article#activity
   %h3
-    &= paged_docs.total
-    Article${'' if paged_docs.total == 1 else 's'}
-    - if form.user():
-      added by ${form.user().short_name()|h}
+    &= document_count
+    Article${'' if document_count == 1 else 's'}
 
   .row
     .col-sm-9
@@ -28,7 +26,7 @@
         #slippy-map
 
     .col-sm-3
-      %form.activity-refine(action=url_for('coverage_map'), method='GET')
+      %form.coverage-refine(action=url_for('coverage_map'), method='GET')
 
         .panel.panel-default
           .panel-heading
@@ -44,6 +42,10 @@
                 %span.input-group-btn
                   %button.btn.btn-default(dataClear='input-group')
                     %i.fa.fa-times
+            .form-group
+              .input-group
+                = form.level
+                = form.selected_area
 
           .panel-footer
             %input.btn.btn-success(type='Submit', value='Update')

@@ -67,20 +67,10 @@ def monitor_dashboard():
 
 @app.route('/coverage-map')
 def coverage_map():
-    per_page = 100
 
-    form = ActivityForm(request.args)
+    form = CoverageForm(request.args)
 
-    try:
-        page = int(request.args.get('page', 1))
-    except ValueError:
-        page = 1
-
-    if form.format.data == 'chart-json':
-        # chart data in json format
-        return jsonify(ActivityChartHelper(form).chart_data())
-
-    elif form.format.data == 'places-json':
+    if form.format.data == 'places-json':
         # places in json format
         query = Document.query\
                   .options(joinedload('places').joinedload('place'))
@@ -88,44 +78,78 @@ def coverage_map():
 
         return jsonify(DocumentPlace.summary_for_docs(query.all()))
 
-    elif form.format.data == 'xlsx':
-        # excel spreadsheet
-        excel = XLSXBuilder(form).build()
-
-        response = make_response(excel)
-        response.headers["Content-Disposition"] = "attachment; filename=%s" % form.filename()
-        response.headers["Content-Type"] = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-        return response
-
-
     query = Document.query\
                 .options(
-                    joinedload(Document.created_by),
                     joinedload(Document.medium),
                     joinedload(Document.topic),
-                    joinedload(Document.origin),
-                    joinedload(Document.fairness),
-                    joinedload(Document.sources).lazyload('*')
+                    joinedload(Document.origin).lazyload('*')
                 )
     query = form.filter_query(query)
 
     # do manual pagination
     query = query.order_by(Document.created_at.desc())
-    items = query.limit(per_page).offset((page - 1) * per_page).all()
-    if not items and page != 1:
-        abort(404)
-    total = form.filter_query(db.session.query(func.count(distinct(Document.id)))).scalar()
-    paged_docs = Pagination(query, page, min(per_page, len(items)), total, items)
-
-    # group by date added
-    doc_groups = []
-    for date, group in groupby(paged_docs.items, lambda d: d.created_at.date()):
-        doc_groups.append([date, list(group)])
+    document_count = form.filter_query(db.session.query(func.count(distinct(Document.id)))).scalar()
+    paged_docs = query.all()
 
     return render_template('dashboard/coverage-map.haml',
                            form=form,
-                           paged_docs=paged_docs,
-                           doc_groups=doc_groups)
+                           document_count=document_count,
+                           paged_docs=paged_docs)
+
+
+class CoverageForm(Form):
+    medium_id = SelectMultipleField('Medium', [validators.Optional()], default='')
+    published_at = TextField('Published', [validators.Optional()])
+    format = HiddenField('format', default='html')
+    level = HiddenField('level', default='country')
+    selected_area = HiddenField('selected_area', default='RSA')
+
+    def __init__(self, *args, **kwargs):
+        super(CoverageForm, self).__init__(*args, **kwargs)
+
+        self.medium_id.choices = [(str(m.id), m.name) for m in Medium.query.order_by(Medium.name).all()]
+
+        # dynamic default
+        if not self.published_at.data:
+            self.published_at.data = ' - '.join(d.strftime("%Y/%m/%d") for d in [datetime.utcnow() - timedelta(days=14), datetime.utcnow()])
+
+    def media(self):
+        if self.medium_id.data:
+            return Medium.query.filter(Medium.id.in_(self.medium_id.data))
+        else:
+            return None
+
+    @property
+    def published_from(self):
+        if self.published_at.data:
+            return self.published_at.data.split(' - ')[0].strip()
+        else:
+            return None
+
+    @property
+    def published_to(self):
+        if self.published_at.data and ' - ' in self.published_at.data:
+            return self.published_at.data.split(' - ')[1].strip() + ' 23:59:59'
+        else:
+            return self.published_from
+
+    def filter_query(self, query):
+        # if self.level and self.level == "province":
+        #
+        #     query = query.filter(Document.places.contains())
+
+        if self.medium_id.data:
+            query = query.filter(Document.medium_id.in_(self.medium_id.data))
+
+        if self.published_from:
+            query = query.filter(Document.published_at >= self.published_from)
+
+        if self.published_to:
+            query = query.filter(Document.published_at <= self.published_to)
+        return query
+
+    def as_dict(self):
+        return dict((f.name, f.data) for f in self if f.name != 'csrf_token')
 
 
 @app.route('/activity')
