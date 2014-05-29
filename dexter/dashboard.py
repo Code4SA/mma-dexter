@@ -8,9 +8,9 @@ from flask.ext.mako import render_template
 from flask.ext.login import login_required, current_user
 from flask.ext.sqlalchemy import Pagination
 from sqlalchemy.sql import func, distinct
-from sqlalchemy.orm import joinedload
+from sqlalchemy.orm import joinedload, subqueryload
 
-from dexter.models import db, Document, Entity, Medium, User, DocumentSource, DocumentPlace, DocumentFairness, Fairness, Topic
+from dexter.models import db, Document, Entity, Medium, User, DocumentSource, DocumentPlace, DocumentFairness, Fairness, Topic, Place
 from dexter.models.document import DocumentAnalysisProblem
 
 from wtforms import validators, HiddenField, TextField, SelectMultipleField
@@ -76,7 +76,7 @@ def coverage_map():
                   .options(joinedload('places').joinedload('place'))
         query = form.filter_query(query)
 
-        return jsonify(DocumentPlace.summary_for_docs(query.all()))
+        return jsonify(DocumentPlace.summary_for_coverage(query.all()))
 
     query = Document.query\
                 .options(
@@ -134,9 +134,9 @@ class CoverageForm(Form):
             return self.published_from
 
     def filter_query(self, query):
-        # if self.level and self.level == "province":
-        #
-        #     query = query.filter(Document.places.contains())
+        # Note: this filter is not working as expected
+        # if self.level.data and self.level.data == "province":
+        #     query = query.filter(Place.province_code == self.selected_area.data)
 
         if self.medium_id.data:
             query = query.filter(Document.medium_id.in_(self.medium_id.data))

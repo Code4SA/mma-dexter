@@ -225,6 +225,35 @@ class DocumentPlace(db.Model, WithOffsets):
             'origins': origins,
         }
 
+    @classmethod
+    def summary_for_coverage(cls, docs):
+        """
+        Generate a summary description for plotting on a coverage map.
+        """
+        report_count = {'total': 0, 'topic_breakdown': {}, 'provinces': {}}
+
+        for d in docs:
+            report_count['total'] += 1
+            places = d.get_places()
+            if places:
+                tmp_provinces = {}
+                for dp in places:
+                    if not dp.place.province_code in tmp_provinces:
+                        tmp_provinces[dp.place.province_code] = []
+                    if dp.place.municipality_code:
+                        tmp_provinces[dp.place.province_code].append(dp.place.municipality_code)
+                for province_code, municipality_codes in tmp_provinces.iteritems():
+                    if not report_count['provinces'].get(province_code):
+                        report_count['provinces'][province_code] = {'total': 0, 'topic_breakdown': {}, 'municipalities': {}}
+                    report_count['provinces'][province_code]['total'] += 1
+                    for municipality_code in municipality_codes:
+                        if not report_count['provinces'][province_code]['municipalities'].get(municipality_code):
+                            report_count['provinces'][province_code]['municipalities'][municipality_code] = \
+                                {'total': 0, 'topic_breakdown': {}}
+                        report_count['provinces'][province_code]['municipalities'][municipality_code]['total'] += 1
+
+        return report_count
+
 
 # Places we know aren't in SA, but sometimes match something in our DB
 PLACE_STOPWORDS = set(x.strip() for x in """

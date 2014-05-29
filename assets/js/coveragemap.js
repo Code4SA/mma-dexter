@@ -16,7 +16,9 @@
         Dexter.maps.invalidate();
       });
       Dexter.maps.map.options.maxZoom = 8;
-      Dexter.maps.loadAndDrawPlaces();
+
+      $.getJSON(Dexter.maps.placesUrl(), function(data){console.log(data)});
+
       if(level.val() == "country")
       {
         var fit_screen = true;

@@ -94,8 +94,6 @@
             var name = feature.properties['province_name'];
             var code = feature.properties['province'];
 
-            console.log(feature)
-
             layer.on('mouseover', function () {
               layer.setStyle({
                 "fillOpacity": 0.5,
@@ -136,8 +134,6 @@
           onEachFeature: function (feature, layer) {
             var name = feature.properties['province_name'];
             var code = feature.properties['province'];
-
-            console.log(feature)
 
             layer.on('mouseover', function () {
               layer.setStyle({
