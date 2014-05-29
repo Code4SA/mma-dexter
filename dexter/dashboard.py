@@ -65,6 +65,68 @@ def monitor_dashboard():
                            doc_groups=doc_groups)
 
 
+@app.route('/coverage-map')
+def coverage_map():
+    per_page = 100
+
+    form = ActivityForm(request.args)
+
+    try:
+        page = int(request.args.get('page', 1))
+    except ValueError:
+        page = 1
+
+    if form.format.data == 'chart-json':
+        # chart data in json format
+        return jsonify(ActivityChartHelper(form).chart_data())
+
+    elif form.format.data == 'places-json':
+        # places in json format
+        query = Document.query\
+                  .options(joinedload('places').joinedload('place'))
+        query = form.filter_query(query)
+
+        return jsonify(DocumentPlace.summary_for_docs(query.all()))
+
+    elif form.format.data == 'xlsx':
+        # excel spreadsheet
+        excel = XLSXBuilder(form).build()
+
+        response = make_response(excel)
+        response.headers["Content-Disposition"] = "attachment; filename=%s" % form.filename()
+        response.headers["Content-Type"] = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        return response
+
+
+    query = Document.query\
+                .options(
+                    joinedload(Document.created_by),
+                    joinedload(Document.medium),
+                    joinedload(Document.topic),
+                    joinedload(Document.origin),
+                    joinedload(Document.fairness),
+                    joinedload(Document.sources).lazyload('*')
+                )
+    query = form.filter_query(query)
+
+    # do manual pagination
+    query = query.order_by(Document.created_at.desc())
+    items = query.limit(per_page).offset((page - 1) * per_page).all()
+    if not items and page != 1:
+        abort(404)
+    total = form.filter_query(db.session.query(func.count(distinct(Document.id)))).scalar()
+    paged_docs = Pagination(query, page, min(per_page, len(items)), total, items)
+
+    # group by date added
+    doc_groups = []
+    for date, group in groupby(paged_docs.items, lambda d: d.created_at.date()):
+        doc_groups.append([date, list(group)])
+
+    return render_template('dashboard/coverage-map.haml',
+                           form=form,
+                           paged_docs=paged_docs,
+                           doc_groups=doc_groups)
+
 
 @app.route('/activity')
 @login_required

@@ -67,6 +67,12 @@ assets.register('activity',
         'js/activity.js',
         output='js/activity.%(version)s.js'))
 
+assets.register('coveragemap',
+    Bundle(
+        maps,
+        'js/coveragemap.js',
+        output='js/activity.%(version)s.js'))
+
 assets.register('documents',
     Bundle(
         maps,
