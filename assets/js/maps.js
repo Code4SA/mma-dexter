@@ -14,8 +14,8 @@
       self.map.setView({lat: -28.4796, lng: 24.698445}, 5);
 
       var osm = new L.TileLayer('//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        minZoom: 1,
-        maxZoom: 16,
+        minZoom: 5,
+        maxZoom: 12,
         attribution: 'Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'});
       self.map.addLayer(osm);
     };
@@ -75,6 +75,7 @@
         }
       });
     };
+
     self.drawProvinces = function(){
       // add province boundaries
       $.getJSON("http://maps.code4sa.org/political/2011/province?quantization=1000", function (topo) {
@@ -93,6 +94,8 @@
             var name = feature.properties['province_name'];
             var code = feature.properties['province'];
 
+            console.log(feature)
+
             layer.on('mouseover', function () {
               layer.setStyle({
                 "fillOpacity": 0.5,
@@ -103,7 +106,58 @@
                 "fillOpacity": 0.3,
               });
             });
-            layer.bindPopup(name);
+            layer.on('mouseover', function(e) {
+              console.log(feature.id)
+//              //open popup;
+//              var popup = L.popup()
+//                .setLatLng(e.latlng)
+//                .setContent(name + " (" + feature.id + ")")
+//                .openOn(self.map);
+            });
+          },
+        });
+        self.map.addLayer(featureLayer);
+      });
+    }
+
+    self.drawMunicipalities = function(province_id){
+      // add province boundaries
+      $.getJSON("http://maps.code4sa.org/political/2011/municipality?quantization=1000&filter[province]=" + province_id, function (topo) {
+        if (!topo)
+          return;
+        var featureLayer = L.geoJson(topojson.feature(topo, topo.objects.demarcation), {
+          style: {
+            "clickable": true,
+            "color": "#00d",
+            "fillColor": "#ccc",
+            "weight": 1.0,
+            "opacity": 0.3,
+            "fillOpacity": 0.3,
+          },
+          onEachFeature: function (feature, layer) {
+            var name = feature.properties['province_name'];
+            var code = feature.properties['province'];
+
+            console.log(feature)
+
+            layer.on('mouseover', function () {
+              layer.setStyle({
+                "fillOpacity": 0.5,
+              });
+            });
+            layer.on('mouseout', function () {
+              layer.setStyle({
+                "fillOpacity": 0.3,
+              });
+            });
+            layer.on('mouseover', function(e) {
+              console.log(feature.id)
+//              //open popup;
+//              var popup = L.popup()
+//                .setLatLng(e.latlng)
+//                .setContent(name + " (" + feature.id + ")")
+//                .openOn(self.map);
+            });
           },
         });
         self.map.addLayer(featureLayer);

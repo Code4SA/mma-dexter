@@ -6,27 +6,16 @@
   Dexter.CoverageView = function() {
     var self = this;
 
-    self.placesSetup = false;
-
     self.init = function() {
-      $('form.activity-refine .btn.download').on('click', function(e) {
-        e.preventDefault();
-
-        $('form.activity-refine').append('<input type="hidden" name="format" value="xlsx">');
-        $('form.activity-refine').submit();
-        $('form.activity-refine input[name="format"]').remove();
-      });
-
       // invalidate the map so that it gets resized correctly
       $($(this).attr('href') + ' .leaflet-container').each(function(i, map) {
         Dexter.maps.invalidate();
       });
+      Dexter.maps.map.options.maxZoom = 8;
+      Dexter.maps.loadAndDrawPlaces();
+//      Dexter.maps.drawProvinces();
+      Dexter.maps.drawMunicipalities("EC");
 
-      if (!self.placesSetup) {
-        Dexter.maps.loadAndDrawPlaces();
-        self.placesSetup = true;
-        Dexter.maps.drawProvinces();
-      }
     };
 
     self.datePairs = function(data) {
