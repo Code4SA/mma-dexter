@@ -17,8 +17,9 @@
 
 %article#activity
   %h3
+    South African media coverage (based on
     &= document_count
-    Article${'' if document_count == 1 else 's'}
+    Article${'' if document_count == 1 else 's'})
 
   .row
     .col-sm-9
@@ -31,7 +32,7 @@
         .panel.panel-default
           .panel-heading
             %h3.panel-title
-              Refine
+              Filters
 
           .panel-body
             = vertical_field(form.medium_id, class_='select2')

@@ -37,7 +37,7 @@
           form.submit()
         });
         fit_screen = true;
-        Dexter.maps.drawMunicipalities(fit_screen, selected_area.val());
+        Dexter.maps.drawMunicipalities(fit_screen, selected_area.val(), function(municipality_id){});
       }
     };
 

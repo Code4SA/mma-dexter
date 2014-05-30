@@ -97,11 +97,22 @@
             layer.on('mouseover', function () {
               layer.setStyle({
                 "fillOpacity": 0.5,
+                "weight": 2.0,
+                "opacity": 0.5,
               });
+              // it's a region, get the centroid
+              var coords = d3.geo.centroid(feature.geometry);
+              //open popup
+              self.popup = L.popup()
+                .setLatLng([coords[1], coords[0]])
+                .setContent(name + " (" + code + ")")
+                .openOn(self.map);
             });
             layer.on('mouseout', function () {
               layer.setStyle({
                 "fillOpacity": 0.3,
+                "weight": 1.0,
+                "opacity": 0.3,
               });
             });
             layer.on('click', function () {
@@ -132,17 +143,28 @@
             "fillOpacity": 0.3,
           },
           onEachFeature: function (feature, layer) {
-            var name = feature.properties['province_name'];
-            var code = feature.properties['province'];
+            var name = feature.properties['municipality_name'];
+            var code = feature.properties['municipality'];
 
             layer.on('mouseover', function () {
               layer.setStyle({
                 "fillOpacity": 0.5,
+                "weight": 2.0,
+                "opacity": 0.5,
               });
+              // it's a region, get the centroid
+              var coords = d3.geo.centroid(feature.geometry);
+              //open popup
+              self.popup = L.popup()
+                .setLatLng([coords[1], coords[0]])
+                .setContent(name + " (" + code + ")")
+                .openOn(self.map);
             });
             layer.on('mouseout', function () {
               layer.setStyle({
                 "fillOpacity": 0.3,
+                "weight": 1.0,
+                "opacity": 0.3,
               });
             });
             layer.on('click', function () {
