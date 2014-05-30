@@ -15,20 +15,25 @@
     %script(src=url)
 
 
-%article#activity
-  %h3
-    South African media coverage (based on
-    &= document_count
-    Article${'' if document_count == 1 else 's'})
+%article#coverage
 
   .row
-    .col-sm-9
+    .col-sm-8
+      %h3
+        Media coverage in
+        %span#map-area-title South Africa
       #tab-map.tab-pane
         #slippy-map
 
-    .col-sm-3
-      %form.coverage-refine(action=url_for('coverage_map'), method='GET')
+    .col-sm-4
+      .panel.panel-default#charts
+        .panel-heading
+          %h4.panel-title Media
+        .panel-body
+          .chart.chart-media-coverage
+            Loading...
 
+      %form.coverage-refine(action=url_for('coverage_map'), method='GET')
         .panel.panel-default
           .panel-heading
             %h3.panel-title
@@ -45,8 +50,8 @@
                     %i.fa.fa-times
             .form-group
               .input-group
-                = form.level
-                = form.selected_area
+                = form.selected_province
+                = form.selected_municipality
 
           .panel-footer
             %input.btn.btn-success(type='Submit', value='Update')

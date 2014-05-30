@@ -8,7 +8,7 @@ from sqlalchemy import (
     String,
     func,
     or_,
-    )
+)
 from sqlalchemy.orm import relationship, backref
 
 import logging
@@ -106,7 +106,7 @@ class Place(db.Model):
             'code': self.code,
             'full_name': self.full_name,
             'name': self.name,
-        }
+            }
 
         if d['type'] == 'point':
             d['coordinates'] = [self.lat, self.lng]
@@ -116,8 +116,8 @@ class Place(db.Model):
 
     def __repr__(self):
         return "<Place level=%s, province=%s, muni=%s, mainplace='%s', subplace='%s'>" % (
-                self.level, self.province_code, self.municipality_code,
-                self.mainplace_name, self.subplace_name)
+            self.level, self.province_code, self.municipality_code,
+            self.mainplace_name, self.subplace_name)
 
 
     @classmethod
@@ -128,25 +128,25 @@ class Place(db.Model):
         if term in PLACE_STOPWORDS:
             return
 
-        p = Place.query\
-                .filter(Place.level == 'province')\
-                .filter(Place.province_name == term).first()
+        p = Place.query \
+            .filter(Place.level == 'province') \
+            .filter(Place.province_name == term).first()
         if p:
             return p
 
-        p = Place.query\
-                .filter(Place.level == 'municipality')\
-                .filter(or_(
-                    Place.municipality_name == term,
-                    Place.municipality_name == 'City of %s' % term)).first()
+        p = Place.query \
+            .filter(Place.level == 'municipality') \
+            .filter(or_(
+            Place.municipality_name == term,
+            Place.municipality_name == 'City of %s' % term)).first()
         if p:
             return p
 
-        p = Place.query\
-                .filter(Place.level == 'mainplace')\
-                .filter(or_(
-                    Place.mainplace_name == term,
-                    Place.mainplace_name == '%s MP' % term)).first()
+        p = Place.query \
+            .filter(Place.level == 'mainplace') \
+            .filter(or_(
+            Place.mainplace_name == term,
+            Place.mainplace_name == '%s MP' % term)).first()
         if p:
             return p
 
@@ -177,7 +177,7 @@ class DocumentPlace(db.Model, WithOffsets):
 
     # offsets in the document, a space-separated list of offset:length pairs.
     offset_list  = Column(String(1024))
-    
+
     created_at   = Column(DateTime(timezone=True), index=True, unique=False, nullable=False, server_default=func.now())
     updated_at   = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.current_timestamp())
 
@@ -223,17 +223,24 @@ class DocumentPlace(db.Model, WithOffsets):
             'document_count': count,
             'mentions': mentions.values(),
             'origins': origins,
-        }
+            }
 
     @classmethod
     def summary_for_coverage(cls, docs):
         """
         Generate a summary description for plotting on a coverage map.
         """
-        report_count = {'total': 0, 'topic_breakdown': {}, 'provinces': {}}
+
+        report_count = {'total': 0, 'medium_breakdown': {}, 'topic_breakdown': {}, 'provinces': {}}
 
         for d in docs:
+            # count the total number of articles
             report_count['total'] += 1
+            # count articles per medium
+            if d.medium:
+                if not report_count['medium_breakdown'].get(d.medium.name):
+                    report_count['medium_breakdown'][d.medium.name] = 0
+                report_count['medium_breakdown'][d.medium.name] += 1
             places = d.get_places()
             if places:
                 tmp_provinces = {}
@@ -244,14 +251,25 @@ class DocumentPlace(db.Model, WithOffsets):
                         tmp_provinces[dp.place.province_code].append(dp.place.municipality_code)
                 for province_code, municipality_codes in tmp_provinces.iteritems():
                     if not report_count['provinces'].get(province_code):
-                        report_count['provinces'][province_code] = {'total': 0, 'topic_breakdown': {}, 'municipalities': {}}
+                        report_count['provinces'][province_code] = {'total': 0, 'medium_breakdown': {}, 'topic_breakdown': {}, 'municipalities': {}}
+                    # count the number of articles per province
                     report_count['provinces'][province_code]['total'] += 1
+                    # breakdown per medium
+                    if d.medium:
+                        if not report_count['provinces'][province_code]['medium_breakdown'].get(d.medium.name):
+                            report_count['provinces'][province_code]['medium_breakdown'][d.medium.name] = 0
+                        report_count['provinces'][province_code]['medium_breakdown'][d.medium.name] += 1
                     for municipality_code in municipality_codes:
                         if not report_count['provinces'][province_code]['municipalities'].get(municipality_code):
                             report_count['provinces'][province_code]['municipalities'][municipality_code] = \
-                                {'total': 0, 'topic_breakdown': {}}
+                                {'total': 0, 'medium_breakdown': {}, 'topic_breakdown': {}}
+                        # count the number of articles per municipality
                         report_count['provinces'][province_code]['municipalities'][municipality_code]['total'] += 1
-
+                        # breakdown per medium
+                        if d.medium:
+                            if not report_count['provinces'][province_code]['municipalities'][municipality_code]['medium_breakdown'].get(d.medium.name):
+                                report_count['provinces'][province_code]['municipalities'][municipality_code]['medium_breakdown'][d.medium.name] = 0
+                            report_count['provinces'][province_code]['municipalities'][municipality_code]['medium_breakdown'][d.medium.name] += 1
         return report_count
 
 

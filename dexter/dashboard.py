@@ -101,8 +101,8 @@ class CoverageForm(Form):
     medium_id = SelectMultipleField('Medium', [validators.Optional()], default='')
     published_at = TextField('Published', [validators.Optional()])
     format = HiddenField('format', default='html')
-    level = HiddenField('level', default='country')
-    selected_area = HiddenField('selected_area', default='RSA')
+    selected_province = HiddenField('selected_province')
+    selected_municipality = HiddenField('selected_municipality')
 
     def __init__(self, *args, **kwargs):
         super(CoverageForm, self).__init__(*args, **kwargs)

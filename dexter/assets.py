@@ -70,6 +70,7 @@ assets.register('activity',
 assets.register('coveragemap',
     Bundle(
         maps,
+        'js/highcharts-4.0.1.js',
         'js/coveragemap.js',
         output='js/activity.%(version)s.js'))
 

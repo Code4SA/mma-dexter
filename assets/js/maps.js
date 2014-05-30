@@ -76,7 +76,12 @@
       });
     };
 
-    self.drawProvinces = function(fit_screen, click_callback){
+//    self.fitBounds = function(featureLayer)
+//    {
+//      self.map.fitBounds(featureLayer.getBounds());
+//    }
+
+    self.drawProvinces = function(click_callback){
       // add province boundaries
       $.getJSON("http://maps.code4sa.org/political/2011/province?quantization=1000", function (topo) {
         if (!topo)
@@ -100,13 +105,6 @@
                 "weight": 2.0,
                 "opacity": 0.5,
               });
-              // it's a region, get the centroid
-              var coords = d3.geo.centroid(feature.geometry);
-              //open popup
-              self.popup = L.popup()
-                .setLatLng([coords[1], coords[0]])
-                .setContent(name + " (" + code + ")")
-                .openOn(self.map);
             });
             layer.on('mouseout', function () {
               layer.setStyle({
@@ -120,15 +118,12 @@
             });
           },
         });
-        self.map.addLayer(featureLayer);
-        if(fit_screen)
-        {
-          self.map.fitBounds(featureLayer.getBounds());
-        }
+        self.map.provinceLayer = featureLayer;
+        self.map.addLayer(self.map.provinceLayer);
       });
     }
 
-    self.drawMunicipalities = function(fit_screen, province_id, click_callback){
+    self.drawMunicipalities = function(province_id, click_callback){
       // add province boundaries
       $.getJSON("http://maps.code4sa.org/political/2011/municipality?quantization=1000&filter[province]=" + province_id, function (topo) {
         if (!topo)
@@ -152,13 +147,6 @@
                 "weight": 2.0,
                 "opacity": 0.5,
               });
-              // it's a region, get the centroid
-              var coords = d3.geo.centroid(feature.geometry);
-              //open popup
-              self.popup = L.popup()
-                .setLatLng([coords[1], coords[0]])
-                .setContent(name + " (" + code + ")")
-                .openOn(self.map);
             });
             layer.on('mouseout', function () {
               layer.setStyle({
@@ -168,15 +156,16 @@
               });
             });
             layer.on('click', function () {
+              // it's a region, get the centroid
+              var coords = d3.geo.centroid(feature.geometry);
+              // center map around centroid
+              self.map.panTo({lat: coords[1], lng: coords[0]});
               click_callback(feature.id);
             });
           },
         });
-        self.map.addLayer(featureLayer);
-        if(fit_screen)
-        {
-          self.map.fitBounds(featureLayer.getBounds());
-        }
+        self.map.municipalityLayer = featureLayer;
+        self.map.addLayer(self.map.municipalityLayer);
       });
     }
   };
