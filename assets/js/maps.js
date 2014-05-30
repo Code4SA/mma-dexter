@@ -76,11 +76,6 @@
       });
     };
 
-//    self.fitBounds = function(featureLayer)
-//    {
-//      self.map.fitBounds(featureLayer.getBounds());
-//    }
-
     self.drawProvinces = function(click_callback){
       // add province boundaries
       $.getJSON("http://maps.code4sa.org/political/2011/province?quantization=1000", function (topo) {
@@ -118,13 +113,17 @@
             });
           },
         });
+        if(!self.map.provinceLayer)
+          self.map.fitBounds(featureLayer);
         self.map.provinceLayer = featureLayer;
         self.map.addLayer(self.map.provinceLayer);
       });
     }
 
     self.drawMunicipalities = function(province_id, click_callback){
-      // add province boundaries
+      if(self.map.municipalityLayer)
+        self.map.removeLayer(self.map.municipalityLayer);
+      // add municipality boundaries
       $.getJSON("http://maps.code4sa.org/political/2011/municipality?quantization=1000&filter[province]=" + province_id, function (topo) {
         if (!topo)
           return;
@@ -164,6 +163,7 @@
             });
           },
         });
+        self.map.fitBounds(featureLayer);
         self.map.municipalityLayer = featureLayer;
         self.map.addLayer(self.map.municipalityLayer);
       });

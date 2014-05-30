@@ -10,9 +10,10 @@
     var form = $(".coverage-refine")
     var input_selected_province = form.find("input#selected_province")
     var input_selected_municipality = form.find("input#selected_municipality")
+    var span_title = $("#map-area-title")
+
     var selected_province = input_selected_province.val()
     var selected_municipality = input_selected_municipality.val()
-    var span_title = $("#map-area-title")
 
     if(selected_province)
       console.log(selected_province)
@@ -36,10 +37,7 @@
       if(selected_province)
       {
         Dexter.maps.drawMunicipalities(selected_province, self.click_municipality);
-//        Dexter.maps.map.fitBounds(Dexter.maps.map.municipalityLayer.getBounds());
       }
-//      else
-//        Dexter.maps.map.fitBounds(Dexter.maps.map.provinceLayer.getBounds());
 
       self.load_and_draw_chart()
     };
@@ -86,13 +84,14 @@
 
     self.click_province = function(province_id){
       input_selected_province.val(province_id);
-      input_selected_municipality.val('');
-      form.submit()
+      input_selected_municipality.val(null);
+      selected_province = input_selected_province.val()
+      selected_municipality = input_selected_municipality.val()
+      self.init()
     }
 
     self.click_municipality = function(municipality_id){
       input_selected_municipality.val(municipality_id);
-      form.submit()
     }
 
     self.datePairs = function(data) {
