@@ -24,39 +24,44 @@
     else
       console.log("no municipality selected")
 
-    // highlight selected province, fit map to province bounds, and load municipality shapes
-    self.select_province = function(){
+    //Width and height
+    var w = 800;
+    var h = 600;
 
-    }
+    //Define map projection
+    var projection = d3.geo.mercator()
+      .translate([w/2, h/2])
+      .center([25.48, -28.76])
+      .scale([2000]);
+
+    //Define path generator
+    var path = d3.geo.path()
+      .projection(projection);
+
+    //Create SVG element
+    var svg = d3.select("#coverage-map")
+      .append("svg")
+      .attr("width", w)
+      .attr("height", h);
 
     self.init = function() {
+      d3.json("https://maps.code4sa.org/political/2011/province?filter&quantization=5000", function(error, topo) {
+        if (error){
+          $("#slippy-map").text("No data available.")
+          return
+        }
+
+        //Bind data and create one path per GeoJSON feature
+        svg.selectAll("path")
+          .data(topojson.feature(topo, topo.objects.demarcation).features)
+          .enter()
+          .append("path")
+          .attr("class", function(d) { return "province " + d.id; })
+          .attr("d", path);
+      });
+
       self.load_and_draw_chart()
     };
-
-    self.load_title = function(){
-      if(selected_province)
-      {
-        var selected_level = "province"
-        var selected_area_id = selected_province
-        if(selected_municipality)
-        {
-          selected_level = "municipality"
-          selected_area_id = selected_municipality
-        }
-        var query_str =  selected_level + '?filter[' + selected_level + ']=' + selected_area_id
-        // load selected area's details from MAPS API
-        $.getJSON("https://maps.code4sa.org/political/2011/" + query_str + '&quantization=5000', function (topo) {
-          if (!topo)
-            return;
-          // set the page title
-          console.log(topo.objects.demarcation.geometries[0])
-          if(selected_level == "municipality")
-            span_title.text(topo.objects.demarcation.geometries[0].properties.municipality_name)
-          else
-            span_title.text(topo.objects.demarcation.geometries[0].properties.province_name)
-        });
-      }
-    }
 
     self.load_and_draw_chart = function(){
       // load chart data
@@ -84,18 +89,6 @@
 
       return url + "format=places-json";
     };
-
-    self.click_province = function(province_id){
-      input_selected_province.val(province_id);
-      input_selected_municipality.val(null);
-      selected_province = input_selected_province.val()
-      selected_municipality = input_selected_municipality.val()
-      self.init()
-    }
-
-    self.click_municipality = function(municipality_id){
-      input_selected_municipality.val(municipality_id);
-    }
 
     self.drawChart = function(chart_data) {
 
