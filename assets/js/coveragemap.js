@@ -30,20 +30,6 @@
     }
 
     self.init = function() {
-      // invalidate the map so that it gets resized correctly
-      $($(this).attr('href') + ' .leaflet-container').each(function(i, map) {
-        Dexter.maps.invalidate();
-      });
-      Dexter.maps.map.options.maxZoom = 8;
-
-      self.load_title()
-
-      Dexter.maps.drawProvinces(self.click_province);
-      if(selected_province)
-      {
-        Dexter.maps.drawMunicipalities(selected_province, self.click_municipality);
-      }
-
       self.load_and_draw_chart()
     };
 
@@ -74,7 +60,7 @@
 
     self.load_and_draw_chart = function(){
       // load chart data
-      $.getJSON(Dexter.maps.placesUrl(), function(data){
+      $.getJSON(self.placesUrl(), function(data){
         console.log(data)
         if(selected_province)
           data = data['provinces'][selected_province]
@@ -86,6 +72,18 @@
           $(".chart.chart-media-coverage").text("No data available.")
       });
     }
+
+    self.placesUrl = function() {
+      var url = document.location;
+
+      if (document.location.search === "") {
+        url = url + "?";
+      } else {
+        url = url + "&";
+      }
+
+      return url + "format=places-json";
+    };
 
     self.click_province = function(province_id){
       input_selected_province.val(province_id);
