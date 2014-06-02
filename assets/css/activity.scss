@@ -41,8 +41,30 @@
 }
 
 #coverage-map{
-  .province{
-    fill: #ddc;
-    stroke: #333;
+  .feature{
+    fill: #ccc;
+    cursor: pointer;
   }
+
+  .feature.municipality{
+    opacity: 0;
+  }
+
+  .background {
+    fill: none;
+    pointer-events: all;
+  }
+
+  .feature.active {
+    fill: orange;
+    opacity: 1;
+  }
+
+  .mesh {
+    fill: none;
+    stroke: #fff;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
 }
