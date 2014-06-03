@@ -92,11 +92,15 @@ export CALAIS_API_KEY=anotherkey
 
 * download the latest backup:
 
-    s3cmd get `s3cmd ls --recursive s3://mma-dexter-backups/mysql- | tail -1 | awk '{print $4}'`
+```
+s3cmd get `s3cmd ls --recursive s3://mma-dexter-backups/mysql- | tail -1 | awk '{print $4}'`
+```
 
 * extract and restore
 
-    gunzip -c BACKUP-FILE | mysql -u mma -p mma
+```
+gunzip -c BACKUP-FILE | mysql -u mma -p mma
+```
 
 ### Logging
 
