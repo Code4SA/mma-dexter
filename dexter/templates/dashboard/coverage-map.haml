@@ -21,14 +21,17 @@
     .col-sm-8
       %h3
         Media coverage in
-        %span#map-area-title South Africa
+        %span#coverage-map-title South Africa
+        %nobr %small#coverage-map-subtitle ...
+
       #tab-map.tab-pane
         #coverage-map
 
     .col-sm-4
       .panel.panel-default#charts
         .panel-heading
-          %h4.panel-title Media
+          %h4.medium-breakdown-chart-title Articles per publisher
+            %nobr %small#medium-breakdown-chart-subtitle ...
         .panel-body
           .chart.chart-media-coverage
             Loading...
