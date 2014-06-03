@@ -55,6 +55,7 @@ fab prod deploy
 CREATE DATABASE mma;
 GRANT ALL ON mma.* TO 'mma'@'localhost' identified by 'PASSWORD';
 GRANT SELECT ON *.* TO 'reports'@'%' identified by 'PASSWORD' require ssl;
+GRANT SELECT, LOCK TABLES, SHOW VIEW ON `mma`.* TO 'backup'@'localhost' IDENTIFIED BY 'X2aVljzBeDDm';
 ```
 
 * restore the database from a backup, if available.
