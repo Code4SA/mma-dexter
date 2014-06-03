@@ -137,7 +137,7 @@ def edit_article(id):
         author_form.person_gender_id.data = doc.author.person.gender.id if doc.author.person and doc.author.person.gender else None
 
     return render_template('articles/edit.haml',
-            doc=doc,
+            document=doc,
             form=form,
             author_form=author_form)
 

@@ -58,18 +58,6 @@ $(function() {
 });
 
 $(function() {
-  // affix article text in document view
-  var $text = $('.document-container .article-text');
-  if ($text.length > 0) {
-    $text.affix({
-      offset: {
-        top: $text.offset().top - 20,
-      }
-    });
-  }
-});
-
-$(function() {
   // prevent dirty forms from being navigated away from
   var dirty = false;
 
