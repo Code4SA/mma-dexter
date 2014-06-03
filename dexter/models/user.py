@@ -90,6 +90,17 @@ class User(db.Model, UserMixin):
 
         return None
 
+    @classmethod
+    def create_defaults(self):
+        admin_user = User()
+        admin_user.first_name = "Admin"
+        admin_user.last_name = "Admin"
+        admin_user.admin = True
+        admin_user.email = "admin@code4sa.org"
+        admin_user.encrypted_password = sha256_crypt.encrypt('admin')
+
+        return [admin_user]
+
 
 class LoginForm(Form):
     email       = EmailField('Email', [validators.Required()])

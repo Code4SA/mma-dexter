@@ -35,6 +35,7 @@ export CALAIS_API_KEY=anotherkey
 ```
 
 * run the server: `python app.py`
+* log in as `admin@code4sa.org` with password `admin`
 * to add a new article to the database, visit [http://localhost:5000/articles/new] and enter a Mail and Guardian URL.
 
 ## Production

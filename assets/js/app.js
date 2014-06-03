@@ -1,6 +1,5 @@
 $(function() {
   $('[title]').tooltip();
-  $('.chosen-select').chosen();
   $('.select2:visible').select2();
 
   $('.use-datepicker').datepicker({

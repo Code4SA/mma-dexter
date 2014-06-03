@@ -4,6 +4,8 @@
 %%block(name="title")
   Add article
 
+- from dexter.models import AnalysisNature
+
 #new-document
   %article
     %section
@@ -17,6 +19,16 @@
 
           .form-group
             = field_input(form.url, placeholder='URL', autofocus=True)
+
+          .form-group
+            - for nature in form.analysis_nature_id:
+              .checkbox
+                = nature
+                - kwargs = {'for': nature.id}
+                %label(**kwargs)
+                  %i.fa(class_=AnalysisNature.ICONS.get(int(nature.data)))
+                  = nature.label.text
+
           %input.btn.btn-success(type='submit', value="Fetch and add article", dataDisableWith='Fetching...')
 
       %form(action=url_for('new_article'), method='POST')

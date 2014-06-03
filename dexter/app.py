@@ -34,12 +34,8 @@ app.config['MAKO_PREPROCESSOR'] = haml.preprocessor
 app.config['MAKO_TRANSLATE_EXCEPTIONS'] = False
 app.config['MAKO_DEFAULT_FILTERS'] = ['decode.utf8']
 
-from flask_wtf.csrf import CsrfProtect, generate_csrf
+from flask_wtf.csrf import CsrfProtect
 CsrfProtect(app)
-
-@app.context_processor
-def csrf_token():
-    return dict(csrf_token=generate_csrf)
 
 
 # user authentication

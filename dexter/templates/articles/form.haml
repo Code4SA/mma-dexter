@@ -1,6 +1,18 @@
 %%namespace(file="../bootstrap_wtf.haml", **{'import': '*'})
+- from dexter.models import AnalysisNature
 
 = vertical_field(form.title, placeholder='Article headline', required=True)
+
+- if form.is_new():
+  .form-group
+    - for nature in form.analysis_nature_id:
+      .checkbox
+        - nature.id = nature.id + "-2"
+        = nature
+        - kwargs = {'for': nature.id}
+        %label(**kwargs)
+          %i.fa(class_=AnalysisNature.ICONS.get(int(nature.data)))
+          = nature.label.text
 
 .row
   .col-sm-2
@@ -8,9 +20,9 @@
   .col-sm-2
     = vertical_field(form.item_num, min=1, max=100)
   .col-sm-3
-    = vertical_field(form.medium_id, class_='chosen-select')
+    = vertical_field(form.medium_id, class_='select2')
   .col-sm-4
-    = vertical_field(form.document_type_id, class_='chosen-select')
+    = vertical_field(form.document_type_id, class_='select2')
 
 .author-widget
   .form-group

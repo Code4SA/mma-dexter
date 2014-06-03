@@ -8,11 +8,11 @@ Flask-Login==0.2.10
 Flask-Mako==0.3
 Flask-SQLAlchemy==1.0
 Flask-Testing==0.4
-Flask-WTF==0.9.1
+Flask-WTF==0.9.5
 Flask-fillin==0.2
 Jinja2==2.7.2
 Mako==0.9.1
-MarkupSafe==0.18
+MarkupSafe==0.23
 MySQL-python==1.2.5
 Pillow==2.3.0
 PyHAML==1.0.1
@@ -29,7 +29,7 @@ ecdsa==0.11
 extras==0.0.3
 fixture==1.5
 gunicorn==18.0
-itsdangerous==0.23
+itsdangerous==0.24
 lxml==3.3.0
 mock==1.0.1
 newrelic==2.18.1.15
