@@ -71,6 +71,7 @@ def new_article():
                 else:
                     try:
                         doc = proc.process_url(url)
+                        doc.analysis_nature_id = form.analysis_nature_id.data
                     except ProcessingError as e:
                         log.error("Error processing %s: %s" % (url, e), exc_info=e)
                         flash("Something went wrong processing the document: %s" % (e,), 'error')
@@ -94,8 +95,6 @@ def new_article():
         if doc:
             if current_user.is_authenticated():
                 doc.created_by = current_user
-                if current_user.default_analysis_nature:
-                    doc.analysis_nature = current_user.default_analysis_nature
 
             db.session.add(doc)
             db.session.flush()

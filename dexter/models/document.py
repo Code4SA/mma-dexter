@@ -6,7 +6,7 @@ import datetime
 from wtforms import StringField, TextAreaField, validators, DateTimeField, HiddenField
 from wtforms.fields.html5 import URLField
 
-from ..forms import Form, IntegerField, SelectField
+from ..forms import Form, IntegerField, SelectField, RadioField
 
 from sqlalchemy import (
     Table,
@@ -250,6 +250,15 @@ class Document(db.Model):
         return "<Document id=%s, url=%s>" % (self.id, self.url)
 
 
+def default_analysis_nature_id():
+    from flask.ext.login import current_user
+
+    if current_user.is_authenticated() and current_user.default_analysis_nature_id:
+        return current_user.default_analysis_nature_id
+
+    return 1
+
+
 class DocumentForm(Form):
     url         = URLField('URL', [validators.Length(max=200)])
     title       = StringField('Headline', [validators.Required(), validators.Length(max=1024)])
@@ -262,15 +271,22 @@ class DocumentForm(Form):
     document_type_id    = SelectField('Type', [validators.Required()], default=1)
     author_id           = HiddenField()
 
+    analysis_nature_id = RadioField('Analysis', [validators.Optional()], default=default_analysis_nature_id)
+
     def __init__(self, *args, **kwargs):
         self.published_at.data = datetime.datetime.utcnow()
 
         super(DocumentForm, self).__init__(*args, **kwargs)
 
-        from . import Medium, DocumentType
+        from . import Medium, DocumentType, AnalysisNature
 
         self.medium_id.choices = [['', '(none)']] + [[str(m.id), m.name] for m in Medium.query.order_by(Medium.name).all()]
         self.document_type_id.choices = [[str(t.id), t.name] for t in DocumentType.query.order_by(DocumentType.name).all()]
+        self.analysis_nature_id.choices = [[str(t.id), 'Analyse for %s' % t.name] for t in AnalysisNature.all()]
+
+
+    def is_new(self):
+        return self._obj is None
 
 
 class DocumentType(db.Model):
