@@ -8,9 +8,9 @@ from flask.ext.mako import render_template
 from flask.ext.login import login_required, current_user
 from flask.ext.sqlalchemy import Pagination
 from sqlalchemy.sql import func, distinct
-from sqlalchemy.orm import joinedload
+from sqlalchemy.orm import joinedload, subqueryload
 
-from dexter.models import db, Document, Entity, Medium, User, DocumentSource, DocumentPlace, DocumentFairness, Fairness, Topic
+from dexter.models import db, Document, Entity, Medium, User, DocumentSource, DocumentPlace, DocumentFairness, Fairness, Topic, Place
 from dexter.models.document import DocumentAnalysisProblem
 
 from wtforms import validators, HiddenField, TextField, SelectMultipleField
@@ -64,6 +64,92 @@ def monitor_dashboard():
     return render_template('dashboard/monitor.haml',
                            doc_groups=doc_groups)
 
+
+@app.route('/coverage-map')
+def coverage_map():
+
+    form = CoverageForm(request.args)
+
+    if form.format.data == 'places-json':
+        # places in json format
+        query = Document.query\
+                  .options(joinedload('places').joinedload('place'))
+        query = form.filter_query(query)
+
+        return jsonify(DocumentPlace.summary_for_coverage(query.all()))
+
+    query = Document.query\
+                .options(
+                    joinedload(Document.medium),
+                    joinedload(Document.topic),
+                    joinedload(Document.origin).lazyload('*')
+                )
+    query = form.filter_query(query)
+
+    # do manual pagination
+    query = query.order_by(Document.created_at.desc())
+    document_count = form.filter_query(db.session.query(func.count(distinct(Document.id)))).scalar()
+    paged_docs = query.all()
+
+    return render_template('dashboard/coverage-map.haml',
+                           form=form,
+                           document_count=document_count,
+                           paged_docs=paged_docs)
+
+
+class CoverageForm(Form):
+    medium_id = SelectMultipleField('Medium', [validators.Optional()], default='')
+    published_at = TextField('Published', [validators.Optional()])
+    format = HiddenField('format', default='html')
+    selected_province = HiddenField('selected_province')
+    selected_municipality = HiddenField('selected_municipality')
+
+    def __init__(self, *args, **kwargs):
+        super(CoverageForm, self).__init__(*args, **kwargs)
+
+        self.medium_id.choices = [(str(m.id), m.name) for m in Medium.query.order_by(Medium.name).all()]
+
+        # dynamic default
+        if not self.published_at.data:
+            self.published_at.data = ' - '.join(d.strftime("%Y/%m/%d") for d in [datetime.utcnow() - timedelta(days=14), datetime.utcnow()])
+
+    def media(self):
+        if self.medium_id.data:
+            return Medium.query.filter(Medium.id.in_(self.medium_id.data))
+        else:
+            return None
+
+    @property
+    def published_from(self):
+        if self.published_at.data:
+            return self.published_at.data.split(' - ')[0].strip()
+        else:
+            return None
+
+    @property
+    def published_to(self):
+        if self.published_at.data and ' - ' in self.published_at.data:
+            return self.published_at.data.split(' - ')[1].strip() + ' 23:59:59'
+        else:
+            return self.published_from
+
+    def filter_query(self, query):
+        # Note: this filter is not working as expected
+        # if self.level.data and self.level.data == "province":
+        #     query = query.filter(Place.province_code == self.selected_area.data)
+
+        if self.medium_id.data:
+            query = query.filter(Document.medium_id.in_(self.medium_id.data))
+
+        if self.published_from:
+            query = query.filter(Document.published_at >= self.published_from)
+
+        if self.published_to:
+            query = query.filter(Document.published_at <= self.published_to)
+        return query
+
+    def as_dict(self):
+        return dict((f.name, f.data) for f in self if f.name != 'csrf_token')
 
 
 @app.route('/activity')

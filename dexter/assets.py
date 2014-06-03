@@ -67,6 +67,14 @@ assets.register('activity',
         'js/activity.js',
         output='js/activity.%(version)s.js'))
 
+assets.register('coveragemap',
+    Bundle(
+        'js/d3.v3.min.js',
+        'js/topojson.v1.min.js',
+        'js/highcharts-4.0.1.js',
+        'js/coveragemap.js',
+        output='js/activity.%(version)s.js'))
+
 assets.register('documents',
     Bundle(
         maps,

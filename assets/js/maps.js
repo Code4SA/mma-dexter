@@ -14,9 +14,9 @@
       self.map.setView({lat: -28.4796, lng: 24.698445}, 5);
 
       var osm = new L.TileLayer('//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        minZoom: 1,
-        maxZoom: 16,
-        attribution: 'Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'});	
+        minZoom: 5,
+        maxZoom: 12,
+        attribution: 'Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'});
       self.map.addLayer(osm);
     };
 
@@ -35,17 +35,17 @@
 
       return url + "format=places-json";
     };
-  
+
     self.loadAndDrawPlaces = function() {
       $.getJSON(self.placesUrl(), self.drawPlaces);
     };
 
     self.drawPlaceMarker = function(place, coords, radius) {
       L.circleMarker(coords, {
-          color: 'red',
-          fillColor: '#f03',
-          fillOpacity: 0.5
-        })
+        color: 'red',
+        fillColor: '#f03',
+        fillOpacity: 0.5
+      })
         .setRadius(radius)
         .addTo(self.map)
         .bindPopup(place.full_name + " (" + place.documents.length + ")");

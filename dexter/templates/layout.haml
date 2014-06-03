@@ -28,25 +28,25 @@
             %a.navbar-brand(href="/")
               Dexter
 
-          .navbar-nav.navbar-btn
-            %a.btn.btn-primary(href=url_for('new_article'))
-              %i.fa.fa-plus
-              Add article
-
-          %ul.nav.navbar-nav
-            %li(class_=('active' if request.url_rule.endpoint == 'activity' else ''))
-              %a.btn.btn-link(href=url_for('activity'))
-                Reports
-            %li(class_=('active' if request.url_rule.endpoint == 'monitor_dashboard' else ''))
-              %a.btn.btn-link(href=url_for('monitor_dashboard'))
-                My Dashboard
-
-            - if current_user.admin:
-              %li
-                %a.btn.btn-link(href='/admin/')
-                  Dexter Admin
-
           - if current_user.is_authenticated():
+            .navbar-nav.navbar-btn
+              %a.btn.btn-primary(href=url_for('new_article'))
+                %i.fa.fa-plus
+                Add article
+
+            %ul.nav.navbar-nav
+              %li(class_=('active' if request.url_rule.endpoint == 'activity' else ''))
+                %a.btn.btn-link(href=url_for('activity'))
+                  Reports
+              %li(class_=('active' if request.url_rule.endpoint == 'monitor_dashboard' else ''))
+                %a.btn.btn-link(href=url_for('monitor_dashboard'))
+                  My Dashboard
+
+              - if current_user.admin:
+                %li
+                  %a.btn.btn-link(href='/admin/')
+                    Dexter Admin
+
             .navbar-nav.navbar-right
               %ul.nav.navbar-nav
                 %li
@@ -61,10 +61,11 @@
                       %a(href=url_for('user_logout'), dataMethod='post')
                         Logout
 
-          %form.navbar-form.navbar-right(action=url_for('search'))
-            .form-group
-              %input.form-control.allow-enter(type='text', name='q', placeholder='Find people')
-            %button.btn.btn-default(type='submit') Go
+          - if current_user.is_authenticated():
+            %form.navbar-form.navbar-right(action=url_for('search'))
+              .form-group
+                %input.form-control.allow-enter(type='text', name='q', placeholder='Find people')
+              %button.btn.btn-default(type='submit') Go
 
     .container
       -# show flash messages

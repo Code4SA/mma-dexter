@@ -1,0 +1,60 @@
+%%inherit(file="../layout.haml")
+%%namespace(file="../paginator.haml", **{'import': '*'})
+%%namespace(file="../bootstrap_wtf.haml", **{'import': '*'})
+
+%%block(name='title')
+  Coverage map
+
+%%block(name="extra_header_tags")
+  - for url in webassets('maps-css'):
+    %link(rel="stylesheet", href=url)
+
+
+%%block(name='extra_javascript')
+  - for url in webassets('coveragemap'):
+    %script(src=url)
+
+
+%article#coverage
+
+  .row
+    .col-sm-8
+      %h3
+        Media coverage in
+        %span#coverage-map-title South Africa
+        %nobr %small#coverage-map-subtitle ...
+
+      #tab-map.tab-pane
+        #coverage-map
+
+    .col-sm-4
+      .panel.panel-default#charts
+        .panel-heading
+          %h4.medium-breakdown-chart-title Articles per publisher
+            %nobr %small#medium-breakdown-chart-subtitle ...
+        .panel-body
+          .chart.chart-media-coverage
+            Loading...
+
+      %form.coverage-refine(action=url_for('coverage_map'), method='GET')
+        .panel.panel-default
+          .panel-heading
+            %h3.panel-title
+              Filters
+
+          .panel-body
+            = vertical_field(form.medium_id, class_='select2')
+            .form-group
+              = form.published_at.label()
+              .input-group
+                = form.published_at(class_='form-control use-daterangepicker')
+                %span.input-group-btn
+                  %button.btn.btn-default(dataClear='input-group')
+                    %i.fa.fa-times
+            .form-group
+              .input-group
+                = form.selected_province
+                = form.selected_municipality
+
+          .panel-footer
+            %input.btn.btn-success(type='Submit', value='Update')
