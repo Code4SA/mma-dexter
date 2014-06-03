@@ -1,6 +1,10 @@
 %%inherit(file="../layout.haml")
 %%namespace(file="../bootstrap_wtf.haml", **{'import': '*'})
 
+%%block(name='extra_javascript')
+  - for url in webassets('documents'):
+    %script(src=url)
+
 %%block(name="title")
   Add article
 
