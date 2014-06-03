@@ -6,13 +6,13 @@ from fabric.contrib.files import exists, upload_template
 
 VIRTUALENV_DIR = 'env'
 CODE_DIR = 'mma-dexter'
-PROD_HOSTS = ['wazimap.co.za']
+PROD_HOSTS = ['mma-dexter.code4sa.org']
 
 @task
 def prod():
     env.deploy_type = 'prod'
     env.deploy_dir = '/home/mma/'
-    env.branch = 'bigserver-children'
+    env.branch = 'master'
     env.hosts = PROD_HOSTS
     env.user = 'mma'
 
