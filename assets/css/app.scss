@@ -349,6 +349,16 @@ table.fairness {
   font-weight: normal;
 }
 
+/* make simple looking button groups prettier */
+.btn-group {
+  .btn.btn-default.active {
+    background-color: #2aabd2;
+    border-color: #28a4c9;
+    color: #fff;
+    text-shadow: 0 -1px 0 rgba(0,0,0,.2);
+  }
+}
+
 .tiny-logo{
   float: right;
   margin-left: 25px;
