@@ -277,6 +277,24 @@
         .val(affiliationId)
         .trigger('change');
 
+      // choose the gender and race
+      $.each(['race', 'gender'], function(i, attrib) {
+        if (person[attrib]) {
+          $('.' + attrib + ' input', $row).each(function(i, el) {
+            var $el = $(el);
+            var $label = $el.closest('label');
+
+            if ($label.data('original-title') === person[attrib]) {
+              $el.prop('checked', true);
+              $label.addClass('active');
+            } else {
+              $el.prop('checked', false);
+              $label.removeClass('active');
+            }
+          });
+        }
+      });
+
       // clear the source function
       $('select[name$="source_function_id"]', $row).val('');
     };
