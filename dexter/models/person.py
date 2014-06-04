@@ -178,6 +178,28 @@ class Person(db.Model):
         return [(p, x) for p, x in candidates if x >= threshold]
 
 
+    def guess_gender_from_doc(self, doc):
+        """
+        Guess the gender of this person, if it's not already set, by looking
+        at quotations by this person in this document.
+        """
+        if self.gender:
+            return
+
+        for de in (de for de in doc.entities if de.entity.person == self):
+            mentions = set(doc.text[offset:offset+length].lower() for offset, length in de.offsets())
+
+            if 'he' in mentions or 'his' in mentions:
+               self.gender = Gender.male()
+               self.log.info("Learnt gender for %s" % self)
+               return
+
+            elif 'she' in mentions or 'her' in mentions:
+               self.gender = Gender.female()
+               self.log.info("Learnt gender for %s" % self)
+               return
+
+
     def __repr__(self):
         return "<Person id=%s, name=\"%s\">" % (self.id, self.name.encode('utf-8'))
 

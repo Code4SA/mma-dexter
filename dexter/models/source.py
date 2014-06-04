@@ -303,4 +303,8 @@ class DocumentSourceForm(Form):
             if any(src.person == u.entity.person for u in document.utterances):
                 src.quoted = True
 
+                # re-guess the gender
+                if not src.person.gender:
+                    src.person.guess_gender_from_doc(document)
+
         return src

@@ -69,16 +69,5 @@ class SourcesExtractor(BaseExtractor):
     def guess_genders(self, doc):
         """ Guess genders based on mentioned people and 'his', 'her' etc. """
         for de in doc.entities:
-            person = de.entity.person
-
-            if person and not person.gender:
-                mentions = set(doc.text[offset:offset+length].lower() for offset, length in de.offsets())
-
-                if 'he' in mentions or 'his' in mentions:
-                   person.gender = Gender.male()
-                   self.log.info("Learnt gender for %s" % person)
-
-                elif 'she' in mentions or 'her' in mentions:
-                   person.gender = Gender.female()
-                   self.log.info("Learnt gender for %s" % person)
-
+            if de.entity.person and not de.entity.person.gender:
+                de.entity.person.guess_gender_from_doc(doc)
