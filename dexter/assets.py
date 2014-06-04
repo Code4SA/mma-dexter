@@ -39,7 +39,7 @@ assets.register('maps-css',
 assets.register('js', Bundle(
     'js/jquery-1.10.2.min.js',
     'js/bootstrap-3.1.1.min.js',
-    'js/typeahead.bundle-0.10.1.min.js',
+    'js/typeahead.bundle-0.10.2.min.js',
     'js/ujs.js',
     'js/app.js',
     'js/person.js',
