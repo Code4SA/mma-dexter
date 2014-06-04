@@ -55,13 +55,22 @@
       });
 
       // author name autocomplete
+      self.$authorName = $('#author-name');
       self.$authorWidget = $('.author-widget');
+
       self.authorHound = new Bloodhound({
         name: 'authors',
-        prefetch: {
-          url: '/api/authors',
-          ttl: 600,
-          filter: function(resp) { return resp.authors; },
+        remote: {
+          url: '/api/authors?q=%QUERY',
+          ajax: {
+            beforeSend: function(xhr) {
+              self.$authorName.addClass('spinner');
+            }
+          },
+          filter: function(resp) {
+            self.$authorName.removeClass('spinner');
+            return resp.authors;
+          },
         },
         sorter: function(a, b) {
           // compare on length, then alphabetically
@@ -77,9 +86,9 @@
       self.authorHound.initialize();
 
       var autoset = false;
-      self.$authorName = $('#author-name');
 
       self.$authorName.typeahead({
+        minLength: 2,
         highlight: true,
         autoselect: true,
       }, {

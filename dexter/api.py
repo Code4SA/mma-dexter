@@ -17,7 +17,14 @@ from .processing import BiasCalculator
 @app.route('/api/authors')
 @login_required
 def api_authors():
-    authors = Author.query.order_by(Author.name).all()
+    q = request.args.get('q', '').strip()
+
+    query = Author.query.order_by(Author.name)
+    if q:
+        q = '%' + q.replace('%', '%%').replace(' ', '%') + '%'
+        query = query.filter(Author.name.like(q))
+    authors = query.all()
+
     return jsonify({'authors': [a.json() for a in authors]})
 
 @app.route('/api/people')
