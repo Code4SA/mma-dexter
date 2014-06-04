@@ -46,11 +46,6 @@
       // person entity name autocomplete
       self.entityHound = new Bloodhound({
         name: 'people',
-        prefetch: {
-          url: '/api/entities/person',
-          ttl: 3600*1000,
-          filter: function(resp) { return resp.entities; },
-        },
         remote: {
           url: '/api/entities?q=%QUERY',
           filter: function(resp) { return resp.entities; },

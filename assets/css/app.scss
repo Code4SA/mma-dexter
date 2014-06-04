@@ -313,6 +313,10 @@ table.fairness {
 .twitter-typeahead {
   width: 100%;
 
+  .tt-input.spinner {
+    background: url('/public/images/select2-spinner.gif') no-repeat right center;
+  }
+
   .tt-dropdown-menu {
     width: 100%;
     padding: 6px 0px;

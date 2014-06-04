@@ -170,10 +170,10 @@
       // source person name autocomplete
       self.personHound = new Bloodhound({
         name: 'people',
-        prefetch: {
-          url: '/api/people',
-          ttl: 600,
-          filter: function(resp) { return resp.people; },
+        remote: {
+          url: '/api/people?q=%QUERY',
+          ajax: {beforeSend: function(xrh) { self.ttShowSpinner(); }},
+          filter: function(resp) { self.ttHideSpinner(); return resp.people; },
         },
         sorter: function(a, b) {
           // compare on length, then alphabetically
@@ -241,16 +241,18 @@
 
     self.enablePersonTypeahead = function($row) {
       if (!self.personTypeaheadEnabled) {
-        $('.name input', $row).
-          val('').
-          typeahead({
+        $('.name input', $row)
+          .val('')
+          .typeahead({
+            minLength: 3,
             highlight: true,
             autoselect: true,
           }, {
             source: self.personHound.ttAdapter(),
             displayKey: 'name',
-          }).
-          on('typeahead:selected', self.personSourceChosen);
+          })
+          .on('typeahead:selected', self.personSourceChosen)
+          .on('keydown', function(e) { self.activeTT = this });
 
         self.personTypeaheadEnabled = true;
       }
@@ -406,6 +408,14 @@
       $row.removeClass('deleted');
       $('select', $row).prop('disabled', false);
       $('input[name$="-deleted"]', $row).val('0');
+    };
+
+    self.ttShowSpinner = function() {
+      $(self.activeTT).addClass('spinner');
+    };
+
+    self.ttHideSpinner = function() {
+      $(self.activeTT).removeClass('spinner');
     };
   };
 })(jQuery, window);
