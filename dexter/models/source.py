@@ -117,10 +117,43 @@ class DocumentSource(db.Model, WithOffsets):
             return self.person.gender
         return self.unnamed_gender
 
+
     def race(self):
         if self.person:
             return self.person.race
         return self.unnamed_race
+
+
+    @property
+    def gender_id(self):
+        g = self.gender()
+        return g and g.id or None
+
+
+    @gender_id.setter
+    def gender_id(self, val):
+        """ Form helper for setting the gender of this source. """
+        if self.person:
+            self.person.gender_id = val or None
+            self.unnamed_gender_id = None
+        else:
+            self.unnamed_gender_id = val or None
+
+
+    @property
+    def race_id(self):
+        r = self.race()
+        return r and r.id or None
+
+
+    @race_id.setter
+    def race_id(self, val):
+        """ Form helper for setting the race of this source. """
+        if self.person:
+            self.person.race_id = val or None
+            self.unnamed_race_id = None
+        else:
+            self.unnamed_race_id = val or None
 
 
     @property
@@ -183,8 +216,9 @@ def none_coerce(v):
 class DocumentSourceForm(Form):
     name              = StringField('Name', [validators.Length(max=100)])
     named             = BooleanField('The source is named', default=True)
-    unnamed_gender_id = SelectField('Gender', [validators.Optional()], default='', coerce=none_coerce)
-    unnamed_race_id   = SelectField('Race', [validators.Optional()], default='', coerce=none_coerce)
+
+    gender_id         = SelectField('Gender', [validators.Optional()], default='', coerce=none_coerce)
+    race_id           = SelectField('Race', [validators.Optional()], default='', coerce=none_coerce)
 
     source_type       = RadioField('Type', default='person', choices=[['person', 'Adult'], ['child', 'Child'], ['secondary', 'Secondary (not a person)']])
 
@@ -216,8 +250,8 @@ class DocumentSourceForm(Form):
         self.source_age_id.choices = [['', '(none)']] + [[str(s.id), s.name] for s in SourceAge.query.order_by(SourceAge.id).all()]
 
         from . import Gender, Race
-        self.unnamed_gender_id.choices = [['', '(unknown gender)']] + [[str(g.id), g.name] for g in Gender.query.order_by(Gender.name).all()]
-        self.unnamed_race_id.choices = [['', '(unknown race)']] + [[str(r.id), r.name] for r in Race.query.order_by(Race.name).all()]
+        self.gender_id.choices = [['', '(unknown gender)']] + [[str(g.id), g.name] for g in Gender.query.order_by(Gender.name).all()]
+        self.race_id.choices = [['', '(unknown race)']] + [[str(r.id), r.name] for r in Race.query.order_by(Race.name).all()]
 
         # because this list is heirarchical, we class 'organisations' as
         # this with only 0 or two dots
@@ -245,8 +279,8 @@ class DocumentSourceForm(Form):
             self.affiliation_id.data = ''
 
         elif self.source_type.data == 'secondary':
-            self.unnamed_gender_id.data = ''
-            self.unnamed_race_id.data = ''
+            self.gender_id.data = ''
+            self.race_id.data = ''
             self.source_role_id.data = ''
             self.source_age_id.data = ''
 
@@ -256,13 +290,6 @@ class DocumentSourceForm(Form):
     def populate_obj(self, obj):
         super(DocumentSourceForm, self).populate_obj(obj)
         obj.unnamed = not self.named.data
-
-        # set the gender and race of the person
-        if self.source_type.data == 'person' and obj.person:
-            if self.unnamed_gender_id.data:
-                obj.person.gender_id = self.unnamed_gender_id.data
-            if self.unnamed_race_id.data:
-                obj.person.race_id = self.unnamed_race_id.data
 
 
     @property

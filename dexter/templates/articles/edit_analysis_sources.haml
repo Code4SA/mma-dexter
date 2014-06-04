@@ -23,8 +23,6 @@
     %input(type="hidden", name=f.source_type.name, value=f.source_type.data)
     %input(type="hidden", name=f.name.name, value=f.name.data)
     %input(type="hidden", name=f.named.name, value=f.named.data)
-    %input(type="hidden", name=f.unnamed_gender_id.name, value=f.unnamed_gender_id.data)
-    %input(type="hidden", name=f.unnamed_race_id.name, value=f.unnamed_race_id.data)
 
     .core
       %i.text-muted.fa(class_=source_icon(ds.source_type))
@@ -60,11 +58,11 @@
       .name
         = vertical_field(f.name)
 
-      .row.gender.race
-        .col-sm-7
-          = vertical_field(f.unnamed_gender_id)
-        .col-sm-5
-          = vertical_field(f.unnamed_race_id)
+    .row.gender.race
+      .col-sm-7
+        = vertical_field(f.gender_id)
+      .col-sm-5
+        = vertical_field(f.race_id)
 
     .row.affiliation.function
       .col-sm-7

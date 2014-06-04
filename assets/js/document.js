@@ -154,7 +154,12 @@
         .on('ajax:error', function(e, xhr, status, error) {
           console.log(xhr.status);
           if (xhr.status == 500) {
-            $('#error-box').text('Hmm, something went wrong, please try again. (' + xhr.status + ': ' + error + ')').show();
+            $('#error-box')
+              .text('Hmm, something went wrong, please try again. (' + xhr.status + ': ' + error + ')')
+              .show();
+            $('html, body').animate({
+              scrollTop: 0,
+            }, 300);
           } else {
             // problem, do a non-ajax submit
             $('input[data-disable-with]', self.$form).removeAttr('data-disable-with');
