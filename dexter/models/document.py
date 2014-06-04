@@ -271,7 +271,7 @@ class DocumentForm(Form):
     document_type_id    = SelectField('Type', [validators.Required()], default=1)
     author_id           = HiddenField()
 
-    analysis_nature_id = RadioField('Analysis', [validators.Optional()], default=default_analysis_nature_id)
+    analysis_nature_id = RadioField('Analysis', default=default_analysis_nature_id)
 
     def __init__(self, *args, **kwargs):
         self.published_at.data = datetime.datetime.utcnow()

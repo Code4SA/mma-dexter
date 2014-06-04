@@ -95,6 +95,8 @@ def new_article():
         if doc:
             if current_user.is_authenticated():
                 doc.created_by = current_user
+                # change analysis default for this user
+                current_user.default_analysis_nature_id = doc.analysis_nature_id
 
             db.session.add(doc)
             db.session.flush()
