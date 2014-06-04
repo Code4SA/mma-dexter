@@ -97,7 +97,7 @@ class Document(db.Model):
     document_type = relationship("DocumentType")
     origin      = relationship("Location")
 
-    analysis_nature = relationship("AnalysisNature")
+    analysis_nature = relationship("AnalysisNature", lazy=False)
 
     principle_supported = relationship("Principle", foreign_keys=[principle_supported_id])
     principle_violated  = relationship("Principle", foreign_keys=[principle_violated_id])

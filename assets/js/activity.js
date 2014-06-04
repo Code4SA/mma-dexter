@@ -193,9 +193,15 @@
         holder.empty();
 
         _.map(data, function(val, cat) {
-          var html = $('<div class="problem"><h3>' + val + '</h3><h4><a href="#">' + cat + '</a></div>');
-          holder.append(html);
+          if (val > 0) {
+            var html = $('<div class="problem"><h3>' + val + '</h3><h4><a href="#">' + cat + '</a></div>');
+            holder.append(html);
+          }
         });
+
+        if (holder.is(':empty')) {
+          holder.append("No problems!");
+        }
 
         // when the user clicks on a problem, narrow down to it
         holder.on('click', 'a', function(e) {

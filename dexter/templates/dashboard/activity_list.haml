@@ -8,6 +8,9 @@
       %table.table.table-striped.table-condensed.activity-list
         - for doc in group:
           %tr
+            %td
+              %i.fa(class_=doc.analysis_nature.icon(), title='%s analysis' % doc.analysis_nature.name)
+
             %td.user
               - if doc.created_by:
                 &= doc.created_by.short_name()
