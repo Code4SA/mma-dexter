@@ -10,12 +10,13 @@ from flask.ext.sqlalchemy import Pagination
 from sqlalchemy.sql import func, distinct
 from sqlalchemy.orm import joinedload
 
-from dexter.models import db, Document, Entity, Medium, User, DocumentSource, DocumentPlace, DocumentFairness, Fairness, Topic
+from dexter.models import db, Document, Entity, Medium, User, DocumentSource, DocumentPlace, DocumentFairness, Fairness, Topic, AnalysisNature
 from dexter.models.document import DocumentAnalysisProblem
+from dexter.models.user import default_analysis_nature_id
 
 from wtforms import validators, HiddenField, TextField, SelectMultipleField
 from wtforms.fields.html5 import DateField
-from .forms import Form, SelectField, MultiCheckboxField
+from .forms import Form, SelectField, MultiCheckboxField, RadioField
 from .processing.xlsx import XLSXBuilder
 
 @app.route('/dashboard')
@@ -131,6 +132,7 @@ def activity():
 
 
 class ActivityForm(Form):
+    analysis_nature_id = RadioField('Analysis', default=default_analysis_nature_id)
     user_id     = SelectField('User', [validators.Optional()], default='')
     medium_id   = SelectMultipleField('Medium', [validators.Optional()], default='') 
     created_at  = TextField('Added', [validators.Optional()])
@@ -145,6 +147,7 @@ class ActivityForm(Form):
                 [str(u.id), u.short_name()] for u in sorted(User.query.all(), key=lambda u: u.short_name())]
 
         self.medium_id.choices = [(str(m.id), m.name) for m in Medium.query.order_by(Medium.name).all()]
+        self.analysis_nature_id.choices = [[str(n.id), n.name] for n in AnalysisNature.all()]
 
         # dynamic default
         if not self.created_at.data and not self.published_at.data and not self.user_id.data and not self.medium_id.data:
@@ -197,6 +200,8 @@ class ActivityForm(Form):
 
 
     def filter_query(self, query):
+        query = query.filter(Document.analysis_nature_id == self.analysis_nature_id.data)
+
         if self.medium_id.data:
             query = query.filter(Document.medium_id.in_(self.medium_id.data))
 

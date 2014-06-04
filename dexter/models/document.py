@@ -24,6 +24,7 @@ from sqlalchemy import (
 from sqlalchemy.orm import relationship, backref
 from .support import db
 from .problems import DocumentAnalysisProblem
+from .user import default_analysis_nature_id
 
 import logging
 
@@ -248,15 +249,6 @@ class Document(db.Model):
 
     def __repr__(self):
         return "<Document id=%s, url=%s>" % (self.id, self.url)
-
-
-def default_analysis_nature_id():
-    from flask.ext.login import current_user
-
-    if current_user.is_authenticated() and current_user.default_analysis_nature_id:
-        return current_user.default_analysis_nature_id
-
-    return 1
 
 
 class DocumentForm(Form):

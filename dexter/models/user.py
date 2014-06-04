@@ -105,3 +105,12 @@ class User(db.Model, UserMixin):
 class LoginForm(Form):
     email       = EmailField('Email', [validators.Required()])
     password    = PasswordField('Password', [validators.Required()])
+
+
+def default_analysis_nature_id():
+    from flask.ext.login import current_user
+
+    if current_user.is_authenticated() and current_user.default_analysis_nature_id:
+        return current_user.default_analysis_nature_id
+
+    return 1
