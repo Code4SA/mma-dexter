@@ -161,10 +161,10 @@ table.sources {
   tr.source-person {
     .named,
     .affiliation
-    .function { display: block }
-
     .gender,
     .race,
+    .function { display: block }
+
     .role,
     .age { display: none }
 
@@ -175,7 +175,8 @@ table.sources {
     .named,
     .role,
     .age,
-    .gender-race { display: block }
+    .gender,
+    .race { display: block }
 
     .affiliation,
     .function { display: none }

@@ -239,18 +239,12 @@ class DocumentSourceForm(Form):
         if self.source_type.data == 'person':
             self.source_role_id.data = ''
             self.source_age_id.data = ''
-            if self.named.data:
-                # it's not an anonymous source, so ignore these
-                # settings
-                self.unnamed_gender_id.data = ''
-                self.unnamed_race_id.data = ''
 
         elif self.source_type.data == 'child':
             self.source_function_id.data = ''
             self.affiliation_id.data = ''
 
         elif self.source_type.data == 'secondary':
-            self.source_role_id.data = ''
             self.unnamed_gender_id.data = ''
             self.unnamed_race_id.data = ''
             self.source_role_id.data = ''
@@ -262,6 +256,13 @@ class DocumentSourceForm(Form):
     def populate_obj(self, obj):
         super(DocumentSourceForm, self).populate_obj(obj)
         obj.unnamed = not self.named.data
+
+        # set the gender and race of the person
+        if self.source_type.data == 'person' and obj.person:
+            if self.unnamed_gender_id.data:
+                obj.person.gender_id = self.unnamed_gender_id.data
+            if self.unnamed_race_id.data:
+                obj.person.race_id = self.unnamed_race_id.data
 
 
     @property
@@ -290,8 +291,6 @@ class DocumentSourceForm(Form):
 
         src = DocumentSource()
         src.document = document
-
-        self.populate_obj(src)
         src.manual = True
         
         # link to person if they chose that option
@@ -302,9 +301,10 @@ class DocumentSourceForm(Form):
             # this document
             if any(src.person == u.entity.person for u in document.utterances):
                 src.quoted = True
-
                 # re-guess the gender
                 if not src.person.gender:
                     src.person.guess_gender_from_doc(document)
+
+        self.populate_obj(src)
 
         return src
