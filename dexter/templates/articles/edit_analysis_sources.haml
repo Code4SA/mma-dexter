@@ -59,15 +59,7 @@
         = vertical_field(f.name)
 
     .row
-      .col-sm-7.race
-        .form-group
-          %label.control-label Race
-          .btn-group(dataToggle='buttons')
-            - for fld in f.race_id:
-              %label.btn.btn-default(class_='active' if fld.checked else '', title=fld.label.text)
-                = fld()
-                &= fld.label.text[0:2]
-      .col-sm-5.gender
+      .col-sm-5.race
         .form-group
           %label.control-label Gender
           .btn-group(dataToggle='buttons')
@@ -75,21 +67,29 @@
               %label.btn.btn-default(class_='active' if fld.checked else '', title=fld.label.text)
                 = fld()
                 &= fld.label.text[0:2]
+      .col-sm-7.gender
+        .form-group
+          %label.control-label Race
+          .btn-group(dataToggle='buttons')
+            - for fld in f.race_id:
+              %label.btn.btn-default(class_='active' if fld.checked else '', title=fld.label.text)
+                = fld()
+                &= fld.label.text[0:2]
 
     .row.affiliation.function
-      .col-sm-7
-        = vertical_field(f.affiliation_id, class_='select2')
       .col-sm-5
         = vertical_field(f.source_function_id, class_='select2')
+      .col-sm-7
+        = vertical_field(f.affiliation_id, class_='select2')
 
     .row.role.age
-      .col-sm-7
-        = vertical_field(f.source_role_id, class_='select2')
       .col-sm-5
         = vertical_field(f.source_age_id, class_='select2')
+      .col-sm-7
+        = vertical_field(f.source_role_id, class_='select2')
 
     .row
-      .col-sm-7
+      .col-sm-5
         .quoted
           -# don't allow editing of directly quoted sources
           - if f.source and ds.utterances():
@@ -100,7 +100,7 @@
           - else:
             &= field_input(f.quoted)
 
-      .col-sm-5
+      .col-sm-7
         .photographed
           &= field_input(f.photographed)
 

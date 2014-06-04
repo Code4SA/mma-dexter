@@ -255,7 +255,7 @@ class Gender(db.Model):
         return "<Gender name='%s'>" % (self.name)
 
     def abbr(self):
-        return self.name[0].upper()
+        return self.name[0:2].title()
 
     @classmethod
     def male(cls):
@@ -291,7 +291,7 @@ class Race(db.Model):
         return "<Race name='%s'>" % (self.name)
 
     def abbr(self):
-        return self.name[0].upper()
+        return self.name[0:2].title()
 
     @classmethod
     def create_defaults(self):
