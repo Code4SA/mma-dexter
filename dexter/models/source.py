@@ -217,8 +217,8 @@ class DocumentSourceForm(Form):
     name              = StringField('Name', [validators.Length(max=100)])
     named             = BooleanField('The source is named', default=True)
 
-    gender_id         = SelectField('Gender', [validators.Optional()], default='', coerce=none_coerce)
-    race_id           = SelectField('Race', [validators.Optional()], default='', coerce=none_coerce)
+    gender_id         = RadioField('Gender', [validators.Optional()], default='', coerce=none_coerce)
+    race_id           = RadioField('Race', [validators.Optional()], default='', coerce=none_coerce)
 
     source_type       = RadioField('Type', default='person', choices=[['person', 'Adult'], ['child', 'Child'], ['secondary', 'Secondary (not a person)']])
 
@@ -250,8 +250,8 @@ class DocumentSourceForm(Form):
         self.source_age_id.choices = [['', '(none)']] + [[str(s.id), s.name] for s in SourceAge.query.order_by(SourceAge.id).all()]
 
         from . import Gender, Race
-        self.gender_id.choices = [['', '(unknown gender)']] + [[str(g.id), g.name] for g in Gender.query.order_by(Gender.name).all()]
-        self.race_id.choices = [['', '(unknown race)']] + [[str(r.id), r.name] for r in Race.query.order_by(Race.name).all()]
+        self.gender_id.choices = [['', '? - unknown']] + [[str(g.id), g.name] for g in Gender.query.order_by(Gender.name).all()]
+        self.race_id.choices = [['', '? - unknown']] + [[str(r.id), r.name] for r in Race.query.order_by(Race.name).all()]
 
         # because this list is heirarchical, we class 'organisations' as
         # this with only 0 or two dots

@@ -158,6 +158,13 @@ section.sources {
 table.sources {
   border-bottom: 1px solid #ddd;
 
+  .gender,
+  .race {
+    .form-group > label {
+      display: block;
+    }
+  }
+
   tr.source-person {
     .named,
     .affiliation

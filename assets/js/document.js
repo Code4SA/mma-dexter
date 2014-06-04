@@ -230,6 +230,7 @@
       });
 
       $('.select2', $row).select2();
+      $('[title]', $row).tooltip();
 
       // trigger the source type toggle
       $('input:radio[name$="-source_type"]', $row)

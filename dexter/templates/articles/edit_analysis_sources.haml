@@ -60,9 +60,21 @@
 
     .row.gender.race
       .col-sm-7
-        = vertical_field(f.gender_id)
+        .form-group
+          %label.control-label Race
+          .btn-group(dataToggle='buttons')
+            - for fld in f.race_id:
+              %label.btn.btn-default(class_='active' if fld.checked else '', title=fld.label.text)
+                = fld()
+                &= fld.label.text[0:2]
       .col-sm-5
-        = vertical_field(f.race_id)
+        .form-group
+          %label.control-label Gender
+          .btn-group(dataToggle='buttons')
+            - for fld in f.gender_id:
+              %label.btn.btn-default(class_='active' if fld.checked else '', title=fld.label.text)
+                = fld()
+                &= fld.label.text[0:2]
 
     .row.affiliation.function
       .col-sm-7
