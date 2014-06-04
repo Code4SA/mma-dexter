@@ -59,7 +59,7 @@
         = vertical_field(f.name)
 
     .row
-      .col-sm-5.race
+      .col-sm-5.gender
         .form-group
           %label.control-label Gender
           .btn-group(dataToggle='buttons')
@@ -67,7 +67,7 @@
               %label.btn.btn-default(class_='active' if fld.checked else '', title=fld.label.text)
                 = fld()
                 &= fld.label.text[0:2]
-      .col-sm-7.gender
+      .col-sm-7.race
         .form-group
           %label.control-label Race
           .btn-group(dataToggle='buttons')
