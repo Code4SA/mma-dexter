@@ -94,8 +94,11 @@ class DocumentSource(db.Model, WithOffsets):
 
     def utterances(self):
         """ A potentially empty list of Utterances from this source in this document. """
-        return sorted([u for u in self.document.utterances if self.person and u.entity.person == self.person],
-                key=lambda u: u.offset)
+        utterances = [u for u in self.document.utterances
+                      if (self.person and u.entity.person == self.person)
+                        or (not self.person and u.entity.name == self.name)]
+
+        return sorted(utterances, key=lambda u: u.offset)
 
 
     def friendly_name(self):
