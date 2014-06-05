@@ -107,8 +107,12 @@
               - if document.analysis_nature == AnalysisNature.CHILDREN:
                 %hr
                 %section
-                  %h4 Child Focus
-                  = field_input(form.child_focus)
+                  %h4&=form.child_focus.label.text
+                  .btn-group(dataToggle='buttons')
+                    - for fld in form.child_focus:
+                      %label.btn.btn-default(class_='active' if fld.checked else '')
+                        = fld()
+                        &= fld.label.text
 
                 .row
                   .col-sm-6

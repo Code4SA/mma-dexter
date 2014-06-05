@@ -9,7 +9,7 @@ from sqlalchemy.orm import relationship
 from .support import db
 
 from wtforms import StringField, TextAreaField, BooleanField, validators, DateTimeField, HiddenField
-from ..forms import Form, MultiCheckboxField, IntegerField, SelectField, RadioField
+from ..forms import Form, MultiCheckboxField, IntegerField, SelectField, RadioField, YesNoField
 
 class ElectionsAnalysisForm(Form):
     """
@@ -36,7 +36,7 @@ class ChildrenAnalysisForm(ElectionsAnalysisForm):
     """
     Analysis of a document from a children standpoint.
     """
-    child_focus     = BooleanField('Children are a central focus')
+    child_focus     = YesNoField('Children are a central focus?', [validators.Optional()])
 
     quality_basic_context = BooleanField('Basic context')
     quality_causes        = BooleanField('Causes are mentioned')

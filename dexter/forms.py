@@ -127,3 +127,19 @@ class RadioField(WTFRadioField):
             val = getattr(obj, name, None)
             if val == '' or val == 'None':
                 setattr(obj, name, None)
+
+
+class YesNoField(RadioField):
+    def __init__(self, *args, **kwargs):
+        kwargs['choices'] = [['True', 'Yes'], ['False', 'No']]
+        super(YesNoField, self).__init__(*args, **kwargs)
+
+    def populate_obj(self, obj, name):
+        super(YesNoField, self).populate_obj(obj, name)
+
+        if hasattr(obj, name):
+            val = getattr(obj, name, None)
+            if val == 'True':
+                setattr(obj, name, True)
+            if val == 'False':
+                setattr(obj, name, False)

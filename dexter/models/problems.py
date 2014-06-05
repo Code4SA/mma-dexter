@@ -58,21 +58,21 @@ class MissingOrigin(DocumentAnalysisProblem):
 
 
 class NotChildFocused(DocumentAnalysisProblem):
-    code = 'not-child-focused'
-    short_desc = 'not child focused'
-    long_desc  = 'This document is not child focused.'
+    code = 'unclear-child-focused'
+    short_desc = 'unclear child focus'
+    long_desc  = 'Not clear if this document is child focused or not.'
 
     def check(self, doc):
         from . import AnalysisNature
         return (doc.analysis_nature_id == AnalysisNature.CHILDREN
-                and not doc.child_focus)
+                and doc.child_focus is None)
 
     def filter_query(self, query):
         from .document import Document
         from . import AnalysisNature
         return query.filter(
                 Document.analysis_nature_id == AnalysisNature.CHILDREN,
-                Document.child_focus == False)
+                Document.child_focus == None)
 
 
 class SourceWithoutFunction(DocumentAnalysisProblem):
