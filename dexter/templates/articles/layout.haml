@@ -13,7 +13,10 @@
     .container
       .row
         .col-sm-8
-          %h3&= document.title
+          %h3
+            - if document.flagged:
+              %i.article-flag.fa.fa-flag.flag-set(title=document.notes or 'Article has been flagged', dataPlacement='bottom')
+            &= document.title
           .url
             %a(href=document.url, target='_blank')&= document.url
 

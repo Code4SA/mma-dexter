@@ -32,7 +32,14 @@
       .tab-content
         #analysis-tab.tab-pane.active
           %section
-            %h4 Analysis
+            .row
+              .col-sm-2
+                %h4 Analysis
+              .col-sm-10
+                - if document.flagged:
+                  %i.article-flag.fa.fa-lg.fa-flag.flag-set
+                  %span.article-notes&=document.notes
+
             %%include(file="analysis_warnings.haml")
 
             .row.topic-origin

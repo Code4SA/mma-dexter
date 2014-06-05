@@ -25,6 +25,8 @@
             %td.title
               %a(href=url_for('show_article', id=doc.id))
                 %strong&= doc.title or '(none)'
+              - if doc.flagged:
+                %i.article-flag.fa.fa-flag.flag-set(title=doc.notes or 'Article has been flagged')
             %td.published_at
               &=doc.published_at.strftime('%e %B %Y')
             %td.medium

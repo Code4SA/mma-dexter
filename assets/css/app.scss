@@ -135,6 +135,10 @@ form#edit-person {
     }
   }
 
+  .article-notes {
+    margin-left: 5px;
+  }
+
   .edit-analysis {
     .panel.analysis {
       box-shadow: 0 0 7px #428bca;
@@ -284,13 +288,11 @@ table.sources {
   }
 }
 
-.article-flag {
-  i {
-    color: #ccc;
-  }
+i.article-flag {
+  color: #ccc;
 
-  i.flag-set {
-    color: #d9534f;
+  &.flag-set {
+    color: #a94442;
   }
 }
 
