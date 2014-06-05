@@ -121,6 +121,7 @@ class MediumView(MyModelView):
         'name',
         'parent_org'
     )
+    column_default_sort = 'name'
     column_formatters = dict(
         medium_type=macro('render_medium_type'),
         )
