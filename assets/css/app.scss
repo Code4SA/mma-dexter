@@ -139,6 +139,15 @@ form#edit-person {
     .panel.analysis {
       box-shadow: 0 0 7px #428bca;
     }
+
+    label.article-flag {
+      cursor: pointer;
+      float: left;
+
+      input[type=checkbox] {
+        display: none;
+      }
+    }
   }
 
   .issues {
@@ -273,6 +282,23 @@ table.sources {
       margin: 5px 0px 0px 0px;
     }
   }
+}
+
+.article-flag {
+  i {
+    color: #ccc;
+  }
+
+  i.flag-set {
+    color: #d9534f;
+  }
+}
+
+[name=notes] {
+  float: left;
+  margin-left: 10px;
+  margin-bottom: 10px;
+  width: 90%;
 }
 
 table.principles {

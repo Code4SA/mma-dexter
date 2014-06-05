@@ -55,7 +55,14 @@
           .tab-content
             #analysis-tab.tab-pane.active
               %section.form-horizontal
-                %h4 Analysis
+                .row
+                  .col-sm-2
+                    %h4 Analysis
+                  .col-sm-10
+                    %label.article-flag(title="Flag this article")
+                      %i.fa.fa-lg.fa-flag(class_='flag-set' if form.flagged.data else '')
+                      = form.flagged
+                    = field_input(form.notes, maxlength=1024, placeholder='Why did you flag this article?', class_='hidden' if not form.flagged.data else '')
 
                 %%include(file="analysis_warnings.haml")
 
