@@ -15,9 +15,9 @@
           = nature.label.text
 
 .row
-  .col-sm-2
+  .col-sm-3
     = vertical_field(form.published_at, placeholder='YYYY/MM/DD hh:mm', class_='use-datetimepicker', **{'data-format':'YYYY/MM/DD HH:mm',})
-  .col-sm-2
+  .col-sm-1
     = vertical_field(form.item_num, min=1, max=100)
   .col-sm-3
     = vertical_field(form.medium_id, class_='select2')
