@@ -14,7 +14,7 @@ class Medium(db.Model):
 
     id           = Column(Integer, primary_key=True)
     name         = Column(String(100), index=True, nullable=False, unique=True)
-    domain       = Column(String(100), unique=True)
+    domain       = Column(String(100), index=True)
     medium_type  = Column(String(100), index=True, nullable=False)
     medium_group = Column(String(100))
     parent_org   = Column(String(100))

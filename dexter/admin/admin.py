@@ -117,6 +117,10 @@ class MediumView(MyModelView):
     column_labels = dict(
         medium_type='Publication Type',
         )
+    column_searchable_list = (
+        'name',
+        'parent_org'
+    )
     column_formatters = dict(
         medium_type=macro('render_medium_type'),
         )
