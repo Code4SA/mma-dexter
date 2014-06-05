@@ -19,6 +19,9 @@ class ElectionsAnalysisForm(Form):
     issues              = MultiCheckboxField('Issues')
     origin_location_id  = SelectField('Origin')
 
+    flagged             = BooleanField('Flagged')
+    notes               = TextAreaField('Notes')
+
     def __init__(self, *args, **kwargs):
         super(ElectionsAnalysisForm, self).__init__(*args, **kwargs)
 

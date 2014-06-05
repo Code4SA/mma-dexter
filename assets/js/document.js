@@ -154,6 +154,16 @@
         self.$form.submit();
       });
 
+      // flag functionality
+      $('label.article-flag input[type=checkbox]').on('change', function(e) {
+        var checked = $(this).prop("checked");
+
+        $('.article-flag i.fa').toggleClass('flag-set', checked);
+        self.$form.find('[name="notes"]')
+          .removeClass('hidden')
+          .toggle(checked);
+      });
+
       self.$form
         .on('ajax:success', function(e, data, status, xhr) {
           // success, reload the page

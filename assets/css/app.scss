@@ -135,9 +135,22 @@ form#edit-person {
     }
   }
 
+  .article-notes {
+    margin-left: 5px;
+  }
+
   .edit-analysis {
     .panel.analysis {
       box-shadow: 0 0 7px #428bca;
+    }
+
+    label.article-flag {
+      cursor: pointer;
+      float: left;
+
+      input[type=checkbox] {
+        display: none;
+      }
     }
   }
 
@@ -273,6 +286,21 @@ table.sources {
       margin: 5px 0px 0px 0px;
     }
   }
+}
+
+i.article-flag {
+  color: #ccc;
+
+  &.flag-set {
+    color: #a94442;
+  }
+}
+
+[name=notes] {
+  float: left;
+  margin-left: 10px;
+  margin-bottom: 10px;
+  width: 90%;
 }
 
 table.principles {

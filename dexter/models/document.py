@@ -83,6 +83,9 @@ class Document(db.Model):
     principle_supported_id = Column(Integer, ForeignKey('principles.id'))
     principle_violated_id  = Column(Integer, ForeignKey('principles.id'))
 
+    flagged              = Column(Boolean, index=True)
+    notes                = Column(String(1024))
+
 
     # Associations
     author      = relationship("Author")
