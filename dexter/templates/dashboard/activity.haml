@@ -126,6 +126,13 @@
                   .checkbox
                     = fld
                     = fld.label()
+            .form-group
+              .checkbox
+                = form.flagged
+                - kwargs = {"for": 'flagged'}
+                %label(**kwargs)
+                  %i.fa.fa-flag.flag-set.article-flag
+                  = form.flagged.label.text
 
           .panel-footer
             .pull-right

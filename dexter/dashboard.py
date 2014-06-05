@@ -14,7 +14,7 @@ from dexter.models import db, Document, Entity, Medium, User, DocumentSource, Do
 from dexter.models.document import DocumentAnalysisProblem
 from dexter.models.user import default_analysis_nature_id
 
-from wtforms import validators, HiddenField, TextField, SelectMultipleField
+from wtforms import validators, HiddenField, TextField, SelectMultipleField, BooleanField
 from wtforms.fields.html5 import DateField
 from .forms import Form, SelectField, MultiCheckboxField, RadioField
 from .processing.xlsx import XLSXBuilder
@@ -138,6 +138,7 @@ class ActivityForm(Form):
     created_at  = TextField('Added', [validators.Optional()])
     published_at   = TextField('Published', [validators.Optional()])
     problems       = MultiCheckboxField('Article problems', [validators.Optional()], choices=DocumentAnalysisProblem.for_select())
+    flagged        = BooleanField('flagged')
     format         = HiddenField('format', default='html') 
 
     def __init__(self, *args, **kwargs):
@@ -223,6 +224,9 @@ class ActivityForm(Form):
         if self.problems.data:
             for code in self.problems.data:
                 query = DocumentAnalysisProblem.lookup(code).filter_query(query)
+
+        if self.flagged.data:
+            query = query.filter(Document.flagged == True)
 
         return query
 
