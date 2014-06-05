@@ -100,7 +100,7 @@ class AnalysisNature(db.Model):
     }
 
     ICONS = {
-        ELECTIONS: 'fa-check-square-o',
+        ELECTIONS: 'fa-university',
         CHILDREN : 'fa-child',
     }
 
