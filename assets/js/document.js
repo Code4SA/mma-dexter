@@ -120,6 +120,17 @@
           });
         }
       });
+
+      // dropzone for article attachments
+      var attachmentsUrl = window.location.pathname
+        .replace(/edit$/, "attachments")      // articles/123/attachments
+        .replace(/new$/, "new/attachments");  // articles/new/attachments
+
+      $('#dropzone').dropzone({
+        url: attachmentsUrl,
+        maxFilesize: 6,
+        acceptedFiles: 'image/*,application/pdf',
+      });
     };
 
     self.setAuthor = function(author) {
@@ -444,3 +455,4 @@ $(function() {
   new Dexter.EditDocumentView().init();
   new Dexter.EditDocumentAnalysisView().init();
 });
+Dropzone.autoDiscover = false;
