@@ -61,6 +61,23 @@ class DocumentAttachment(db.Model):
     def generate_thumbnails(self):
         self.image.generate_thumbnail(width=self.THUMBNAIL_WIDTH)
 
+
+    def set_data(self, data):
+        """ Set the data for this attachment from a file-like object. """
+        if self.mimetype == "application/pdf":
+            # TODO: save pdf to s3
+
+            # convert to an image for use with thumbnails
+            with WandImage(file=upload, resolution=300) as img:
+                img.format = 'png'
+                data = StringIO()
+                img.save(file=upload)
+                data.seek(0)
+
+        self.image.from_file(data)
+        self.generate_thumbnails()
+
+
     @classmethod
     def is_acceptable(cls, upload):
         """
@@ -68,31 +85,22 @@ class DocumentAttachment(db.Model):
         """
         return upload.mimetype in MIMETYPES
 
+
     @classmethod
     def from_upload(cls, upload, user=None, document=None):
         """
         Create a new attachment from an uploaded file, a `werkzeug.FileStorage` object.
         """
-
         attachment = DocumentAttachment()
         attachment.document = document
         attachment.filename = secure_filename(upload.filename)
+        attachment.mimetype = upload.mimetype
+
         if user and user.is_authenticated():
             attachment.created_by = user
 
-        if upload.mimetype == "application/pdf":
-            # TODO: save pdf to s3
-
-            # convert to an image
-            with WandImage(file=upload, resolution=300) as img:
-                img.format = 'png'
-                upload = StringIO()
-                img.save(file=upload)
-                upload.seek(0)
-
-        # store attachment and thumbnails
-        attachment.image.from_file(upload)
-        attachment.generate_thumbnails()
+        # set the data and generate thumbnails
+        attachment.set_data(data)
 
         return attachment
         
