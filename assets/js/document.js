@@ -126,10 +126,14 @@
         .replace(/edit$/, "attachments")      // articles/123/attachments
         .replace(/new$/, "new/attachments");  // articles/new/attachments
 
-      $('#dropzone').dropzone({
-        url: attachmentsUrl,
-        maxFilesize: 6,
-        acceptedFiles: 'image/*,application/pdf',
+      var dropzone = new Dropzone("#dropzone", {
+          url: attachmentsUrl,
+          maxFilesize: 6,
+          acceptedFiles: 'image/png,image/jpeg,image/gif,application/pdf',
+        });
+      dropzone.on('sending', function(formData) {
+        var csrfToken = $('meta[name=csrf-token]').attr('content');
+        formData.xhr.setRequestHeader('X-CSRF-Token', csrfToken);
       });
     };
 

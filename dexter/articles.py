@@ -1,12 +1,14 @@
 import logging
-log = logging.getLogger(__name__)
+import os
 
 from flask import request, url_for, flash, redirect, make_response, jsonify
 from flask.ext.mako import render_template
 from flask.ext.login import login_required, current_user
 
+from werkzeug.exceptions import BadRequest, Forbidden, NotAcceptable
+
 from .app import app
-from .models import db, Document, Issue, Person, DocumentPlace
+from .models import db, Document, Issue, Person, DocumentPlace, DocumentAttachment
 from .models.document import DocumentForm
 from .models.source import DocumentSource, DocumentSourceForm
 from .models.fairness import DocumentFairness, DocumentFairnessForm
@@ -14,6 +16,8 @@ from .models.analysis_nature import AnalysisNature
 from .models.author import AuthorForm
 
 from .processing import DocumentProcessor, ProcessingError
+
+log = logging.getLogger(__name__)
 
 @app.route('/articles/<id>')
 @login_required
@@ -142,6 +146,7 @@ def edit_article(id):
             document=doc,
             form=form,
             author_form=author_form)
+
 
 @app.route('/articles/<id>/analysis', methods=['GET', 'POST'])
 @login_required
@@ -291,3 +296,29 @@ def edit_article_analysis_nature(id):
         db.session.commit()
 
     return redirect(url_for('edit_article_analysis', id=id))
+
+
+@app.route('/articles/<id>/attachments', methods=['POST'])
+@login_required
+def create_article_attachment(id):
+    if id == 'new':
+        document = None
+    else:
+        document = Document.query.get_or_404(id)
+        # can this user do this?
+        if not document.can_user_edit(current_user):
+            raise Forbidden()
+
+    if 'file' in request.files:
+        upload = request.files['file']
+
+        if not DocumentAttachment.is_acceptable(upload):
+            raise NotAcceptable()
+
+        attachment = DocumentAttachment.from_upload(upload, current_user, document)
+        db.session.add(attachment)
+        db.session.commit()
+
+        return jsonify({'attachment-id': attachment.id})
+
+    raise BadRequest("Need a file attachment")

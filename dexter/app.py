@@ -73,3 +73,7 @@ from logs import UserIdFilter
 def log_attach_user_id(sender, **extra):
     UserIdFilter.set_userid(session.get('user_id', '-'))
 request_started.connect(log_attach_user_id, app)
+
+# file attachments
+from .attachments import setup_attachments
+setup_attachments(app)
