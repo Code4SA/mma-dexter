@@ -179,29 +179,31 @@
           url: '/articles/attachments',
           maxFilesize: 6,
           acceptedFiles: 'image/png,image/jpeg,image/gif,application/pdf',
+          addRemoveLinks: true,
+          headers: {"X-CSRF-Token": $('meta[name=csrf-token]').attr('content')},
         });
       dropzone
-        .on('sending', function(formData) {
-          var csrfToken = $('meta[name=csrf-token]').attr('content');
-          formData.xhr.setRequestHeader('X-CSRF-Token', csrfToken);
-        })
         .on('success', function(file) {
           // successfully uploaded
           dropzone.removeFile(file);
 
           var attachment = $.parseJSON(file.xhr.response).attachment;
-          var li = $('<li>').appendTo($('ul.attachment-list'));
+          var li = $('.attachment-list .template')
+            .clone()
+            .removeClass('template')
+            .appendTo($('.attachment-list'));
 
           $('<input type="hidden" name="attachments">')
             .val(attachment.id)
             .appendTo(li);
 
-          $('<img class="thumbnail attachment">')
+          $('a.download', li)
+            .attr('href', attachment.download_url);
+
+          $('img', li)
             .attr('src', attachment.thumbnail_url)
             .data('url', attachment.url)
             .data('size', attachment.size)
-            .data('download-url', attachment.download_url)
-            .appendTo(li)
             .click();
         });
 

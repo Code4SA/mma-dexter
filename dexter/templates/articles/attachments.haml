@@ -12,12 +12,17 @@
             %i.fa.fa-file-text.fa-2x
             Text
 
+      %li.template
+        %a.download(target="_blank", title='download')
+          %i.fa.fa-cloud-download.fa-lg
+        %img.thumbnail.attachment
+
       - if document:
         - for attachment in document.attachments:
           %li
+            %a.download(href=attachment.download_url, target="_blank", title='download')
+              %i.fa.fa-cloud-download.fa-lg
             %img.thumbnail.attachment(src=attachment.thumbnail_url, dataUrl=attachment.preview_url, dataSize=attachment.size_str())
-            %a.download(href=attachment.download_url, target="_blank")
-              %i.fa.fa-cloud-download
 
             - if editing:
               %input(type='hidden', name='attachments', value=attachment.id)

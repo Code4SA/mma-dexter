@@ -12,7 +12,7 @@ pushed = False
 
 def setup_attachments(app):
     # max upload size
-    patch_request_class(app, 5 * 1024 * 1024)
+    patch_request_class(app, 6 * 1024 * 1024)
 
     # setup the file storage for image attachments
     # TODO: handle testing

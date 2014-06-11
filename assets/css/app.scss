@@ -143,16 +143,27 @@ form#edit-person {
     overflow-x: scroll;
     padding: 5px;
 
+    .template {
+      display: none;
+    }
+
     li {
       display: inline-block;
       list-style: none;
       padding-left: 5px;
+      position: relative;
     }
 
     .thumbnail {
       margin-bottom: 0px;
       cursor: pointer;
       max-height: 100px;
+    }
+
+    .download {
+      position: absolute;
+      top: 78px;
+      right: 5px;
     }
 
     .show-text {
