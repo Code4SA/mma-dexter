@@ -4,7 +4,7 @@ import logging
 from flask.ext.uploads import patch_request_class
 
 from sqlalchemy_imageattach.context import (pop_store_context, push_store_context)
-from sqlalchemy_imageattach.stores.fs import FileSystemStore
+from sqlalchemy_imageattach.stores.fs import HttpExposedFileSystemStore
 
 log = logging.getLogger(__name__)
 
@@ -22,7 +22,9 @@ def setup_attachments(app):
     except:
         pass
     log.info("Storing attachments in %s" % path)
-    store = FileSystemStore(path, '/nowhere')
+    # TODO: production
+    store = HttpExposedFileSystemStore(path, '/static-attachments/')
+    app.wsgi_app = store.wsgi_middleware(app.wsgi_app)
 
 
     @app.before_request

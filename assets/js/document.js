@@ -11,7 +11,7 @@
     self.init = function() {
       $('a[href="#places-tab"][data-toggle="tab"]').on('shown.bs.tab', self.onPlacesTabShown);
 
-      var $text = $('.document-container .article-text');
+      var $text = $('.document-container .article-content');
       if ($text.length > 0) {
         $text.affix({
           offset: {
@@ -26,7 +26,54 @@
             top: 55,
           }
         });
+
+      // attachment viewer
+      $('.article-attachments')
+        .on('click', '.show-text', self.showArticleText)
+        .on('click', '.attachment', self.showAttachment);
+
+      if ($('#attachment-slippy').length > 0) {
+        self.attachmentMap = L.map('attachment-slippy', {
+          minZoom: 1,
+          maxZoom: 4,
+          zoom: 1,
+          center: [0, 0],
+          crs: L.CRS.Simple,
+        });
+      }
+
+      return self;
     };
+
+    self.showArticleText = function(e) {
+      e.preventDefault();
+      $('.article-content .article-text').show();
+      $('.article-content .attachment-viewer').hide();
+    }
+
+    self.showAttachment = function(e) {
+      e.preventDefault();
+      var $attachment = $(this);
+      var map = self.attachmentMap;
+
+      // remove existing layers
+      map.eachLayer(function(l) { map.removeLayer(l); });
+
+      $('.article-content .article-text').hide();
+      $('.article-content .attachment-viewer').show();
+
+      var size = $attachment.data('preview-size').split(',');
+      var w = size[0],
+          h = size[1];
+
+      var southWest = map.unproject([0, h], map.getMaxZoom()-1);
+      var northEast = map.unproject([w, 0], map.getMaxZoom()-1);
+      var bounds = new L.LatLngBounds(southWest, northEast);
+
+      map.setMaxBounds(bounds);
+      map.setZoom(map.getMaxZoom()-1);
+      L.imageOverlay($attachment.data('preview-url'), bounds).addTo(map);
+    }
 
     self.onPlacesTabShown = function(e) {
       // invalidate the map so that it gets resized correctly
@@ -455,7 +502,7 @@
 })(jQuery, window);
 
 $(function() {
-  new Dexter.DocumentView().init();
+  Dexter.documentView = new Dexter.DocumentView().init();
   new Dexter.EditDocumentView().init();
   new Dexter.EditDocumentAnalysisView().init();
 });

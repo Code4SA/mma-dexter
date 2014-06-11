@@ -50,6 +50,20 @@
 %section
   %p.article-summary
     %em&= document.summary
-  .article-text(dataOriginal=document.text.replace("\r", "\n"))
-    = format_paragraphs(document.text)
+
+  .article-content
+    .article-text(dataOriginal=document.text.replace("\r", "\n"), class_='with-attachments' if document.attachments else '')
+      = format_paragraphs(document.text)
+
+    .attachment-viewer
+      #attachment-slippy
+
+    - if document.attachments:
+      %ul.article-attachments.list-inline
+        %li
+          %a.show-text(href="#") Article text
+
+        - for attachment in document.attachments:
+          %li
+            %img.thumbnail.attachment(src=attachment.thumbnail_url, dataPreviewUrl=attachment.preview_url, dataPreviewSize='%d,%d' % attachment.image.original.size, dataDownloadUrl=attachment.download_url)
 

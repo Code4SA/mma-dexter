@@ -51,7 +51,7 @@ class DocumentAttachment(db.Model):
     updated_at   = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.current_timestamp())
 
     # Associations
-    document    = relationship("Document")
+    document    = relationship("Document", backref="attachments")
     created_by  = relationship("User", foreign_keys=[created_by_user_id])
     image       = image_attachment("AttachmentImage")
 
@@ -68,14 +68,31 @@ class DocumentAttachment(db.Model):
             # TODO: save pdf to s3
 
             # convert to an image for use with thumbnails
-            with WandImage(file=upload, resolution=300) as img:
+            self.log.info("Converting PDF to image")
+            with WandImage(file=data, resolution=300) as img:
                 img.format = 'png'
                 data = StringIO()
-                img.save(file=upload)
+                img.save(file=data)
                 data.seek(0)
+            self.log.info("Converted")
 
         self.image.from_file(data)
+        db.session.flush()
         self.generate_thumbnails()
+
+
+    @property
+    def thumbnail_url(self):
+        return self.image.find_thumbnail(width=self.THUMBNAIL_WIDTH).locate()
+
+    @property
+    def preview_url(self):
+        return self.image.original.locate()
+
+    @property
+    def download_url(self):
+        # TODO: handle pdfs
+        return self.image.original.locate()
 
 
     @classmethod
@@ -100,7 +117,7 @@ class DocumentAttachment(db.Model):
             attachment.created_by = user
 
         # set the data and generate thumbnails
-        attachment.set_data(data)
+        attachment.set_data(upload.stream)
 
         return attachment
         

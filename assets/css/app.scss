@@ -126,6 +126,22 @@ form#edit-person {
     padding: 10px;
     overflow-y: auto;
 
+    &.with-attachments {
+      height: 400px;
+    }
+  }
+
+  .attachment-viewer {
+    display: none;
+  }
+
+  #attachment-slippy {
+    height: 400px;
+    width: 100%;
+    border: 1px solid #ddd;
+  }
+
+  .article-content {
     &.affix {
       top: 100px;
 
@@ -462,7 +478,7 @@ footer {
 
 @media (min-width: 768px) {
   .document-container {
-    .article-text.affix {
+    .article-content.affix {
       width: 283px;
     }
   }
@@ -470,7 +486,7 @@ footer {
 
 @media (min-width: 992px) {
   .document-container {
-    .article-text.affix {
+    .article-content.affix {
       width: 374px;
     }
   }
@@ -478,7 +494,7 @@ footer {
 
 @media (min-width: 1200px) {
   .document-container {
-    .article-text.affix {
+    .article-content.affix {
       width: 458px;
     }
   }
