@@ -67,8 +67,13 @@ class DocumentAttachment(db.Model):
     def set_data(self, data):
         """ Set the data for this attachment from a file-like object. """
         if self.mimetype == PDF:
+            if self.id is None:
+                db.session.add(self)
+                db.session.flush()
+
             # save pdf to s3
             current_store.put_file(data, 'document-attachment', self.id, 0, 0, self.mimetype, False)
+            data.seek(0)
 
             # convert to an image for use with thumbnails
             self.log.info("Converting PDF to image")
