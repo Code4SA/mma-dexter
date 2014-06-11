@@ -87,7 +87,7 @@ def new_article():
 
                 if form.validate():
                     doc = Document()
-                    form.populate_obj(doc)
+                    form.populate_obj(doc, request.form.getlist('attachments'))
 
                     try:
                         proc.process_document(doc)
@@ -133,11 +133,7 @@ def edit_article(id):
             form.author_id.data = author_form.get_or_create_author().id
 
             if form.validate():
-                form.populate_obj(doc)
-
-                attachment_ids = set(x for x in request.form.getlist('attachments'))
-                doc.attachments = [x for x in doc.attachments if str(x.id) in attachment_ids]
-
+                form.populate_obj(doc, request.form.getlist('attachments'))
                 doc.normalise_text()
 
                 db.session.commit()

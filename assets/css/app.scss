@@ -11,7 +11,7 @@ article, section {
 }
 
 .fixed-header {
-  z-index: 1000;
+  z-index: 9000;
 
   width: 100%;
   height: 80px;
@@ -136,10 +136,6 @@ form#edit-person {
   .attachment-viewer {
     display: none;
     height: 480px;
-  }
-
-  .dropzone {
-    margin-bottom: 10px;
   }
 
   .attachment-list {

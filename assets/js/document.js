@@ -32,17 +32,6 @@
         .on('click', '.show-text', self.showArticleText)
         .on('click', '.attachment', self.showAttachment);
 
-      if ($('#attachment-slippy').length > 0) {
-        self.attachmentMap = L.map('attachment-slippy', {
-          minZoom: 1,
-          maxZoom: 4,
-          zoom: 1,
-          center: [0, 0],
-          crs: L.CRS.Simple,
-          attributionControl: false,
-        });
-      }
-
       return self;
     };
 
@@ -55,13 +44,14 @@
     self.showAttachment = function(e) {
       e.preventDefault();
       var $attachment = $(this);
-      var map = self.attachmentMap;
-
-      // remove existing layers
-      map.eachLayer(function(l) { map.removeLayer(l); });
 
       $('.article-content .article-text').hide();
       $('.attachment-viewer').show();
+
+      var map = self.getAttachmentMap();
+
+      // remove existing layers
+      map.eachLayer(function(l) { map.removeLayer(l); });
 
       var size = $attachment.data('size').split(',');
       var w = size[0],
@@ -72,9 +62,24 @@
       var bounds = new L.LatLngBounds(southWest, northEast);
 
       map.setMaxBounds(bounds);
-      map.setZoom(map.getMaxZoom()-1);
+      map.setView([0, 0], map.getMaxZoom()-1);
       L.imageOverlay($attachment.data('url'), bounds).addTo(map);
-    }
+    };
+
+    self.getAttachmentMap = function() {
+      if (!self.attachmentMap) {
+        self.attachmentMap = L.map('attachment-slippy', {
+          minZoom: 1,
+          maxZoom: 4,
+          zoom: 1,
+          center: [0, 0],
+          crs: L.CRS.Simple,
+          attributionControl: false,
+        });
+      }
+
+      return self.attachmentMap;
+    };
 
     self.onPlacesTabShown = function(e) {
       // invalidate the map so that it gets resized correctly
@@ -180,9 +185,28 @@
           var csrfToken = $('meta[name=csrf-token]').attr('content');
           formData.xhr.setRequestHeader('X-CSRF-Token', csrfToken);
         })
+        .on('success', function(file) {
+          // successfully uploaded
+          dropzone.removeFile(file);
+
+          var attachment = $.parseJSON(file.xhr.response).attachment;
+          var li = $('<li>').appendTo($('ul.attachment-list'));
+
+          $('<input type="hidden" name="attachments">')
+            .val(attachment.id)
+            .appendTo(li);
+
+          $('<img class="thumbnail attachment">')
+            .attr('src', attachment.thumbnail_url)
+            .data('url', attachment.url)
+            .data('size', attachment.size)
+            .data('download-url', attachment.download_url)
+            .appendTo(li)
+            .click();
+        });
 
       // show the first attachment, if any
-      $('.attachment-list .attachment').first().trigger('click');
+      $('.attachment-list .attachment').first().click();
     };
 
     self.setAuthor = function(author) {

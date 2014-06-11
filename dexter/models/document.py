@@ -100,6 +100,7 @@ class Document(db.Model):
     topic       = relationship("Topic")
     document_type = relationship("DocumentType")
     origin      = relationship("Location")
+    attachments = relationship("DocumentAttachment", backref="document", cascade='all, delete-orphan', passive_deletes=True)
 
     analysis_nature = relationship("AnalysisNature", lazy=False)
 
@@ -282,6 +283,13 @@ class DocumentForm(Form):
 
     def is_new(self):
         return self._obj is None
+
+
+    def populate_obj(self, obj, attachment_ids):
+        super(DocumentForm, self).populate_obj(obj)
+
+        from . import DocumentAttachment
+        obj.attachments = DocumentAttachment.query.filter(DocumentAttachment.id.in_(attachment_ids)).all()
 
 
 class DocumentType(db.Model):

@@ -14,6 +14,7 @@ from sqlalchemy import (
     )
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy_imageattach.entity import Image, image_attachment
+from sqlalchemy_imageattach.context import current_store
 from werkzeug.utils import secure_filename
 from wand.image import Image as WandImage
 
@@ -24,6 +25,7 @@ import logging
 
 # mimetypes we accept
 MIMETYPES = set("image/png image/jpeg image/gif application/pdf".split())
+PDF = "application/pdf"
 
 
 class DocumentAttachment(db.Model):
@@ -43,6 +45,7 @@ class DocumentAttachment(db.Model):
     id        = Column(Integer, primary_key=True)
 
     filename  = Column(String(256), nullable=False)
+    mimetype  = Column(String(256), nullable=False)
     document_id = Column(Integer, ForeignKey('documents.id'), index=True)
 
     created_by_user_id = Column(Integer, ForeignKey('users.id'), index=True)
@@ -51,9 +54,8 @@ class DocumentAttachment(db.Model):
     updated_at   = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.current_timestamp())
 
     # Associations
-    document    = relationship("Document", backref="attachments", passive_deletes=True)
     created_by  = relationship("User", foreign_keys=[created_by_user_id])
-    image       = image_attachment("AttachmentImage", cascade='all, delete-orphan', passive_delete=True)
+    image       = image_attachment("AttachmentImage", cascade='all, delete-orphan', passive_deletes=True)
 
 
     THUMBNAIL_HEIGHT = 100
@@ -64,8 +66,9 @@ class DocumentAttachment(db.Model):
 
     def set_data(self, data):
         """ Set the data for this attachment from a file-like object. """
-        if self.mimetype == "application/pdf":
-            # TODO: save pdf to s3
+        if self.mimetype == PDF:
+            # save pdf to s3
+            current_store.put_file(data, 'document-attachment', self.id, 0, 0, self.mimetype, False)
 
             # convert to an image for use with thumbnails
             self.log.info("Converting PDF to image")
@@ -91,7 +94,9 @@ class DocumentAttachment(db.Model):
 
     @property
     def download_url(self):
-        # TODO: handle pdfs
+        if self.mimetype == PDF:
+            return current_store.get_url('document-attachment', self.id, 0, 0, self.mimetype)
+
         return self.image.original.locate()
 
 
@@ -103,6 +108,7 @@ class DocumentAttachment(db.Model):
         return {
             'id': self.id,
             'url': self.preview_url,
+            'thumbnail_url': self.thumbnail_url,
             'download_url': self.download_url,
             'size': self.size_str(),
         }

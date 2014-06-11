@@ -1,6 +1,10 @@
 %%inherit(file="../layout.haml")
 %%namespace(file="../bootstrap_wtf.haml", **{'import': '*'})
 
+%%block(name="extra_header_tags")
+  - for url in webassets('maps-css'):
+    %link(rel="stylesheet", href=url)
+
 %%block(name='extra_javascript')
   - for url in webassets('documents'):
     %script(src=url)
@@ -38,7 +42,7 @@
       %form(action=url_for('new_article'), method='POST')
         = form.csrf_token
 
-        %fieldset
+        %fieldset.document-container
           %legend Or by typing it in
 
           %%include(file="form.haml")
