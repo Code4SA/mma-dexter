@@ -186,6 +186,7 @@
           acceptedFiles: 'image/png,image/jpeg,image/gif,application/pdf',
           addRemoveLinks: true,
           headers: {"X-CSRF-Token": $('meta[name=csrf-token]').attr('content')},
+          dictDefaultMessage: "Click or drag-and-drop to add an attachment",
         });
       self.dropzone
         .on('success', self.attachmentUploaded)

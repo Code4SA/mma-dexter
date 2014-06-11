@@ -247,6 +247,8 @@ form#edit-person {
 }
 
 .dropzone {
+  border: 5px dashed rgba(0, 0, 0, 0.2);
+
   i.fa-spinner {
     position: absolute;
     top: 25px;
@@ -257,6 +259,14 @@ form#edit-person {
   .dz-error i.fa-spinner,
   .dz-success i.fa-spinner {
     display: none;
+  }
+
+  &.dz-drag-hover {
+    background-color: #d9edf7;
+  }
+
+  .dz-message {
+    text-align: center;
   }
 }
 
