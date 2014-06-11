@@ -30,8 +30,7 @@
       // attachment viewer
       $('.attachment-list')
         .on('click', '.show-text', self.showArticleText)
-        .on('click', '.attachment', self.showAttachment)
-        .on('click', '.delete', self.deleteAttachment);
+        .on('click', '.attachment', self.showAttachment);
 
       return self;
     };
@@ -68,21 +67,6 @@
       map.setMaxBounds(bounds);
       map.setView([0, 0], map.getMaxZoom()-1);
       L.imageOverlay($attachment.data('url'), bounds).addTo(map);
-    };
-
-    self.deleteAttachment = function(e) {
-      e.preventDefault();
-
-      if (confirm('Really delete this attachment?')) {
-        $(this).closest('li').remove();
-
-        var attachments = $('.attachment-list li:not(.template) .attachment');
-        if (attachments.length > 0) {
-          attachments.first().click();
-        } else {
-          $('.article-attachments').hide();
-        }
-      }
     };
 
     self.getAttachmentMap = function() {
@@ -122,8 +106,10 @@
         return;
       }
 
+      self.$form = $('#edit-document form');
+
       $('button.submit').on('click', function(e) {
-        $('#edit-document form').submit();
+        self.$form.submit();
       });
 
       // author name autocomplete
@@ -207,11 +193,18 @@
 
       // show the first attachment, if any
       $('.attachment-list li:not(.template) .attachment').first().click();
+
+      // attachment viewer
+      $('.attachment-list')
+        .on('click', '.delete', self.deleteAttachment);
     };
 
     self.attachmentUploaded = function(file) {
       // successfully uploaded
       self.dropzone.removeFile(file);
+
+      // the form is now dirty
+      self.$form[0].dirty = true;
 
       var attachment = $.parseJSON(file.xhr.response).attachment;
       var li = $('.attachment-list .template')
@@ -231,7 +224,25 @@
         .data('url', attachment.url)
         .data('size', attachment.size)
         .click();
-    }
+    };
+
+    self.deleteAttachment = function(e) {
+      e.preventDefault();
+
+      // the form is now dirty
+      self.$form[0].dirty = true;
+
+      if (confirm('Really delete this attachment?')) {
+        $(this).closest('li').remove();
+
+        var attachments = $('.attachment-list li:not(.template) .attachment');
+        if (attachments.length > 0) {
+          attachments.first().click();
+        } else {
+          $('.article-attachments').hide();
+        }
+      }
+    };
 
     self.setAuthor = function(author) {
       var info = [author.author_type];
