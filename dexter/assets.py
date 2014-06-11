@@ -71,6 +71,7 @@ assets.register('documents',
         maps,
         'js/dropzone-3.10.2.min.js',
         'js/document.js',
+        'js/analysis.js',
         output='js/documents.%(version)s.js'))
 
 # Helper that is available in templates, and returns the
