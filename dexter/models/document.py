@@ -288,8 +288,11 @@ class DocumentForm(Form):
     def populate_obj(self, obj, attachment_ids):
         super(DocumentForm, self).populate_obj(obj)
 
-        from . import DocumentAttachment
-        obj.attachments = DocumentAttachment.query.filter(DocumentAttachment.id.in_(attachment_ids)).all()
+        if attachment_ids:
+            from . import DocumentAttachment
+            obj.attachments = DocumentAttachment.query.filter(DocumentAttachment.id.in_(attachment_ids)).all()
+        else:
+            obj.attachments = []
 
 
 class DocumentType(db.Model):
