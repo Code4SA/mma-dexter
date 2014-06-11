@@ -56,10 +56,10 @@ class DocumentAttachment(db.Model):
     image       = image_attachment("AttachmentImage")
 
 
-    THUMBNAIL_WIDTH = 100
+    THUMBNAIL_HEIGHT = 100
 
     def generate_thumbnails(self):
-        self.image.generate_thumbnail(width=self.THUMBNAIL_WIDTH)
+        self.image.generate_thumbnail(height=self.THUMBNAIL_HEIGHT)
 
 
     def set_data(self, data):
@@ -83,7 +83,7 @@ class DocumentAttachment(db.Model):
 
     @property
     def thumbnail_url(self):
-        return self.image.find_thumbnail(width=self.THUMBNAIL_WIDTH).locate()
+        return self.image.find_thumbnail(height=self.THUMBNAIL_HEIGHT).locate()
 
     @property
     def preview_url(self):
@@ -93,6 +93,19 @@ class DocumentAttachment(db.Model):
     def download_url(self):
         # TODO: handle pdfs
         return self.image.original.locate()
+
+
+    def size_str(self):
+        return '%d,%d' % self.image.original.size
+
+
+    def to_json(self):
+        return {
+            'id': self.id,
+            'url': self.preview_url,
+            'download_url': self.download_url,
+            'size': self.size_str(),
+        }
 
 
     @classmethod

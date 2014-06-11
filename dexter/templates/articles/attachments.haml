@@ -1,0 +1,17 @@
+%%page(args="editing")
+
+.article-attachments
+  .attachment-viewer
+    #attachment-slippy
+
+  - if editing or document.attachments:
+    %ul.attachment-list.well
+      - if not editing:
+        %li
+          .show-text.thumbnail
+            %i.fa.fa-file-text.fa-2x
+            Text
+
+      - for attachment in document.attachments:
+        %li
+          %img.thumbnail.attachment(src=attachment.thumbnail_url, dataUrl=attachment.preview_url, dataSize=attachment.size_str(), dataDownloadUrl=attachment.download_url)

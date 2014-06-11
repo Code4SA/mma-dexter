@@ -298,27 +298,19 @@ def edit_article_analysis_nature(id):
     return redirect(url_for('edit_article_analysis', id=id))
 
 
-@app.route('/articles/<id>/attachments', methods=['POST'])
+@app.route('/articles/attachments', methods=['POST'])
 @login_required
-def create_article_attachment(id):
-    if id == 'new':
-        document = None
-    else:
-        document = Document.query.get_or_404(id)
-        # can this user do this?
-        if not document.can_user_edit(current_user):
-            raise Forbidden()
-
+def create_article_attachment():
     if 'file' in request.files:
         upload = request.files['file']
 
         if not DocumentAttachment.is_acceptable(upload):
             raise NotAcceptable()
 
-        attachment = DocumentAttachment.from_upload(upload, current_user, document)
+        attachment = DocumentAttachment.from_upload(upload, current_user)
         db.session.add(attachment)
         db.session.commit()
 
-        return jsonify({'attachment-id': attachment.id})
+        return jsonify({'attachment': attachment.to_json()})
 
     raise BadRequest("Need a file attachment")

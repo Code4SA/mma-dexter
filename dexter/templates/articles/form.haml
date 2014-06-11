@@ -43,14 +43,15 @@
 
 .url
   = vertical_field(form.url, placeholder='URL')
-= vertical_field(form.summary, placeholder='Summary', maxlength=1024, rows=2)
 
 .row
-  .col-sm-8
+  .col-sm-6
+    = vertical_field(form.summary, placeholder='Summary', maxlength=1024, rows=2)
     = vertical_field(form.text, rows=15, placeholder='The text of the article')
-  .col-sm-4
+  .col-sm-6
     .form-group
       %label Attachments
 
-      .article-attachments
-        .dropzone#dropzone
+      .dropzone#dropzone
+
+      %%include(file="attachments.haml", args="editing=True")

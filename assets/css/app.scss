@@ -125,20 +125,62 @@ form#edit-person {
     border: 1px solid #ddd;
     padding: 10px;
     overflow-y: auto;
+  }
 
-    &.with-attachments {
-      height: 400px;
-    }
+  #attachment-slippy {
+    height: 100%;
+    width: 100%;
+    border: 1px solid #ddd;
   }
 
   .attachment-viewer {
     display: none;
+    height: 480px;
   }
 
-  #attachment-slippy {
-    height: 400px;
-    width: 100%;
-    border: 1px solid #ddd;
+  .dropzone {
+    margin-bottom: 10px;
+  }
+
+  .attachment-list {
+    margin-top: 10px;
+    overflow-x: scroll;
+    padding: 5px;
+
+    li {
+      display: inline-block;
+      list-style: none;
+      padding-left: 5px;
+    }
+
+    .thumbnail {
+      margin-bottom: 0px;
+      cursor: pointer;
+      max-height: 100px;
+    }
+
+    .show-text {
+      display: inline-block;
+      vertical-align: bottom;
+      width: 60px;
+      height: 100px;
+
+      padding-top: 20px;
+      margin-bottom: 5px;
+
+      text-align: center;
+
+      i {
+        display:block;
+        margin-bottom: 10px;
+      }
+    }
+  }
+
+  .with-attachments {
+    .article-text {
+      height: 480px;
+    }
   }
 
   .article-content {

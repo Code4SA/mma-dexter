@@ -28,7 +28,7 @@
         });
 
       // attachment viewer
-      $('.article-attachments')
+      $('.attachment-list')
         .on('click', '.show-text', self.showArticleText)
         .on('click', '.attachment', self.showAttachment);
 
@@ -39,6 +39,7 @@
           zoom: 1,
           center: [0, 0],
           crs: L.CRS.Simple,
+          attributionControl: false,
         });
       }
 
@@ -48,7 +49,7 @@
     self.showArticleText = function(e) {
       e.preventDefault();
       $('.article-content .article-text').show();
-      $('.article-content .attachment-viewer').hide();
+      $('.attachment-viewer').hide();
     }
 
     self.showAttachment = function(e) {
@@ -60,9 +61,9 @@
       map.eachLayer(function(l) { map.removeLayer(l); });
 
       $('.article-content .article-text').hide();
-      $('.article-content .attachment-viewer').show();
+      $('.attachment-viewer').show();
 
-      var size = $attachment.data('preview-size').split(',');
+      var size = $attachment.data('size').split(',');
       var w = size[0],
           h = size[1];
 
@@ -72,7 +73,7 @@
 
       map.setMaxBounds(bounds);
       map.setZoom(map.getMaxZoom()-1);
-      L.imageOverlay($attachment.data('preview-url'), bounds).addTo(map);
+      L.imageOverlay($attachment.data('url'), bounds).addTo(map);
     }
 
     self.onPlacesTabShown = function(e) {
@@ -169,19 +170,19 @@
       });
 
       // dropzone for article attachments
-      var attachmentsUrl = window.location.pathname
-        .replace(/edit$/, "attachments")      // articles/123/attachments
-        .replace(/new$/, "new/attachments");  // articles/new/attachments
-
       var dropzone = new Dropzone("#dropzone", {
-          url: attachmentsUrl,
+          url: '/articles/attachments',
           maxFilesize: 6,
           acceptedFiles: 'image/png,image/jpeg,image/gif,application/pdf',
         });
-      dropzone.on('sending', function(formData) {
-        var csrfToken = $('meta[name=csrf-token]').attr('content');
-        formData.xhr.setRequestHeader('X-CSRF-Token', csrfToken);
-      });
+      dropzone
+        .on('sending', function(formData) {
+          var csrfToken = $('meta[name=csrf-token]').attr('content');
+          formData.xhr.setRequestHeader('X-CSRF-Token', csrfToken);
+        })
+
+      // show the first attachment, if any
+      $('.attachment-list .attachment').first().trigger('click');
     };
 
     self.setAuthor = function(author) {
