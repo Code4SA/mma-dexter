@@ -125,19 +125,25 @@ def edit_article(id):
         return redirect(url_for('show_article', id=id))
 
     form = DocumentForm(obj=doc)
-
     author_form = AuthorForm(prefix='author', csrf_enabled=False, obj=doc.author)
 
     if request.method == 'POST':
         if author_form.validate():
             # link author
             form.author_id.data = author_form.get_or_create_author().id
+
             if form.validate():
                 form.populate_obj(doc)
+
+                attachment_ids = set(x for x in request.form.getlist('attachments'))
+                doc.attachments = [x for x in doc.attachments if str(x.id) in attachment_ids]
+
                 doc.normalise_text()
+
                 db.session.commit()
                 flash('Article updated.')
                 return redirect(url_for('show_article', id=id))
+
     else:
         author_form.person_race_id.data = doc.author.person.race.id if doc.author.person and doc.author.person.race else None
         author_form.person_gender_id.data = doc.author.person.gender.id if doc.author.person and doc.author.person.gender else None

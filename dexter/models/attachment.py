@@ -51,9 +51,9 @@ class DocumentAttachment(db.Model):
     updated_at   = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.current_timestamp())
 
     # Associations
-    document    = relationship("Document", backref="attachments")
+    document    = relationship("Document", backref="attachments", passive_deletes=True)
     created_by  = relationship("User", foreign_keys=[created_by_user_id])
-    image       = image_attachment("AttachmentImage")
+    image       = image_attachment("AttachmentImage", cascade='all, delete-orphan', passive_delete=True)
 
 
     THUMBNAIL_HEIGHT = 100

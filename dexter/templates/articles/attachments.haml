@@ -15,3 +15,5 @@
       - for attachment in document.attachments:
         %li
           %img.thumbnail.attachment(src=attachment.thumbnail_url, dataUrl=attachment.preview_url, dataSize=attachment.size_str(), dataDownloadUrl=attachment.download_url)
+          - if editing:
+            %input(type='hidden', name='attachments', value=attachment.id)
