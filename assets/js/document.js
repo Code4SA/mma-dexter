@@ -185,41 +185,44 @@
       });
 
       // dropzone for article attachments
-      var dropzone = new Dropzone("#dropzone", {
+      self.dropzone = new Dropzone("#dropzone", {
           url: '/articles/attachments',
           maxFilesize: 6,
           acceptedFiles: 'image/png,image/jpeg,image/gif,application/pdf',
           addRemoveLinks: true,
           headers: {"X-CSRF-Token": $('meta[name=csrf-token]').attr('content')},
         });
-      dropzone
-        .on('success', function(file) {
-          // successfully uploaded
-          dropzone.removeFile(file);
-
-          var attachment = $.parseJSON(file.xhr.response).attachment;
-          var li = $('.attachment-list .template')
-            .clone()
-            .removeClass('template')
-            .appendTo($('.attachment-list'));
-
-          $('<input type="hidden" name="attachments">')
-            .val(attachment.id)
-            .appendTo(li);
-
-          $('a.download', li)
-            .attr('href', attachment.download_url);
-
-          $('img', li)
-            .attr('src', attachment.thumbnail_url)
-            .data('url', attachment.url)
-            .data('size', attachment.size)
-            .click();
-        });
+      self.dropzone
+        .on('success', self.attachmentUploaded)
+        .on('addedfile', function(e) { $('#dropzone .dz-preview:last-child').append('<i class="fa fa-spinner fa-spin fa-4x">'); });
 
       // show the first attachment, if any
       $('.attachment-list li:not(.template) .attachment').first().click();
     };
+
+    self.attachmentUploaded = function(file) {
+      // successfully uploaded
+      self.dropzone.removeFile(file);
+
+      var attachment = $.parseJSON(file.xhr.response).attachment;
+      var li = $('.attachment-list .template')
+        .clone()
+        .removeClass('template')
+        .appendTo($('.attachment-list'));
+
+      $('<input type="hidden" name="attachments">')
+        .val(attachment.id)
+        .appendTo(li);
+
+      $('a.download', li)
+        .attr('href', attachment.download_url);
+
+      $('img', li)
+        .attr('src', attachment.thumbnail_url)
+        .data('url', attachment.url)
+        .data('size', attachment.size)
+        .click();
+    }
 
     self.setAuthor = function(author) {
       var info = [author.author_type];

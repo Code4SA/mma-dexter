@@ -241,6 +241,20 @@ form#edit-person {
   }
 }
 
+.dropzone {
+  i.fa-spinner {
+    position: absolute;
+    top: 25px;
+    left: 35px;
+
+  }
+
+  .dz-error i.fa-spinner,
+  .dz-success i.fa-spinner {
+    display: none;
+  }
+}
+
 section.sources {
   .buttons {
     text-align: center;
