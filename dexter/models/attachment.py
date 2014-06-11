@@ -46,7 +46,7 @@ class DocumentAttachment(db.Model):
 
     filename  = Column(String(256), nullable=False)
     mimetype  = Column(String(256), nullable=False)
-    document_id = Column(Integer, ForeignKey('documents.id'), index=True)
+    document_id = Column(Integer, ForeignKey('documents.id', ondelete='CASCADE'), index=True)
 
     created_by_user_id = Column(Integer, ForeignKey('users.id'), index=True)
 
@@ -152,6 +152,6 @@ class AttachmentImage(db.Model, Image):
     id            = Column(Integer, primary_key=True)
     width         = Column('width', Integer)
     height        = Column('height', Integer)
-    attachment_id = Column(Integer, ForeignKey('attachments.id'), index=True)
+    attachment_id = Column(Integer, ForeignKey('attachments.id', ondelete='CASCADE'), index=True)
 
 Index('attachment_images_w_h_id_ix', AttachmentImage.width, AttachmentImage.height, AttachmentImage.attachment_id, unique=True)

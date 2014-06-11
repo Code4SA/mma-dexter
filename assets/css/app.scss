@@ -152,6 +152,12 @@ form#edit-person {
       list-style: none;
       padding-left: 5px;
       position: relative;
+
+      &:hover {
+        .delete {
+          display: inline;
+        }
+      }
     }
 
     .thumbnail {
@@ -164,6 +170,14 @@ form#edit-person {
       position: absolute;
       top: 78px;
       right: 5px;
+    }
+
+    .delete {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      display: none;
+      color: #b92c28;
     }
 
     .show-text {

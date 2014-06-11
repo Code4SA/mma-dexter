@@ -30,7 +30,8 @@
       // attachment viewer
       $('.attachment-list')
         .on('click', '.show-text', self.showArticleText)
-        .on('click', '.attachment', self.showAttachment);
+        .on('click', '.attachment', self.showAttachment)
+        .on('click', '.delete', self.deleteAttachment);
 
       return self;
     };
@@ -64,6 +65,15 @@
       map.setMaxBounds(bounds);
       map.setView([0, 0], map.getMaxZoom()-1);
       L.imageOverlay($attachment.data('url'), bounds).addTo(map);
+    };
+
+    self.deleteAttachment = function(e) {
+      e.preventDefault();
+
+      if (confirm('Really delete this attachment?')) {
+        $(this).closest('li').remove();
+        $('.attachment-list li:not(.template) .attachment').first().click();
+      }
     };
 
     self.getAttachmentMap = function() {
@@ -208,7 +218,7 @@
         });
 
       // show the first attachment, if any
-      $('.attachment-list .attachment').first().click();
+      $('.attachment-list li:not(.template) .attachment').first().click();
     };
 
     self.setAuthor = function(author) {
