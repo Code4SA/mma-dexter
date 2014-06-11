@@ -51,6 +51,9 @@
 
       var map = self.getAttachmentMap();
 
+      // ensure the attachment browser is visible
+      $('.article-attachments').show();
+
       // remove existing layers
       map.eachLayer(function(l) { map.removeLayer(l); });
 
@@ -72,7 +75,13 @@
 
       if (confirm('Really delete this attachment?')) {
         $(this).closest('li').remove();
-        $('.attachment-list li:not(.template) .attachment').first().click();
+
+        var attachments = $('.attachment-list li:not(.template) .attachment');
+        if (attachments.length > 0) {
+          attachments.first().click();
+        } else {
+          $('.article-attachments').hide();
+        }
       }
     };
 

@@ -58,6 +58,11 @@ article, section {
   }
 }
 
+#new-document .article-attachments,
+#edit-document .article-attachments {
+  display: none;
+}
+
 .navbar {
   border-radius: 0px;
 
