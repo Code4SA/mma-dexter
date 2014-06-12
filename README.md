@@ -79,6 +79,8 @@ configuration entries.
 export SQLALCHEMY_DATABASE_URI=mysql://mma:PASSWORD@localhost/mma
 export ALCHEMY_API_KEY=thekey
 export CALAIS_API_KEY=anotherkey
+export AWS_ACCESS_KEY_ID=access-key
+export AWS_SECRET_ACCESS_KEY=secret
 ```
 
 **Note:** DO NOT commit `production-settings.sh` into source control!
