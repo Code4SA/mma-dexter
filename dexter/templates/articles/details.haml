@@ -50,6 +50,9 @@
 %section
   %p.article-summary
     %em&= document.summary
-  .article-text(dataOriginal=document.text.replace("\r", "\n"))
-    = format_paragraphs(document.text)
 
+  .article-content(class_='with-attachments' if document.attachments else 'without-attachments')
+    .article-text(dataOriginal=document.text.replace("\r", "\n"))
+      = format_paragraphs(document.text)
+
+    %%include(file="attachments.haml", args="editing=False")

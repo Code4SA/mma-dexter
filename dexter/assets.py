@@ -19,6 +19,7 @@ assets.register('css',
       'css/daterangepicker-bs3.css',
       'css/select2-3.4.8.css',
       'css/select2-bootstrap-3.4.8.css',
+      'css/dropzone-3.10.2.css',
       Bundle(
         'css/*.scss',
         filters='pyscss',
@@ -68,7 +69,9 @@ assets.register('activity',
 assets.register('documents',
     Bundle(
         maps,
+        'js/dropzone-3.10.2.min.js',
         'js/document.js',
+        'js/analysis.js',
         output='js/documents.%(version)s.js'))
 
 # Helper that is available in templates, and returns the

@@ -1,6 +1,10 @@
 %%inherit(file="../layout.haml")
 %%namespace(file="../bootstrap_wtf.haml", **{'import': '*'})
 
+%%block(name="extra_header_tags")
+  - for url in webassets('maps-css'):
+    %link(rel="stylesheet", href=url)
+
 %%block(name='extra_javascript')
   - for url in webassets('documents'):
     %script(src=url)
@@ -15,7 +19,7 @@
     %section
       %h2 Add a new article
 
-      %form.safedirty(action=url_for('new_article'), method='POST')
+      %form(action=url_for('new_article'), method='POST')
         = form.csrf_token
 
         %fieldset
@@ -35,10 +39,10 @@
 
           %input.btn.btn-success(type='submit', value="Fetch and add article", dataDisableWith='Fetching...')
 
-      %form(action=url_for('new_article'), method='POST')
+      %form.safedirty.new-document(action=url_for('new_article'), method='POST')
         = form.csrf_token
 
-        %fieldset
+        %fieldset.document-container
           %legend Or by typing it in
 
           %%include(file="form.haml")
