@@ -19,7 +19,7 @@
     %section
       %h2 Add a new article
 
-      %form.safedirty(action=url_for('new_article'), method='POST')
+      %form(action=url_for('new_article'), method='POST')
         = form.csrf_token
 
         %fieldset
@@ -39,7 +39,7 @@
 
           %input.btn.btn-success(type='submit', value="Fetch and add article", dataDisableWith='Fetching...')
 
-      %form(action=url_for('new_article'), method='POST')
+      %form.safedirty.new-document(action=url_for('new_article'), method='POST')
         = form.csrf_token
 
         %fieldset.document-container

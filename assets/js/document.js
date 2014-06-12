@@ -106,7 +106,7 @@
         return;
       }
 
-      self.$form = $('#edit-document form');
+      self.$form = $('form.edit-document, form.new-document');
 
       $('button.submit').on('click', function(e) {
         self.$form.submit();
