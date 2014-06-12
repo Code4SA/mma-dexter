@@ -294,7 +294,8 @@ class DocumentForm(Form):
         # force the document attachments to load, so
         # to work around a bug that causes them not
         # to be deleted otherwise
-        x = list(obj.attachments)
+        for x in obj.attachments:
+            x.image.all()
 
         if attachment_ids:
             obj.attachments = DocumentAttachment.query.filter(DocumentAttachment.id.in_(attachment_ids)).all()

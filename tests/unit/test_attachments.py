@@ -48,6 +48,7 @@ class TestAttachments(unittest.TestCase):
             self.assertEqual('image/png', attachment.image.original.mimetype)
 
         doc = Document.query.get(doc.id)
+        x = list(doc.attachments)
         self.assertEqual(1, len(doc.attachments))
         doc.attachments = []
 

@@ -12,7 +12,10 @@ from sqlalchemy import (
     func,
     Index,
     )
+from sqlalchemy.event import listen
 from sqlalchemy.orm import relationship, backref
+from sqlalchemy.orm.session import Session
+
 from sqlalchemy_imageattach.entity import Image, image_attachment
 from sqlalchemy_imageattach.context import current_store
 from werkzeug.utils import secure_filename
@@ -57,8 +60,9 @@ class DocumentAttachment(db.Model):
     created_by  = relationship("User", foreign_keys=[created_by_user_id])
     image       = image_attachment("AttachmentImage")
 
-
     THUMBNAIL_HEIGHT = 100
+
+    _deleted_attachments = set()
 
     def generate_thumbnails(self):
         self.image.generate_thumbnail(height=self.THUMBNAIL_HEIGHT)
@@ -111,6 +115,12 @@ class DocumentAttachment(db.Model):
         return '%d,%d' % self.image.original.size
 
 
+    def delete_file(self):
+        if self.mimetype == PDF:
+            filename = '%d/%s' % (self.id, self.filename)
+            return current_store.delete_file('document-attachment', filename, 0, 0, self.mimetype)
+
+
     def to_json(self):
         return {
             'id': self.id,
@@ -146,6 +156,27 @@ class DocumentAttachment(db.Model):
         attachment.set_data(upload.stream)
 
         return attachment
+
+    @classmethod
+    def _mark_attachment_deleted(cls, mapper, connection, target):
+        cls._deleted_attachments.add(target)
+
+    @classmethod
+    def _session_rollback(cls, session, previous_transaction):
+        cls._deleted_attachments.clear()
+
+    @classmethod
+    def _session_commit(cls, session):
+        if cls._deleted_attachments:
+            for attachment in cls._deleted_attachments:
+                attachment.delete_file()
+
+            cls._deleted_attachments.clear()
+
+
+listen(Session, 'after_soft_rollback', DocumentAttachment._session_rollback)
+listen(Session, 'after_commit', DocumentAttachment._session_commit)
+listen(DocumentAttachment, 'after_delete', DocumentAttachment._mark_attachment_deleted, propagate=True)
         
 
 class AttachmentImage(db.Model, Image):
