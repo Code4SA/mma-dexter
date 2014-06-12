@@ -72,7 +72,8 @@ class DocumentAttachment(db.Model):
                 db.session.flush()
 
             # save pdf to s3
-            current_store.put_file(data, 'document-attachment', self.id, 0, 0, self.mimetype, False)
+            filename = '%d/%s' % (self.id, self.filename)
+            current_store.put_file(data, 'document-attachment', filename, 0, 0, self.mimetype, False)
             data.seek(0)
 
             # convert to an image for use with thumbnails
@@ -100,7 +101,8 @@ class DocumentAttachment(db.Model):
     @property
     def download_url(self):
         if self.mimetype == PDF:
-            return current_store.get_url('document-attachment', self.id, 0, 0, self.mimetype)
+            filename = '%d/%s' % (self.id, self.filename)
+            return current_store.get_url('document-attachment', filename, 0, 0, self.mimetype)
 
         return self.image.original.locate()
 
