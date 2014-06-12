@@ -8,18 +8,23 @@ from sqlalchemy_imageattach.context import (pop_store_context, push_store_contex
 from sqlalchemy_imageattach.stores.fs import HttpExposedFileSystemStore as BaseHttpExposedFileSystemStore
 from sqlalchemy_imageattach.stores.s3 import S3Store as BaseS3Store, DEFAULT_MAX_AGE
 
-from boto.s3.connection import S3Connection, Key, Bucket
+from boto.s3.connection import S3Connection, Key, Bucket, S3ResponseError
 
 log = logging.getLogger(__name__)
 
 pushed = False
+store = None
 
 def setup_attachments(app):
     # max upload size
     patch_request_class(app, 6 * 1024 * 1024)
 
     # attachment store
+    global store
     store = setup_store(app)
+
+    # set for the current thread, useful for debugging
+    push_store_context(store)
 
     # link attachment store implicitly to the request chain
     @app.before_request
@@ -34,6 +39,8 @@ def setup_attachments(app):
         if pushed:
             pop_store_context()
             pushed = False
+    push_store_context(store)
+
 
 def setup_store(app):
     # setup the file storage for image attachments
@@ -107,7 +114,10 @@ class S3Store(BaseS3Store):
 
     def delete_file(self, *args, **kwargs):
         key = self.get_key_obj(*args, **kwargs)
-        key.delete()
+        try:
+            key.delete()
+        except S3ResponseError as e:
+            self.logger.warn("Error deleting %s from S3" % key, exc_info=e)
 
     def upload_file(self, key, data, content_type, rrs):
         headers = {

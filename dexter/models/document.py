@@ -100,7 +100,7 @@ class Document(db.Model):
     topic       = relationship("Topic")
     document_type = relationship("DocumentType")
     origin      = relationship("Location")
-    attachments = relationship("DocumentAttachment", backref="document", cascade='all, delete-orphan', passive_deletes=True)
+    attachments = relationship("DocumentAttachment", backref="document", cascade='all, delete-orphan')
 
     analysis_nature = relationship("AnalysisNature", lazy=False)
 
@@ -288,8 +288,15 @@ class DocumentForm(Form):
     def populate_obj(self, obj, attachment_ids):
         super(DocumentForm, self).populate_obj(obj)
 
+        from . import DocumentAttachment
+
+        # HACK
+        # force the document attachments to load, so
+        # to work around a bug that causes them not
+        # to be deleted otherwise
+        x = list(obj.attachments)
+
         if attachment_ids:
-            from . import DocumentAttachment
             obj.attachments = DocumentAttachment.query.filter(DocumentAttachment.id.in_(attachment_ids)).all()
         else:
             obj.attachments = []
