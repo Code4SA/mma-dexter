@@ -19,6 +19,10 @@ class PlacesExtractor(BaseExtractor):
         Go through document entities and see if they match
         a place in South Africa. If it does, link them.
         """
+        if doc.country.code != 'za':
+            self.log.info("Not extracting places for %s" % doc.country)
+            return
+
         self.log.info("Extracting places for %s" % doc)
 
         places_added = 0

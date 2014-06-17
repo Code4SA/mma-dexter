@@ -28,11 +28,12 @@ class ElectionsAnalysisForm(Form):
         from . import Topic, Location, Issue
 
         nature = self._obj.analysis_nature
+        country = self._obj.country
 
         self.topic_id.choices = [['', '(none)']] + Topic.for_select_widget(nature.topics)
         self.issues.choices = [(str(issue.id), issue.name) for issue in nature.issues]
         self.origin_location_id.choices = [['', '(none)']] + [
-                [str(loc.id), loc.name] for loc in Location.query.order_by(Location.name).all()]
+                [str(loc.id), loc.name] for loc in country.locations()]
 
 
 class ChildrenAnalysisForm(ElectionsAnalysisForm):

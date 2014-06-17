@@ -45,6 +45,7 @@ class UserData(DataSet):
         first_name = 'User'
         last_name  = 'Smith'
         email = 'user@example.com'
+        country_id = 1
 
 class DocumentData(DataSet):
     class simple:
@@ -57,6 +58,7 @@ class DocumentData(DataSet):
         document_type_id = 1
         author = AuthorData.joe_author
         created_by = UserData.user
+        country_id = 1
 
     class simple2:
         url = 'http://mg.co.za/articles/2012-03-03-bar'
@@ -68,6 +70,7 @@ class DocumentData(DataSet):
         document_type_id = 1
         author = AuthorData.joe_author
         created_by = UserData.user
+        country_id = 1
 
 
 dbfixture = SQLAlchemyFixture(

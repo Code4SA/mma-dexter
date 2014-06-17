@@ -89,6 +89,9 @@ def new_article():
                     doc = Document()
                     form.populate_obj(doc, request.form.getlist('attachments'))
 
+                    db.session.add(doc)
+                    db.session.flush()
+
                     try:
                         proc.process_document(doc)
                     except ProcessingError as e:
@@ -101,6 +104,10 @@ def new_article():
                 doc.created_by = current_user
                 # change analysis default for this user
                 current_user.default_analysis_nature_id = doc.analysis_nature_id
+
+                # enforce a country
+                if doc.country is None:
+                    doc.country = current_user.country
 
             db.session.add(doc)
             db.session.flush()

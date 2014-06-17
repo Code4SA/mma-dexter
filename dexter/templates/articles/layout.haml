@@ -9,6 +9,7 @@
     %script(src=url)
 
 %%block(name='pre_content')
+  - from dexter.helpers import country_flag
   .fixed-header
     .container
       .row
@@ -18,6 +19,7 @@
               %i.article-flag.fa.fa-flag.flag-set(title=document.notes or 'Article has been flagged', dataPlacement='bottom')
             &= document.title
           .url
+            = country_flag(document.country)
             %a(href=document.url, target='_blank')&= document.url
 
         .col-sm-4.text-right
