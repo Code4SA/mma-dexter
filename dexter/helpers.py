@@ -33,7 +33,10 @@ def source_icon(source):
         return 'fa-file-o'
 
 def country_flag(country, **kwargs):
-    return HTML.tag('img',
-            src="/public/images/flags/%s.png" % country.code,
-            title=country.name,
-            **kwargs)
+    if country:
+        return HTML.tag('img',
+                src="/public/images/flags/%s.png" % country.code,
+                title=country.name,
+                **kwargs)
+    else:
+        return None

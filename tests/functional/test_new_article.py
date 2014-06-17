@@ -73,6 +73,7 @@ class TestNewArticle(TestCase):
         f.fields['text'] = 'the article text'
         f.fields['medium_id'] = '1'
         f.fields['document_type_id'] = '1'
+        f.fields['country_id'] = '1'
         f.fields['author-name'] = str(self.fx.EntityData.joe_author.name)
 
         res = f.submit(self.client)
@@ -89,6 +90,7 @@ class TestNewArticle(TestCase):
         f.fields['text'] = 'the article text'
         f.fields['medium_id'] = '1'
         f.fields['document_type_id'] = '1'
+        f.fields['country_id'] = '1'
         f.fields['author-name'] = 'Sue Skosana'
         f.fields['author-person_gender_id'] = '1'
         f.fields['author-person_race_id'] = '1'

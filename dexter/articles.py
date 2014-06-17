@@ -89,6 +89,9 @@ def new_article():
                     doc = Document()
                     form.populate_obj(doc, request.form.getlist('attachments'))
 
+                    db.session.add(doc)
+                    db.session.flush()
+
                     try:
                         proc.process_document(doc)
                     except ProcessingError as e:
