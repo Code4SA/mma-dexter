@@ -45,6 +45,7 @@ class UserData(DataSet):
         first_name = 'User'
         last_name  = 'Smith'
         email = 'user@example.com'
+        country_id = 1
 
 class DocumentData(DataSet):
     class simple:

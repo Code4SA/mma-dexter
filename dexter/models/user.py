@@ -37,11 +37,14 @@ class User(db.Model, UserMixin):
 
     default_analysis_nature_id = Column(Integer, ForeignKey('analysis_natures.id'), default=1)
 
+    country_id  = Column(Integer, ForeignKey('countries.id'), nullable=False)
+
     created_at   = Column(DateTime(timezone=True), index=True, unique=False, nullable=False, server_default=func.now())
     updated_at   = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.current_timestamp())
 
     # associations
     default_analysis_nature = relationship("AnalysisNature")
+    country     = relationship("Country")
 
     def get_password(self):
         return None
@@ -92,11 +95,14 @@ class User(db.Model, UserMixin):
 
     @classmethod
     def create_defaults(self):
+        from . import Country
+
         admin_user = User()
         admin_user.first_name = "Admin"
         admin_user.last_name = "Admin"
         admin_user.admin = True
         admin_user.email = "admin@code4sa.org"
+        admin_user.country = Country.query.filter(Country.name == 'South Africa').one()
         admin_user.encrypted_password = sha256_crypt.encrypt('admin')
 
         return [admin_user]

@@ -17,3 +17,4 @@ from .analysis_nature import AnalysisNature
 from .children import SourceRole, SourceAge
 from .principle import Principle
 from .attachment import DocumentAttachment, AttachmentImage
+from .country import Country
