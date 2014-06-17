@@ -10,9 +10,9 @@ from flask.ext.sqlalchemy import Pagination
 from sqlalchemy.sql import func, distinct
 from sqlalchemy.orm import joinedload
 
-from dexter.models import db, Document, Entity, Medium, User, DocumentSource, DocumentPlace, DocumentFairness, Fairness, Topic, AnalysisNature
+from dexter.models import *
 from dexter.models.document import DocumentAnalysisProblem
-from dexter.models.user import default_analysis_nature_id
+from dexter.models.user import default_analysis_nature_id, default_country_id
 
 from wtforms import validators, HiddenField, TextField, SelectMultipleField, BooleanField
 from wtforms.fields.html5 import DateField
@@ -135,6 +135,7 @@ class ActivityForm(Form):
     analysis_nature_id = RadioField('Analysis', default=default_analysis_nature_id)
     user_id     = SelectField('User', [validators.Optional()], default='')
     medium_id   = SelectMultipleField('Medium', [validators.Optional()], default='') 
+    country_id  = SelectField('Country', [validators.Optional()], default=default_country_id)
     created_at  = TextField('Added', [validators.Optional()])
     published_at   = TextField('Published', [validators.Optional()])
     problems       = MultiCheckboxField('Article problems', [validators.Optional()], choices=DocumentAnalysisProblem.for_select())
@@ -149,6 +150,7 @@ class ActivityForm(Form):
 
         self.medium_id.choices = [(str(m.id), m.name) for m in Medium.query.order_by(Medium.name).all()]
         self.analysis_nature_id.choices = [[str(n.id), n.name] for n in AnalysisNature.all()]
+        self.country_id.choices = [['', '(any)']] + [[str(c.id), c.name] for c in Country.all()]
 
         # dynamic default
         if not self.created_at.data and not self.published_at.data and not self.user_id.data and not self.medium_id.data:
@@ -208,6 +210,9 @@ class ActivityForm(Form):
 
         if self.user_id.data:
             query = query.filter(Document.created_by_user_id == self.user_id.data)
+
+        if self.country_id.data:
+            query = query.filter(Document.country_id == self.country_id.data)
 
         if self.created_from:
             query = query.filter(Document.created_at >= self.created_from)
