@@ -24,7 +24,7 @@ from sqlalchemy import (
 from sqlalchemy.orm import relationship, backref
 from .support import db
 from .problems import DocumentAnalysisProblem
-from .user import default_analysis_nature_id
+from .user import default_analysis_nature_id, default_country_id
 
 import logging
 
@@ -52,6 +52,8 @@ class Document(db.Model):
     medium_id         = Column(Integer, ForeignKey('mediums.id'), index=True)
     document_type_id  = Column(Integer, ForeignKey('document_types.id'), index=True)
     origin_location_id = Column(Integer, ForeignKey('locations.id'), index=True)
+
+    country_id        = Column(Integer, ForeignKey('countries.id'), index=True)
 
     created_by_user_id = Column(Integer, ForeignKey('users.id'), index=True)
     checked_by_user_id = Column(Integer, ForeignKey('users.id'), index=True)
@@ -100,6 +102,7 @@ class Document(db.Model):
     topic       = relationship("Topic")
     document_type = relationship("DocumentType")
     origin      = relationship("Location")
+    country     = relationship("Country")
     attachments = relationship("DocumentAttachment", backref="document", cascade='all, delete-orphan')
 
     analysis_nature = relationship("AnalysisNature", lazy=False)
@@ -265,6 +268,7 @@ class DocumentForm(Form):
 
     medium_id           = SelectField('Medium', [validators.Required()])
     document_type_id    = SelectField('Type', [validators.Required()], default=1)
+    country_id          = SelectField('Country', [validators.Required()], default=default_country_id)
     author_id           = HiddenField()
 
     analysis_nature_id = RadioField('Analysis', default=default_analysis_nature_id)
@@ -274,11 +278,12 @@ class DocumentForm(Form):
 
         super(DocumentForm, self).__init__(*args, **kwargs)
 
-        from . import Medium, DocumentType, AnalysisNature
+        from . import Medium, DocumentType, AnalysisNature, Country
 
         self.medium_id.choices = [['', '(none)']] + [[str(m.id), m.name] for m in Medium.query.order_by(Medium.name).all()]
         self.document_type_id.choices = [[str(t.id), t.name] for t in DocumentType.query.order_by(DocumentType.name).all()]
         self.analysis_nature_id.choices = [[str(t.id), 'Analyse for %s' % t.name] for t in AnalysisNature.all()]
+        self.country_id.choices = [[str(c.id), c.name] for c in Country.all()]
 
 
     def is_new(self):

@@ -102,6 +102,10 @@ def new_article():
                 # change analysis default for this user
                 current_user.default_analysis_nature_id = doc.analysis_nature_id
 
+                # enforce a country
+                if doc.country is None:
+                    doc.country = current_user.country
+
             db.session.add(doc)
             db.session.flush()
             id = doc.id

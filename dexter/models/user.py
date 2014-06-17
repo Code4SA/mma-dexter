@@ -120,3 +120,11 @@ def default_analysis_nature_id():
         return current_user.default_analysis_nature_id
 
     return 1
+
+def default_country_id():
+    from flask.ext.login import current_user
+
+    if current_user.is_authenticated() and current_user.country_id is not None:
+        return current_user.country_id
+
+    return None
