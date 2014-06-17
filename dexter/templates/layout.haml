@@ -1,5 +1,5 @@
 - from flask.ext.login import current_user
-- from dexter.helpers import country_flag
+- from dexter.helpers import country_flag, body_tag_args
 
 !!! 5
 %html
@@ -21,7 +21,7 @@
 
     %%block(name="extra_header_tags")
 
-  %body
+  %body(**body_tag_args())
     %header
       .navbar.navbar-default._navbar-fixed-top.navbar-inverse
         .container
@@ -86,6 +86,7 @@
         %p#copyright
           %small
             &copy; 2014 MMA
+            %a(href="mailto:dexter@mma.org.za") dexter@mma.org.za
 
     - for url in webassets('js'):
       %script(src=url)

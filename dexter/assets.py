@@ -43,6 +43,7 @@ assets.register('js', Bundle(
     'js/typeahead.bundle-0.10.2.min.js',
     'js/ujs.js',
     'js/app.js',
+    'js/uservoice.js',
     'js/person.js',
     'js/moment.min.js',
     'js/bootstrap-datepicker.js',
