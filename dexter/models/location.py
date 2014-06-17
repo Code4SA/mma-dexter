@@ -6,6 +6,7 @@ from sqlalchemy import (
     String,
     func,
     )
+from sqlalchemy.orm import relationship
 
 from .support import db
 
@@ -17,6 +18,10 @@ class Location(db.Model):
 
     id          = Column(Integer, primary_key=True)
     name        = Column(String(50), index=True, nullable=False, unique=True)
+    country_id  = Column(Integer, ForeignKey('countries.id'), nullable=True, index=True)
+
+    # associations
+    country     = relationship("Country")
 
     def __repr__(self):
         return "<Location id=%s, name=\"%s\">" % (self.id, self.name.encode('utf-8'))

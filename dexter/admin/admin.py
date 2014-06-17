@@ -148,6 +148,9 @@ class IssueView(MyModelView):
 class TopicView(MyModelView):
     column_searchable_list = ('name', 'group')
 
+class LocationView(MyModelView):
+    column_list = ('name', 'country')
+
 class CountryView(MyModelView):
     def scaffold_form(self):
         form_class = super(MyModelView, self).scaffold_form()
@@ -183,7 +186,7 @@ admin_instance.add_view(CountryView(Country, db.session, name="Countries", endpo
 admin_instance.add_view(MediumView(Medium, db.session, name="Media", endpoint="medium", category='Article Information'))
 admin_instance.add_view(MyModelView(DocumentType, db.session, name="Types", endpoint="type", category='Article Information'))
 admin_instance.add_view(TopicView(Topic, db.session, name="Topics", endpoint="topic", category='Article Information'))
-admin_instance.add_view(MyModelView(Location, db.session, name="Origins", endpoint="origins", category='Article Information'))
+admin_instance.add_view(LocationView(Location, db.session, name="Origins", endpoint="origins", category='Article Information'))
 admin_instance.add_view(EntityView(Entity, db.session, name="Entities", endpoint='entity', category='Article Information'))
 admin_instance.add_view(IssueView(Issue, db.session, name="Issues", endpoint="issues", category='Article Information'))
 admin_instance.add_view(MyModelView(Fairness, db.session, name="Bias", endpoint="bias", category='Article Information'))

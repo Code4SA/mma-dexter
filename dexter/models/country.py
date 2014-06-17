@@ -6,6 +6,7 @@ from sqlalchemy import (
     Integer,
     String,
     func,
+    or_
     )
 from sqlalchemy.orm import relationship
 
@@ -32,6 +33,19 @@ class Country(db.Model):
 
     def __repr__(self):
         return "<Country code=%s>" % (self.code,)
+
+    def locations(self):
+        """
+        Locations suitable for this origin.
+        """
+        from . import Location
+        return Location.query\
+            .filter(
+                or_(Location.country_id == self.id,
+                    Location.country_id == None)
+            )\
+            .order_by(Location.name)\
+            .all()
 
     @classmethod
     def all(cls):
