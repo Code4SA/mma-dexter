@@ -1,4 +1,5 @@
 - from flask.ext.login import current_user
+- from dexter.helpers import country_flag
 
 !!! 5
 %html
@@ -51,6 +52,7 @@
               %ul.nav.navbar-nav
                 %li
                   %a.dropdown-toggle(href="#", dataToggle='dropdown')
+                    = country_flag(current_user.country, **{"data-placement": 'bottom'})
                     &= current_user.full_name()
                     %b.caret
                   %ul.dropdown-menu

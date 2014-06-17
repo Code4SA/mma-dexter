@@ -1,6 +1,6 @@
 import re
 
-from webhelpers.html import literal, lit_sub
+from webhelpers.html import literal, lit_sub, HTML
 from webhelpers.html.converters import _universal_newline_rx, format_paragraphs as wh_format_paragraphs
 
 newlines_re = re.compile(R"\n+")
@@ -31,3 +31,9 @@ def source_icon(source):
 
     if source == 'secondary':
         return 'fa-file-o'
+
+def country_flag(country, **kwargs):
+    return HTML.tag('img',
+            src="/public/images/flags/%s.png" % country.code,
+            title=country.name,
+            **kwargs)
