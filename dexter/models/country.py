@@ -27,8 +27,15 @@ class Country(db.Model):
     # http://en.wikipedia.org/wiki/ISO_3166-1 alpha-2 -- basically TLD cods
     code        = Column(String(2), nullable=False)
 
+    def __str__(self):
+        return self.name
+
     def __repr__(self):
         return "<Country code=%s>" % (self.code,)
+
+    @classmethod
+    def all(cls):
+        return cls.query.order_by(Country.name).all()
 
     @classmethod
     def create_defaults(cls):

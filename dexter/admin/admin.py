@@ -21,32 +21,6 @@ class MyModelView(ModelView):
 class MyIndexView(AdminIndexView):
     @expose('/')
     def index(self):
-        document_count = Document.query.count()
-        self._template_args['document_count'] = document_count
-
-        earliest = Document.query.order_by(Document.published_at).first()
-        if earliest:
-            self._template_args['date_from'] = earliest.published_at
-        latest = Document.query.order_by(Document.published_at.desc()).first()
-        if latest:
-            self._template_args['date_to'] = latest.published_at
-
-        group_counts = {}
-        tmp = db.session.query(db.func.count(Entity.id), Entity.group).group_by(Entity.group).all()
-        if tmp:
-            for row in tmp:
-                group_counts[str(row[1])] = int(row[0])
-            self._template_args['group_counts'] = group_counts
-
-        source_count = []
-        tmp = db.session.query(db.func.count(Document.id), Medium.name) \
-            .join(Medium) \
-            .group_by(Document.medium_id) \
-            .order_by(db.func.count(Document.id)) \
-            .limit(5)
-        for row in tmp:
-            source_count.append([str(row[1]), int(row[0])])
-        self._template_args['source_count'] = source_count
         return super(MyIndexView, self).index()
 
 class DocumentView(MyModelView):
@@ -114,6 +88,14 @@ class EntityView(MyModelView):
 
 class MediumView(MyModelView):
     list_template = 'admin/custom_list_template.html'
+    column_list = (
+        'name',
+        'domain',
+        'medium_type',
+        'medium_gruop',
+        'parent_org',
+        'country',
+    )
     column_labels = dict(
         medium_type='Publication Type',
         )
@@ -166,18 +148,23 @@ class IssueView(MyModelView):
 class TopicView(MyModelView):
     column_searchable_list = ('name', 'group')
 
+class CountryView(MyModelView):
+    def scaffold_form(self):
+        form_class = super(MyModelView, self).scaffold_form()
+        del form_class.mediums
+        return form_class
+
 class UserView(MyModelView):
     list_template = 'admin/custom_list_template.html'
     column_list = (
         'first_name',
         'last_name',
         'email',
+        'country',
         'disabled',
         'admin',
     )
-    column_searchable_list = (
-        'email',
-    )
+    column_searchable_list = ('first_name', 'last_name', 'email')
 
     def scaffold_form(self):
         form_class = super(UserView, self).scaffold_form()
@@ -191,6 +178,7 @@ class UserView(MyModelView):
 
 admin_instance = Admin(url='/admin', base_template='admin/custom_master.html', name="Dexter Admin", index_view=MyIndexView())
 admin_instance.add_view(UserView(User, db.session, name="Users", endpoint='user'))
+admin_instance.add_view(CountryView(Country, db.session, name="Countries", endpoint='country'))
 
 admin_instance.add_view(MediumView(Medium, db.session, name="Media", endpoint="medium", category='Article Information'))
 admin_instance.add_view(MyModelView(DocumentType, db.session, name="Types", endpoint="type", category='Article Information'))
