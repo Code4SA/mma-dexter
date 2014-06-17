@@ -259,6 +259,8 @@ class Document(db.Model):
 
 
 class DocumentForm(Form):
+    log = logging.getLogger(__name__)
+
     url         = URLField('URL', [validators.Length(max=200)])
     title       = StringField('Headline', [validators.Required(), validators.Length(max=1024)])
     published_at = DateTimeField('Published/broadcast on', [validators.Required()], format='%Y/%m/%d %H:%M')
