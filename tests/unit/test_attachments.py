@@ -49,6 +49,12 @@ class TestAttachments(unittest.TestCase):
 
         doc = Document.query.get(doc.id)
         x = list(doc.attachments)
+        for att in x:
+          for y in att.image:
+            print 1
+          #print [1 for t in att.image]
+          pass
+
         self.assertEqual(1, len(doc.attachments))
         doc.attachments = []
 

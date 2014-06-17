@@ -176,7 +176,7 @@ class DocumentAttachment(db.Model):
 
 listen(Session, 'after_soft_rollback', DocumentAttachment._session_rollback)
 listen(Session, 'after_commit', DocumentAttachment._session_commit)
-listen(DocumentAttachment, 'after_delete', DocumentAttachment._mark_attachment_deleted, propagate=True)
+listen(DocumentAttachment, 'after_delete', DocumentAttachment._mark_attachment_deleted)
         
 
 class AttachmentImage(db.Model, Image):

@@ -300,7 +300,8 @@ class DocumentForm(Form):
         # to work around a bug that causes them not
         # to be deleted otherwise
         for x in obj.attachments:
-            x.image.all()
+            for img in x.image:
+                self.log.debug(img.id)
 
         if attachment_ids:
             obj.attachments = DocumentAttachment.query.filter(DocumentAttachment.id.in_(attachment_ids)).all()
