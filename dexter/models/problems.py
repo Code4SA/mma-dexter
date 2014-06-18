@@ -50,7 +50,7 @@ class MissingOrigin(DocumentAnalysisProblem):
     long_desc  = 'This document is missing an origin.'
 
     def check(self, doc):
-        return doc.origin is None
+        return doc.origin_location_id is None
 
     def filter_query(self, query):
         from .document import Document
