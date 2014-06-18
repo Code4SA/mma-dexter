@@ -282,7 +282,7 @@ class DocumentForm(Form):
 
         from . import Medium, DocumentType, AnalysisNature, Country
 
-        self.medium_id.choices = [['', '(none)']] + [[str(m.id), m.name] for m in Medium.query.order_by(Medium.name).all()]
+        self.medium_id.choices = [['', '(none)']] + Medium.for_select_widget()
         self.document_type_id.choices = [[str(t.id), t.name] for t in DocumentType.query.order_by(DocumentType.name).all()]
         self.analysis_nature_id.choices = [[str(t.id), 'Analyse for %s' % t.name] for t in AnalysisNature.all()]
         self.country_id.choices = [[str(c.id), c.name] for c in Country.all()]

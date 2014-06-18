@@ -1,3 +1,5 @@
+from itertools import groupby
+
 from sqlalchemy import (
     Column,
     Integer,
@@ -26,6 +28,18 @@ class Medium(db.Model):
 
     def group_name(self):
         return self.medium_group or self.name
+
+    @classmethod
+    def for_select_widget(cls):
+        from . import Country
+        mediums = cls.query.join(Country).all()
+        mediums.sort(key=lambda m: [m.country.name, m.name])
+
+        choices = []
+        for group, items in groupby(mediums, lambda m: m.country.name):
+          choices.append((group, [[str(m.id), m.name] for m in items]))
+
+        return choices
 
     @classmethod
     def create_defaults(cls):
