@@ -143,6 +143,19 @@
         series: [{data: vals}],
       });
 
+      // countries
+      data = charts.charts.countries.values;
+      cats = _.sortBy(_.keys(data), function(k) { return -data[k]; });
+      vals = _.map(cats, function(k) { return data[k]; });
+      $('.chart-countries').highcharts({
+        chart: {type: 'bar'},
+        xAxis: {
+          categories: cats,
+          labels: {step: 1},
+        },
+        series: [{data: vals}],
+      });
+
       // media
       data = charts.charts.media.values;
       types = charts.charts.media.types;

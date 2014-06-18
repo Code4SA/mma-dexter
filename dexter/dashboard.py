@@ -272,6 +272,7 @@ class ActivityChartHelper:
                 'created': self.created_chart(),
                 'published': self.published_chart(),
                 'users': self.users_chart(),
+                'countries': self.countries_chart(),
                 'media': self.media_chart(),
                 'problems': self.problems_chart(),
                 'fairness': self.fairness_chart(),
@@ -315,6 +316,19 @@ class ActivityChartHelper:
 
         return {
             'values': dict((users.get(r[0], 'None'), r[1]) for r in rows)
+        }
+
+    def countries_chart(self):
+        query = db.session.query(
+                  Document.country_id,
+                  func.count(Document.id),
+                )\
+                .group_by(Document.country_id)
+        rows = self.filter(query).all()
+        countries = dict((c.id, c.name) for c in Country.query.filter(Country.id.in_(r[0] for r in rows)))
+
+        return {
+            'values': dict((countries.get(r[0], 'None'), r[1]) for r in rows)
         }
 
     def fairness_chart(self):

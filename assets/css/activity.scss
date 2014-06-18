@@ -1,11 +1,8 @@
 #charts {
-  .chart {
-    height: 200px;
-  }
-
   .chart.chart-created,
-  .chart.chart-published {
-    height: 150px;
+  .chart.chart-published,
+  .chart.chart-countries {
+    height: 130px;
   }
 
   .chart.chart-users {
