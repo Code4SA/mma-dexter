@@ -125,11 +125,17 @@ class AffiliationView(MyModelView):
     column_list = (
         'code',
         'name',
+        'country',
     )
     column_searchable_list = (
         'code',
-        'name'
+        'name',
     )
+    column_sortable_list = (
+        ('code', Affiliation.code),
+        ('name', Affiliation.name),
+    )
+    column_default_sort = 'code'
     page_size = 100
 
 class IssueView(MyModelView):

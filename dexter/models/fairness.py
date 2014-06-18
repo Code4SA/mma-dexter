@@ -6,6 +6,7 @@ from sqlalchemy import (
     Integer,
     String,
     func,
+    or_,
     )
 from sqlalchemy.orm import relationship
 
@@ -132,6 +133,10 @@ class Affiliation(db.Model):
     id        = Column(Integer, primary_key=True)
     code      = Column(String(10), index=True, nullable=False, unique=True)
     name      = Column(String(100), index=True, nullable=False)
+    country_id = Column(Integer, ForeignKey('countries.id'), nullable=True, index=True)
+
+    # associations
+    country   = relationship("Country")
 
     def full_name(self):
         return self.code + ' - ' + self.name
@@ -141,6 +146,18 @@ class Affiliation(db.Model):
 
     def __repr__(self):
         return "<Affiliation code='%s', name='%s'>" % (self.code.encode('utf-8'), self.name.encode('utf-8'))
+
+
+    @classmethod
+    def for_country(cls, country):
+        """ Affiliations for this country. """
+        return cls.query\
+            .filter(
+                or_(cls.country_id == country.id,
+                    cls.country_id == None)
+            )\
+            .order_by(cls.name)\
+            .all()
 
 
     @classmethod

@@ -238,16 +238,24 @@ class DocumentSourceForm(Form):
     def __init__(self, *args, **kwargs):
         super(DocumentSourceForm, self).__init__(*args, **kwargs)
 
-        from . import SourceAge
+        country = None
+        nature = None
+        if self.source:
+            nature = self.source.document.analysis_nature
+            country = self.source.document.country
 
         if 'nature' in kwargs:
             nature = kwargs['nature']
-        elif self.source:
-            nature = self.source.document.analysis_nature
-        else:
-            raise ArgumentError("Missing analysis nature. Either pass in obj or nature")
+        if 'country' in kwargs:
+            country = kwargs['country']
+
+        if nature is None:
+            raise ValueError("Missing analysis nature. Either pass in obj or nature")
+        if country is None:
+            raise ValueError("Missing country. Either pass in obj or country")
 
 
+        from . import SourceAge
         self.source_function_id.choices = [['', '(none)']] + [[str(s.id), s.name] for s in SourceFunction.query.order_by(SourceFunction.name).all()]
         self.source_role_id.choices = [['', '(none)']] + [[str(s.id), s.name] for s in nature.roles]
         self.source_age_id.choices = [['', '(none)']] + [[str(s.id), s.name] for s in SourceAge.query.order_by(SourceAge.id).all()]
@@ -257,9 +265,9 @@ class DocumentSourceForm(Form):
         self.race_id.choices = [['', '? - unknown']] + [[str(r.id), r.name] for r in Race.query.order_by(Race.name).all()]
 
         # because this list is heirarchical, we class 'organisations' as
-        # this with only 0 or two dots
+        # those with only 0 or two dots
         from . import Affiliation
-        orgs = [i for i in Affiliation.query.all() if i.code.count('.') <= 1]
+        orgs = [i for i in Affiliation.for_country(country) if i.code.count('.') <= 1]
         orgs.sort(key=Affiliation.sort_key)
         self.affiliation_id.choices = [['', '(none)']] + [[str(s.id), s.full_name()] for s in orgs]
 

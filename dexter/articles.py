@@ -185,7 +185,7 @@ def edit_article_analysis(id):
     # 'source-new[0]-name'. This form is used as a template for these
     # new source forms.
     new_sources = []
-    new_source_form = DocumentSourceForm(prefix='source-new', csrf_enabled=False, nature=nature)
+    new_source_form = DocumentSourceForm(prefix='source-new', csrf_enabled=False, nature=nature, country=document.country)
 
     # fairness forms
     new_fairness_form = DocumentFairnessForm(prefix='fairness-new', csrf_enabled=False)
@@ -201,7 +201,7 @@ def edit_article_analysis(id):
         # find new sources and build forms for them.
         # the field names are like: source-new[2]-name
         for key in sorted(set('-'.join(key.split('-', 3)[0:2]) for key in request.form.keys() if key.startswith('source-new['))):
-            src_form = DocumentSourceForm(prefix=key, nature=nature)
+            src_form = DocumentSourceForm(prefix=key, nature=nature, country=document.country)
             # skip new sources that have an empty name but aren't anonymous
             if not src_form.named.data or src_form.name.data:
                 new_sources.append(src_form)
