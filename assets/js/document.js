@@ -112,6 +112,10 @@
         self.$form.submit();
       });
 
+      $('#country_id')
+        .on('change', self.countryChanged)
+        .trigger('change');
+
       // author name autocomplete
       self.$authorName = $('#author-name');
       self.$authorWidget = $('.author-widget');
@@ -260,6 +264,44 @@
       // include type of author, race, gender
       $('.author-details', self.$authorWidget).addClass('hidden');
       $('.new-author-details', self.$authorWidget).removeClass('hidden');
+    };
+
+    self.countryChanged = function(e) {
+      // change the list of mediums to show only those for this country
+
+      // build up a list of mediums by country if we don't already have one
+      if (!self.mediums) {
+        self.mediums = {}
+        $('#medium_id optgroup option').each(function(i, opt) {
+          var country = $(opt).parent().attr('label');
+          if (!self.mediums[country])
+            self.mediums[country] = [];
+          self.mediums[country].push({value: opt.value, text: opt.textContent});
+        });
+      }
+
+      var $medium = $('#medium_id'),
+          selected = $medium.val(),
+          selectedValid = false;
+
+      $medium
+        .select2('destroy')
+        .empty()
+        .append($("<option value=''>(none)</option>"));
+
+      var country = $('option:selected', this).text();
+      $.each(self.mediums[country], function(i, opt) {
+        selectedValid = selectedValid || (opt.value == selected);
+
+        $("<option>")
+          .attr('value', opt.value)
+          .text(opt.text)
+          .appendTo($medium);
+      });
+
+      $medium
+        .val(selectedValid ? selected : '')
+        .select2();
     };
   };
 })(jQuery, window);
