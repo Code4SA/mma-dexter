@@ -1,12 +1,12 @@
 #charts {
   .chart.chart-created,
-  .chart.chart-published,
-  .chart.chart-countries {
+  .chart.chart-published {
     height: 130px;
   }
 
+  .chart.chart-countries,
   .chart.chart-users {
-    height: 250px;
+    height: 150px;
   }
 
   .chart.chart-problems {
