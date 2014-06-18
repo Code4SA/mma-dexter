@@ -131,7 +131,7 @@ class Affiliation(db.Model):
     __tablename__ = "affiliations"
 
     id        = Column(Integer, primary_key=True)
-    code      = Column(String(10), index=True, nullable=False, unique=True)
+    code      = Column(String(10), index=True, nullable=False)
     name      = Column(String(100), index=True, nullable=False)
     country_id = Column(Integer, ForeignKey('countries.id'), nullable=True, index=True)
 
@@ -458,12 +458,51 @@ class Affiliation(db.Model):
 13.19 Other corporation not listed
         """
 
+        from . import Country
         affiliations = []
+
+        # by default, everything except top-level items are linked to ZA
+        za = Country.query.filter(Country.code == 'za').one()
+
         for s in text.strip().split("\n"):
             code, name = s.split(" ", 1)
             i = Affiliation()
             i.code = code.strip()
             i.name = name.strip()
+            if '.' in i.code:
+              i.country = za
+
+            affiliations.append(i)
+
+        # Zambian entries
+        zm = Country.query.filter(Country.code == 'zm').one()
+        text = """
+2.1 Central
+2.2 Copperbelt
+2.3 Eastern
+2.4 Luapula
+2.5 Lusaka
+2.6 Northern
+2.7 North Western
+2.8 Southern
+2.9 Western
+8.1 Zambia Interfaith Networking Project on HIV and AIDS (ZINGO)
+8.2 Children Disabilities Forum
+8.3 Childcare and Adoption Society
+8.4 Children in Crisis
+8.5 Childrens Christian Foundation
+8.6 Oxfam
+8.7 Amnesty International
+8.8 REPSII
+        """
+
+        for s in text.strip().split("\n"):
+            code, name = s.split(" ", 1)
+            i = Affiliation()
+            i.code = code.strip()
+            i.name = name.strip()
+            i.country = zm
+
             affiliations.append(i)
 
         return affiliations
