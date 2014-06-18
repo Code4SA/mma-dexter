@@ -482,10 +482,11 @@ class Affiliation(db.Model):
 2.3 Eastern
 2.4 Luapula
 2.5 Lusaka
-2.6 Northern
+2.6 Muchinga
 2.7 North Western
-2.8 Southern
-2.9 Western
+2.8 Northern
+2.9 Southern
+2.10 Western
 8.1 Zambia Interfaith Networking Project on HIV and AIDS (ZINGO)
 8.2 Children Disabilities Forum
 8.3 Childcare and Adoption Society
