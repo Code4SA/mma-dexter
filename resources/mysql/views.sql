@@ -39,6 +39,7 @@ create or replace view documents_view as select
   concat(created_user.first_name, ' ', created_user.last_name) as `user_added`,
   concat(analysis_user.first_name, ' ', analysis_user.last_name) as `user_analysis`,
   concat('https://mma-dexter.code4sa.org/articles/', d.id) as `dexter_url`,
+  c.name as `country`,
   d.item_num as `item_num`,
   m.name as `medium`,
   m.medium_type as `medium_type`,
@@ -58,6 +59,7 @@ from
   left join author_types at on a.author_type_id = at.id
   left join users created_user on d.created_by_user_id = created_user.id
   left join users analysis_user on d.checked_by_user_id = analysis_user.id
+  left join countries c on d.country_id = c.id
 ;
 
 -- documents_issues_view:

@@ -168,6 +168,11 @@ class ActivityForm(Form):
         else:
             return None
 
+    def country(self):
+        if self.country_id.data:
+            return Country.query.get(self.country_id.data)
+        return None
+
 
     def get_problems(self):
         return [DocumentAnalysisProblem.lookup(code) for code in self.problems.data]

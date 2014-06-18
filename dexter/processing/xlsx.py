@@ -65,23 +65,27 @@ class XLSXBuilder:
         if self.form.published_to:
             ws.write_datetime('C6', parse(self.form.published_to, yearfirst=True, dayfirst=True), self.formats['date'])
 
-        ws.write('A7', 'medium')
+        ws.write('A7', 'country')
+        if self.form.country():
+            ws.write('B7', self.form.country().name)
+
+        ws.write('A8', 'medium')
         media = self.form.media()
         if media:
-            ws.write('B7', ', '.join(x.name for x in media))
+            ws.write('B8', ', '.join(x.name for x in media))
 
-        ws.write('A8', 'user')
+        ws.write('A9', 'user')
         if self.form.user():
-            ws.write('B8', self.form.user().full_name())
+            ws.write('B9', self.form.user().full_name())
 
-        ws.write('A9', 'problems')
+        ws.write('A10', 'problems')
         if self.form.problems.data:
-            ws.write('B9', ', '.join(p.short_desc for p in self.form.get_problems()))
+            ws.write('B10', ', '.join(p.short_desc for p in self.form.get_problems()))
 
 
-        ws.write('A11', 'Summary', self.formats['bold'])
-        ws.write('A12', 'articles')
-        ws.write('B12', self.filter(Document.query).count())
+        ws.write('A12', 'Summary', self.formats['bold'])
+        ws.write('A13', 'articles')
+        ws.write('B13', self.filter(Document.query).count())
 
     def documents_worksheet(self, wb):
         from dexter.models.views import DocumentsView
