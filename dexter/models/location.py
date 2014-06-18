@@ -5,6 +5,7 @@ from sqlalchemy import (
     Integer,
     String,
     func,
+    or_,
     )
 from sqlalchemy.orm import relationship
 
@@ -25,6 +26,18 @@ class Location(db.Model):
 
     def __repr__(self):
         return "<Location id=%s, name=\"%s\">" % (self.id, self.name.encode('utf-8'))
+
+
+    @classmethod
+    def for_country(cls, country):
+        return cls.query\
+            .filter(
+                or_(cls.country_id == country.id,
+                    cls.country_id == None)
+            )\
+            .order_by(cls.name)\
+            .all()
+
 
     @classmethod
     def create_defaults(cls):
