@@ -42,25 +42,35 @@ class Location(db.Model):
     @classmethod
     def create_defaults(cls):
         text = """
-        International
-        Africa
-        National
-        Regional
-        Gauteng
-        Western Cape
-        KwaZulu-Natal
-        Eastern Cape
-        Limpopo
-        Free State
-        Mpumalanga
-        North West
-        Northern Cape
+        International|
+        Africa|
+        National|
+        Regional|
+        Gauteng|za
+        Western Cape|za
+        KwaZulu-Natal|za
+        Eastern Cape|za
+        Limpopo|za
+        Free State|za
+        Mpumalanga|za
+        North West|za
+        Northern Cape|za
         Unclear (Last Resort)
         """
         locations = []
+        countries = {}
         for s in text.strip().split("\n"):
             loc = Location()
-            loc.name = s.strip()
+
+            parts = s.split("|")
+            loc.name = parts[0].strip()
+
+            if len(parts) > 1:
+                code = parts[1]
+                if not code in countries:
+                    countries[code] = Country.query.filter(Country.code == code).one()
+                loc.country = countries[code]
+
             locations.append(loc)
 
         return locations
