@@ -155,7 +155,7 @@ class TopicView(MyModelView):
     column_searchable_list = ('name', 'group')
 
 class LocationView(MyModelView):
-    column_list = ('name', 'country')
+    column_list = ('name', 'group', 'country')
 
 class CountryView(MyModelView):
     def scaffold_form(self):

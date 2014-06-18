@@ -47,6 +47,7 @@ create or replace view documents_view as select
   if(m.parent_org IS NULL OR m.parent_org = '', m.name, m.parent_org) as `parent_org`,
   t.name as `topic`,
   l.name as `origin`,
+  if(l.group IS NULL or l.group = '', l.name, l.group) as `origin_group`,
   if (a.person_id is null, a.name, ap.name) as `author_name`,
   at.name as `author_type`
 from
