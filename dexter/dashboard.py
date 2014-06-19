@@ -173,6 +173,11 @@ class ActivityForm(Form):
             return Country.query.get(self.country_id.data)
         return None
 
+    def analysis_nature(self):
+        if self.analysis_nature_id.data:
+            return AnalysisNature.query.get(self.analysis_nature_id.data)
+        return None
+
 
     def get_problems(self):
         return [DocumentAnalysisProblem.lookup(code) for code in self.problems.data]
