@@ -49,9 +49,11 @@ create or replace view documents_view as select
   l.name as `origin`,
   if(l.group IS NULL or l.group = '', l.name, l.group) as `origin_group`,
   if (a.person_id is null, a.name, ap.name) as `author_name`,
-  at.name as `author_type`
+  at.name as `author_type`,
+  an.name as `analysis_nature`
 from
   documents d
+  inner join analysis_natures an on d.analysis_nature_id = an.id
   left join mediums m on d.medium_id = m.id
   left join topics t on d.topic_id = t.id
   left join locations l on d.origin_location_id = l.id
