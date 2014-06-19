@@ -4,16 +4,20 @@
 --   aggregate all information on document sources
 create or replace view document_sources_view as
 select
+  ds.source_type as `source_type`,
   if(ds.unnamed = 1, '(unnamed)', if(p.id is not null, p.name, ds.name)) as `source_name`,
   if(gender_person.id is not null, gender_person.name, gender_unnamed.name) as `gender`,
   if(race_person.id is not null, race_person.name, race_unnamed.name) as `race`,
+  sa.name as `source_age`,
   a.name as `affiliation`,
   a.code as `affiliation_code`,
   -- affiliation parent
   ap.name as `affiliation_group`,
   ap.code as `affiliation_group_code`,
   sf.name as `function`,
+  sr.name as `role`,
   ds.quoted as `quoted`,
+  ds.photographed as `photographed`,
   ds.doc_id as `document_id`,
   ds.id as `document_source_id`
 from
@@ -25,6 +29,8 @@ from
   left join races race_person on p.race_id = race_person.id
   left join races race_unnamed on ds.unnamed_race_id = race_unnamed.id
   left join source_functions sf on ds.source_function_id = sf.id
+  left join source_roles sr on ds.source_role_id = sr.id
+  left join source_ages sa on ds.source_age_id = sa.id
   left join affiliations ap on ap.code = substring_index(a.code, '.', 1)
 ;
 
