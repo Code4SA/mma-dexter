@@ -6,7 +6,7 @@ from datetime import datetime
 from dateutil.parser import parse
 
 from .bias import BiasCalculator
-from ..models import Document, db
+from ..models import Document, db, AnalysisNature
 
 class XLSXBuilder:
     def __init__(self, form):
@@ -32,7 +32,11 @@ class XLSXBuilder:
         self.sources_worksheet(workbook)
         self.bias_worksheet(workbook)
         self.fairness_worksheet(workbook)
-        self.principles_worksheet(workbook)
+
+        if self.form.analysis_nature() == AnalysisNature.CHILDREN:
+            self.children_worksheet(workbook)
+            self.principles_worksheet(workbook)
+
         self.places_worksheet(workbook)
         self.everything_worksheet(workbook)
 
@@ -143,6 +147,21 @@ class XLSXBuilder:
                     .join(Document)\
                     .join(DocumentPrinciplesView)).all()
         self.write_table(ws, 'Principles', rows)
+
+    def children_worksheet(self, wb):
+        from dexter.models.views import DocumentsView, DocumentChildrenView
+
+        ws = wb.add_worksheet('children')
+
+        tables = OrderedDict()
+        tables['doc'] = DocumentsView
+        tables['children'] = DocumentChildrenView
+
+        rows = self.filter(db.session\
+                    .query(*self.merge_views(tables, ['document_id']))\
+                    .join(Document)\
+                    .join(DocumentChildrenView)).all()
+        self.write_table(ws, 'Children', rows)
 
     def places_worksheet(self, wb):
         from dexter.models.views import DocumentsView, DocumentPlacesView

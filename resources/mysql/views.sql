@@ -137,3 +137,26 @@ from
 where
   dp.relevant = 1
 ;
+
+
+-- documents_children_view:
+--   child-focused document analysis
+create or replace view documents_children_view as
+select
+  d.id as `document_id`,
+  ifnull(d.child_focus, 'unknown') as `child_focused`,
+  d.quality_basic_context as `basic_context`,
+  d.quality_causes as `causes_mentioned`,
+  d.quality_consequences as `consequences_mentioned`,
+  d.quality_solutions as `solutions_offerede`,
+  d.quality_policies as `relevant_policies`,
+  d.quality_self_help as `self_help_offered`,
+  d.abuse_source as `secondary_victim_source`,
+  d.abuse_identified as `secondary_victim_identified`,
+  d.abuse_victim as `secondary_victim_victim_of_abuse`
+from
+  documents d
+  inner join analysis_natures an on d.analysis_nature_id = an.id
+where
+  an.name = 'children'
+;
