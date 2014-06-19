@@ -32,6 +32,7 @@ class XLSXBuilder:
         self.sources_worksheet(workbook)
         self.bias_worksheet(workbook)
         self.fairness_worksheet(workbook)
+        self.principles_worksheet(workbook)
         self.places_worksheet(workbook)
         self.everything_worksheet(workbook)
 
@@ -127,6 +128,21 @@ class XLSXBuilder:
                     .join(Document)\
                     .join(DocumentFairnessView)).all()
         self.write_table(ws, 'Fairness', rows)
+
+    def principles_worksheet(self, wb):
+        from dexter.models.views import DocumentsView, DocumentPrinciplesView
+
+        ws = wb.add_worksheet('principles')
+
+        tables = OrderedDict()
+        tables['doc'] = DocumentsView
+        tables['principles'] = DocumentPrinciplesView
+
+        rows = self.filter(db.session\
+                    .query(*self.merge_views(tables, ['document_id']))\
+                    .join(Document)\
+                    .join(DocumentPrinciplesView)).all()
+        self.write_table(ws, 'Principles', rows)
 
     def places_worksheet(self, wb):
         from dexter.models.views import DocumentsView, DocumentPlacesView

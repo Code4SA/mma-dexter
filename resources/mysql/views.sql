@@ -50,7 +50,9 @@ create or replace view documents_view as select
   if(l.group IS NULL or l.group = '', l.name, l.group) as `origin_group`,
   if (a.person_id is null, a.name, ap.name) as `author_name`,
   at.name as `author_type`,
-  an.name as `analysis_nature`
+  an.name as `analysis_nature`,
+  d.flagged as `flagged`,
+  if(d.flagged = 1, d.notes, null) as `flag_notes`
 from
   documents d
   inner join analysis_natures an on d.analysis_nature_id = an.id
@@ -94,6 +96,22 @@ from
   left join fairness f on df.fairness_id = f.id
   left join affiliations af_favour on df.bias_favour_affiliation_id = af_favour.id
   left join affiliations af_oppose on df.bias_oppose_affiliation_id = af_oppose.id
+;
+
+
+-- documents_principles_view:
+--   principles for documents
+create or replace view documents_principles_view as
+select 
+  d.id as `document_id`,
+  ps.name as `principle_supported`,
+  pv.name as `principle_violated`
+from
+  documents d
+  left join principles ps on ps.id = d.principle_supported_id
+  left join principles pv on pv.id = d.principle_violated_id
+where
+  pv.id is not null or ps.id is not null
 ;
 
 
