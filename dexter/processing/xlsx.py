@@ -37,6 +37,7 @@ class XLSXBuilder:
             self.fairness_worksheet(workbook)
 
         if self.form.analysis_nature() == AnalysisNature.CHILDREN:
+            self.child_focus_worksheet(workbook)
             self.child_gender_worksheets(workbook)
             self.child_race_worksheets(workbook)
             self.children_worksheet(workbook)
@@ -169,6 +170,20 @@ class XLSXBuilder:
                     .join(Document)\
                     .join(DocumentChildrenView)).all()
         self.write_table(ws, 'Children', rows)
+
+    def child_focus_worksheet(self, wb):
+        from dexter.models.views import DocumentChildrenView
+
+        query = db.session.query(
+                    DocumentChildrenView.c.child_focused,
+                    func.count(1).label('count')
+                    )\
+                    .join(Document)\
+                    .group_by('child_focused')
+        rows = self.filter(query).all()
+
+        ws = wb.add_worksheet('child_focused')
+        self.write_table(ws, 'ChildFocused', rows)
 
     def child_gender_worksheets(self, wb):
         """
@@ -332,9 +347,10 @@ class XLSXBuilder:
         # decompose rows into a list of values
         data = [[label] + [r[col] for col in col_labels] for label, r in data.iteritems()]
 
-        ws.add_table(0, 0, len(data), len(keys)-1, {
+        ws.add_table(0, 0, len(data)+1, len(keys)-1, {
             'name': name,
-            'columns': [{'header': k} for k in keys],
+            'total_row': True,
+            'columns': [{'header': k, 'total_function': 'sum' if i > 0 else None} for i, k in enumerate(keys)],
             'data': data,
             })
 

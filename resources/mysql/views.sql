@@ -151,7 +151,7 @@ where
 create or replace view documents_children_view as
 select
   d.id as `document_id`,
-  ifnull(d.child_focus, 'unknown') as `child_focused`,
+  case d.child_focus when 1 then 'child-focused' when 0 then 'not-child-focused' end as `child_focused`,
   d.quality_basic_context as `basic_context`,
   d.quality_causes as `causes_mentioned`,
   d.quality_consequences as `consequences_mentioned`,
