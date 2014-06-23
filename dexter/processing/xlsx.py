@@ -37,7 +37,8 @@ class XLSXBuilder:
             self.fairness_worksheet(workbook)
 
         if self.form.analysis_nature() == AnalysisNature.CHILDREN:
-            self.child_genders_worksheets(workbook)
+            self.child_gender_worksheets(workbook)
+            self.child_race_worksheets(workbook)
             self.children_worksheet(workbook)
             self.principles_worksheet(workbook)
 
@@ -169,7 +170,7 @@ class XLSXBuilder:
                     .join(DocumentChildrenView)).all()
         self.write_table(ws, 'Children', rows)
 
-    def child_genders_worksheets(self, wb):
+    def child_gender_worksheets(self, wb):
         """
         For documents with child sources, give various breakdowns by gender of
         those children. All reports are source focused, providing counts
@@ -187,8 +188,8 @@ class XLSXBuilder:
                     .group_by('gender')
         rows = self.filter(query).all()
 
-        ws = wb.add_worksheet('genders')
-        self.write_table(ws, 'Genders', rows)
+        ws = wb.add_worksheet('child_genders')
+        self.write_table(ws, 'ChildGenders', rows)
 
         # topics by gender
         query = db.session.query(
@@ -203,7 +204,7 @@ class XLSXBuilder:
                     .order_by('topic_group')
 
         query = self.filter(query)
-        self.write_summed_table(wb.add_worksheet('gender_topics'), 'GenderTopics', query)
+        self.write_summed_table(wb.add_worksheet('child_gender_topics'), 'ChildGenderTopics', query)
 
         # origins by gender
         query = db.session.query(
@@ -218,7 +219,7 @@ class XLSXBuilder:
                     .order_by('origin')
 
         query = self.filter(query)
-        self.write_summed_table(wb.add_worksheet('gender_origins'), 'GenderOrigins', query)
+        self.write_summed_table(wb.add_worksheet('child_gender_origins'), 'ChildGenderOrigins', query)
 
         # roles by gender
         query = db.session.query(
@@ -232,7 +233,7 @@ class XLSXBuilder:
                     .order_by('role')
 
         query = self.filter(query)
-        self.write_summed_table(wb.add_worksheet('gender_roles'), 'GenderRoles', query)
+        self.write_summed_table(wb.add_worksheet('child_gender_roles'), 'ChildGenderRoles', query)
 
         # ages by gender
         query = db.session.query(
@@ -246,7 +247,7 @@ class XLSXBuilder:
                     .order_by('source_age')
 
         query = self.filter(query)
-        self.write_summed_table(wb.add_worksheet('gender_ages'), 'GenderAges', query)
+        self.write_summed_table(wb.add_worksheet('child_gender_ages'), 'ChildGenderAges', query)
 
         # quoted-vs-non by gender
         query = db.session.query(
@@ -260,7 +261,45 @@ class XLSXBuilder:
                     .order_by('quoted')
 
         query = self.filter(query)
-        self.write_summed_table(wb.add_worksheet('gender_quoted'), 'GenderQuoted', query)
+        self.write_summed_table(wb.add_worksheet('child_gender_quoted'), 'ChildGenderQuoted', query)
+
+
+
+    def child_race_worksheets(self, wb):
+        """
+        For documents with child sources, give various breakdowns by race of
+        those children. All reports are source focused, providing counts
+        of *sources* in each category.
+        """
+        from dexter.models.views import DocumentsView, DocumentSourcesView
+
+        # races
+        query = db.session.query(
+                    DocumentSourcesView.c.race,
+                    func.count(DocumentSourcesView.c.document_source_id).label('count')
+                    )\
+                    .join(Document)\
+                    .filter(DocumentSourcesView.c.source_type == 'child')\
+                    .group_by('race')
+        rows = self.filter(query).all()
+
+        ws = wb.add_worksheet('child_race')
+        self.write_table(ws, 'ChildRace', rows)
+
+        # topics by race
+        query = db.session.query(
+                    DocumentsView.c.topic_group,
+                    DocumentSourcesView.c.race,
+                    func.count(DocumentSourcesView.c.document_source_id).label('count')
+                    )\
+                    .join(Document)\
+                    .join(DocumentSourcesView, DocumentsView.c.document_id == DocumentSourcesView.c.document_id)\
+                    .filter(DocumentSourcesView.c.source_type == 'child')\
+                    .group_by('topic_group', 'race')\
+                    .order_by('topic_group')
+
+        query = self.filter(query)
+        self.write_summed_table(wb.add_worksheet('race_topics'), 'RaceTopics', query)
 
 
     def write_summed_table(self, ws, name, query):
