@@ -43,6 +43,9 @@ class XLSXBuilder:
             self.children_worksheet(workbook)
             self.principles_worksheet(workbook)
 
+        self.origin_worksheet(workbook)
+        self.topic_worksheet(workbook)
+
         self.documents_worksheet(workbook)
         self.sources_worksheet(workbook)
 
@@ -155,6 +158,52 @@ class XLSXBuilder:
                     .join(Document)\
                     .join(DocumentPrinciplesView)).all()
         self.write_table(ws, 'Principles', rows)
+
+    def origin_worksheet(self, wb):
+        from dexter.models.views import DocumentsView
+
+        ws = wb.add_worksheet('origins')
+
+        query = db.session.query(
+                    DocumentsView.c.origin,
+                    func.count(1).label('count')
+                    )\
+                    .join(Document)\
+                    .group_by('origin')
+        rows = self.filter(query).all()
+        self.write_table(ws, 'Origins', rows)
+
+        query = db.session.query(
+                    DocumentsView.c.origin,
+                    func.count(1).label('count')
+                    )\
+                    .join(Document)\
+                    .group_by('origin_group')
+        rows = self.filter(query).all()
+        self.write_table(ws, 'OriginGroups', rows, rownum=0, colnum=4)
+
+    def topic_worksheet(self, wb):
+        from dexter.models.views import DocumentsView
+
+        query = db.session.query(
+                    DocumentsView.c.topic,
+                    func.count(1).label('count')
+                    )\
+                    .join(Document)\
+                    .group_by('topic')
+        rows = self.filter(query).all()
+
+        ws = wb.add_worksheet('topics')
+        self.write_table(ws, 'Topics', rows)
+
+        query = db.session.query(
+                    DocumentsView.c.topic_group,
+                    func.count(1).label('count')
+                    )\
+                    .join(Document)\
+                    .group_by('topic_group')
+        rows = self.filter(query).all()
+        self.write_table(ws, 'TopicGroups', rows, rownum=0, colnum=4)
 
     def children_worksheet(self, wb):
         from dexter.models.views import DocumentsView, DocumentChildrenView
@@ -414,7 +463,7 @@ class XLSXBuilder:
             ws.write(5, col, score.fair)
             ws.write(6, col, score.score)
 
-    def write_table(self, ws, name, rows, keys=None):
+    def write_table(self, ws, name, rows, keys=None, rownum=0, colnum=0):
         if rows:
             if not keys:
                 keys = rows[0].keys()
@@ -425,7 +474,7 @@ class XLSXBuilder:
                     info = row._asdict()
                     data.append([info[k] for k in keys])
 
-            ws.add_table(0, 0, len(rows), len(keys)-1, {
+            ws.add_table(rownum, colnum, rownum+len(rows), colnum+len(keys)-1, {
                 'name': name,
                 'columns': [{'header': k} for k in keys],
                 'data': data,
