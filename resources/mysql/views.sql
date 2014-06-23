@@ -155,7 +155,7 @@ select
   d.quality_basic_context as `basic_context`,
   d.quality_causes as `causes_mentioned`,
   d.quality_consequences as `consequences_mentioned`,
-  d.quality_solutions as `solutions_offerede`,
+  d.quality_solutions as `solutions_offered`,
   d.quality_policies as `relevant_policies`,
   d.quality_self_help as `self_help_offered`,
   d.abuse_source as `secondary_victim_source`,

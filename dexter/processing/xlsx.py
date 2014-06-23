@@ -40,8 +40,9 @@ class XLSXBuilder:
             self.child_focus_worksheet(workbook)
             self.child_gender_worksheets(workbook)
             self.child_race_worksheets(workbook)
-            self.children_worksheet(workbook)
+            self.child_context_worksheet(workbook)
             self.principles_worksheet(workbook)
+            self.children_worksheet(workbook)
 
         self.origin_worksheet(workbook)
         self.topic_worksheet(workbook)
@@ -110,14 +111,14 @@ class XLSXBuilder:
     def documents_worksheet(self, wb):
         from dexter.models.views import DocumentsView
 
-        ws = wb.add_worksheet('documents')
+        ws = wb.add_worksheet('raw_documents')
         docs = self.filter(db.session.query(DocumentsView).join(Document)).all()
         self.write_table(ws, 'Documents', docs)
 
     def sources_worksheet(self, wb):
         from dexter.models.views import DocumentsView, DocumentSourcesView
 
-        ws = wb.add_worksheet('sources')
+        ws = wb.add_worksheet('raw_sources')
 
         tables = OrderedDict()
         tables['doc'] = DocumentsView
@@ -208,7 +209,7 @@ class XLSXBuilder:
     def children_worksheet(self, wb):
         from dexter.models.views import DocumentsView, DocumentChildrenView
 
-        ws = wb.add_worksheet('children')
+        ws = wb.add_worksheet('raw_children')
 
         tables = OrderedDict()
         tables['doc'] = DocumentsView
@@ -338,14 +339,13 @@ class XLSXBuilder:
         from dexter.models.views import DocumentsView, DocumentSourcesView
 
         # races
-        query = db.session.query(
+        rows = self.filter(db.session.query(
                     DocumentSourcesView.c.race,
                     func.count(DocumentSourcesView.c.document_source_id).label('count')
                     )\
                     .join(Document)\
                     .filter(DocumentSourcesView.c.source_type == 'child')\
-                    .group_by('race')
-        rows = self.filter(query).all()
+                    .group_by('race')).all()
 
         ws = wb.add_worksheet('child_race')
         self.write_table(ws, 'ChildRace', rows)
@@ -364,6 +364,33 @@ class XLSXBuilder:
 
         query = self.filter(query)
         self.write_summed_table(wb.add_worksheet('race_topics'), 'RaceTopics', query)
+
+    def child_context_worksheet(self, wb):
+        from dexter.models.views import DocumentChildrenView
+
+        row = self.filter(db.session.query(
+                    func.sum(DocumentChildrenView.c.basic_context).label('basic_content'),
+                    func.sum(DocumentChildrenView.c.causes_mentioned).label('causes_mentioned'),
+                    func.sum(DocumentChildrenView.c.consequences_mentioned).label('consequences_mentioned'),
+                    func.sum(DocumentChildrenView.c.solutions_offered).label('solutions_offered'),
+                    func.sum(DocumentChildrenView.c.relevant_policies).label('relevant_policies'),
+                    func.sum(DocumentChildrenView.c.self_help_offered).label('self_help_offered'),
+                    )\
+                    .join(Document)).one()
+    
+        ws = wb.add_worksheet('child_context')
+
+        d = row._asdict()
+        data = [[k, d[k]] for k in d.keys()]
+        ws.add_table(0, 0, len(data)+1, 1, {
+            'name': 'ChildContext',
+            'total_row': True,
+            'data': data,
+            'columns': [
+                {'header': ''},
+                {'header': 'count', 'total_function': 'sum'}
+            ]
+            })
 
 
     def write_summed_table(self, ws, name, query):
