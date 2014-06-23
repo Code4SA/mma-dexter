@@ -16,8 +16,8 @@ select
   ap.code as `affiliation_group_code`,
   sf.name as `function`,
   sr.name as `role`,
-  ds.quoted as `quoted`,
-  ds.photographed as `photographed`,
+  case ds.quoted when 1 then 'quoted' when 0 then 'not-quoted' end as `quoted`,
+  case ds.photographed when 1 then 'photographed' when 0 then 'not-photographed' end as `photographed`,
   ds.doc_id as `document_id`,
   ds.id as `document_source_id`
 from
@@ -52,6 +52,7 @@ create or replace view documents_view as select
   if(m.medium_group IS NULL OR m.medium_group = '', m.name, m.medium_group) as `medium_group`,
   if(m.parent_org IS NULL OR m.parent_org = '', m.name, m.parent_org) as `parent_org`,
   t.name as `topic`,
+  t.group as `topic_group`,
   l.name as `origin`,
   if(l.group IS NULL or l.group = '', l.name, l.group) as `origin_group`,
   if (a.person_id is null, a.name, ap.name) as `author_name`,

@@ -1,9 +1,12 @@
-from collections import OrderedDict
+from collections import OrderedDict, defaultdict
+from itertools import groupby
 
 import xlsxwriter
 import StringIO
 from datetime import datetime
 from dateutil.parser import parse
+
+from sqlalchemy.sql import func
 
 from .bias import BiasCalculator
 from ..models import Document, db, AnalysisNature
@@ -28,18 +31,21 @@ class XLSXBuilder:
         self.formats['bold'] = workbook.add_format({'bold': True})
 
         self.summary_worksheet(workbook)
-        self.documents_worksheet(workbook)
-        self.sources_worksheet(workbook)
-        self.bias_worksheet(workbook)
-        self.fairness_worksheet(workbook)
+
+        if self.form.analysis_nature() == AnalysisNature.ELECTIONS:
+            self.bias_worksheet(workbook)
+            self.fairness_worksheet(workbook)
 
         if self.form.analysis_nature() == AnalysisNature.CHILDREN:
+            self.child_genders_worksheets(workbook)
             self.children_worksheet(workbook)
             self.principles_worksheet(workbook)
 
+        self.documents_worksheet(workbook)
+        self.sources_worksheet(workbook)
+
         self.places_worksheet(workbook)
         self.everything_worksheet(workbook)
-
 
         workbook.close()
         output.seek(0)
@@ -162,6 +168,137 @@ class XLSXBuilder:
                     .join(Document)\
                     .join(DocumentChildrenView)).all()
         self.write_table(ws, 'Children', rows)
+
+    def child_genders_worksheets(self, wb):
+        """
+        For documents with child sources, give various breakdowns by gender of
+        those children. All reports are source focused, providing counts
+        of *sources* in each category.
+        """
+        from dexter.models.views import DocumentsView, DocumentSourcesView
+
+        # genders
+        query = db.session.query(
+                    DocumentSourcesView.c.gender,
+                    func.count(DocumentSourcesView.c.document_source_id).label('count')
+                    )\
+                    .join(Document)\
+                    .filter(DocumentSourcesView.c.source_type == 'child')\
+                    .group_by('gender')
+        rows = self.filter(query).all()
+
+        ws = wb.add_worksheet('genders')
+        self.write_table(ws, 'Genders', rows)
+
+        # topics by gender
+        query = db.session.query(
+                    DocumentsView.c.topic_group,
+                    DocumentSourcesView.c.gender,
+                    func.count(DocumentSourcesView.c.document_source_id).label('count')
+                    )\
+                    .join(Document)\
+                    .join(DocumentSourcesView, DocumentsView.c.document_id == DocumentSourcesView.c.document_id)\
+                    .filter(DocumentSourcesView.c.source_type == 'child')\
+                    .group_by('topic_group', 'gender')\
+                    .order_by('topic_group')
+
+        query = self.filter(query)
+        self.write_summed_table(wb.add_worksheet('gender_topics'), 'GenderTopics', query)
+
+        # origins by gender
+        query = db.session.query(
+                    DocumentsView.c.origin,
+                    DocumentSourcesView.c.gender,
+                    func.count(DocumentSourcesView.c.document_source_id).label('count')
+                    )\
+                    .join(Document)\
+                    .join(DocumentSourcesView, DocumentsView.c.document_id == DocumentSourcesView.c.document_id)\
+                    .filter(DocumentSourcesView.c.source_type == 'child')\
+                    .group_by('origin', 'gender')\
+                    .order_by('origin')
+
+        query = self.filter(query)
+        self.write_summed_table(wb.add_worksheet('gender_origins'), 'GenderOrigins', query)
+
+        # roles by gender
+        query = db.session.query(
+                    DocumentSourcesView.c.role,
+                    DocumentSourcesView.c.gender,
+                    func.count(DocumentSourcesView.c.document_source_id).label('count')
+                    )\
+                    .join(Document)\
+                    .filter(DocumentSourcesView.c.source_type == 'child')\
+                    .group_by('role', 'gender')\
+                    .order_by('role')
+
+        query = self.filter(query)
+        self.write_summed_table(wb.add_worksheet('gender_roles'), 'GenderRoles', query)
+
+        # ages by gender
+        query = db.session.query(
+                    DocumentSourcesView.c.source_age,
+                    DocumentSourcesView.c.gender,
+                    func.count(DocumentSourcesView.c.document_source_id).label('count')
+                    )\
+                    .join(Document)\
+                    .filter(DocumentSourcesView.c.source_type == 'child')\
+                    .group_by('source_age', 'gender')\
+                    .order_by('source_age')
+
+        query = self.filter(query)
+        self.write_summed_table(wb.add_worksheet('gender_ages'), 'GenderAges', query)
+
+        # quoted-vs-non by gender
+        query = db.session.query(
+                    DocumentSourcesView.c.quoted,
+                    DocumentSourcesView.c.gender,
+                    func.count(DocumentSourcesView.c.document_source_id).label('count')
+                    )\
+                    .join(Document)\
+                    .filter(DocumentSourcesView.c.source_type == 'child')\
+                    .group_by('quoted', 'gender')\
+                    .order_by('quoted')
+
+        query = self.filter(query)
+        self.write_summed_table(wb.add_worksheet('gender_quoted'), 'GenderQuoted', query)
+
+
+    def write_summed_table(self, ws, name, query):
+        """
+        For a query which returns three columns, [A, B, C],
+        write a table that uses A as row labels, B values as column
+        labels, and C as counts for each.
+
+        The query must return rows ordered by the first column.
+        """
+        row_label = query.column_descriptions[0]['name']
+
+        # calculate col labels dynamically
+        col_labels = set()
+
+        data = OrderedDict()
+        for label, rows in groupby(query.all(), lambda r: r[0]):
+            data[label or '(none)'] = row = defaultdict(int)
+
+            for r in rows:
+                col_label = r[1] or '(none)'
+                col_labels.add(col_label)
+                row[col_label] = r[2]
+                row['total'] += r[2]
+
+        # final column labels
+        col_labels = sorted(list(col_labels)) + ['total']
+        keys = [row_label] + col_labels
+
+        # decompose rows into a list of values
+        data = [[label] + [r[col] for col in col_labels] for label, r in data.iteritems()]
+
+        ws.add_table(0, 0, len(data), len(keys)-1, {
+            'name': name,
+            'columns': [{'header': k} for k in keys],
+            'data': data,
+            })
+
 
     def places_worksheet(self, wb):
         from dexter.models.views import DocumentsView, DocumentPlacesView
