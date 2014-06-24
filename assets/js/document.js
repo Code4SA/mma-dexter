@@ -202,6 +202,8 @@
       // attachment viewer
       $('.attachment-list')
         .on('click', '.delete', self.deleteAttachment);
+
+      self.$form[0].dirty = false;
     };
 
     self.attachmentUploaded = function(file) {
