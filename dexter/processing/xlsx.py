@@ -254,10 +254,10 @@ class XLSXBuilder:
         ws = wb.add_worksheet('child_secondary_victimisation')
 
         rows = self.filter(db.session.query(
-                    func.count(DocumentChildrenView.c.secondary_victim_source).label('secondary_victim_source'),
-                    func.count(DocumentChildrenView.c.secondary_victim_identified).label('secondary_victim_identified'),
-                    func.count(DocumentChildrenView.c.secondary_victim_victim_of_abuse).label('secondary_victim_victim_of_abuse'),
-                    func.count(DocumentChildrenView.c.secondary_victim_source_identified_abused).label('secondary_victim_source_identified_abused'),
+                    func.sum(DocumentChildrenView.c.secondary_victim_source == 'secondary-victim-source', type_=Integer).label('secondary_victim_source'),
+                    func.sum(DocumentChildrenView.c.secondary_victim_identified == 'secondary-victim-identified', type_=Integer).label('secondary_victim_identified'),
+                    func.sum(DocumentChildrenView.c.secondary_victim_victim_of_abuse == 'secondary-victim-abused', type_=Integer).label('secondary_victim_victim_of_abuse'),
+                    func.sum(DocumentChildrenView.c.secondary_victim_source_identified_abused == 'secondary-victim-source-identified-abused', type_=Integer).label('secondary_victim_source_identified_abused'),
                     )\
                     .join(Document)).all()
         if not rows:

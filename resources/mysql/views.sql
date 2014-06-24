@@ -160,7 +160,7 @@ select
   case d.quality_self_help when 1 then 'self-help-offered' when 0 then 'no-self-help-offered' end as `self_help_offered`,
   case d.abuse_source when 1 then 'secondary-victim-source' when 0 then 'not-secondary-victim-source' end as `secondary_victim_source`,
   case d.abuse_identified when 1 then 'secondary-victim-identified' when 0 then 'not-secondary-victim-identified' end as `secondary_victim_identified`,
-  case d.abuse_victim when 1 then 'secondary-victim-victim' when 0 then 'not-secondary-victim-victim' end as `secondary_victim_victim_of_abuse`,
+  case d.abuse_victim when 1 then 'secondary-victim-abused' when 0 then 'not-secondary-victim-abused' end as `secondary_victim_victim_of_abuse`,
   -- all three abuse settings are true
   if(d.abuse_source = 1 AND
      d.abuse_identified = 1 AND
