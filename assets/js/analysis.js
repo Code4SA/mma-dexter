@@ -83,8 +83,31 @@
         on('change', '.template select', self.addNewFairness).
         on('click', '.btn.delete', self.deleteFairness).
         on('click', '.btn.undo-delete', self.undoDeleteFairness);
+
+      $('.suggested-sources .source').on('click', self.addSuggestedSource);
     };
-      
+     
+    self.addSuggestedSource = function(e) {
+      e.preventDefault();
+
+      var $row = self.addSource(e);
+      var person = {
+        gender: $(this).data('gender'),
+        race: $(this).data('race'),
+        name: $(this).data('name'),
+        affiliation: '',
+      };
+
+      var $name = $('input[name$="-name"]', $row);
+      $name
+        .typeahead('val', person.name)
+        .typeahead('close');
+
+      $(this).closest('li').hide();
+
+      self.personSourceChosen.call($name, e, person);
+    };
+
     self.addSource = function(e) {
       e.preventDefault();
 
@@ -118,12 +141,13 @@
         .first()
         .prop('checked', true)
         .trigger('change');
+
+      return $row;
     };
 
     self.enablePersonTypeahead = function($row) {
       if (!self.personTypeaheadEnabled) {
         $('.name input', $row)
-          .val('')
           .typeahead({
             minLength: 3,
             highlight: true,
@@ -133,14 +157,14 @@
             displayKey: 'name',
           })
           .on('typeahead:selected', self.personSourceChosen)
-          .on('keydown', function(e) { self.activeTT = this });
+          .on('keydown', function(e) { self.activeTT = this; });
 
         self.personTypeaheadEnabled = true;
       }
     };
 
     self.disablePersonTypeahead = function($row) {
-      $('.name input', $row).typeahead('destroy').val('');
+      $('.name input', $row).typeahead('destroy');
       self.personTypeaheadEnabled = false;
     };
 
@@ -188,6 +212,13 @@
 
       var $row = $(this).closest('tr');
       if ($row.hasClass('new')) {
+        var name = $('input[name$="-name"]', $row).val();
+        $('.suggested-sources .source').each(function(i, src) {
+          if ($(src).data('name') === name) {
+            $(src).closest('li').show();
+          }
+        });
+
         // it's new
         $row.remove();
       } else {

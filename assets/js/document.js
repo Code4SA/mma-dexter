@@ -32,14 +32,106 @@
         .on('click', '.show-text', self.showArticleText)
         .on('click', '.attachment', self.showAttachment);
 
+      // setup the offset adjustments for hilighting portions of the article
+      self.$articleText = $('.document-container .article-text');
+      self.originalText = self.$articleText.data('original') || '';
+
+      $('.document-container .tabs a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
+        // highlight entities for the active pane
+        self.highlightEntities($($(e.target).attr('href')));
+      });
+
+      $('.document-container .offsets [data-offsets]').on('mouseover', function(e) {
+        self.highlightEntities($(this));
+      });
+
+      $('.document-container .offsets [data-offsets]').on('mouseout', function(e) {
+        self.highlightEntities($('.document-container .tab-pane.active'));
+      });
+
+      self.highlightEntities($('.document-container .tab-pane.active'));
+
       return self;
+    };
+
+    self.highlightOffsets = function(offsets) {
+      var text = self.originalText;
+      var accumulatedOffset = 0;
+
+      for (var i = 0; i < offsets.length; i++) {
+        var offset = offsets[i];
+        offset[0] += i * 13;
+
+        text = text.slice(0, offset[0]) +
+          '<mark>' + text.slice(offset[0], offset[0]+offset[1]) + '</mark>' +
+          text.slice(offset[0]+offset[1]);
+      }
+
+      // Do HTML escape and unescape the mark tags. This technically lets
+      // someone inject mark tags, but we're okay with that, it makes this easy.
+      text = self.htmlEscape(text)
+        .replace(/\&lt;mark\&gt;/g, '<mark>')
+        .replace(/\&lt;\/mark&gt;/g, '</mark>')
+        // now add <br> in the same way the server does
+        .replace(/\n+/g, "\n")
+        .replace(/\n/g, "\n")
+        .replace(/\n/g, "</p>");
+
+      self.$articleText.html('<p>' + text + '</p>');
+    };
+
+    self.highlightEntities = function(container) {
+      var $elems;
+
+      if ($(container).data('offsets')) {
+        $elems = $(container);
+      } else {
+        $elems = $('[data-offsets]', $(container));
+      }
+
+      var offsets = $.makeArray($elems.map(function(i, row) { return $(row).data('offsets'); }));
+      if (offsets.length > 0) {
+        offsets = offsets.join(' ').trim().split(/ +/);
+        offsets = $.map(offsets, function(e) {
+          var pair = e.split(':');
+          return [[parseInt(pair[0]), parseInt(pair[1])]];
+        });
+
+        offsets.sort(function(a, b) { return a[0] - b[0]; });
+
+        // coalesce overlapping offsets
+        var coalesced = [offsets[0]];
+
+        for (var i = 1; i < offsets.length; i++) {
+          var prev = coalesced[coalesced.length-1];
+          var curr = offsets[i];
+
+          if (curr[0] <= prev[0] + prev[1]) {
+            prev[1] = Math.max(prev[0] + prev[1], curr[0] + curr[1]) - prev[0];
+          } else {
+            coalesced.push(curr);
+          }
+        }
+
+        offsets = coalesced;
+      }
+
+      self.highlightOffsets(offsets);
+    };
+
+    self.htmlEscape = function(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/"/g, '&quot;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
     };
 
     self.showArticleText = function(e) {
       e.preventDefault();
       $('.article-content .article-text').show();
       $('.attachment-viewer').hide();
-    }
+    };
 
     self.showAttachment = function(e) {
       e.preventDefault();
@@ -202,6 +294,8 @@
       // attachment viewer
       $('.attachment-list')
         .on('click', '.delete', self.deleteAttachment);
+
+      self.$form[0].dirty = false;
     };
 
     self.attachmentUploaded = function(file) {

@@ -244,6 +244,19 @@ form#edit-person {
       font-size: inherit;
     }
   }
+
+  .suggested-sources {
+    ul {
+      list-style: none;
+      margin-bottom: 20px;
+      padding-left: 0px;
+    }
+
+    li {
+      display: inline-block;
+      width: 48%;
+    }
+  }
 }
 
 .dropzone {
@@ -273,6 +286,7 @@ form#edit-person {
 section.sources {
   .buttons {
     text-align: center;
+    margin-bottom: 20px;
   }
 }
 
