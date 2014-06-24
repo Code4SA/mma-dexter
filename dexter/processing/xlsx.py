@@ -7,6 +7,7 @@ from datetime import datetime
 from dateutil.parser import parse
 
 from sqlalchemy.sql import func
+from sqlalchemy.types import Integer
 
 from .bias import BiasCalculator
 from ..models import Document, db, AnalysisNature
@@ -415,12 +416,12 @@ class XLSXBuilder:
         from dexter.models.views import DocumentChildrenView
 
         rows = self.filter(db.session.query(
-                    func.sum(DocumentChildrenView.c.basic_context).label('basic_content'),
-                    func.sum(DocumentChildrenView.c.causes_mentioned).label('causes_mentioned'),
-                    func.sum(DocumentChildrenView.c.consequences_mentioned).label('consequences_mentioned'),
-                    func.sum(DocumentChildrenView.c.solutions_offered).label('solutions_offered'),
-                    func.sum(DocumentChildrenView.c.relevant_policies).label('relevant_policies'),
-                    func.sum(DocumentChildrenView.c.self_help_offered).label('self_help_offered'),
+                    func.sum(DocumentChildrenView.c.basic_context == 'basic-context', type_=Integer).label('basic_context'),
+                    func.sum(DocumentChildrenView.c.causes_mentioned == 'causes-mentioned', type_=Integer).label('causes_mentioned'),
+                    func.sum(DocumentChildrenView.c.consequences_mentioned == 'consequences-mentioned', type_=Integer).label('consequences_mentioned'),
+                    func.sum(DocumentChildrenView.c.solutions_offered == 'solutions-offered', type_=Integer).label('solutions_offered'),
+                    func.sum(DocumentChildrenView.c.relevant_policies == 'relevant-policies', type_=Integer).label('relevant_policies'),
+                    func.sum(DocumentChildrenView.c.self_help_offered == 'self-help-offered', type_=Integer).label('self_help_offered'),
                     )\
                     .join(Document)).all()
         if not rows:
@@ -430,13 +431,12 @@ class XLSXBuilder:
 
         d = rows[0]._asdict()
         data = [[k, d[k]] for k in d.keys()]
-        ws.add_table(0, 0, len(data)+1, 1, {
+        ws.add_table(0, 0, len(data), 1, {
             'name': 'ChildContext',
-            'total_row': True,
             'data': data,
             'columns': [
                 {'header': ''},
-                {'header': 'count', 'total_function': 'sum'}
+                {'header': 'count'},
             ]
             })
 
