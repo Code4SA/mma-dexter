@@ -41,11 +41,11 @@
         self.highlightEntities($($(e.target).attr('href')));
       });
 
-      $('.document-container .table.offsets tr').on('mouseover', function(e) {
+      $('.document-container .offsets [data-offsets]').on('mouseover', function(e) {
         self.highlightEntities($(this));
       });
 
-      $('.document-container .table.offsets tr').on('mouseout', function(e) {
+      $('.document-container .offsets [data-offsets]').on('mouseout', function(e) {
         self.highlightEntities($('.document-container .tab-pane.active'));
       });
 

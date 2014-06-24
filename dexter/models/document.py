@@ -254,6 +254,35 @@ class Document(db.Model):
         return self.analysis_nature.form(obj=self)
 
 
+    def suggested_sources(self):
+        """
+        Return a list of DocumentSource instances for suggested sources for this document.
+        Excludes any suggestions that are already sources.
+        """
+        from . import DocumentSource
+
+        existing_people = set(s.person for s in self.sources if s.person)
+        existing_names = set(s.friendly_name() for s in self.sources if not s.unnamed)
+
+        entities = [e for e in self.entities
+            if e.entity.group == 'person'
+                and (e.entity.person is None or e.entity.person not in existing_people)
+                and (e.entity.name not in existing_names)]
+
+        suggestions = []
+        for e in entities:
+            ds = DocumentSource()
+            ds.document = self
+            ds.source_type = 'person'
+            ds.name = e.entity.name
+            ds.person = e.entity.person
+            ds.entity = e
+            suggestions.append(ds)
+
+        suggestions.sort(key=DocumentSource.friendly_name)
+        return suggestions
+
+
     def __repr__(self):
         return "<Document id=%s, url=%s>" % (self.id, self.url)
 

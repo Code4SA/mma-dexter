@@ -84,9 +84,30 @@
         on('click', '.btn.delete', self.deleteFairness).
         on('click', '.btn.undo-delete', self.undoDeleteFairness);
 
-      self.suggestSources();
+      $('.suggested-sources .source').on('click', self.addSuggestedSource);
     };
-      
+     
+    self.addSuggestedSource = function(e) {
+      e.preventDefault();
+
+      var $row = self.addSource(e);
+      var person = {
+        gender: $(this).data('gender'),
+        race: $(this).data('race'),
+        name: $(this).data('name'),
+        affiliation: '',
+      };
+
+      var $name = $('input[name$="-name"]', $row);
+      $name
+        .typeahead('val', person.name)
+        .typeahead('close');
+
+      $(this).closest('li').hide();
+
+      self.personSourceChosen.call($name, e, person);
+    };
+
     self.addSource = function(e) {
       e.preventDefault();
 
@@ -120,6 +141,8 @@
         .first()
         .prop('checked', true)
         .trigger('change');
+
+      return $row;
     };
 
     self.enablePersonTypeahead = function($row) {
@@ -189,6 +212,13 @@
 
       var $row = $(this).closest('tr');
       if ($row.hasClass('new')) {
+        var name = $('input[name$="-name"]', $row).val();
+        $('.suggested-sources .source').each(function(i, src) {
+          if ($(src).data('name') === name) {
+            $(src).closest('li').show();
+          }
+        });
+
         // it's new
         $row.remove();
       } else {
