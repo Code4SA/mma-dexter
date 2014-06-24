@@ -45,8 +45,8 @@ class XLSXBuilder:
             self.child_race_worksheets(workbook)
             self.child_context_worksheet(workbook)
             self.child_victimisation_worksheet(workbook)
-            self.children_worksheet(workbook)
             self.principles_worksheet(workbook)
+            self.children_worksheet(workbook)
 
         self.documents_worksheet(workbook)
         self.sources_worksheet(workbook)
@@ -148,6 +148,32 @@ class XLSXBuilder:
     def principles_worksheet(self, wb):
         from dexter.models.views import DocumentsView, DocumentPrinciplesView
 
+        ws = wb.add_worksheet('principles')
+
+        # supported
+        rows = self.filter(db.session.query(
+                    DocumentPrinciplesView.c.principle_supported,
+                    func.count(1).label('count')
+                    )\
+                    .join(Document)\
+                    .filter(DocumentPrinciplesView.c.principle_supported != None)\
+                    .group_by('principle_supported')\
+                    ).all()
+        rownum = 3 + self.write_table(ws, 'PrincipleSupported', rows)
+
+        # violated
+        rows = self.filter(db.session.query(
+                    DocumentPrinciplesView.c.principle_violated,
+                    func.count(1).label('count')
+                    )\
+                    .join(Document)\
+                    .filter(DocumentPrinciplesView.c.principle_violated != None)\
+                    .group_by('principle_violated')\
+                    ).all()
+        self.write_table(ws, 'PrincipleViolated', rows, rownum=rownum)
+
+
+        # raw data
         ws = wb.add_worksheet('raw_principles')
 
         tables = OrderedDict()
