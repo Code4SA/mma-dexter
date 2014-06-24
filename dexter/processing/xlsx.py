@@ -32,6 +32,9 @@ class XLSXBuilder:
 
         self.summary_worksheet(workbook)
 
+        self.origin_worksheet(workbook)
+        self.topic_worksheet(workbook)
+
         if self.form.analysis_nature() == AnalysisNature.ELECTIONS:
             self.bias_worksheet(workbook)
             self.fairness_worksheet(workbook)
@@ -41,15 +44,12 @@ class XLSXBuilder:
             self.child_gender_worksheets(workbook)
             self.child_race_worksheets(workbook)
             self.child_context_worksheet(workbook)
-            self.principles_worksheet(workbook)
             self.children_worksheet(workbook)
-
-        self.origin_worksheet(workbook)
-        self.topic_worksheet(workbook)
+            self.principles_worksheet(workbook)
+            #self.victimisation_worksheet(workbook)
 
         self.documents_worksheet(workbook)
         self.sources_worksheet(workbook)
-
         self.places_worksheet(workbook)
         self.everything_worksheet(workbook)
 
@@ -148,7 +148,7 @@ class XLSXBuilder:
     def principles_worksheet(self, wb):
         from dexter.models.views import DocumentsView, DocumentPrinciplesView
 
-        ws = wb.add_worksheet('principles')
+        ws = wb.add_worksheet('raw_principles')
 
         tables = OrderedDict()
         tables['doc'] = DocumentsView
@@ -172,7 +172,7 @@ class XLSXBuilder:
                     .join(Document)\
                     .group_by('origin')
         rows = self.filter(query).all()
-        self.write_table(ws, 'Origins', rows)
+        rownum = 3 + self.write_table(ws, 'Origins', rows)
 
         query = db.session.query(
                     DocumentsView.c.origin,
@@ -181,30 +181,30 @@ class XLSXBuilder:
                     .join(Document)\
                     .group_by('origin_group')
         rows = self.filter(query).all()
-        self.write_table(ws, 'OriginGroups', rows, rownum=0, colnum=4)
+        self.write_table(ws, 'OriginGroups', rows, rownum=rownum)
 
     def topic_worksheet(self, wb):
         from dexter.models.views import DocumentsView
 
-        query = db.session.query(
-                    DocumentsView.c.topic,
-                    func.count(1).label('count')
-                    )\
-                    .join(Document)\
-                    .group_by('topic')
-        rows = self.filter(query).all()
-
         ws = wb.add_worksheet('topics')
-        self.write_table(ws, 'Topics', rows)
 
-        query = db.session.query(
+        # topic groups
+        rows = self.filter(db.session.query(
                     DocumentsView.c.topic_group,
                     func.count(1).label('count')
                     )\
                     .join(Document)\
-                    .group_by('topic_group')
-        rows = self.filter(query).all()
-        self.write_table(ws, 'TopicGroups', rows, rownum=0, colnum=4)
+                    .group_by('topic_group')).all()
+        rownum = 3 + self.write_table(ws, 'TopicGroups', rows)
+
+        # topics
+        rows = self.filter(db.session.query(
+                    DocumentsView.c.topic,
+                    func.count(1).label('count')
+                    )\
+                    .join(Document)\
+                    .group_by('topic')).all()
+        self.write_table(ws, 'Topics', rows, rownum=rownum)
 
     def children_worksheet(self, wb):
         from dexter.models.views import DocumentsView, DocumentChildrenView
@@ -220,6 +220,21 @@ class XLSXBuilder:
                     .join(Document)\
                     .join(DocumentChildrenView)).all()
         self.write_table(ws, 'Children', rows)
+
+    def victimisation_worksheet(self, wb):
+        from dexter.models.views import DocumentSourcesView, DocumentChildrenView
+
+        rows = self.filter(db.session.query(
+                    func.count(DocumentChildrenView.c.secondary_victim_source).label('secondary_victim_source'),
+                    func.count(DocumentChildrenView.c.secondary_victim_identified).label('secondary_victim_identified'),
+                    func.count(DocumentChildrenView.c.secondary_victim_victim_of_abuse).label('secondary_victim_of_abuse'),
+                    )\
+                    .join(Document)\
+                    .filter(DocumentSourcesView.c.source_type == 'child')).all()
+
+        # TODO: and combinations
+
+        self.write_summed_table(wb.add_worksheet('child_gender_quoted'), 'ChildGenderQuoted', query)
 
     def child_focus_worksheet(self, wb):
         from dexter.models.views import DocumentChildrenView
@@ -255,9 +270,10 @@ class XLSXBuilder:
 
         ws = wb.add_worksheet('child_genders')
         self.write_table(ws, 'ChildGenders', rows)
+        rownum = len(rows)+4
 
         # topics by gender
-        query = db.session.query(
+        query = self.filter(db.session.query(
                     DocumentsView.c.topic_group,
                     DocumentSourcesView.c.gender,
                     func.count(DocumentSourcesView.c.document_source_id).label('count')
@@ -266,13 +282,12 @@ class XLSXBuilder:
                     .join(DocumentSourcesView, DocumentsView.c.document_id == DocumentSourcesView.c.document_id)\
                     .filter(DocumentSourcesView.c.source_type == 'child')\
                     .group_by('topic_group', 'gender')\
-                    .order_by('topic_group')
+                    .order_by('topic_group'))
 
-        query = self.filter(query)
-        self.write_summed_table(wb.add_worksheet('child_gender_topics'), 'ChildGenderTopics', query)
+        rownum += 3 + self.write_summed_table(ws, 'ChildGenderTopics', query, rownum=rownum)
 
         # origins by gender
-        query = db.session.query(
+        query = self.filter(db.session.query(
                     DocumentsView.c.origin,
                     DocumentSourcesView.c.gender,
                     func.count(DocumentSourcesView.c.document_source_id).label('count')
@@ -281,13 +296,12 @@ class XLSXBuilder:
                     .join(DocumentSourcesView, DocumentsView.c.document_id == DocumentSourcesView.c.document_id)\
                     .filter(DocumentSourcesView.c.source_type == 'child')\
                     .group_by('origin', 'gender')\
-                    .order_by('origin')
+                    .order_by('origin'))
 
-        query = self.filter(query)
-        self.write_summed_table(wb.add_worksheet('child_gender_origins'), 'ChildGenderOrigins', query)
+        rownum += 3 + self.write_summed_table(ws, 'ChildGenderOrigins', query, rownum=rownum)
 
         # roles by gender
-        query = db.session.query(
+        query = self.filter(db.session.query(
                     DocumentSourcesView.c.role,
                     DocumentSourcesView.c.gender,
                     func.count(DocumentSourcesView.c.document_source_id).label('count')
@@ -295,13 +309,12 @@ class XLSXBuilder:
                     .join(Document)\
                     .filter(DocumentSourcesView.c.source_type == 'child')\
                     .group_by('role', 'gender')\
-                    .order_by('role')
+                    .order_by('role'))
 
-        query = self.filter(query)
-        self.write_summed_table(wb.add_worksheet('child_gender_roles'), 'ChildGenderRoles', query)
+        rownum += 3 + self.write_summed_table(ws, 'ChildGenderRoles', query, rownum=rownum)
 
         # ages by gender
-        query = db.session.query(
+        query = self.filter(db.session.query(
                     DocumentSourcesView.c.source_age,
                     DocumentSourcesView.c.gender,
                     func.count(DocumentSourcesView.c.document_source_id).label('count')
@@ -309,13 +322,12 @@ class XLSXBuilder:
                     .join(Document)\
                     .filter(DocumentSourcesView.c.source_type == 'child')\
                     .group_by('source_age', 'gender')\
-                    .order_by('source_age')
+                    .order_by('source_age'))
 
-        query = self.filter(query)
-        self.write_summed_table(wb.add_worksheet('child_gender_ages'), 'ChildGenderAges', query)
+        rownum += 3 + self.write_summed_table(ws, 'ChildGenderAges', query, rownum=rownum)
 
         # quoted-vs-non by gender
-        query = db.session.query(
+        query = self.filter(db.session.query(
                     DocumentSourcesView.c.quoted,
                     DocumentSourcesView.c.gender,
                     func.count(DocumentSourcesView.c.document_source_id).label('count')
@@ -323,11 +335,9 @@ class XLSXBuilder:
                     .join(Document)\
                     .filter(DocumentSourcesView.c.source_type == 'child')\
                     .group_by('quoted', 'gender')\
-                    .order_by('quoted')
+                    .order_by('quoted'))
 
-        query = self.filter(query)
-        self.write_summed_table(wb.add_worksheet('child_gender_quoted'), 'ChildGenderQuoted', query)
-
+        self.write_summed_table(ws, 'ChildGenderQuoted', query, rownum=rownum)
 
 
     def child_race_worksheets(self, wb):
@@ -347,11 +357,11 @@ class XLSXBuilder:
                     .filter(DocumentSourcesView.c.source_type == 'child')\
                     .group_by('race')).all()
 
-        ws = wb.add_worksheet('child_race')
-        self.write_table(ws, 'ChildRace', rows)
+        ws = wb.add_worksheet('child_races')
+        rownum = 3 + self.write_table(ws, 'ChildRace', rows)
 
         # topics by race
-        query = db.session.query(
+        query = self.filter(db.session.query(
                     DocumentsView.c.topic_group,
                     DocumentSourcesView.c.race,
                     func.count(DocumentSourcesView.c.document_source_id).label('count')
@@ -360,10 +370,9 @@ class XLSXBuilder:
                     .join(DocumentSourcesView, DocumentsView.c.document_id == DocumentSourcesView.c.document_id)\
                     .filter(DocumentSourcesView.c.source_type == 'child')\
                     .group_by('topic_group', 'race')\
-                    .order_by('topic_group')
+                    .order_by('topic_group'))
 
-        query = self.filter(query)
-        self.write_summed_table(wb.add_worksheet('race_topics'), 'RaceTopics', query)
+        self.write_summed_table(ws, 'RaceTopics', query, rownum=rownum)
 
     def child_context_worksheet(self, wb):
         from dexter.models.views import DocumentChildrenView
@@ -393,13 +402,15 @@ class XLSXBuilder:
             })
 
 
-    def write_summed_table(self, ws, name, query):
+    def write_summed_table(self, ws, name, query, rownum=0):
         """
         For a query which returns three columns, [A, B, C],
         write a table that uses A as row labels, B values as column
         labels, and C as counts for each.
 
         The query must return rows ordered by the first column.
+
+        Returns number of rows written, including headers and footers.
         """
         row_label = query.column_descriptions[0]['name']
 
@@ -423,18 +434,21 @@ class XLSXBuilder:
         # decompose rows into a list of values
         data = [[label] + [r[col] for col in col_labels] for label, r in data.iteritems()]
 
-        ws.add_table(0, 0, len(data)+1, len(keys)-1, {
+        ws.add_table(rownum, 0, rownum+len(data)+1, len(keys)-1, {
             'name': name,
             'total_row': True,
             'columns': [{'header': k, 'total_function': 'sum' if i > 0 else None} for i, k in enumerate(keys)],
             'data': data,
             })
 
+        # number of rows plus header and footer
+        return len(data)+2
+
 
     def places_worksheet(self, wb):
         from dexter.models.views import DocumentsView, DocumentPlacesView
 
-        ws = wb.add_worksheet('places')
+        ws = wb.add_worksheet('raw_places')
 
         tables = OrderedDict()
         tables['doc'] = DocumentsView
@@ -449,7 +463,7 @@ class XLSXBuilder:
     def everything_worksheet(self, wb):
         from dexter.models.views import DocumentsView, DocumentSourcesView, DocumentFairnessView, DocumentPlacesView
 
-        ws = wb.add_worksheet('everything')
+        ws = wb.add_worksheet('raw_everything')
 
         tables = OrderedDict()
         tables['doc'] = DocumentsView
@@ -506,6 +520,8 @@ class XLSXBuilder:
                 'columns': [{'header': k} for k in keys],
                 'data': data,
                 })
+
+        return len(rows)+1
 
     def filter(self, query):
         return query.filter(Document.id.in_(self.doc_ids))
