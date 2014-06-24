@@ -16,8 +16,8 @@ select
   ap.code as `affiliation_group_code`,
   sf.name as `function`,
   sr.name as `role`,
-  ds.quoted as `quoted`,
-  ds.photographed as `photographed`,
+  case ds.quoted when 1 then 'quoted' when 0 then 'not-quoted' end as `quoted`,
+  case ds.photographed when 1 then 'photographed' when 0 then 'not-photographed' end as `photographed`,
   ds.doc_id as `document_id`,
   ds.id as `document_source_id`
 from
@@ -52,6 +52,7 @@ create or replace view documents_view as select
   if(m.medium_group IS NULL OR m.medium_group = '', m.name, m.medium_group) as `medium_group`,
   if(m.parent_org IS NULL OR m.parent_org = '', m.name, m.parent_org) as `parent_org`,
   t.name as `topic`,
+  t.group as `topic_group`,
   l.name as `origin`,
   if(l.group IS NULL or l.group = '', l.name, l.group) as `origin_group`,
   if (a.person_id is null, a.name, ap.name) as `author_name`,
@@ -150,16 +151,20 @@ where
 create or replace view documents_children_view as
 select
   d.id as `document_id`,
-  ifnull(d.child_focus, 'unknown') as `child_focused`,
-  d.quality_basic_context as `basic_context`,
-  d.quality_causes as `causes_mentioned`,
-  d.quality_consequences as `consequences_mentioned`,
-  d.quality_solutions as `solutions_offerede`,
-  d.quality_policies as `relevant_policies`,
-  d.quality_self_help as `self_help_offered`,
-  d.abuse_source as `secondary_victim_source`,
-  d.abuse_identified as `secondary_victim_identified`,
-  d.abuse_victim as `secondary_victim_victim_of_abuse`
+  case d.child_focus when 1 then 'child-focused' when 0 then 'not-child-focused' end as `child_focused`,
+  case d.quality_basic_context when 1 then 'basic-context' when 0 then 'no-basic-context' end as `basic_context`,
+  case d.quality_causes when 1 then 'causes-mentioned' when 0 then 'no-causes-mentioned' end as `causes_mentioned`,
+  case d.quality_consequences when 1 then 'consequences-mentioned' when 0 then 'no-consequences-mentioned' end as `consequences_mentioned`,
+  case d.quality_solutions when 1 then 'solutions-offered' when 0 then 'no-solutions-offered' end as `solutions_offered`,
+  case d.quality_policies when 1 then 'relevant-policies' when 0 then 'no-relevant-policies' end as `relevant_policies`,
+  case d.quality_self_help when 1 then 'self-help-offered' when 0 then 'no-self-help-offered' end as `self_help_offered`,
+  case d.abuse_source when 1 then 'secondary-victim-source' when 0 then 'not-secondary-victim-source' end as `secondary_victim_source`,
+  case d.abuse_identified when 1 then 'secondary-victim-identified' when 0 then 'not-secondary-victim-identified' end as `secondary_victim_identified`,
+  case d.abuse_victim when 1 then 'secondary-victim-victim' when 0 then 'not-secondary-victim-victim' end as `secondary_victim_victim_of_abuse`,
+  -- all three abuse settings are true
+  if(d.abuse_source = 1 AND
+     d.abuse_identified = 1 AND
+     d.abuse_victim = 1, 'secondary-victim-source-identified-abused', NULL) as `secondary_victim_source_identified_abused`
 from
   documents d
   inner join analysis_natures an on d.analysis_nature_id = an.id
