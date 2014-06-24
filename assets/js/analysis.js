@@ -83,6 +83,8 @@
         on('change', '.template select', self.addNewFairness).
         on('click', '.btn.delete', self.deleteFairness).
         on('click', '.btn.undo-delete', self.undoDeleteFairness);
+
+      self.suggestSources();
     };
       
     self.addSource = function(e) {
@@ -123,7 +125,6 @@
     self.enablePersonTypeahead = function($row) {
       if (!self.personTypeaheadEnabled) {
         $('.name input', $row)
-          .val('')
           .typeahead({
             minLength: 3,
             highlight: true,
@@ -133,14 +134,14 @@
             displayKey: 'name',
           })
           .on('typeahead:selected', self.personSourceChosen)
-          .on('keydown', function(e) { self.activeTT = this });
+          .on('keydown', function(e) { self.activeTT = this; });
 
         self.personTypeaheadEnabled = true;
       }
     };
 
     self.disablePersonTypeahead = function($row) {
-      $('.name input', $row).typeahead('destroy').val('');
+      $('.name input', $row).typeahead('destroy');
       self.personTypeaheadEnabled = false;
     };
 
