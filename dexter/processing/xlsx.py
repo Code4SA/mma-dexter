@@ -44,9 +44,9 @@ class XLSXBuilder:
             self.child_gender_worksheets(workbook)
             self.child_race_worksheets(workbook)
             self.child_context_worksheet(workbook)
+            self.child_victimisation_worksheet(workbook)
             self.children_worksheet(workbook)
             self.principles_worksheet(workbook)
-            #self.victimisation_worksheet(workbook)
 
         self.documents_worksheet(workbook)
         self.sources_worksheet(workbook)
@@ -221,20 +221,31 @@ class XLSXBuilder:
                     .join(DocumentChildrenView)).all()
         self.write_table(ws, 'Children', rows)
 
-    def victimisation_worksheet(self, wb):
+    def child_victimisation_worksheet(self, wb):
         from dexter.models.views import DocumentSourcesView, DocumentChildrenView
+
+        ws = wb.add_worksheet('child_secondary_victimisation')
 
         rows = self.filter(db.session.query(
                     func.count(DocumentChildrenView.c.secondary_victim_source).label('secondary_victim_source'),
                     func.count(DocumentChildrenView.c.secondary_victim_identified).label('secondary_victim_identified'),
-                    func.count(DocumentChildrenView.c.secondary_victim_victim_of_abuse).label('secondary_victim_of_abuse'),
+                    func.count(DocumentChildrenView.c.secondary_victim_victim_of_abuse).label('secondary_victim_victim_of_abuse'),
+                    func.count(DocumentChildrenView.c.secondary_victim_source_identified_abused).label('secondary_victim_source_identified_abused'),
                     )\
-                    .join(Document)\
-                    .filter(DocumentSourcesView.c.source_type == 'child')).all()
+                    .join(Document)).all()
+        if not rows:
+            return
 
-        # TODO: and combinations
-
-        self.write_summed_table(wb.add_worksheet('child_gender_quoted'), 'ChildGenderQuoted', query)
+        d = rows[0]._asdict()
+        data = [[k, d[k]] for k in sorted(d.keys(), key=len)]
+        ws.add_table(0, 0, len(data), 1, {
+            'name': 'ChildSecondaryVictimisation',
+            'data': data,
+            'columns': [
+                {'header': ''},
+                {'header': 'count'},
+            ]
+            })
 
     def child_focus_worksheet(self, wb):
         from dexter.models.views import DocumentChildrenView
@@ -377,7 +388,7 @@ class XLSXBuilder:
     def child_context_worksheet(self, wb):
         from dexter.models.views import DocumentChildrenView
 
-        row = self.filter(db.session.query(
+        rows = self.filter(db.session.query(
                     func.sum(DocumentChildrenView.c.basic_context).label('basic_content'),
                     func.sum(DocumentChildrenView.c.causes_mentioned).label('causes_mentioned'),
                     func.sum(DocumentChildrenView.c.consequences_mentioned).label('consequences_mentioned'),
@@ -385,11 +396,13 @@ class XLSXBuilder:
                     func.sum(DocumentChildrenView.c.relevant_policies).label('relevant_policies'),
                     func.sum(DocumentChildrenView.c.self_help_offered).label('self_help_offered'),
                     )\
-                    .join(Document)).one()
+                    .join(Document)).all()
+        if not rows:
+            return
     
         ws = wb.add_worksheet('child_context')
 
-        d = row._asdict()
+        d = rows[0]._asdict()
         data = [[k, d[k]] for k in d.keys()]
         ws.add_table(0, 0, len(data)+1, 1, {
             'name': 'ChildContext',
