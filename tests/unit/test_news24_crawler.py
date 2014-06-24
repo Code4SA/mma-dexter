@@ -2070,7 +2070,7 @@ $j("<a href='" + popupUrl + "'></a>" ).fancybox({'width':730,'height':508, 'type
         self.assertEqual(doc.author.name, "SAPA")
         self.assertEqual(doc.medium.name, 'News24')
 
-        self.assertEqual(doc.text, u"\n\nJohannesburg - Two men have been found guilty of murder,\nrape, and robbery, in the South Gauteng High Court sitting in Palm Ridge, The Star reported on Wednesday.\n\nKyle Fredericks and Shinawaaz Ahmento, both aged 21, would\nbe sentenced on Wednesday by acting Judge Louis Vorster for murdering, raping,\nand robbing Tracey-Lee Martins.\n\nIn April last year, the two broke into Martins's home in\nKlipspruit West to rob her so they could get money for drugs, the paper\nreported.\n\nAhmento raped Martins while she was in bed, then robbed her.\nHe was a frequent visitor at the house, the paper reported. \n\nFredericks strangled Martins with socks then threw the socks\ndown a drain.\n\nMartins's son, who was aged 3 at the time, and his\n74-year-old grandmother were also at the house at the time. Ahmento strangled\nthe older woman, who survived the attack, before robbing her as well.\n\nThe two then fled the scene, the paper reported.\n\n\n\n\n\n")
+        self.assertEqual(doc.text, u"\n\nJohannesburg - Two men have been found guilty of murder, rape, and robbery, in the South Gauteng High Court sitting in Palm Ridge, The Star reported on Wednesday.\n\nKyle Fredericks and Shinawaaz Ahmento, both aged 21, would be sentenced on Wednesday by acting Judge Louis Vorster for murdering, raping, and robbing Tracey-Lee Martins.\n\nIn April last year, the two broke into Martins's home in Klipspruit West to rob her so they could get money for drugs, the paper reported.\n\nAhmento raped Martins while she was in bed, then robbed her. He was a frequent visitor at the house, the paper reported. \n\nFredericks strangled Martins with socks then threw the socks down a drain.\n\nMartins's son, who was aged 3 at the time, and his 74-year-old grandmother were also at the house at the time. Ahmento strangled the older woman, who survived the attack, before robbing her as well.\n\nThe two then fled the scene, the paper reported.\n\n\n\n\n\n")
 
     def test_extract_old_article_style(self):
         html = """
@@ -5055,3 +5055,2162 @@ cmsStatsImage.src = "http://stats.24.com/content/image.articleview?rnd=635320294
 
         self.assertEqual(doc.text, u'Johannesburg - Tau SA has lodged an objection against President Jacob Zuma as a candidate in the 7 May general elections, the agriculture union said on Tuesday. \n\nIt sent a letter to Electoral Commission of SA (IEC) chairperson Pansy Tlakula with its objection against Zuma\'s number one position on the list of African National Congress candidates.\n\n"He [Zuma] has been recently implicated in a report of the Public Protector regarding possible irregular expenses on his Nkandla homestead, and the fact that he could have misled Parliament on this issue," Tau SA wrote.\n\n"The full investigation into the so-called weapons scandal [arms inquiry] has not yet been finalised and his name was mentioned in some of the reports on this issue."\n\nThe union said it was of the opinion that an MP had to be free of any suspected involvement in corruption, misappropriation of funds and misleading Parliament.\n\n"For this reason we object to his nomination as a candidate."\n\nThe deadline for objections to National Assembly and provincial legislature candidates nominated by political parties was 17:00 on Tuesday.\n\nIn terms of the Electoral Act, anyone, including the chief electoral officer, may object to the nomination of a candidate.\n\nAn objection can be made on three grounds: If a candidate does not qualify to stand in the election, if the prescribed acceptance of nomination is not signed by the candidate, and if no undertaking signed by the candidate that he/she is bound by the Electoral Code of Conduct is submitted.\n\nThe IEC would consider all objections and inform the objector and the party of its decision by 17:00 on 7 April. It was not clear on Tuesday evening how many objections the IEC had received.\n\nThe Institute for Accountability in Southern Africa has also filed an objection against Zuma\'s nomination. The institute said its objection was lodged ex abundante cautela (from excessive caution) as the ANC was still considering the objection letter and had not yet responded substantively to it.\n\nIn an open letter sent to the IEC the institute includes arguments based on the Public Protector\'s "Secure in Comfort" report on Zuma\'s Nkandla residence. Also contained in the letter is mention of review proceedings, which the Democratic Alliance has pending against the decision to withdraw 783 charges of corruption, fraud, money laundering and racketeering against Zuma.')
         
+    def test_extract_article_style_2(self):
+        html = """
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" xmlns:og="http://opengraphprotocol.org/schema/" xmlns:fb="http://www.facebook.com/2008/fbml">
+<head id="Head1"><meta name="description" content="The wife of the man accused of abusing her and their five children and holding them captive has appeared in court, where her case was postponed for a bail application." /><script type='text/javascript'>(function(e){if(typeof e.za24_exk=='undefined')e.za24_exk=new Array;if(typeof e.za24_exkt=='undefined')e.za24_exkt=new Array})(window)
+window.za24_exkt.push('weather');window.za24_exk.push('4');
+</script><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" /><meta property="article:published_time" content="2014-06-24 02:04:30 PM"/><meta property="article:modified_time" content="2014-06-24 02:04:30 PM"/><meta property="article:expiration_time" content="2014-06-26 03:20:28 PM"/><meta property="twitter:card" content="summary"/><meta property="twitter:url" content="http://www.news24.com/SouthAfrica/News/House-of-horrors-wife-appears-in-court-20140624"/><meta property="twitter:title" content="&#39;House of horrors&#39; wife appears in court"/><meta property="twitter:site" content="News24"/><meta property="twitter:description" content="The wife of the man accused of abusing her and their five children and holding them captive has appeared in court, where her case was postponed for a bail application."/><meta property="twitter:image" content="http://cdn.24.co.za/files/Cms/General/d/2768/631a355e7d9a42be88089321d2f71502.jpg"/><meta property="twitter:app:name:iphone" content="News24"/><meta property="twitter:app:id:iphone" content="310970460"/><meta property="twitter:app:name:ipad" content="News24"/><meta property="twitter:app:id:ipad" content="310970460"/><meta property="twitter:app:url:iphone" content="https://itunes.apple.com/za/app/news24/id310970460?mt=8"/><meta property="twitter:app:url:ipad" content="https://itunes.apple.com/za/app/news24/id310970460?mt=8"/><meta property="og:site_name" content="News24"/><meta property="fb:app_id" content="2363277980"/><meta property="fb:page_id" content="10227041841"/><meta property="og:title" content="'House of horrors' wife appears in court"/><meta property="og:type" content="article"/><meta property="og:url" content="http://www.news24.com/SouthAfrica/News/House-of-horrors-wife-appears-in-court-20140624"/><meta property="og:image" content="http://cdn.24.co.za/files/Cms/General/d/2667/bf817f060b584c33afb8a4cb430de2a3.jpg"/><meta property="og:description" content="The wife of the man accused of abusing her and their five children and holding them captive has appeared in court, where her case was postponed for a bail application."/><link rel="canonical" href="http://www.news24.com/SouthAfrica/News/House-of-horrors-wife-appears-in-court-20140624"/><script type="text/javascript" language="javascript">
+var addthis_share =
+{
+url: "http://www.news24.com/SouthAfrica/News/House-of-horrors-wife-appears-in-court-20140624",
+title: "'House of horrors' wife appears in court",
+description: "The wife of the man accused of abusing her and their five children and holding them captive has appeared in court, where her case was postponed for a bail application.",
+templates:
+{
+twitter: "{{title}}: {{url}} via @News24"
+},
+url_transforms: {
+shorten: {
+twitter: 'bitly'
+}
+},
+shorteners: {
+bitly: {
+login: '24com',
+apiKey: 'R_ca79efd5a0978fb80d1d853bac1dda83'
+}}};
+</script>
+<title>
+	'House of horrors' wife appears in court | News24
+</title><meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" /><meta name="verify-v1" content="7Ni+Om+G5YH4bPtmBOm+5Qih2e8WRykbCvNJXRK9vbg=" /><meta name="bitly-verification" content="267098cc5a65" />   
+     <!-- Mobile viewport optimized: j.mp/bplateviewport //-->
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <!-- For non-Retina iPhone, iPod Touch, and Android 2.1+ devices: -->
+    <link rel="apple-touch-icon" href="../../images/ios/bookapple-touch-icon.png" />
+     <!-- For first- and second-generation iPad: -->
+    <link rel="apple-touch-icon" sizes="76x76" href="../../images/ios/bookapple-touch-icon-76x76.png" />
+    <!-- For iPhone with high-resolution Retina display running iOS = 7: -->
+    <link rel="apple-touch-icon" sizes="120x120" href="../../images/ios/bookapple-touch-icon-120x120.png" />
+    <!-- For iPad with high-resolution Retina display running iOS = 7: -->
+    <link rel="apple-touch-icon" sizes="152x152" href="../../images/ios/bookapple-touch-icon-152x152.png" /><link rel="SHORTCUT ICON" href="/favicon.ico" />
+    <script type='text/javascript'>var _sf_startpt = (new Date()).getTime()</script>
+    <link type="text/css" rel="stylesheet" href="http://static.24.co.za/5/styles/complete.css?v=20140620" /><link type="text/css" rel="stylesheet" href="http://scripts.24.co.za/libs/fancybox/jquery.fancybox.css?v=20140620" />
+<!--[if gte IE 7]>
+<link href="http://www.news24.com/Styles/ie7.css" type="text/css" rel="stylesheet">
+<![endif]-->
+<!--[if IE 7]><link href='http://www.news24.com/Styles/ie7.css' type='text/css' rel='stylesheet'><![endif]--><script type="text/javascript" language="javascript" src="http://static.24.co.za/5/scripts/minified/basescript1.js?v=20140620" ></script><script type="text/javascript" language="javascript" src="http://scripts.24.co.za/libs/fancybox/fancybox-1.3.4.min.js?v=20140620" ></script>
+    <script type="text/javascript">
+        var $j = jQuery.noConflict();var isHomePage = false;document.domain = "news24.com";
+    </script>
+    
+    <script sync type="text/javascript" src="http://scripts.24.co.za/libs/24com/portal/1.0/common.min.js?v=20140620"></script><script type="text/javascript">var _gaq = _gaq || [];_gaq.push(['_setDomainName', 'www.news24.com']);_gaq.push(['_setAccount', 'UA-45055449-1']);_gaq.push(['_trackPageview']);
+                                    (function() {var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+                                    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+                                    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+                                    })();</script>
+    
+    
+    <link id="alternateLink" rel="alternate" media="only screen and (max-width: 640px)" href="http://m.news24.com/news24/SouthAfrica/News/House-of-horrors-wife-appears-in-court-20140624"></link>
+    
+
+<meta name="keywords" content="johannesburg, crime, child abuse" />
+<meta name="news_keywords" content="johannesburg, crime, child abuse" />
+    <meta name="articleid" content="1370d9df-3a3f-4eed-9c29-a3d036173ac4"/>
+
+<link href="http://scripts.24.co.za/libs/24com/comments/3.0.2/styles/comments.css" type="text/css" rel="stylesheet"></link>
+<!-- Start of DClick Header -->
+<!-- Site: /8900/24.com/Web/News24, Zone: /SouthAfrica/Articles, MapsTo: "News" -->
+
+<script src='//www.googletagservices.com/tag/js/gpt.js' type='text/javascript' ></script>
+<script src="http://scripts.24.co.za/libs/24com/Ads/3.0/24AdScript.min.js" language="JavaScript" type="text/javascript"></script>
+<script language="JavaScript" type="text/javascript">//<![CDATA[
+za24_AdSite = '/8900/24.com/Web/News24'; 
+za24_AdZone = '/SouthAfrica/Articles';
+za24_IsAsync  = false;
+za24_InterstitialEnabled=true;
+za24_KeywordType[1]='artid'; za24_Keywords[1]='1370d9df-3a3f-4eed-9c29-a3d036173ac4'; 
+za24_KeywordType[2]='places'; za24_Keywords[2]='johannesburg'; 
+za24_KeywordType[3]='topics'; za24_Keywords[3]='crime,child abuse'; 
+
+za24_AdSize[1]='1000x1000'; za24_AdPositionNo[1]='1'; 
+za24_AdSize[2]='728x90'; za24_AdPositionNo[2]='1'; 
+za24_AdSize[3]='300x600'; za24_AdPositionNo[3]='1'; 
+za24_AdSize[4]='300x250'; za24_AdPositionNo[4]='1'; 
+za24_AdSize[5]='468x120'; za24_AdPositionNo[5]='1'; 
+za24_AdSize[6]='10x10'; za24_AdPositionNo[6]='1'; 
+za24_AdSize[7]='278x76'; za24_AdPositionNo[7]='1'; 
+za24_AdSize[8]='278x35'; za24_AdPositionNo[8]='1'; 
+za24_AdSize[9]='200x400'; za24_AdPositionNo[9]='1'; 
+za24_AdSize[10]='980x90'; za24_AdPositionNo[10]='1'; 
+za24_InitAds();
+//--></script>
+<!-- End of DClick Header -->
+</head>
+<body>
+    <!-- Start Alexa Certify Javascript -->
+<script type="text/javascript">
+    _atrk_opts = { atrk_acct: "qhC0h1agYe00yl", domain: "news24.com", dynamic: true };
+    (function () { var as = document.createElement('script'); as.type = 'text/javascript'; as.async = true; as.src = "https://d31qbv1cthcecs.cloudfront.net/atrk.js"; var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(as, s); })();
+</script>
+<noscript><img src="https://d5nxst8fruw4z.cloudfront.net/atrk.gif?account=qhC0h1agYe00yl" style="display:none" height="1" width="1" alt="" /></noscript>
+<!-- End Alexa Certify Javascript -->
+    <!-- COPYRIGHT EFFECTIVE MEASURE -->
+    <script type="text/javascript">
+        (function () {var em = document.createElement('script'); em.type = 'text/javascript'; em.async = true;
+            em.src = ('https:' == document.location.protocol ? 'https://za-ssl' : 'http://za-cdn') + '.effectivemeasure.net/em.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(em, s);})();
+    </script>
+    <noscript><img src="http://za.effectivemeasure.net/em_image" alt="" style="position: absolute; left: -5px;" /></noscript>
+    <!--END EFFECTIVE MEASURE CODE -->
+    <form name="aspnetForm" method="post" id="aspnetForm">
+<div class="aspNetHidden">
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="/wEPDwUJMTcxNTY0OTA1ZGQW6vNhyWzSvAx2GSJ/MzQaNC2H9A==" />
+</div>
+
+
+<script type="text/javascript">
+//<![CDATA[
+var za24_displayAdUrl = 'http://www.news24.com/static/Ads/DisplayAd.html';//]]>
+</script>
+
+<div class="aspNetHidden">
+
+	<input type="hidden" name="__EVENTVALIDATION" id="__EVENTVALIDATION" value="/wEdAAa1BYUt6IflRataqYJyh8AufLgYOaxGNxpcxlKlT9IObQH+ih4MEySCBlfYlvG/lO3w/h12H3MZPLcouy1JL6NJpTNihxCpIUCa2K/Ulzjx5fwGEjiXfG6Ja/hBBVaFQfQh8dMBqWKFZeFkyhEiMsF4/822Sg==" />
+</div>
+       
+        <script type="text/javascript">
+jQuery('head').append("<link href='http://scripts.24.co.za/libs/24com/ads/2.0/Style/TransAd.css?v=20140620' type='text/css' rel='stylesheet' ></link>")
+</script>
+<script type="text/javascript" src="http://scripts.24.co.za/libs/24com/ads/2.0/script/TransAd.min.js?v=20140620"></script>
+<script type="text/javascript">AdTemplate = "News24";</script>
+<div id='ad-10x10-1' class='24ad10x10'><script type='text/javascript'>if(typeof za24_DisplayAd != 'undefined') za24_DisplayAd('10x10','1');</script></div><noscript><a href='http://pubads.g.doubleclick.net/gampad/jump?iu=/8900/24.com/Web/News24/SouthAfrica/Articles&sz=10x10&c=634586355&t=artid%3d1370d9df-3a3f-4eed-9c29-a3d036173ac4%26Places%3djohannesburg%26Topics%3dcrime%2cchild+abuse%26posno%3d1' target='_blank'><img src='http://pubads.g.doubleclick.net/gampad/ad?iu=/8900/24.com/Web/News24/SouthAfrica/Articles&sz=10x10&c=634586355&t=artid%3d1370d9df-3a3f-4eed-9c29-a3d036173ac4%26Places%3djohannesburg%26Topics%3dcrime%2cchild+abuse%26posno%3d1' border='0' alt=''></a></noscript>
+        
+
+<div id="leaderboard">
+    <div class="adCenter">
+        <div style="background-color:transparent;border-bottom:3px solid transparent;border-left:0px solid transparent;border-right:3px solid transparent;">
+	        <div id='ad-728x90-1' class='24ad728x90'><script type='text/javascript'>if(typeof za24_DisplayAd != 'undefined') za24_DisplayAd('728x90','1');</script></div><noscript><a href='http://pubads.g.doubleclick.net/gampad/jump?iu=/8900/24.com/Web/News24/SouthAfrica/Articles&sz=728x90&c=634586355&t=artid%3d1370d9df-3a3f-4eed-9c29-a3d036173ac4%26Places%3djohannesburg%26Topics%3dcrime%2cchild+abuse%26posno%3d1' target='_blank'><img src='http://pubads.g.doubleclick.net/gampad/ad?iu=/8900/24.com/Web/News24/SouthAfrica/Articles&sz=728x90&c=634586355&t=artid%3d1370d9df-3a3f-4eed-9c29-a3d036173ac4%26Places%3djohannesburg%26Topics%3dcrime%2cchild+abuse%26posno%3d1' border='0' alt=''></a></noscript>
+        </div>
+    </div>
+    
+</div>
+        <div class="main_wrap relative">
+            
+
+            
+    
+
+<script type="text/javascript" language="text/javascript">
+    jQuery(function () {
+        var pushdown = jQuery("#pushDownAd");
+        if (pushdown.height() < 20) { pushdown.css("display", "none") }
+    });
+</script>
+
+
+<div class="grid_12">
+    <div id="header" class="relative">
+        <h1 id="news24HeaderLogo">
+            <a href="http://www.news24.com/" title="News24.com Home">News24 News. Breaking News. First</a>
+        </h1>
+        
+
+<div class="absolute update_time">LAST UPDATED: 2014-06-24, 15:10</div>
+        <div class="div_0 absolute"></div>
+
+        <div class="absolute">              
+            <div class="header_featured_article">
+    <div class="feature_head first absolute">
+        <a href="http://voices.news24.com/kamela-mahlakwane/2014/06/gratuity-tipping-wrong-guy/" id="lnkHeaderArtImage" target="_self"><img src="http://cdn.24.co.za/files/Cms/General/d/2636/e4450272be1646549fee65ae3b394aa0.jpg" id="imgHeaderArticle" class="left" height="65" width="65" /></a>
+        <h3 class="bold"><a href="http://voices.news24.com/kamela-mahlakwane/2014/06/gratuity-tipping-wrong-guy/" data-track="outbound,home-header,topcompo-Are we tipping the wrong people?" target="_self">Are we tipping the wrong people?</a></h3>
+        <p>Should we tip all people who deliver us services? And if so, does that mean we will just pay them extra to do what they are supposed to? asks <strong>Dr Kamela Mahlakwane</strong>.</p>
+    </div>
+</div>
+
+        </div>
+        <div class="div_2 absolute"></div>
+
+        
+<div class="search_box absolute">
+    <input id="txtSearchField" type="text" class="field absolute" onkeypress="var key=event.keyCode||event.which;if (key==13){submitSiteSearch(); return false;}" />
+    <input type="submit" value="Search" class="btn absolute" onclick="submitSiteSearch(false);return false;" />   
+</div>
+<script type="text/javascript">
+    var headerSearchUrl = 'http://www.news24.com/search?q={0}'; var headerAdvancedSearchUrl = 'http://googlesearch.news24.com/search?s=NWS&ref=NWS&q='; var txtSearchFieldClientId = "txtSearchField"; var btnSearchClientId = "btnSearch"; function submitSiteSearch() { var a = $j.trim($j("#" + txtSearchFieldClientId).val()); if (a.length > 0) { window.location.href = "/search?q=" + a } };
+</script>
+        
+
+<div class="header_weather_box absolute">
+    <div class="icon left">
+    <a id="lnkModalItem" class="fireEventWeather weatherModal" style="display:none;"></a>
+        <a href="http://www.news24.com/UserLocationModal.aspx?iframe&control=weather" id="lnkChangeWeather" class="city weatherModal" style="display: block">Cape Town</a>
+        <img src="http://static.24.co.za/5/images/icons/forecastslarge/4.png" id="weatherImgMain" alt="Afternoon clouds. Mild." />
+    </div>
+    <div class="div_3"></div>
+    <div class="info left">
+        <h2 id="mainTempDisplay">
+            Wednesday
+            <span>15-18&deg;C</span>
+        </h2>
+        <p id="mainDesc"><span id="spanMainDescription" style="cursor:default;" title="Afternoon clouds. Mild.">Afternoon clouds. Mild.</span></p>
+        <ul id="weather_info_container">
+            <li><a class="forecast absolute"  href="javascript:void(0)">7 day forecast</a> <!-- fire script here -->
+                <ul id="weather_box_info" >
+                    <li >
+                        <table cellpadding="0" cellspacing="0" border="0" class="weather_drop_box">
+                            
+                                    <tr>
+                                        <td class="d_day">Thursday</td>
+                                        <td class="d_temp">14-16&deg;c</td>
+                                        <td class="d_icon" valign="bottom"><img src="http://static.24.co.za/5/images/icons/forecasts/20.png" alt="Heavy rain. Morning clouds. Cool." /></td>
+                                        <td class="d_info">Heavy rain. Morning clouds. Cool.</td>
+                                    </tr>
+                                
+                                    <tr>
+                                        <td class="d_day">Friday</td>
+                                        <td class="d_temp">13-16&deg;c</td>
+                                        <td class="d_icon" valign="bottom"><img src="http://static.24.co.za/5/images/icons/forecasts/4.png" alt="Morning clouds. Cool." /></td>
+                                        <td class="d_info">Morning clouds. Cool.</td>
+                                    </tr>
+                                
+                                    <tr>
+                                        <td class="d_day">Saturday</td>
+                                        <td class="d_temp">11-18&deg;c</td>
+                                        <td class="d_icon" valign="bottom"><img src="http://static.24.co.za/5/images/icons/forecasts/1.png" alt="Sunny. Mild." /></td>
+                                        <td class="d_info">Sunny. Mild.</td>
+                                    </tr>
+                                
+                                    <tr>
+                                        <td class="d_day">Sunday</td>
+                                        <td class="d_temp">12-18&deg;c</td>
+                                        <td class="d_icon" valign="bottom"><img src="http://static.24.co.za/5/images/icons/forecasts/5.png" alt="High level clouds. Mild." /></td>
+                                        <td class="d_info">High level clouds. Mild.</td>
+                                    </tr>
+                                
+                                    <tr>
+                                        <td class="d_day">Monday</td>
+                                        <td class="d_temp">11-16&deg;c</td>
+                                        <td class="d_icon" valign="bottom"><img src="http://static.24.co.za/5/images/icons/forecasts/4.png" alt="Morning clouds. Cool." /></td>
+                                        <td class="d_info">Morning clouds. Cool.</td>
+                                    </tr>
+                                
+                                    <tr>
+                                        <td class="d_day">Tuesday</td>
+                                        <td class="d_temp">9-16&deg;c</td>
+                                        <td class="d_icon" valign="bottom"><img src="http://static.24.co.za/5/images/icons/forecasts/5.png" alt="High level clouds. Cool." /></td>
+                                        <td class="d_info">High level clouds. Cool.</td>
+                                    </tr>
+                                
+                            <tr>
+                                <td colspan="4" height="10" valign="bottom" style="vertical-align:bottom">
+                                    <div style="height:1px;border-bottom:1px solid #C6C6C6"></div>
+                                    <div style="height:1px;border-top:1px solid #fff"></div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="4" class="d_more_link" valign="top">
+                                    <a href="http://weather.news24.com/sa/cape-town">More weather from Weather24 ></a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="4" class="ad_link">
+                                    <div id='ad-278x35-1' class='24ad278x35'><script type='text/javascript'>if(typeof za24_DisplayAd != 'undefined') za24_DisplayAd('278x35','1');</script></div><noscript><a href='http://pubads.g.doubleclick.net/gampad/jump?iu=/8900/24.com/Web/News24/Africa/Articles&sz=278x35&c=867796154&t=artid%3d288eb505-863d-4e71-8097-eaad289ed0bc%26posno%3d1' target='_blank'><img src='http://pubads.g.doubleclick.net/gampad/ad?iu=/8900/24.com/Web/News24/Africa/Articles&sz=278x35&c=867796154&t=artid%3d288eb505-863d-4e71-8097-eaad289ed0bc%26posno%3d1' border='0' alt=''></a></noscript>
+                                </td>
+                            </tr>
+                        </table>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+    <div class="div_4"></div>
+    <div class="left prodPlacement">        
+        <a href="http://pubads.g.doubleclick.net/gampad/clk?id=44943070&iu=/8900/24.com/Web/News24" id="lnkHeaderWeatherSponsor" target="blank">Brought to<br />
+        you by:<br />
+        <img src="http://cdn.24.co.za/files/Cms/General/d/1655/d7d2b40e358940f09f295f9a9621f1ac.jpg" id="imgHeaderWeatherSponsor" width="66" height="9" border="0" /></a>
+    </div>
+</div>
+<script type='text/javascript'>if(typeof(topStoriesArray)  != 'undefined') topStoriesArray.push({'name':'Cape Town Heavy rain. Morning clouds. Cool. 15-18','url':'http://weather.news24.com','icon':'/images/icons/Forecasts/20.ico'});</script>
+        <div id="navBar" class="nav_bar absolute" style="z-index:50;top: 115px !important;">
+    <ul id='nav' onmouseover='RemoveSelections();' onmouseout='SetSelections(defaultTabId);'>
+<li class='nav_item ' id='tablink0' ><a href="http://www.news24.com/" data-track="outbound,nav,1stlevel-News">News</a>
+<ul>
+<li ><a  href="http://www.news24.com/SouthAfrica" data-track="outbound,nav,2ndlevel-South Africa">South Africa</a></li><li ><a  href="http://www.news24.com/Elections" data-track="outbound,nav,2ndlevel-Elections">Elections</a></li><li ><a  href="http://www.news24.com/World" data-track="outbound,nav,2ndlevel-World">World</a></li><li ><a  href="http://www.news24.com/Africa" data-track="outbound,nav,2ndlevel-Africa">Africa</a></li><li ><a  href="http://www.channel24.co.za" data-track="outbound,nav,2ndlevel-Entertainment">Entertainment</a></li><li ><a  href="http://www.news24.com/Green" data-track="outbound,nav,2ndlevel-Green">Green</a></li><li ><a  href="http://www.health24.com/news/1.asp" data-track="outbound,nav,2ndlevel-Health">Health</a></li></ul></li>
+<li class='nav_item ' id='tablink1' ><a href="http://www.news24.com/Opinions" data-track="outbound,nav,1stlevel-Opinion">Opinion</a>
+<ul>
+<li><a href="http://voices.news24.com" data-track="outbound,nav,2ndlevel-Voices">Voices</a></li><li><a href="http://www.news24.com/MyNews24" data-track="outbound,nav,2ndlevel-MyNews24">MyNews24</a></li><li><a href="http://www.news24.com/Columnists" data-track="outbound,nav,2ndlevel-Columnists">Columnists</a></li></ul>
+</li>
+<li class='nav_item ' id='tablink2' ><a href="http://www.fin24.com" data-track="outbound,nav,1stlevel-Business">Business</a>
+<ul>
+<li ><a  href="http://www.fin24.com" data-track="outbound,nav,2ndlevel-News">News</a></li><li ><a  href="http://www.fin24.com/Markets" data-track="outbound,nav,2ndlevel-Markets">Markets</a></li><li ><a  href="http://www.fin24.com/Money/" data-track="outbound,nav,2ndlevel-Personal Finance">Personal Finance</a></li><li ><a  href="http://www.fin24.com/Opinion/Columnists/" data-track="outbound,nav,2ndlevel-Opinion">Opinion</a></li><li ><a  href="http://www.fin24.com/login" data-track="outbound,nav,2ndlevel-My Profile">My Profile</a></li></ul></li>
+<li class='nav_item ' id='tablink3' ><a href="http://www.sport24.co.za" data-track="outbound,nav,1stlevel-Sport">Sport</a>
+<ul>
+<li ><a  href="http://www.sport24.co.za/" data-track="outbound,nav,2ndlevel-News">News</a></li><li ><a  href="http://www.sport24.co.za/Rugby/" data-track="outbound,nav,2ndlevel-Rugby">Rugby</a></li><li ><a  href="http://www.sport24.co.za/Cricket/" data-track="outbound,nav,2ndlevel-Cricket">Cricket</a></li><li ><a  href="http://www.sport24.co.za/Soccer/" data-track="outbound,nav,2ndlevel-Soccer">Soccer</a></li><li ><a  href="http://www.sport24.co.za/Golf/" data-track="outbound,nav,2ndlevel-Golf">Golf</a></li><li ><a  href="http://www.sport24.co.za/Tennis" data-track="outbound,nav,2ndlevel-Tennis">Tennis</a></li><li ><a  href="http://www.wheels24.co.za/FormulaOne/" data-track="outbound,nav,2ndlevel-Formula1">Formula1</a></li><li ><a  href=" http://www.sport24.co.za/OtherSport" data-track="outbound,nav,2ndlevel-Other Sport">Other Sport</a></li><li class='red'><a class='red' href="http://www.supersport.com/" data-track="outbound,nav,2ndlevel-SuperSport">SuperSport</a></li><li class='red'><a class='red' href="http://www.supersport.com/live-video" data-track="outbound,nav,2ndlevel-Live Streaming">Live Streaming</a></li><li class='red'><a class='red' href="http://www.supersport.com/video" data-track="outbound,nav,2ndlevel-Video Highlights">Video Highlights</a></li></ul></li>
+<li class='nav_item no_arrow' id='tablink4' ><a href="http://www.fin24.com/Tech/" data-track="outbound,nav,1stlevel-Tech">Tech</a>
+<li class='nav_item ' id='tablink5' ><a href="http://www.wheels24.co.za" data-track="outbound,nav,1stlevel-Motoring">Motoring</a>
+<ul>
+<li ><a  href="http://www.wheels24.co.za/news" data-track="outbound,nav,2ndlevel-News">News</a></li><li ><a  href="http://www.wheels24.co.za/NewModels/" data-track="outbound,nav,2ndlevel-New Models">New Models</a></li><li ><a  href="http://www.wheels24.co.za/4x4/" data-track="outbound,nav,2ndlevel-4x4">4x4</a></li><li ><a  href="http://www.wheels24.co.za/FormulaOne/" data-track="outbound,nav,2ndlevel-Formula One">Formula One</a></li><li ><a  href="http://www.wheels24.co.za/Motorsport/" data-track="outbound,nav,2ndlevel-Motorsport">Motorsport</a></li><li ><a  href="http://www.wheels24.co.za/BikesQuads/" data-track="outbound,nav,2ndlevel-Bikes">Bikes</a></li><li ><a  href="http://www.wheels24.co.za/Your-Wheels/" data-track="outbound,nav,2ndlevel-Your Wheels">Your Wheels</a></li></ul></li>
+<li class='nav_item ' id='tablink6' ><a href="http://www.news24.com/Lifestyle" data-track="outbound,nav,1stlevel-Lifestyle">Lifestyle</a>
+<ul>
+<li ><a  href="http://www.health24.com/" data-track="outbound,nav,2ndlevel-Health">Health</a></li><li ><a  href="http://www.women24.com" data-track="outbound,nav,2ndlevel-Women">Women</a></li><li ><a  href="http://www.wheels24.co.za" data-track="outbound,nav,2ndlevel-Motoring">Motoring</a></li><li ><a  href="http://www.food24.com" data-track="outbound,nav,2ndlevel-Food">Food</a></li><li ><a  href="http://www.news24.com/Travel" data-track="outbound,nav,2ndlevel-Travel">Travel</a></li><li ><a  href="http://www.channel24.co.za/" data-track="outbound,nav,2ndlevel-Entertainment">Entertainment</a></li><li class='red'><a class='red' href="http://www.women24.com/rubybox" data-track="outbound,nav,2ndlevel-Shop Beauty">Shop Beauty</a></li><li ><a  href="http://www.parent24.com" data-track="outbound,nav,2ndlevel-Parent">Parent</a></li><li ><a  href="http://www.lazygamer.net" data-track="outbound,nav,2ndlevel-Games">Games</a></li><li class='red'><a class='red' href="http://www.mweb.co.za/games/Home.aspx?ref=news24nav" data-track="outbound,nav,2ndlevel-GameZone">GameZone</a></li><li class='red'><a class='red' href="http://love2meet.news24.com/s/" data-track="outbound,nav,2ndlevel-Dating">Dating</a></li></ul></li>
+<li class='nav_item ' id='tablink7' ><a href="http://www.news24.com/Multimedia" data-track="outbound,nav,1stlevel-Multimedia">Multimedia</a>
+<ul>
+<li><a href="http://www.news24.com/multimedia" data-track="outbound,nav,2ndlevel-News">News</a></li><li><a href="http://www.sport24.co.za/multimedia" data-track="outbound,nav,2ndlevel-Sport">Sport</a></li><li><a href="http://www.channel24.co.za/Multimedia" data-track="outbound,nav,2ndlevel-Entertainment">Entertainment</a></li><li><a href="http://www.wheels24.co.za/multimedia" data-track="outbound,nav,2ndlevel-Motoring">Motoring</a></li><li><a href="http://www.women24.com/multimedia" data-track="outbound,nav,2ndlevel-Women">Women</a></li><li><a href="http://www.food24.com/multimedia" data-track="outbound,nav,2ndlevel-Food">Food</a></li><li><a href="http://www.parent24.com/multimedia" data-track="outbound,nav,2ndlevel-Parenting">Parenting</a></li><li><a href="http://www.news24.com/travel/multimedia" data-track="outbound,nav,2ndlevel-Travel">Travel</a></li><li><a href="http://www.health24.com/multimedia" data-track="outbound,nav,2ndlevel-Health">Health</a></li><li><a href="http://www.news24.com/live" data-track="outbound,nav,2ndlevel-Video">Video</a></li></ul>
+</li>
+<li class='nav_item ' id='tablink8' ><a href="http://www.news24.com/SpecialReports" data-track="outbound,nav,1stlevel-Focus">Focus</a>
+<ul>
+<li><a href="http://www.news24.com/obituaries" data-track="outbound,nav,2ndlevel-Obituaries">Obituaries</a></li><li><a href="http://www.news24.com/Content/Africa/Zimbabwe" data-track="outbound,nav,2ndlevel-Zimbabwe">Zimbabwe</a></li><li><a href="http://www.health24.com/Medical/HIV-AIDS" data-track="outbound,nav,2ndlevel-Aids Focus">Aids Focus</a></li><li><a href="http://www.m24i.co.za/" data-track="outbound,nav,2ndlevel-Media24 Investigations">Media24 Investigations</a></li><li><a href="http://www.news24.com/Tags/Topics/good_news" data-track="outbound,nav,2ndlevel-Good News ">Good News </a></li><li><a href="http://www.citypress.co.za/" data-track="outbound,nav,2ndlevel-City Press">City Press</a></li><li><a href="http://www.news24.com/competitions" data-track="outbound,nav,2ndlevel-Competitions">Competitions</a></li></ul>
+</li>
+<li class='nav_item ' id='tablink9' ><a href="http://isizulu.news24.com" data-track="outbound,nav,1stlevel-isiZulu">isiZulu</a>
+<ul>
+<li><a href="http://isizulu.news24.com/NingizimuAfrika" data-track="outbound,nav,2ndlevel-Ningizimu Afrika ">Ningizimu Afrika </a></li><li><a href="http://isizulu.news24.com/Izindaba-Zami" data-track="outbound,nav,2ndlevel-Izindaba-Zami">Izindaba-Zami</a></li><li><a href="http://isizulu.news24.com/Ezemidlalo" data-track="outbound,nav,2ndlevel-Ezemidlalo">Ezemidlalo</a></li><li><a href="http://isizulu.news24.com/Afrika" data-track="outbound,nav,2ndlevel-Afrika">Afrika</a></li><li><a href="http://isizulu.news24.com/Umhlaba" data-track="outbound,nav,2ndlevel-Umhlaba">Umhlaba</a></li><li><a href="http://isizulu.news24.com/Ezokuzijabulisa" data-track="outbound,nav,2ndlevel-Ezokuzijabulisa">Ezokuzijabulisa</a></li><li><a href="http://isizulu.news24.com/Ezamabhizinisi" data-track="outbound,nav,2ndlevel-Ezamabhizinisi">Ezamabhizinisi</a></li></ul>
+</li>
+<li class='nav_item no_arrow' id='tablink10' ><a href="http://www.news24.com/Jobs/" data-track="outbound,nav,1stlevel-Jobs">Jobs</a>
+<li class='nav_item no_arrow' id='tablink11' ><a href="http://www.news24.com/Property/" data-track="outbound,nav,1stlevel-Property">Property</a>
+</ul>
+<ul id='nav' onmouseover='RemoveSelections();' onmouseout='SetSelections(defaultTabId);'>
+<li id='liContainer' class='sponsor_img'><a id='lnkSpecialNav' href='http://pubads.g.doubleclick.net/gampad/clk?id=51989710&iu=/8900/24.com/Web/News24' target='_self'><img id='lnkImg' src='http://cdn.24.co.za/files/Cms/General/d/2440/3f222735f4a746ab83d2b4d0b5955f73.gif' /></a>
+<ul class='sponsor'>
+<li class='sponsor-list-item'><a href='http://pubads.g.doubleclick.net/gampad/clk?id=57613510&iu=/8900/24.com/Web/News24' target='_self' data-track="outbound,nav,2ndlevel-Car Insurance">Car Insurance</a>
+<li class='sponsor-list-item'><a href='http://pubads.g.doubleclick.net/gampad/clk?id=57613750&iu=/8900/24.com/Web/News24' target='_self' data-track="outbound,nav,2ndlevel-Home Insurance">Home Insurance</a>
+<li class='sponsor-list-item'><a href='http://pubads.g.doubleclick.net/gampad/clk?id=57613990&iu=/8900/24.com/Web/News24' target='_self' data-track="outbound,nav,2ndlevel-Building Insurance">Building Insurance</a>
+</ul>
+</li>
+</ul>
+
+</div>
+<script type='text/javascript'>menuJsonArray = [{"Url":"http://www.news24.com/SouthAfrica","TabLinkIndex":0,"TabLinkToActivate":"tablink0"},{"Url":"http://www.news24.com/Elections","TabLinkIndex":0,"TabLinkToActivate":"tablink0"},{"Url":"http://www.news24.com/World","TabLinkIndex":0,"TabLinkToActivate":"tablink0"},{"Url":"http://www.news24.com/Africa","TabLinkIndex":0,"TabLinkToActivate":"tablink0"},{"Url":"http://www.news24.com/Green","TabLinkIndex":0,"TabLinkToActivate":"tablink0"},{"Url":"http://www.news24.com/","TabLinkIndex":0,"TabLinkToActivate":"tablink0"},{"Url":"http://voices.news24.com","TabLinkIndex":1,"TabLinkToActivate":"tablink1"},{"Url":"http://www.news24.com/mynews24","TabLinkIndex":1,"TabLinkToActivate":"tablink1"},{"Url":"http://www.news24.com/columnists","TabLinkIndex":1,"TabLinkToActivate":"tablink1"},{"Url":"http://www.news24.com/Opinions","TabLinkIndex":1,"TabLinkToActivate":"tablink1"},{"Url":"http://www.news24.com/Travel","TabLinkIndex":6,"TabLinkToActivate":"tablink6"},{"Url":"http://love2meet.news24.com/s/","TabLinkIndex":6,"TabLinkToActivate":"tablink6"},{"Url":"http://www.news24.com/Lifestyle","TabLinkIndex":6,"TabLinkToActivate":"tablink6"},{"Url":"http://www.news24.com/multimedia","TabLinkIndex":7,"TabLinkToActivate":"tablink7"},{"Url":"http://www.sport24.co.za/multimedia","TabLinkIndex":7,"TabLinkToActivate":"tablink7"},{"Url":"http://www.channel24.co.za/multimedia","TabLinkIndex":7,"TabLinkToActivate":"tablink7"},{"Url":"http://www.wheels24.co.za/multimedia","TabLinkIndex":7,"TabLinkToActivate":"tablink7"},{"Url":"http://www.women24.com/multimedia","TabLinkIndex":7,"TabLinkToActivate":"tablink7"},{"Url":"http://www.food24.com/multimedia","TabLinkIndex":7,"TabLinkToActivate":"tablink7"},{"Url":"http://www.parent24.com/multimedia","TabLinkIndex":7,"TabLinkToActivate":"tablink7"},{"Url":"http://www.news24.com/travel/multimedia","TabLinkIndex":7,"TabLinkToActivate":"tablink7"},{"Url":"http://www.health24.com/multimedia","TabLinkIndex":7,"TabLinkToActivate":"tablink7"},{"Url":"http://www.news24.com/live","TabLinkIndex":7,"TabLinkToActivate":"tablink7"},{"Url":"http://www.news24.com/Multimedia","TabLinkIndex":7,"TabLinkToActivate":"tablink7"},{"Url":"http://www.news24.com/obituaries","TabLinkIndex":8,"TabLinkToActivate":"tablink8"},{"Url":"http://www.news24.com/africa/zimbabwe","TabLinkIndex":8,"TabLinkToActivate":"tablink8"},{"Url":"http://www.health24.com/medical/hiv-aids","TabLinkIndex":8,"TabLinkToActivate":"tablink8"},{"Url":"http://www.m24i.co.za/","TabLinkIndex":8,"TabLinkToActivate":"tablink8"},{"Url":"http://www.news24.com/tags/topics/good_news","TabLinkIndex":8,"TabLinkToActivate":"tablink8"},{"Url":"http://www.citypress.co.za/","TabLinkIndex":8,"TabLinkToActivate":"tablink8"},{"Url":"http://www.news24.com/competitions","TabLinkIndex":8,"TabLinkToActivate":"tablink8"},{"Url":"http://www.news24.com/SpecialReports","TabLinkIndex":8,"TabLinkToActivate":"tablink8"},{"Url":"http://isizulu.news24.com/ningizimuafrika","TabLinkIndex":9,"TabLinkToActivate":"tablink9"},{"Url":"http://isizulu.news24.com/izindaba-zami","TabLinkIndex":9,"TabLinkToActivate":"tablink9"},{"Url":"http://isizulu.news24.com/ezemidlalo","TabLinkIndex":9,"TabLinkToActivate":"tablink9"},{"Url":"http://isizulu.news24.com/afrika","TabLinkIndex":9,"TabLinkToActivate":"tablink9"},{"Url":"http://isizulu.news24.com/umhlaba","TabLinkIndex":9,"TabLinkToActivate":"tablink9"},{"Url":"http://isizulu.news24.com/ezokuzijabulisa","TabLinkIndex":9,"TabLinkToActivate":"tablink9"},{"Url":"http://isizulu.news24.com/ezamabhizinisi","TabLinkIndex":9,"TabLinkToActivate":"tablink9"},{"Url":"http://isizulu.news24.com","TabLinkIndex":9,"TabLinkToActivate":"tablink9"},{"Url":"http://www.news24.com/Jobs/","TabLinkIndex":10,"TabLinkToActivate":"tablink10"},{"Url":"http://www.news24.com/Property/","TabLinkIndex":11,"TabLinkToActivate":"tablink11"}];</script>
+
+<script type="text/javascript" language="javascript">
+    if ('False' == 'True')
+        document.getElementById('main_nav').style.height = '33px';
+</script>
+    </div>
+</div>
+<div class="clear"></div>
+<div id="pushDownAd">
+    <div class="clear"></div>
+    <div id='ad-980x90-1' class='24ad980x90'><script type='text/javascript'>if(typeof za24_DisplayAd != 'undefined') za24_DisplayAd('980x90','1');</script></div><noscript><a href='http://pubads.g.doubleclick.net/gampad/jump?iu=/8900/24.com/Web/News24/SouthAfrica/Articles&sz=980x90&c=634586355&t=artid%3d1370d9df-3a3f-4eed-9c29-a3d036173ac4%26Places%3djohannesburg%26Topics%3dcrime%2cchild+abuse%26posno%3d1' target='_blank'><img src='http://pubads.g.doubleclick.net/gampad/ad?iu=/8900/24.com/Web/News24/SouthAfrica/Articles&sz=980x90&c=634586355&t=artid%3d1370d9df-3a3f-4eed-9c29-a3d036173ac4%26Places%3djohannesburg%26Topics%3dcrime%2cchild+abuse%26posno%3d1' border='0' alt=''></a></noscript>        
+    <div class="clear"></div>
+</div>
+    <div class="container_12">
+        <div class="clr10">&nbsp;</div>
+        <div class="content_wrap socialnewsbasefix">
+            <div class="left col640">
+                
+                
+    <div id="article_special">
+        
+
+<script type="text/javascript" src="http://scripts.24.co.za/libs/24com/article/1.0/articleGreyLinks.js"></script>
+<script type="text/javascript" language="javascript" src="http://static.24.co.za/5/scripts/jquery.hoverintent.min.js?v=20140620" ></script>
+<script type="text/javascript" language="javascript" src="http://static.24.co.za/5/scripts/jquery.cluetip.min.js?v=20140620" ></script>
+
+<div class="article col626">
+    
+    <div class="spacer clr"></div>
+	<h1 class="bold">'House of horrors' wife appears in court</h1>
+	<span id="spnDate" class="block datestamp">2014-06-24 14:04</span>
+	<div class="col300 right">
+	    
+	    <div class="spacer clr"></div>
+        
+        <div id="fb-root"></div>
+<script type="text/javascript">
+ (function (d, s, id) {
+var js, fjs = d.getElementsByTagName(s)[0];
+if (d.getElementById(id)) return;
+js = d.createElement(s); js.id = id;
+ js.src = "//connect.facebook.net/en_GB/all.js#xfbml=1&appId=2363277980";
+fjs.parentNode.insertBefore(js, fjs);
+} (document, 'script', 'facebook-jssdk'));
+</script>
+<script type="text/javascript">
+window.fbAsyncInit = function () {FB.Event.subscribe('edge.create', function (response) {
+GA24.trackEvent('articles,sharelinks,fblike');
+});};
+var pinteresturl = '//assets.pinterest.com/js/pinit.js'
+var twitterurl = '//platform.twitter.com/widgets.js'
+var addthisurl ='//s7.addthis.com/js/250/addthis_widget.js#username=zamedia24'
+$j.ajaxSetup({cache: true});
+$j.getScript(pinteresturl)
+$j.getScript(twitterurl)
+$j.getScript(addthisurl,function(){
+if(typeof(addthis) != 'undefined'){
+$j('#article_toolbox_topright').show();
+addthis.addEventListener('addthis.menu.share', function(evt) {
+GA24.trackEvent('articles,sharelinks,' + evt.data.service);
+});
+}
+});
+$j.ajaxSetup({cache: false});
+var addthis_config ={username: 'zamedia24',services_exclude: 'email,print',ui_open_windows: true,ui_language: 'en' };function googlePlusOneShareLink() {GA24.trackEvent('articles,sharelinks,googleplusone');
+}function OpenPrintWindowShare() {var printUrl = '/printArticle.aspx?iframe&aid=1370d9df-3a3f-4eed-9c29-a3d036173ac4&cid=1059';window.open(printUrl,'myPrintWindow','toolbar=0,location=0,directories=0,status=0,menubar=0,scrollbars=1,resizable=0,width=750,height=600');}</script><div class="spacer clr"></div>
+<div id="article_toolbox_topright" style="border-bottom:solid #ebebeb 0px; border-top:solid #ffffff 1px; padding-left:0px;display:none;">
+<div class="addthis_toolbox">
+<a class="addthis_button_facebook_like" fb:like:action="recommend" fb:like:show_faces="false" fb:like:layout="button_count" fb:like:send="false"></a>
+<a class="addthis_button_google_plusone" g:plusone:size="medium"></a>
+<span><a href="http://pinterest.com/pin/create/button/?url=http://www.news24.com/SouthAfrica/News/House-of-horrors-wife-appears-in-court-20140624" class="pin-it-button" count-layout="horizontal">Pin It</a></span>
+</div>
+<div class="addthis_toolbox">
+<a class="addthis_button_twitter"><span></span></a>
+<a class="addthis_button_facebook"><span></span></a>
+<a class="addthis_button at300b"><span></span></a>
+<a class="email group" href="http://www.news24.com/sendToFriend.aspx?iframe&aid=1370d9df-3a3f-4eed-9c29-a3d036173ac4&cid=1059" title="Email"><span></span></a>
+<a class="print" onclick="OpenPrintWindowShare()" title="Print"><span></span></a>
+</div>
+</div>
+<div id="marging10Bottom"></div>
+
+        <div class="spacer clr"></div>
+	    
+
+<script language="javascript" type="text/javascript">
+    function popUP(url) {
+        newwindow = window.open(url, 'name', 'height=800,width=500,scrollbars=yes,left=400');
+        if (window.focus) { newwindow.focus() }
+        return false;
+    }
+</script>
+
+<div id="article_feature">
+	<img id="image" title="" src="http://cdn.24.co.za/files/Cms/General/d/2667/bf817f060b584c33afb8a4cb430de2a3.jpg" />
+	<p class="text"> (<a href='http://www.shutterstock.com' target='_blank'>Shutterstock</a>)</p>
+	<p class="bold">
+	    <a id="lnkGalleries" href="http://www.news24.com/Multimedia">Multimedia</a>  &nbsp; · &nbsp; <a id="lnkUserGalleries" href="http://www.news24.com/Multimedia/MyNews24">User Galleries</a> &nbsp; · &nbsp; <a id="lnkNewsGalleries" href="http://www.news24.com/Multimedia/Category-Images">News in Pictures</a>
+	    <span class="block red"><a class="group" href="http://uploads.news24.com?iframe">Send us your pictures</a>  &nbsp;·&nbsp; <a class="group" href="http://www.news24.com/FeedBack.aspx?iframe">Send us your stories</a></span>
+	</p> 
+</div>
+
+	    <div class="spacer clr"></div>
+        
+        <div class="spacer clr"></div>	
+	    
+
+<script type="text/javascript">
+    function scrollalert() { var a = $j("#scrollbox"); var b = $j("#scrollbox > #content"); if (a.length > 0) { if (a.length > 0 && a.scrollTop && b.height() <= a.scrollTop() + a.height() + 20) { $j("#imgAjaxLoad").show(); var data = { 'tag': $j("#hfTag").val(), 'tagGroup': $j("#hfTagGroup").val(), 'CurrentSiteId': "5", 'CmsArticleId': "1370d9df-3a3f-4eed-9c29-a3d036173ac4", 'index': $j("#hfBottomIndex").val(), 'selectedArticleIndex': $j("#hfSelectedArticleIndex").val(), 'directionToFetch': "Down" }; news24.getAjax("/Ajax/ArticleData/", "BuildArticleListByTag", data, onSuccessBottom, onFail) } setTimeout("scrollalert();", 500) } } function onSuccessBottom(a) { var b = parseInt($j("#hfBottomIndex").val()); if (a != "" && a != null) { $j("#hfBottomIndex").val(b + 5); setTimeout("$j('#imgAjaxLoad').hide();", 1e3); var c = $j("#RelatedLinks").html() + a; $j("#RelatedLinks").html(c) } else { setTimeout("$j('#imgAjaxLoad').hide();", 1e3); $j("#hfBottomIndex").val(-1) } } function onSuccessTop(a) { var b = parseInt($j("#hfTopIndex").val()); if (a != "" && a != null) { $j("#hfTopIndex").val(b - 5); setTimeout("$j('#imgAjaxLoad').hide();", 1e3); var c = a + $j("#RelatedLinks").html(); $j("#RelatedLinks").html(c); $j("#scrollbox").scrollTo("10") } else { setTimeout("$j('#imgAjaxLoad').hide();", 1e3); $j("#hfTopIndex").val(-1) } } function onFail() { } $j("document").ready(function () { scrollalert(); $j("#imgAjaxLoad").hide() })
+</script>
+
+<div id="relatedlinks_box">
+    <div class="left"><h5 id="Relatedheader" class="bold">Related Links</h5><a id="taglink" class="relatedTag"></a></div>
+    <div class="right"></div>
+    <div class="clr"></div>
+    
+    
+            <ul>
+        
+            <li class="bold"><a data-track="outbound,articles,relatedlinks-\&#39;House of horrors\&#39; wife due in court" href="http://www.news24.com/SouthAfrica/News/House-of-horrors-wife-due-in-court-20140624">'House of horrors' wife due in court</a></li>
+        
+            <li class="bold"><a data-track="outbound,articles,relatedlinks-\&#39;House of horror\&#39; mother arrested - report" href="http://www.news24.com/SouthAfrica/News/House-of-horror-mother-arrested-20140623">'House of horror' mother arrested - report</a></li>
+        
+            <li class="bold"><a data-track="outbound,articles,relatedlinks-\&#39;House of horrors\&#39; may become safe house" href="http://www.news24.com/SouthAfrica/News/House-of-horrors-may-become-safe-house-20140613">'House of horrors' may become safe house</a></li>
+        
+            <li class="bold"><a data-track="outbound,articles,relatedlinks-Springs ‘Monster’ dad case postponed" href="http://www.news24.com/SouthAfrica/News/Springs-Monster-dad-case-postponed-20140612">Springs ‘Monster’ dad case postponed</a></li>
+        
+            <li class="bold"><a data-track="outbound,articles,relatedlinks-\&#39;House of horrors\&#39; dad back in court" href="http://www.news24.com/SouthAfrica/News/House-of-horrors-dad-back-in-court-20140612">'House of horrors' dad back in court</a></li>
+        
+            <li class="bold"><a data-track="outbound,articles,relatedlinks-\&#39;House of horrors\&#39; dad admits punching boy" href="http://www.news24.com/SouthAfrica/News/House-of-horrors-dad-admits-punching-boy-20140531">'House of horrors' dad admits punching boy</a></li>
+        
+            <li class="bold"><a data-track="outbound,articles,relatedlinks-Neighbours tell of \&#39;house of horrors\&#39; boy\&#39;s pleas" href="http://www.news24.com/SouthAfrica/News/Neighbours-tell-of-house-of-horrors-boys-pleas-20140529">Neighbours tell of 'house of horrors' boy's pleas</a></li>
+        
+            </ul>
+        
+    
+   
+    <input type="hidden" name="ctl00$ctl00$MainBodyPlaceholder$Column1Placeholder$articlePaged$articleRelatedlinks$hfTopIndex" id="hfTopIndex" />
+    <input type="hidden" name="ctl00$ctl00$MainBodyPlaceholder$Column1Placeholder$articlePaged$articleRelatedlinks$hfBottomIndex" id="hfBottomIndex" />
+    <input type="hidden" name="ctl00$ctl00$MainBodyPlaceholder$Column1Placeholder$articlePaged$articleRelatedlinks$hfTag" id="hfTag" />
+    <input type="hidden" name="ctl00$ctl00$MainBodyPlaceholder$Column1Placeholder$articlePaged$articleRelatedlinks$hfTagGroup" id="hfTagGroup" />
+    <input type="hidden" name="ctl00$ctl00$MainBodyPlaceholder$Column1Placeholder$articlePaged$articleRelatedlinks$hfSelectedArticleIndex" id="hfSelectedArticleIndex" />
+</div>
+	    
+
+<div class=" rowdivider clr"></div>
+<div class="kalahari_product left">
+    <div id="pnlKalahariListing">
+	
+        
+                <div>
+                    <h4 class="left"><a href="http://etrader.kalahari.net/referral.asp?linkid=1869&partnerid=9113" target="_blank">kalahari.com</a></h4>
+                    <ul class="left">
+                        <li>
+                            <a href="http://etrader.kalahari.net/referral.asp?linkid=5&amp;partnerid=9113&amp;sku=35274963" target="_blank">A Hedonist's Guide To... Johannesburg</a><br />
+                            Explore the vibrant restaurants, bars and cultural life of Johannesburg before heading off for...
+                            
+                            Now R251.00
+                            <br />
+                            <a class="buynow" href="http://etrader.kalahari.net/referral.asp?linkid=5&amp;partnerid=9113&amp;sku=35274963" target="_blank">buy now</a>
+                        </li>
+                    </ul>
+                </div>
+            
+    
+</div>
+    
+</div>
+<div class=" rowdivider clr"></div>
+	    
+        
+	</div>
+	<div class="ByLineWidth">
+		
+	</div>
+	<article id="article-body" class="clr_left"><p>Johannesburg - The wife of the man accused of abusing her
+and their five children and holding them captive appeared in the Springs
+Magistrate's Court on Tuesday, <a href="http://www.beeld.com/nuus/2014-06-24-monster-se-vrou-bly-in-aanhouding">Beeld</a> reported.</p><p>The matter was postponed to 1 July for a formal bail
+application, according to the report.</p><p>She was arrested for defeating the ends of justice on Monday
+when she decided not to co-operate with police and reportedly refused to
+testify against her husband.</p><p>Magistrate Roy le Roux told the woman she was the second
+accused in the case.</p><p>In addition to defeating the ends of justice she faces the
+same charges as her husband - attempted murder, child abuse, and assault.</p><p>The woman's 36-year-old husband, who cannot be named to
+protect the identity of his family members, was arrested last month after
+allegedly assaulting his wife and five children and keeping them captive.</p><p>He was denied bail by the court earlier this month. His case
+was postponed to 25 July.</p><p>The man was arrested in May after his badly beaten
+11-year-old son fled the family's house in Springs and ran to a neighbour to
+beg for help. The neighbour called police.</p><p>The man allegedly kept his wife and five children, aged
+between two and 16, captive in the house for several years and assaulted them.</p></article>
+    
+	<div id="_htmlAccreditationName">- SAPA</div>
+	
+	<p></p>
+	
+
+
+<div id="divKeywordsListing" class="read_more_slider">
+    
+            <b style="color:Gray">Read more on: &nbsp;&nbsp;</b>
+        
+            <b><a style="color:#0E2E5E;" href="/Tags/Places/johannesburg">johannesburg</a></b>                     
+        &nbsp;|&nbsp;
+            <b><a style="color:#0E2E5E;" href="/Tags/Topics/crime">crime</a></b>                     
+        &nbsp;|&nbsp;
+            <b><a style="color:#0E2E5E;" href="/Tags/Topics/child_abuse">child abuse</a></b>                     
+        
+</div>
+    
+
+<script type="text/javascript">
+    function ReadMoreAction() { if ($j("div.read_more_slider").is(":inView") && !hidden) { $j("div#readMoreSlider").animate({ right: 0 }, 400); sliderVisible = true; isLoaded++; if (isLoaded == 1) { GA24.trackEvent("SouthAfrica-next-articlebox, show") } } } function HideReadMoreAction() { $j("div#readMoreSlider").animate({ right: -3e3 }, 400); sliderVisible = false } function CloseAction() { HideReadMoreAction(); hidden = true } var isLoaded = 0; var sliderVisible = false; var hidden = false; $j.extend($j.expr[":"], { inView: function (e) { return $j(e).offset().top + $j(e).height() <= $j(window).scrollTop() + $j(window).height() } }); $j(function () { setInterval("ReadMoreAction();", 500) }); $j(function () { var e = $j(window).scrollTop(); var t = e + $j(window).height(); var n = $j("div.read_more_slider").offset().top; var r = n + $j("div.read_more_slider").height(); return r <= t })
+</script>
+<div id="readMoreSlider">
+    <div class="slider_title"><span>NEXT ON NEWS24</span><span class="right" style="cursor:pointer;" onclick="CloseAction()">X</span></div>
+    <div class="slider_content">
+        <a href='http://www.news24.com/SouthAfrica/News/Cops-still-probing-deaths-of-8-illegal-miners-20140624' data-track="outbound,nextarticlebox"><img src="http://cdn.24.co.za/files/Cms/General/d/2779/dee09c9f1bbe4dfbac4bd4f022dc48fa.jpg" id="imgArticle" class="left" height="65" width="65" /></a>
+	    <h4 class="bold"><a href='http://www.news24.com/SouthAfrica/News/Cops-still-probing-deaths-of-8-illegal-miners-20140624' data-track="outbound,nextarticlebox" style="color:#fff;">Cops still probing deaths of 8 illegal miners</a></h4>
+	    <div class="wrap_stampcomment" style="margin-top:10px;">
+            <span class="block datestamp left" style="font-size:12px;color:#fff;">2014-06-24 13:32</span>
+        </div>
+    </div>
+</div>
+	<p></p>
+    
+</div>
+<script type="text/javascript">
+    $j(document).ready(function () { var a = $j("a.tips"); a.each(function () { var a = $j(this); a.attr("rel", "/Handlers/WhosWhoTooltip.ashx?url=" + a.attr("rel")) }); a.cluetip({ positionBy: "fixed", topOffset: "-230", leftOffset: "-30", sticky: true, dropShadow: false, showTitle: false, mouseOutClose: true, closeText: "", cluezIndex: 5100 }) })
+</script>
+        <div class="spacer clr">
+            </div>
+        
+
+<script type="text/javascript" language="javascript">
+	function openPrintWindow() {
+		myPrintWindow = window.open('http://www.news24.com/printArticle.aspx?iframe&aid=1370d9df-3a3f-4eed-9c29-a3d036173ac4&cid=1059','myPrintWindow','toolbar=0,location=0,directories=0,status=0,menubar=0,scrollbars=1,resizable=0,width=750,height=600');
+	}
+</script>
+<script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#username=zamedia24"></script>
+<div id="article_toolbox_bot" class="col626 left">
+	<ul>
+		<li class="email left" /><a class="group" href="http://www.news24.com/sendToFriend.aspx?iframe&aid=1370d9df-3a3f-4eed-9c29-a3d036173ac4&cid=1059">Email article</a>
+		<li class="print left" /><a onclick="openPrintWindow()" href="#">Print article</a>
+		<li class="get left" />GET NEWS24 ON: 
+		<li class="mobile left" /><a href="http://mobile.24.com/?p=minisite_news">Your mobile</a>
+		<li class="facebook left"/><a href="http://www.facebook.com/apps/application.php?api_key=90f449e533cd94a11213682bc9b2a23c">Your Facebook profile</a>
+		<li class="clr" />
+		<li class="share left" />SHARE:
+		
+	</ul>
+	
+	<div class="addthis_toolbox addthis_default_style">
+	  <a class="addthis_button_facebook">Facebook</a>
+	  <a class="addthis_button_twitter">Twitter</a>
+	  <a class="addthis_button_google">Google</a>
+	  <a class="addthis_button_digg">Digg</a>
+	  <a class="addthis_button_delicious">Delicious</a>
+	  <a class="addthis_button_yahoobkm">Yahoo</a>
+	  <a class="addthis_button_compact" >More...</a>
+	</div>
+</div>
+        <div class="spacer clr">
+            </div>
+        <div class="col620 adfix">
+            <div id='ad-468x120-1' class='24ad468x120'><script type='text/javascript'>if(typeof za24_DisplayAd != 'undefined') za24_DisplayAd('468x120','1');</script></div><noscript><a href='http://pubads.g.doubleclick.net/gampad/jump?iu=/8900/24.com/Web/News24/SouthAfrica/Articles&sz=468x120&c=634586355&t=artid%3d1370d9df-3a3f-4eed-9c29-a3d036173ac4%26Places%3djohannesburg%26Topics%3dcrime%2cchild+abuse%26posno%3d1' target='_blank'><img src='http://pubads.g.doubleclick.net/gampad/ad?iu=/8900/24.com/Web/News24/SouthAfrica/Articles&sz=468x120&c=634586355&t=artid%3d1370d9df-3a3f-4eed-9c29-a3d036173ac4%26Places%3djohannesburg%26Topics%3dcrime%2cchild+abuse%26posno%3d1' border='0' alt=''></a></noscript>
+        </div>
+        <div class="spacer clr">
+            </div>
+        <div class="col626">
+            
+
+<script type="text/javascript" src="http://scripts.24.co.za/libs/24com/comments/3.0.2/scripts/comments.min.js"></script>
+<script type="text/javascript" src="http://scripts.24.co.za/libs/json/json2.js"></script>
+<script type="text/javascript">
+    jQuery(function () {
+        if (typeof onLogin !== "function") {
+            jQuery.getScript("http://scripts.24.co.za/libs/24com/tina/1.0/LoginWindow.js");
+        }
+    });
+
+    $j(function() {
+        if (typeof commentControl !== "undefined") {
+            // settings
+            commentControl.sortOrder = "Asc";
+            commentControl.pageSize = 20;
+            commentControl.tinaBaseUrl = "http://auth.news24.com";
+            commentControl.commentStatus = "Unmoderated";
+            commentControl.lang = false ? "af" : "en";
+            commentControl.locale = "en-za";
+            commentControl.site = "News24";
+            commentControl.breadCrumb = "News24|SouthAfrica|News" ;
+            commentControl.objectId = "1370d9df-3a3f-4eed-9c29-a3d036173ac4";
+            commentControl.isDev = false ;
+            commentControl.canShowPostedComment = true ;
+            commentControl.logOutUrl = "http://auth.news24.com/DeAuthenticate.aspx?surl=http://www.news24.com/SouthAfrica/News/House-of-horrors-wife-appears-in-court-20140624";
+            commentControl.auth.user.id = "00000000-0000-0000-0000-000000000000";
+            commentControl.auth.user.displayName = "";
+            commentControl.auth.user.clickThrough = "";
+            commentControl.auth.user.avatarUrl = "http://cdn.24.co.za/Files/RAP2/d/DefaultAvatar/Small.png";
+            commentControl.auth.user.openIdType = 0 ;
+            commentControl.FacebookHandlerUrl = "http://www.news24.com/FacebookToken.ashx";
+            commentControl.cacheFacebookAvatar = true;
+            commentControl.policyLink = "http://www.news24.com/MyNews24/YourStory/News24s-Comments-Policy-20101109";
+            if (commentControl.auth.util.isFacebookProfile("")) {
+                commentControl.auth.user.facebookProfileId = commentControl.auth.util.getFbProfileIdFromAvatarUrl("");
+            }
+            commentControl.init();
+        }
+    });
+  
+</script>
+<p style="margin-bottom: 10px; margin-top: 5px;">
+<a href="http://www.news24.com/MyNews24/YourStory/News24s-Comments-Policy-20101109">Read News24’s Comments Policy</a>
+</p>
+
+
+
+<div class="facebookComments">
+    <p>24.com publishes all comments posted on articles provided that they adhere to our <a href="http://www.news24.com/MyNews24/YourStory/News24s-Comments-Policy-20101109" target="_blank" style="color:white;cursor:pointer;">Comments Policy</a>. Should you wish to report a comment for editorial review, please do so by clicking the 'Report Comment' button to the right of each comment.</p>
+</div>
+    <div id="comments_wrap">
+        <div id="comment_on_story">
+            <div class="fl">
+                Comment on this story
+            </div>
+            <div class="xsmall normal to_lower fl" id="comment_count_wrap">
+                <span id="lblTotalCommentCount">10</span>&nbsp;<span id="lblTotalCommentCountText">comments</span>
+            </div>
+            <div class="clr"></div>
+        </div>
+
+        
+            <div class="comment_form_wrap" id="comment_article_form">
+                <div class="comment_form_header to_upper bold">Add your comment</div>
+                <div class="comment_form_result_msg bold hidden">Thank you, your comment has been submitted.</div>
+                <div class="comment_form_user">
+                    <div class="avatar_wrap fl">
+                        <div><img alt="avatar" class="user_avatar_img" /></div>
+                    </div>
+                    <div class="author_name fl">
+                        <a href="#" target="_blank" class="author_link bold user_name"></a>
+                    </div>
+                    <div class="logout_wrap fr">
+                        <a href="#" class="smlr logout_link">Logout</a>
+                    </div>
+                    <div class="clr"></div>
+                </div>
+                <div class="comment_form_inner">
+                    <span class="comment_form_label bold">Comment</span>
+                    <span class="comment_form_remaining_text xsmall italic"><span>0</span> characters remaining</span>
+                    <div class="textarea_wrap"><textarea rows="4"></textarea></div>
+                    <div id="divFacebookCheckbox" class="facebook_checkbox">
+                        <input type="checkbox" id="chk_facebook" checked="checked" /> <label for="chk_facebook" class="smlr">Share on Facebook</label>
+                    </div>
+                    <input type="button" value="Post Comment" class="button_submit to_upper smlr" />
+                    <div class="ajax-loader hidden"></div>
+                </div>
+            </div>
+        
+        
+        <div id="comments_list"></div>
+        
+        <div id="comment_reusables" class="hidden">
+            <div class="comment_form_wrap" id="comment_reply_form">
+                <div class="comment_form_header to_upper bold"></div>
+                <div class="comment_form_user">
+                    <div class="avatar_wrap fl">
+                        <div><img alt="avatar" class="user_avatar_img" /></div>
+                    </div>
+                    <div class="author_name fl">
+                        <a href="#" target="_blank" class="author_link bold user_name"></a>
+                    </div>
+                    <div class="logout_wrap fr">
+                        <a href="#" class="smlr logout_link">Logout</a>
+                    </div>
+                    <div class="clr"></div>
+                </div>
+                <div class="comment_form_inner">
+                    <span class="comment_form_label bold">Comment</span>
+                    <span class="comment_form_remaining_text xsmall italic"><span>0</span> characters remaining</span>
+                    <div class="textarea_wrap"><textarea rows="4"></textarea></div>
+                    <div id="divFacebookCheckboxReply" class="facebook_checkbox">
+                        <input type="checkbox" id="chk_facebook_reply" checked="checked" /> <label for="chk_facebook_reply" class="smlr">Share on Facebook</label>
+                    </div>
+                    <input type="button" value="Post Comment" class="button_submit to_upper smlr" />
+                    <div class="ajax-loader hidden"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="comment_loader" class="hidden">
+            <img src="http://scripts.24.co.za/libs/24com/comments/2.7/images/ajax-loader.gif" alt="Loading comments..." /> Loading comments...
+        </div>
+
+        <input type="button" id="btn_load_more" class="hidden to_upper smlr" value="Load More Comments" />
+    </div>
+
+        </div>
+        <script type="text/javascript" language="javascript" src="http://scripts.24.co.za/libs/24com/contentrecommendation/2.0/keywordlogger.min.js?v=20140620" ></script>
+<div id="other_stories" class="col626 left">
+    <div id="googleAdContainer" style="float: left">
+        <script type="text/javascript">
+            google_ad_client = "pub-0710600889784454"; google_ad_slot = "5629899714"; google_ad_width = 336; google_ad_height = 280; $j(document).ready(function () { var data = { 'categoryBreadcrumb': 'SouthAfrica/News', 'articleId': '1370d9df-3a3f-4eed-9c29-a3d036173ac4' }; news24.getAjax("/Ajax/ArticleData/", "GetRecommendedArticles", data, function (res) { GetRecommendedArticlesCallback(res) }) }); function GetRecommendedArticlesCallback(res) { if (!res.error && res != "error") $j('#contentDiv').html(res); else $j('#contentDiv').remove() }
+        </script>
+        <script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+    </div>
+    <div id="contentDiv" class="right" style="width:277px;padding-bottom:10px;"></div>
+    <div class="clr"></div>
+</div>
+        <div class="spacer clr">
+            </div>
+        <div class="spacer clr">
+            </div>
+        
+<iframe src="http://b.wm.co.za/24com.php?location=N&layout=wide" id="ifrWide" frameborder="0" width="630" height="152" scrolling="no" style="margin-left:-8px"></iframe>
+<div class="clr10">&nbsp;</div>
+        <div class="spacer clr">
+            </div>
+        <div id="divToHide">
+    <div id="inside_news" class="col626 left">
+    <h2 class="bold">Inside News24</h2>
+	    <div id="wrap_carousel" class="relative block">
+	      
+		      <ul id="carousel" class="absolute">
+	        
+	          <li>
+		        <div class="item left">
+                    <div class="img_wrap">
+                        <a href="http://www.channel24.co.za/Music/News/Robin-Thickes-new-music-video-is-uncomfortably-awesome-20140624" target="_self"><img src="http://static.24.co.za/5/images/lazy/137x125.jpg" width="130" height="114" data-src="http://cdn.24.co.za/files/Cms/General/d/2796/f3974fafb47f4c86a026efacb37b236f.jpg" /></a>
+                    </div>    
+                    <h4 class="bold"><a href="http://www.channel24.co.za/Music/News/Robin-Thickes-new-music-video-is-uncomfortably-awesome-20140624" data-track="outbound,home,inside-This is really awkward!" target="_self">This is really awkward!</a></h4>
+                    <p>Robin Thicke's soppy new video!</p>
+		        </div>
+		      </li>
+	        
+	          <li>
+		        <div class="item left">
+                    <div class="img_wrap">
+                        <a href="http://www.sport24.co.za/Soccer/WorldCup/" target="_self"><img src="http://static.24.co.za/5/images/lazy/137x125.jpg" width="130" height="114" data-src="http://cdn.24.co.za/files/Cms/General/d/2797/faf08856691a443980224159f2fb9215.jpg" /></a>
+                    </div>    
+                    <h4 class="bold"><a href="http://www.sport24.co.za/Soccer/WorldCup/" data-track="outbound,home,inside-All the news from the SWC" target="_self">All the news from the SWC</a></h4>
+                    <p>Stay up-to-date with Sport24's special Brazil 2014 section.</p>
+		        </div>
+		      </li>
+	        
+	          <li>
+		        <div class="item left">
+                    <div class="img_wrap">
+                        <a href="http://www.health24.com/Medical/Hypertension/Effects-on-the-body/Gout-and-diet-20120721" target="_self"><img src="http://static.24.co.za/5/images/lazy/137x125.jpg" width="130" height="114" data-src="http://cdn.24.co.za/files/Cms/General/d/2791/5c43a0c536d04715a27242a1c9587345.jpg" /></a>
+                    </div>    
+                    <h4 class="bold"><a href="http://www.health24.com/Medical/Hypertension/Effects-on-the-body/Gout-and-diet-20120721" data-track="outbound,home,inside-Is your diet causing gout?" target="_self">Is your diet causing gout?</a></h4>
+                    <p>Cut out these 14 foods to prevent gout.</p>
+		        </div>
+		      </li>
+	        
+	          <li>
+		        <div class="item left">
+                    <div class="img_wrap">
+                        <a href="http://www.parent24.com/School_7-12/health_safety/Terrifying-road-safety-video-opts-for-gruesome-warning-20140623" target="_self"><img src="http://static.24.co.za/5/images/lazy/137x125.jpg" width="130" height="114" data-src="http://cdn.24.co.za/files/Cms/General/d/2796/dd2df972ab3f4176b5c33ad4aa9a362f.jpg" /></a>
+                    </div>    
+                    <h4 class="bold"><a href="http://www.parent24.com/School_7-12/health_safety/Terrifying-road-safety-video-opts-for-gruesome-warning-20140623" data-track="outbound,home,inside-Scary road safety ad" target="_self">Scary road safety ad</a></h4>
+                    <p>Road safety PSA opts for drastic measures to achieve effect.</p>
+		        </div>
+		      </li>
+	        
+	          <li>
+		        <div class="item left">
+                    <div class="img_wrap">
+                        <a href="http://www.food24.com/Recipes-and-Menus/Easy-Weekday-Meals" target="_self"><img src="http://static.24.co.za/5/images/lazy/137x125.jpg" width="130" height="114" data-src="http://cdn.24.co.za/files/Cms/General/d/168/abf07351bffb462e81e3e3522258d3e8.jpg" /></a>
+                    </div>    
+                    <h4 class="bold"><a href="http://www.food24.com/Recipes-and-Menus/Easy-Weekday-Meals" data-track="outbound,home,inside-Easy weekday meals" target="_self">Easy weekday meals</a></h4>
+                    <p>Easy chicken pie, beef enchiladas. mac 'n cheese and more. </p>
+		        </div>
+		      </li>
+	        
+	          <li>
+		        <div class="item left">
+                    <div class="img_wrap">
+                        <a href="http://www.news24.com/Travel/Guides/Island-Escapes/Reunion-Island-volcano-erupts-giving-adventurers-a-rare-sight-20140623" target="_self"><img src="http://static.24.co.za/5/images/lazy/137x125.jpg" width="130" height="114" data-src="http://cdn.24.co.za/files/Cms/General/d/168/c8abf0530cc04432830519c7cbfef733.jpg" /></a>
+                    </div>    
+                    <h4 class="bold"><a href="http://www.news24.com/Travel/Guides/Island-Escapes/Reunion-Island-volcano-erupts-giving-adventurers-a-rare-sight-20140623" data-track="outbound,home,inside-Thrilling eruption" target="_self">Thrilling eruption</a></h4>
+                    <p>Reunion island visitors are being spoiled with a rare sight... </p>
+		        </div>
+		      </li>
+	        
+	          <li>
+		        <div class="item left">
+                    <div class="img_wrap">
+                        <a href="http://www.parent24.com/Toddler_1-2/SoftAndShiny/3-year-old-girl-donates-her-hair-to-cancer-patients-20140620" target="_self"><img src="http://static.24.co.za/5/images/lazy/137x125.jpg" width="130" height="114" data-src="http://cdn.24.co.za/files/Cms/General/d/2794/6de83b695cd942e8a26a64f74c35b8e3.gif" /></a>
+                    </div>    
+                    <h4 class="bold"><a href="http://www.parent24.com/Toddler_1-2/SoftAndShiny/3-year-old-girl-donates-her-hair-to-cancer-patients-20140620" data-track="outbound,home,inside-Viral: Toddler\&#39;s hair inspires!" target="_self">Viral: Toddler's hair inspires!</a></h4>
+                    <p>Watch: 3 year old Emily donates her hair to cancer patients</p>
+		        </div>
+		      </li>
+	        
+	          <li>
+		        <div class="item left">
+                    <div class="img_wrap">
+                        <a href="http://www.fin24.com/Savings/YourVoice/Another-chance-to-bag-R2-000-in-cash-20140620" target="_self"><img src="http://static.24.co.za/5/images/lazy/137x125.jpg" width="130" height="114" data-src="http://cdn.24.co.za/files/Cms/General/d/2795/83d011d4fb45419a8bc76e8e221b51ef.jpg" /></a>
+                    </div>    
+                    <h4 class="bold"><a href="http://www.fin24.com/Savings/YourVoice/Another-chance-to-bag-R2-000-in-cash-20140620" data-track="outbound,home,inside-Win R2 000!" target="_self">Win R2 000!</a></h4>
+                    <p>Add your voice to Fin24's Savings Issue & stand a chance of bagging R2 000.</p>
+		        </div>
+		      </li>
+	        
+	          </ul>
+	        
+	    </div>
+    </div>	
+    <div id="" class="left col13"> </div>
+</div>
+<div class="clr">&nbsp;</div>
+
+
+        <div class="spacer clr">
+            </div>
+        
+
+<div id="promotion_box" class="left col626">
+    <div id='ad-1x1-1' class='24ad1x1'><script type='text/javascript'>if(typeof za24_DisplayAd != 'undefined') za24_DisplayAd('1x1','1');</script></div><noscript><a href='http://pubads.g.doubleclick.net/gampad/jump?iu=/8900/24.com/Web/News24/SouthAfrica/Articles&sz=1x1&c=634586355&t=artid%3d1370d9df-3a3f-4eed-9c29-a3d036173ac4%26Places%3djohannesburg%26Topics%3dcrime%2cchild+abuse%26posno%3d1' target='_blank'><img src='http://pubads.g.doubleclick.net/gampad/ad?iu=/8900/24.com/Web/News24/SouthAfrica/Articles&sz=1x1&c=634586355&t=artid%3d1370d9df-3a3f-4eed-9c29-a3d036173ac4%26Places%3djohannesburg%26Topics%3dcrime%2cchild+abuse%26posno%3d1' border='0' alt=''></a></noscript>
+</div>
+    </div>
+
+            </div>
+            <div id="right_column" class="grey_grad left col299">
+                
+    <div class="personallogin">
+        <div id="PanelLogIn">
+	
+    <div class="welcome">
+        <h2 class="bold">Welcome to News24</h2>
+        <div class="login_block"><a href="javascript:void(0)" class="submit_button">Login | Sign Up</a></div>
+    </div>
+    <div class="clr"></div>
+    
+
+<div class="uploadblack">
+    <div class="blackblock_heading">Get Published!</div>
+    <div class="blackblock_upload"><strong>UPLOAD</strong></div>
+    <div class="blackblock_icons">
+        <a class="tooltip call2action" href="http://uploads.news24.com/#story">
+            <img width="24" height="24" border="0" alt="" src='http://static.24.co.za/5/images/profile/article_icon.jpg'>
+            <span><b>Click here<br>to upload<br>your article</b></span>
+        </a>
+        <a class="tooltip call2action" href="http://uploads.news24.com/#images">
+            <img width="24" height="24" border="0" alt="" src='http://static.24.co.za/5/images/profile/camera_icon.jpg'>
+            <span><b>Click here<br />to upload<br />your photo</b></span>
+        </a>
+        <a class="tooltip call2action" href="http://uploads.news24.com/#videos">
+            <img width="24" height="24" border="0" alt="" src='http://static.24.co.za/5/images/profile/video_icon.jpg'>
+            <span><b>Click here<br>to upload<br>your video</b></span>
+        </a>
+    </div>
+</div>
+
+</div>
+
+
+        <div class="clr">
+        </div>
+    </div>
+    
+
+
+<script language="javascript" type="text/javascript">
+    var tabsClass = { tabSetArray: new Array, classOn: "tabs_on", classOff: "tabs_off", addTabs: function (a) { tabs = document.getElementById(a).getElementsByTagName("div"); for (x in tabs) { if (typeof tabs[x].id != "undefined") { this.tabSetArray.push(tabs[x].id) } else { } } }, switchTab: function (a) { for (x in this.tabSetArray) { tabItem = this.tabSetArray[x]; dataElement = document.getElementById(tabItem + "_data"); if (dataElement) { if (dataElement.style.display != "none") { dataElement.style.display = "none" } else { } } else { } tabElement = document.getElementById(tabItem); if (tabElement) { if (tabElement.className != this.classOff) { tabElement.className = this.classOff } else { } } else { } } document.getElementById(a.id + "_data").style.display = ""; a.className = this.classOn } }
+</script>
+
+<div id="most_box" class="col299 tabs">
+    
+    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+        
+          <tr>
+            <td>
+                <div id="mostTabContainer" class="localised tabNavigation tab-menu">
+	                <div id="tab_read" class="tabs_on left" onmouseover="tabsClass.switchTab(this);">Most Read</div>
+                    <div id="tab_comment" class="tabs_off left" onmouseover="tabsClass.switchTab(this);">Most Commented</div>
+                    <div id="tab_area" class="tabs_off left" onmouseover="tabsClass.switchTab(this);">News In Your Area</div>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                
+
+<div id="tab_read_data" class="tab-wrapper">
+    <ul class="bold">
+            <li><a data-track="outbound,mostread,mostread-Why shouldn\&#39;t we notice Maimane\&#39;s wife\&#39;s race?" href="http://www.news24.com/Columnists/TOMolefe/Why-shouldnt-we-notice-Maimanes-wifes-race-20140623">Why shouldn't we notice Maimane's wife's race?</a></li>
+        
+            <li><a data-track="outbound,mostread,mostread-Local actor violently attacked and robbed in Knysna" href="http://www.channel24.co.za/News/Local/Local-actor-violently-attacked-and-robbed-in-Knysna-20140624">Local actor violently attacked and robbed in Knysna</a></li>
+        
+            <li><a data-track="outbound,mostread,mostread-Zuma put up for sale in ad - report" href="http://www.news24.com/SouthAfrica/News/Zuma-put-up-for-sale-in-ad-report-20140623">Zuma put up for sale in ad - report</a></li>
+        
+            <li><a data-track="outbound,mostread,mostread-Amcu ends five-month platinum strike" href="http://www.fin24.com/Economy/Amcu-ends-five-month-platinum-strike-20140623">Amcu ends five-month platinum strike</a></li>
+        
+            <li><a data-track="outbound,mostread,mostread-Mayor held for Mandela funeral fraud" href="http://www.news24.com/SouthAfrica/News/Mayor-held-for-Mandela-funeral-fraud-20140623">Mayor held for Mandela funeral fraud</a></li>
+        </ul>
+    <div class="spacer clr"></div>
+    <a id="lnkReadMore" Class="lnkMore" href="http://www.news24.com/TopStories">More..</a>
+</div>
+                
+
+<div id="tab_comment_data" class="tab-wrapper" style="display: none;">
+    <div class="clr"></div>
+    <ul class="bold">
+            <li><a data-track="outbound,mostread,mostcommented-Corruption is a cancer - ANC" href="http://www.news24.com/SouthAfrica/Politics/Corruption-is-a-cancer-ANC-20140623">Corruption is a cancer - ANC</a></li>
+        
+            <li><a data-track="outbound,mostread,mostcommented-Derby-Lewis’s wife to approach protector" href="http://www.news24.com/SouthAfrica/News/Derby-Lewiss-wife-to-approach-protector-20140623">Derby-Lewis’s wife to approach protector</a></li>
+        
+            <li><a data-track="outbound,mostread,mostcommented-Zuma put up for sale in ad - report" href="http://www.news24.com/SouthAfrica/News/Zuma-put-up-for-sale-in-ad-report-20140623">Zuma put up for sale in ad - report</a></li>
+        
+            <li><a data-track="outbound,mostread,mostcommented-SA\&#39;s youngest doctor loves his country" href="http://www.news24.com/SouthAfrica/News/SAs-youngest-doctor-loves-his-country-20140622">SA's youngest doctor loves his country</a></li>
+        
+            <li><a data-track="outbound,mostread,mostcommented-Plan to share farms with workers on track" href="http://www.news24.com/SouthAfrica/News/Plan-to-share-farms-with-workers-on-track-20140622">Plan to share farms with workers on track</a></li>
+        </ul>
+    <div class="spacer clr"></div>                        
+    <a id="lnkCommentMore" Class="lnkMore" href="http://www.news24.com/TopStories">More..</a>
+</div>
+<div id="tab_area_data" class="tab-wrapper" style="display: none;">
+    <a href="http://www.news24.com/UserLocationModal.aspx?iframe&control=mostread" id="lnkModalDisplay" class="userLocationModal right change_link">[change area]</a>
+    <h4 id="areaHeading" class="left most_head bold">News in Cape Town</h4>    
+    <div class="clr"></div>
+    <ul class="bold">
+            <li><a data-track="outbound,mostread,mostreadarea-School holiday fun at the Table Mountain Cableway" href="http://www.news24.com/Travel/South-Africa/School-holiday-fun-at-the-Table-Mountain-Cableway-20140624">School holiday fun at the Table Mountain Cableway</a></li>
+        
+            <li><a data-track="outbound,mostread,mostreadarea-R179m for small firms in the Cape" href="http://www.fin24.com/Entrepreneurs/News/R179m-for-small-firms-in-the-Cape-20140620">R179m for small firms in the Cape</a></li>
+        
+            <li><a data-track="outbound,mostread,mostreadarea-PIs, cop in court for homeless man\&#39;s murder" href="http://www.news24.com/SouthAfrica/News/PIs-cop-in-court-for-homeless-mans-murder-20140624">PIs, cop in court for homeless man's murder</a></li>
+        
+            <li><a data-track="outbound,mostread,mostreadarea-Rocking the Daisies announces big international headliner" href="http://www.channel24.co.za/Music/News/Rocking-the-Daisies-announces-big-international-headliner-20140624">Rocking the Daisies announces big international headliner</a></li>
+        
+            <li><a data-track="outbound,mostread,mostreadarea-Paralegal to decide on plea bargain or trial" href="http://www.news24.com/SouthAfrica/News/Paralegal-to-decide-on-plea-bargain-or-trial-20140624">Paralegal to decide on plea bargain or trial</a></li>
+        </ul>
+</div>               
+                <script type="text/javascript">
+                      tabsClass.addTabs("mostTabContainer");
+			    </script>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div class="ad278X35 outsurance"><!-- outsurance Ad -->
+	                <div id='ad-278x76-1' class='24ad278x76'><script type='text/javascript'>if(typeof za24_DisplayAd != 'undefined') za24_DisplayAd('278x76','1');</script></div><noscript><a href='http://pubads.g.doubleclick.net/gampad/jump?iu=/8900/24.com/Web/News24/SouthAfrica/Articles&sz=278x76&c=1118552289&t=artid%3ddf8ae1f0-3fbc-4e4a-9a59-c7c9a69f36f1%26Companies%3dlonmin%26Places%3dmahikeng%26Topics%3dmarikana+inquiry%2cmining+unrest%26posno%3d1' target='_blank'><img src='http://pubads.g.doubleclick.net/gampad/ad?iu=/8900/24.com/Web/News24/SouthAfrica/Articles&sz=278x76&c=1118552289&t=artid%3ddf8ae1f0-3fbc-4e4a-9a59-c7c9a69f36f1%26Companies%3dlonmin%26Places%3dmahikeng%26Topics%3dmarikana+inquiry%2cmining+unrest%26posno%3d1' border='0' alt=''></a></noscript>
+                </div>
+            </td>
+        </tr>
+    </table>
+    <a id="lnkModalItem" class="fireEventMost locationModal" style="display:none;"></a>
+</div>
+
+    <div class="spacer clr">
+        </div>
+    <div class="ad300X600 col300">
+        <div id='ad-300x600-1' class='24ad300x600'><script type='text/javascript'>if(typeof za24_DisplayAd != 'undefined') za24_DisplayAd('300x600','1');</script></div><noscript><a href='http://pubads.g.doubleclick.net/gampad/jump?iu=/8900/24.com/Web/News24/SouthAfrica/Articles&sz=300x600&c=634586355&t=artid%3d1370d9df-3a3f-4eed-9c29-a3d036173ac4%26Places%3djohannesburg%26Topics%3dcrime%2cchild+abuse%26posno%3d1' target='_blank'><img src='http://pubads.g.doubleclick.net/gampad/ad?iu=/8900/24.com/Web/News24/SouthAfrica/Articles&sz=300x600&c=634586355&t=artid%3d1370d9df-3a3f-4eed-9c29-a3d036173ac4%26Places%3djohannesburg%26Topics%3dcrime%2cchild+abuse%26posno%3d1' border='0' alt=''></a></noscript>
+    </div>
+    <div class="spacer clr">
+        </div>
+    
+    
+<div id='bgColour' class='left relative sitewide_block ' style='background:#e7e7e7 url(http://cdn.24.co.za/files/Cms/General/d/2787/9a247e3983d84616908254d7baf70ff4.jpg) no-repeat top left; width:292px;border:4px solid #005e00 ;background-color:#e7e7e7;' ><div class="media_wrapper False">
+<div class="generic_header">
+<div style='min-height: 50px; max-height: 100px; margin: -6px -6px -6px -7px; min-width: 100%;height:150px!important;'></div>
+</div>
+
+<div class="clr borderdotted">&nbsp;</div>
+<div class='news_item'>
+<a href="http://www.sport24.co.za/Soccer/SWC-team-after-Round-Two-20140623-2" target="_blank" data-track="SitewideComponent,SWC-team-after-Round-Two-20140623-2"><img src="http://cdn.24.co.za/files/Cms/General/d/2763/b389d2840f434cb6a816a13d28d5ff43.jpg"  class="left" width="65" height="65"/></a>
+<h4><a href="http://www.sport24.co.za/Soccer/SWC-team-after-Round-Two-20140623-2" data-track="SitewideComponent,SWC-team-after-Round-Two-20140623-2" style="color:#005e00">SWC team after Round Two</a></h4>
+<p>The SWC is in full swing and after tonight, four teams will be heading for the airport. Here is the team of tournament, so far.</p>
+</div>
+
+<div class="clr borderdotted">&nbsp;</div>
+<ul>
+<li>
+<a href="http://www.sport24.co.za/Soccer/WorldCup/Schedule">Find out when your team is playing</a>
+</li>
+<li>
+<a href="http://www.sport24.co.za/Soccer/WorldCup/Results">Catch up with the latest results</a>
+</li>
+<li>
+<a href="http://www.sport24.co.za/Soccer/WorldCup/Logs">See who's leading the pack</a>
+</li>
+</ul>
+
+<div class="clr borderdotted">&nbsp;</div>
+<h2 class="bold" id="secondHeadingColor"><a href="http://www.sport24.co.za/soccer/worldcup/multimedia" style="color:#005e00!important">Latest World Cup multimedia</a></h2>
+<div class="media_images left">
+<div class="clr"></div>
+<div class="multsitewideFalse" style="float: left;">
+<a href="http://www.sport24.co.za/Soccer/WorldCup/Multimedia/World-Cup-mascots-dirty-dancing-20140624" target="_blank" id="lnkGallery" class="gallery_list"><img src='/images/lazy/65x65.jpg' data-src="http://cdn.24.co.za/files/Cms/General/d/2796/a7293a1e91e34a47b180b5a314fc54da.png" width="65" height="65"/></a>
+</div>
+<div id="multTitleSiteWideHoverFalse0" class="multiBlueGrey" style="margin-left: 0px; width: 258px;background-color:#005e00;">
+<div style="margin-top: -20px;margin-left: 0px; position: absolute;border-color: transparent transparent #005e00 transparent;border-style: solid;border-width: 0px 20px 20px 20px;height: 0px;width: 0px;"></div>
+<span style="font-size: 13px; font-weight: bold;color:#ffffff!important;">World Cup mascot's dirty dancing</span></div>
+<div class="multsitewideFalse" style="float: left;">
+<a href="http://www.sport24.co.za/Soccer/WorldCup/Multimedia/Top-10-SWC-WAGS-20140619" target="_blank" id="lnkGallery" class="gallery_list"><img src='/images/lazy/65x65.jpg' data-src="http://cdn.24.co.za/files/Cms/General/d/2760/fd2b3b3cb1b44834aa70b23807a36506.jpg" width="65" height="65"/></a>
+</div>
+<div id="multTitleSiteWideHoverFalse1" class="multiBlueGrey" style="margin-left: 0px; width: 258px;background-color:#005e00;">
+<div style="margin-top: -20px;margin-left: 70px; position: absolute;border-color: transparent transparent #005e00 transparent;border-style: solid;border-width: 0px 20px 20px 20px;height: 0px;width: 0px;"></div>
+<span style="font-size: 13px; font-weight: bold;color:#ffffff!important;">Top 10 SWC WAGS</span></div>
+<div class="multsitewideFalse" style="float: left;">
+<a href="http://www.sport24.co.za/Soccer/WorldCup/Multimedia/SWC-WAG-of-the-Week-20140619" target="_blank" id="lnkGallery" class="gallery_list"><img src='/images/lazy/65x65.jpg' data-src="http://cdn.24.co.za/files/Cms/General/d/2759/6564a92fc33a4fd7b54bf63c230b0b22.jpg" width="65" height="65"/></a>
+</div>
+<div id="multTitleSiteWideHoverFalse2" class="multiBlueGrey" style="margin-left: 0px; width: 258px;background-color:#005e00;">
+<div style="margin-top: -20px;margin-left: 140px; position: absolute;border-color: transparent transparent #005e00 transparent;border-style: solid;border-width: 0px 20px 20px 20px;height: 0px;width: 0px;"></div>
+<span style="font-size: 13px; font-weight: bold;color:#ffffff!important;">SWC WAG of the Week</span></div>
+<div class="multsitewideFalse" style="float: left;">
+<a href="http://www.sport24.co.za/Soccer/WorldCup/Multimedia/Body-painted-SWC-babes-20140613" target="_blank" id="lnkGallery" class="gallery_list"><img src='/images/lazy/65x65.jpg' data-src="http://cdn.24.co.za/files/Cms/General/d/2787/1f4fea494d454e129ca7f3a908841a7a.jpg" width="65" height="65"/></a>
+</div>
+<div id="multTitleSiteWideHoverFalse3" class="multiBlueGrey" style="margin-left: 0px; width: 258px;background-color:#005e00;">
+<div style="margin-top: -20px;margin-left: 210px; position: absolute;border-color: transparent transparent #005e00 transparent;border-style: solid;border-width: 0px 20px 20px 20px;height: 0px;width: 0px;"></div>
+<span style="font-size: 13px; font-weight: bold;color:#ffffff!important;">Body painted SWC babes</span></div>
+<div class="clr"></div>
+</div>
+
+<a href="http://pubads.g.doubleclick.net/gampad/clk?id=81443350&iu=/8900/24.com/Web/Sport24" target="_blank" data-track="SitewideComponent,SponsorAdBanner,News24" alt=" " title=" "><img src='/images/lazy/65x65.jpg' data-src="http://cdn.24.co.za/files/Cms/General/d/2795/b66af6d23d8c489dbe4214e64e6a12fe.jpg" /></a>
+</div>
+<div class="clr"></div>
+</div>
+
+<script type="text/javascript">
+jQuery(document).ready(function () {
+$j('.multsitewideFalse').each(function (index) {
+$j(this).hover(function () { $j('.media_wrapper.False .multiBlueGrey').hide(); $j("#multTitleSiteWideHoverFalse" + index).show(); });
+});
+setTimeout(function() {$j('#multTitleSiteWideHoverFalse0').show();},0);
+});
+</script>
+<div class="clr" style="height: 10px;"></div>
+
+
+    <div class="spacer clr">
+        </div>
+    
+    <div class="spacer clr">
+        </div>
+    <div id="fb_social"></div>
+<script type="text/javascript" src="http://scripts.24.co.za/libs/24com/SocialNews/3.0/scripts/socialnews.min.js?v=20140620" type="text/javascript"></script>
+<script type="text/javascript" >
+jQuery('head').append('<link rel="stylesheet" href="http://scripts.24.co.za/libs/24com/SocialNews/3.0/styles/socialnews.css?v=20140620" type="text/css" />');
+jQuery(document).ready(function(){
+FBSocialNews.settings.siteDomain="www.news24.com";
+FBSocialNews.settings.parentDomain="www.news24.com";
+FBSocialNews.settings.activityServiceUrl="http://fbactivity.24.com/";
+FBSocialNews.settings.appID="2363277980";
+FBSocialNews.settings.tinaBaseUrl="http://auth.news24.com";
+FBSocialNews.settings.isArticle=true;
+FBSocialNews.settings.actionType='read';
+FBSocialNews.settings.overrideFriendActivity=false;
+if(typeof LanguageResource != 'undefined')FBSocialNews.settings.language=LanguageResource.languages.eng;
+FBSocialNews.userProfile.hasPermission=false;
+FBSocialNews.init();
+});
+</script>
+<div class="clr socialspacer"></div>
+<a href="/SocialSharingPopup.aspx" class="iframe socialSharePopup" style="display:none;"></a>
+
+    <div class="spacer clr">
+        </div>
+    
+    
+    
+
+<script language="javascript" type="text/javascript">
+    $j(document).ready(function () { var a = "capetown"; if (a == "" || a == "default") { $j("#tab_traffic_data").attr("class", "tab-wrapper") } }); var tabsInfoClass = { tabInfoSetArray: new Array, classOn: "tabs_on left", classOff: "tabs_off left", addTabs: function (a) { tabs = document.getElementById(a).getElementsByTagName("div"); for (x in tabs) { if (typeof tabs[x].id != "undefined") { this.tabInfoSetArray.push(tabs[x].id) } else { } } }, switchTab: function (a) { for (x in this.tabInfoSetArray) { tabItem = this.tabInfoSetArray[x]; dataElement = document.getElementById(tabItem + "_data"); if (dataElement) { if (dataElement.style.display != "none") { dataElement.style.display = "none" } else { } } else { } tabElement = document.getElementById(tabItem); if (tabElement) { if (tabElement.className != this.classOff) { tabElement.className = this.classOff } else { } } else { } } document.getElementById(a.id + "_data").style.display = ""; a.className = this.classOn } }
+</script>
+
+<div class="clr10">&nbsp;</div>
+<div id="weather_box" class="col299 relative tabs2">
+    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+        <tr>
+            <td>
+                <div id="infoTabContainer" class="tabNavigation tab-menu">
+                    <div id="tab_traffic" class="tabs_on left" onmouseover="tabsInfoClass.switchTab(this);">Traffic</div>
+                    <div id="tab_lottery" class="tabs_off left" onmouseover="tabsInfoClass.switchTab(this);">Lottery</div>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td class="relative">
+                <div id="tab_traffic_data" class="tab-wrapper-beta">
+
+<div id="traffic_box">
+    <div class="traffic_header">
+        <!--<h3 class="bold left">Traffic</h3>//-->
+        <div class="dropdown left"><select id='ddlTrafficRegions'><option value='' >Select region..</option><option value='Gauteng' >Gauteng</option><option value='KwaZulu-Natal' >KwaZulu-Natal</option><option value='Western Cape' selected='selected'>Western Cape</option><option value='Free State' >Free State</option><option value='Northern Cape' >Northern Cape</option><option value='Eastern Cape' >Eastern Cape</option><option value='North West' >North West</option><option value='Mpumalanga' >Mpumalanga</option></select></div>
+    </div>
+    <div class="traffic_container">
+        <div class="clr5 clr">&nbsp;</div>
+        <div id="trafic-container" class="left">
+            <ul><li><span class='day'>Tuesday</span>&nbsp;<span class='location'>Table View - 15:09 PM</span><br/><span class='road'>Road name: Marine Drive Southbound</span><br/><span class='description'>TRUCK ACCIDENT in Sunset Beach - delays from Table View</span></li><li><span class='day'>Tuesday</span>&nbsp;<span class='location'>Epping - 15:06 PM</span><br/><span class='road'>Road name: N7 Vanguard Drive Northbound</span><br/><span class='description'>DELAYS approaching Bofors Circle</span></li></ul>
+        </div>
+        <div class="clr5 clr">&nbsp;</div>
+        <a href="http://www.news24.com/Traffic/WESTERN_CAPE" id="lnkMore" class="block bold">More traffic reports...</a>
+        <div class="clr5 clr">&nbsp;</div>
+        <a id="lnkSponsor"></a>
+        <script type="text/javascript">
+            $j(document).ready(function () { $j("#ddlTrafficRegions").change(function () { var e = $j("OPTION:selected", this).val(); var t = "traffic/" + e.replace(" ", "_").toUpperCase(); $j("#lnkMore").html("<a id='lnkMore' href='" + t + "' class='block bold'>More traffic reports...</a>"); $j("#trafic-container").hide(); news24.getAjax("/Ajax/TrafficData/", "GetTraffic", { 'location': e }, function (e) { $j("#trafic-container").html(e); $j("#trafic-container").fadeIn("slow") }) }) });
+        </script>
+    </div>
+</div></div>
+                <div id="tab_lottery_data" class="tab-wrapper" style="display: none;">Here are the winning Lotto numbers for the Saturday, 21 June draw.<br />&nbsp;2, 5, 8, 16, 36, 38 Bonus 17<br /><br />Lotto Plus: 2, 8, 25, 35, 43, 49 Bonus 21<br /><br /><strong>SMS the word Lotto to 31222 to get Lotto numbers sent directly to your phone. The service costs just R10 per month.<br /><br /></strong><br /><br /><strong>To unsubscribe, reply with the words Stop Lotto. <br /></strong><br />
+<div class="spacer clr"></div>
+<a href="http://www.news24.com/Lottery" id="lnkMoreLotto" class="block bold">More lotto numbers...</a></div>
+                <script type="text/javascript">tabsInfoClass.addTabs("infoTabContainer");</script>
+            </td>
+        </tr>
+    </table>
+</div>
+<div class="spacer clr"></div>
+    <div class="spacer clr">
+        </div>
+    <div class="ad300X250 col300">
+        <div id='ad-300x250-1' class='24ad300x250'><script type='text/javascript'>if(typeof za24_DisplayAd != 'undefined') za24_DisplayAd('300x250','1');</script></div><noscript><a href='http://pubads.g.doubleclick.net/gampad/jump?iu=/8900/24.com/Web/News24/SouthAfrica/Articles&sz=300x250&c=634586355&t=artid%3d1370d9df-3a3f-4eed-9c29-a3d036173ac4%26Places%3djohannesburg%26Topics%3dcrime%2cchild+abuse%26posno%3d1' target='_blank'><img src='http://pubads.g.doubleclick.net/gampad/ad?iu=/8900/24.com/Web/News24/SouthAfrica/Articles&sz=300x250&c=634586355&t=artid%3d1370d9df-3a3f-4eed-9c29-a3d036173ac4%26Places%3djohannesburg%26Topics%3dcrime%2cchild+abuse%26posno%3d1' border='0' alt=''></a></noscript>
+    </div>
+    <div class="spacer clr">
+        </div>
+    
+<script type="text/javascript">
+    function InsuranceDealsGoTo(a) { $j("#sponsor_carousel").jcarousel("scroll", a, true); $j("#sponsor_carousel").jcarousel("reload"); return false } function movenext() { $j("#sponsor_carousel").jcarousel("next"); return false } function moveback() { $j("#sponsor_carousel").jcarousel("prev"); return false } function mycarousel_itemFirstInCallback(a, b, c, d) { var e = c; $j("div#adlist ul li").removeClass("selected"); $j("div#adlist ul li").removeAttr("style"); $j("div#adlist ul a").removeAttr("style"); $j("#ad_" + e).parent().addClass("selected"); $j("#ad_" + e).parent().attr("style", "background-color:" + colors[e] + ";color:" + textcolors[e]); $j("#ad_" + e).attr("style", "color:" + textcolors[e]); $j("#jcarousel-prev").unbind("click"); $j("#jcarousel-next").unbind("click"); if (e == 1) { $j("#jcarousel-prev").removeClass("jcarousel-prev-disabled").addClass("jcarousel-prev-disabled"); $j("#jcarousel-prev").attr("disabled", "disabled"); $j("#jcarousel-prev").unbind("click") } else { $j("#jcarousel-prev").removeClass("jcarousel-prev-disabled"); $j("#jcarousel-prev").attr("disabled", ""); $j("#jcarousel-prev").bind("click", moveback) } if (e == last) { $j("#jcarousel-next").removeClass("jcarousel-next-disabled").addClass("jcarousel-next-disabled"); $j("#jcarousel-next").attr("disabled", "disabled"); $j("#jcarousel-next").unbind("click") } else { $j("#jcarousel-next").removeClass("jcarousel-next-disabled"); $j("#jcarousel-next").attr("disabled", ""); $j("#jcarousel-next").bind("click", movenext) } } $j(document).ready(function () { $j('#jcarousel-next').bind('click', movenext); $j('#jcarousel-prev').bind('click', moveback); var randomnumber = Math.floor(Math.random() *0 +1); $j("#sponsor_carousel").jcarousel({ scroll: 1, start: randomnumber, itemFirstInCallback: mycarousel_itemFirstInCallback, buttonNextHTML: null, buttonPrevHTML: null }); $j("#sponsored_holder").removeClass("tabLoader") });
+</script>
+
+
+<div class="spacer clr"></div>
+    
+
+<div id="the_accordion" class="tabLoader">
+    <div id="accordion" class="col299 relative">
+        <h3 id="headerTag" class="toggler toggler_pers">
+    <a href="http://www.careers24.com/cape-town-jobs" class="bold toggler_anchor">Jobs in Cape Town</a>
+    <a href="http://www.news24.com/UserLocationModal.aspx?iframe&control=careers" id="lnkModalDisplay" class="careersModal right" style="padding-right:5px;text-transform:lowercase;font-size:11px">[change area]</a>
+</h3>
+<div class="element">
+    <div id="divToHide">
+        <h4 id="headerCareersRegion" class="bold item" style="font-size:11px;">Jobs in Western Cape region</h4>
+        
+	         <div class="item">
+                
+                    <h4 class="bold">
+                        <a data-track="outbound,rightnav-listings,careers-PS896 BEQUEST &amp; MAJOR DONOR OFFICER, NPO" href="http://www.careers24.com/jobs/adverts/480556-ps896-bequest-major-donor-officer-npo-cape-town-southern-suburbs/" target="_blank">PS896 BEQUEST & MAJOR DONOR OFFICER, NPO</a></h4>
+                        <img src="http://static.24.co.za/5/images/lazy/86x48.jpg" class="right job" width="86" height="48" data-src="/imagecache.axd?url=http%3a%2f%2fwww.careers24.com%2f_resx%2fimageresource%2f95A7FC908DBD21FC76C7966745B60B4BE1338E7C-975-86-48-0" />
+                    <p>
+                        Cape Town Southern Suburbs<br/>Anchor Executive Recruitment (Pty) Ltd<br/></p>
+                    
+                    <div class="clr">
+                    </div>
+                </div>
+          
+	         <div class="item">
+                
+                    <h4 class="bold">
+                        <a data-track="outbound,rightnav-listings,careers-Supply Chain Manager" href="http://www.careers24.com/jobs/adverts/476801-supply-chain-manager-cape-town/" target="_blank">Supply Chain Manager</a></h4>
+                        <img src="http://static.24.co.za/5/images/lazy/86x48.jpg" class="right job" width="86" height="48" data-src="/imagecache.axd?url=http%3a%2f%2fwww.careers24.com%2f_resx%2fimageresource%2f6BF54C4B72E35F6E046C9BFC548394BE3D3562DA-88300-86-48-0" />
+                    <p>
+                        Cape Town<br/>Purple Door Recruitment (Pty) Ltd<br/>R8 000 - R10 500 Per Month</p>
+                    
+                    <div class="clr">
+                    </div>
+                </div>
+          
+	         <div class="item">
+                
+                    <h4 class="bold">
+                        <a data-track="outbound,rightnav-listings,careers-IT DEVELOPER" href="http://www.careers24.com/jobs/adverts/468923-it-developer-milnerton/" target="_blank">IT DEVELOPER</a></h4>
+                        
+                    <p>
+                        Milnerton<br/>CR Solutions<br/></p>
+                    
+                    <div class="clr">
+                    </div>
+                </div>
+          
+	    <div class="item browse bold">
+		    <a href="http://www.careers24.com/cape-town-jobs" target="_blank">Browse more Cape Town jobs...</a>
+	    </div>
+	    <div class="item">
+                <div class="left" style="margin-left: 0px; width: 140px;">
+                    <ul>
+                        
+                                <li>
+                                    <a href='http://www.careers24.com/pretoria-jobs' title='Pretoria Jobs'>
+                                        Pretoria Jobs
+                                    </a> 
+                                </li>
+                            
+                                <li>
+                                    <a href='http://www.careers24.com/kimberley-jobs' title='Kimberley Jobs'>
+                                        Kimberley Jobs
+                                    </a> 
+                                </li>
+                            
+                                <li>
+                                    <a href='http://www.careers24.com/jobs-in-gauteng' title='Gauteng Jobs'>
+                                        Gauteng Jobs
+                                    </a> 
+                                </li>
+                            
+                    </ul>
+                </div>
+                <div class="left" style="margin-right:13px">
+                    <ul>
+                        
+                                <li>
+                                    <a href='http://www.careers24.com/call-centre-jobs' title='Call Centre Jobs'>
+                                        Call Centre Jobs
+                                    </a> 
+                                </li>
+                            
+                                <li>
+                                    <a href='http://www.careers24.com/insurance-jobs' title='Insurance Jobs'>
+                                        Insurance Jobs
+                                    </a> 
+                                </li>
+                            
+                                <li>
+                                    <a href='http://www.careers24.com/admin-jobs' title='Admin Jobs'>
+                                        Admin Jobs
+                                    </a> 
+                                </li>
+                            
+                    </ul>
+                </div>
+                <div class="clr"></div>
+        </div>
+	    <div class="item bold last">
+		    <a href="http://www.careers24.com/candidate/register/" target="_blank">Register your CV...</a><br/>
+		    <a href="http://www.careers24.com/jobs/alert/" target="_blank">Get Job alerts in your e-mail...</a><br/>
+		    <a href="http://www.careers24.com/recruiters/" target="_blank">RECRUITERS – Advertise your jobs here</a>
+	    </div>
+        <a id="lnkModalItem" class="fireEventCareers careersModal" style="display:none;"></a>
+        <div class="clr"></div>
+        
+    </div>
+</div>
+        <h3 id="headerTag" class="toggler toggler_pers">
+    <a href="http://www.property24.com" class="bold toggler_anchor">Property</a>
+    <a href="http://www.news24.com/UserLocationModal.aspx?iframe&control=property" id="lnkModalDisplay" class="propertyModal right" style="padding-right:5px;text-transform:lowercase;font-size:11px">[change area]</a>
+</h3>
+<div class="element">
+    <div id="divToHide">
+        
+        
+                <div class="item">
+	                <div class="wrapper">
+	                <a href="http://www.property24.com/for-sale/stellenbosch/western-cape/459?ListingNumber=P24-101889409" id="lnkThumb">
+                        <img src="http://static.24.co.za/5/images/lazy/128x100.jpg" class="left" width="128" height="100" data-src="http://www.news24.com/imagecache.axd?url=http%3a%2f%2fimages.property24.com%2fFetchImage.ashx%3fuid%3d49047324%26size%3dmedium" />
+                    </a>
+                    </div>
+                    <div class="wrapper">
+		            <h4 class="bold"><a data-track="outbound,rightnav-listings,property-HOUSES FOR SALE IN Stellenbosch, De Zalze Winelands Golf Estate" href="http://www.property24.com/for-sale/stellenbosch/western-cape/459?ListingNumber=P24-101889409" target="_blank">HOUSES FOR SALE IN Stellenbosch, De Zalze Winelands Golf Estate</a></h4>
+		            <p><span class="block">Houses</span>
+		            <span class="block bold">R 19 750 000</span></p>
+                    </div>
+		            <div class="clr"></div>
+	            </div>
+            
+                <div class="item">
+	                <div class="wrapper">
+	                <a href="http://www.property24.com/for-sale/cape-town/western-cape/432?ListingNumber=P24-101901444" id="lnkThumb">
+                        <img src="http://static.24.co.za/5/images/lazy/128x100.jpg" class="left" width="128" height="100" data-src="http://www.news24.com/imagecache.axd?url=http%3a%2f%2fimages.property24.com%2fFetchImage.ashx%3fuid%3d49375200%26size%3dmedium" />
+                    </a>
+                    </div>
+                    <div class="wrapper">
+		            <h4 class="bold"><a data-track="outbound,rightnav-listings,property-TOWNHOUSES FOR SALE IN Cape Town, Camps Bay" href="http://www.property24.com/for-sale/cape-town/western-cape/432?ListingNumber=P24-101901444" target="_blank">TOWNHOUSES FOR SALE IN Cape Town, Camps Bay</a></h4>
+		            <p><span class="block">Townhouses</span>
+		            <span class="block bold">R 12 950 000</span></p>
+                    </div>
+		            <div class="clr"></div>
+	            </div>
+            
+                <div class="item">
+	                <div class="wrapper">
+	                <a href="http://www.property24.com/for-sale/hermanus/western-cape/400?ListingNumber=P24-101903202" id="lnkThumb">
+                        <img src="http://static.24.co.za/5/images/lazy/128x100.jpg" class="left" width="128" height="100" data-src="http://www.news24.com/imagecache.axd?url=http%3a%2f%2fimages.property24.com%2fFetchImage.ashx%3fuid%3d49433175%26size%3dmedium" />
+                    </a>
+                    </div>
+                    <div class="wrapper">
+		            <h4 class="bold"><a data-track="outbound,rightnav-listings,property-HOUSES FOR SALE IN Hermanus, Onrus" href="http://www.property24.com/for-sale/hermanus/western-cape/400?ListingNumber=P24-101903202" target="_blank">HOUSES FOR SALE IN Hermanus, Onrus</a></h4>
+		            <p><span class="block">Houses</span>
+		            <span class="block bold">R 2 250 000</span></p>
+                    </div>
+		            <div class="clr"></div>
+	            </div>
+            
+        <a id="lnkModalItem" class="fireEventProperty propertyModal" style="display:none;"></a>
+        <div class="clr"></div>
+        
+    </div>
+</div>
+        <h3 id="headerTag" class="toggler" style="height:15px;"><a href="http://www.gotravel24.com/" class="bold">Travel</a> - Look, Book, Go!</h3>
+<div class="element">
+    <div id="divToHide">
+	    <div class="item travel"><!-- add travel class -->
+		    <h4 class="bold"><a id="lnkTitle" href="http://holidays.gotravel24.com/ku/holidayoffer.jsp?Destination=MASSINGA_GT,RG,RB&amp;utm_source=holidays&amp;utm_medium=focus&amp;utm_campaign=may_massinga">Magical Massinga</a></h4>
+		    <img src="http://static.24.co.za/5/images/lazy/110x65.jpg" id="imgThumbnail" width="110" height="65" class="right" data-src="http://www.news24.com/imagecache.axd?url=http%3a%2f%2fwww.gotravel24.com%2ffiles%2fmassinga_ext_05.jpg" />
+		    Spend 5 nights at the gorgeous Massinga Beach Lodge in Mozambique and only pay for 4 from R13 220 per person sharing. Includes return flights, accommodation, transfers and romantic turndown.
+		    <span class="item browse bold block"><a id="lnkPackages" href="http://holidays.gotravel24.com/ku/holidayoffer.jsp?Destination=MASSINGA_GT,RG,RB&amp;utm_source=holidays&amp;utm_medium=focus&amp;utm_campaign=may_massinga">Book now!</a></span>
+	    </div>
+        <div class="clr"></div>
+        
+    </div>
+</div>
+        <h3 id="headerTag" class="toggler"><a href="http://etrader.kalahari.com/referral.asp?linkid=3442&partnerid=9180" class="bold">Kalahari.com</a> - shop online today</h3>
+<div class="element">
+    <div id="divToHide">
+        
+                <div class="item">
+                    <div class="left">
+                        <a href="http://www.kalahari.com/s?N=20090&amp;Ns=p_sales30days%7c1&amp;linkId=2103600&amp;affiliateId=563&amp;linkType=ORDER_REFERRAL" target="blank"></a>
+                    </div>
+                    <div class="left" style="width:200px;padding:0 0 0 5px;">
+		              <h4 class="bold"><a href="http://www.kalahari.com/s?N=20090&amp;Ns=p_sales30days%7c1&amp;linkId=2103600&amp;affiliateId=563&amp;linkType=ORDER_REFERRAL" target="blank">Top trending eBooks</a></h4>
+		              <p style="word-wrap:break-word;">The Real Meal Revolution by Tim Noakes, Laaste Dans, Drienie by Steve Hofmeyr, Jeffrey Archer’s Be Careful What You Wish For and many more. Shop now!</p>
+                    </div>
+                    <div class="clr"></div>
+	            </div>
+                <div class="clr"></div>
+            
+                <div class="item">
+                    <div class="left">
+                        <a href="http://www.kalahari.com/s?N=24047&amp;linkId=2088165&amp;affiliateId=563&amp;linkType=ORDER_REFERRAL" target="blank"></a>
+                    </div>
+                    <div class="left" style="width:200px;padding:0 0 0 5px;">
+		              <h4 class="bold"><a href="http://www.kalahari.com/s?N=24047&amp;linkId=2088165&amp;affiliateId=563&amp;linkType=ORDER_REFERRAL" target="blank">Mind blowing deals on electronics!</a></h4>
+		              <p style="word-wrap:break-word;">Save up to 35% on electronics. Offer valid while stocks last. Shop now!</p>
+                    </div>
+                    <div class="clr"></div>
+	            </div>
+                <div class="clr"></div>
+            
+                <div class="item">
+                    <div class="left">
+                        <a href="http://www.kalahari.com/s?N=24097&amp;linkId=2088164&amp;affiliateId=563&amp;linkType=ORDER_REFERRAL" target="blank"></a>
+                    </div>
+                    <div class="left" style="width:200px;padding:0 0 0 5px;">
+		              <h4 class="bold"><a href="http://www.kalahari.com/s?N=24097&amp;linkId=2088164&amp;affiliateId=563&amp;linkType=ORDER_REFERRAL" target="blank">Up to 50% off outdoor & braai</a></h4>
+		              <p style="word-wrap:break-word;">Hurry and grab some mind blowing deals on outdoor and braai products. Offer valid while stocks last. Shop now!</p>
+                    </div>
+                    <div class="clr"></div>
+	            </div>
+                <div class="clr"></div>
+            
+                <div class="item">
+                    <div class="left">
+                        <a href="http://www.kalahari.com/s?N=23678+4294965726&amp;linkId=1988113&amp;affiliateId=563&amp;linkType=ORDER_REFERRAL" target="blank"></a>
+                    </div>
+                    <div class="left" style="width:200px;padding:0 0 0 5px;">
+		              <h4 class="bold"><a href="http://www.kalahari.com/s?N=23678+4294965726&amp;linkId=1988113&amp;affiliateId=563&amp;linkType=ORDER_REFERRAL" target="blank">2 DVDs for R99</a></h4>
+		              <p style="word-wrap:break-word;">Save big on blockbuster movies including Man Of Steel, Pacific Rim, The Avengers and many more. Offer valid while stocks last. Shop now!</p>
+                    </div>
+                    <div class="clr"></div>
+	            </div>
+                <div class="clr"></div>
+            
+                <div class="item last">
+                    <div class="left">
+                        <a href="http://www.kalahari.com/electronics-mobile-phones/N-1z141o9Z1z141o6Z1z13t9vZd8m?linkId=1988444&amp;affiliateId=563&amp;linkType=ORDER_REFERRAL" target="blank"></a>
+                    </div>
+                    <div class="left" style="width:200px;padding:0 0 0 5px;">
+		              <h4 class="bold"><a href="http://www.kalahari.com/electronics-mobile-phones/N-1z141o9Z1z141o6Z1z13t9vZd8m?linkId=1988444&amp;affiliateId=563&amp;linkType=ORDER_REFERRAL" target="blank">New gobii smartphones! </a></h4>
+		              <p style="word-wrap:break-word;">Front and rear camera's, dual SIM capability and 200MB of FREE Cell C data every month for 12 months, are just some of the many features on these smartphones. Get yours now! Shop here.</p>
+                    </div>
+                    <div class="clr"></div>
+	            </div>
+                <div class="clr"></div>
+            
+        <div class="clr"></div>
+        
+    </div>
+</div>
+        <h3 id="headerTag" class="toggler toggler">
+    <a href="http://www.olx.co.za/" class="bold toggler_anchor"> OLX Free Classifieds</a>
+    <a href="http://www.news24.com/UserLocationModal.aspx?iframe&control=kalahari" id="lnkModalDisplay" class="kalahariModal right" style="padding-right:5px;text-transform:lowercase;font-size:11px">[change area]</a>
+</h3>
+<div class="element">
+    <div id="divToHide">
+        
+	          <div style="min-height:100px;" class="item">
+                    <a href="http://capetown.olx.co.za/samsung-galaxy-s4-iid-559689336" id="lnkThumb" target="_blank">
+                        <img src="http://static.24.co.za/5/images/lazy/128x100.jpg" id="imgKalahari" class="left" width="128" height="100" data-src="http://www.news24.com/imagecache.axd?url=http%3a%2f%2fimages04.olx-st.com%2fui%2f7%2f99%2f36%2ft_1382642518_559689336_3.jpg" />
+                    </a>
+		            <h4 class="bold"><a id="lnkArticle" href="http://capetown.olx.co.za/samsung-galaxy-s4-iid-559689336" target="_blank">Samsung Galaxy s4</a></h4>
+		            <p style="word-wrap:break-word;">Mobile, Cell Phones in South Africa, Western Cape, Cape Town. Date October 24</p>
+	          </div>
+          
+	          <div style="min-height:100px;" class="item">
+                    <a href="http://capetown.olx.co.za/best-bargain-in-big-bay-iid-559891688" id="lnkThumb" target="_blank">
+                        <img src="http://static.24.co.za/5/images/lazy/128x100.jpg" id="imgKalahari" class="left" width="128" height="100" data-src="http://www.news24.com/imagecache.axd?url=http%3a%2f%2fimages02.olx-st.com%2fui%2f1%2f24%2f88%2ft_1382699383_559891688_1.jpg" />
+                    </a>
+		            <h4 class="bold"><a id="lnkArticle" href="http://capetown.olx.co.za/best-bargain-in-big-bay-iid-559891688" target="_blank">Best bargain in big bay</a></h4>
+		            <p style="word-wrap:break-word;">Real Estate, Houses - Apartments for Sale in South Africa, Western Cape, Cape Town. Date October 25</p>
+	          </div>
+          
+	          <div style="min-height:100px;" class="item last">
+                    <a href="http://capetown.olx.co.za/vw-golf-6-1-6-trendline-excellent-condition-iid-559891037" id="lnkThumb" target="_blank">
+                        <img src="http://static.24.co.za/5/images/lazy/128x100.jpg" id="imgKalahari" class="left" width="128" height="100" data-src="http://www.news24.com/imagecache.axd?url=http%3a%2f%2fimages02.olx-st.com%2fui%2f7%2f17%2f37%2ft_1382699205_559891037_1.jpg" />
+                    </a>
+		            <h4 class="bold"><a id="lnkArticle" href="http://capetown.olx.co.za/vw-golf-6-1-6-trendline-excellent-condition-iid-559891037" target="_blank">VW Golf 6, 1.6 Trendline (Excellent condition)</a></h4>
+		            <p style="word-wrap:break-word;">Vehicles, Cars in South Africa, Western Cape, Cape Town. Date October 25</p>
+	          </div>
+          
+        <a id="lnkModalItem" class="fireEventKalahari kalahariModal" style="display:none;"></a>
+        <div class="clr"></div>
+        
+    </div>
+</div>
+    </div>
+</div>
+    <div class="spacer clr">
+        </div>
+    
+    
+
+<div id="sponsor_box" class="col299 relative">
+	<h3 class="bold">Sponsored links</h3>
+    
+		<table class="sponsor" width="280" border="0" cellpadding="0" cellspacing="0">
+		  <tbody>
+	  
+		  <tr>
+			<td style="width:35px;"><a href="../../Controls/Common/#" id="lnkSponsorImg"><img src="http://cdn.24.co.za/files/Cms/General/d/2750/8ed416ece6764870bde5b0f2f59ba50a.png" style="width:27px;" /></a></td>
+			<td align="left"><a href="http://pubads.g.doubleclick.net/gampad/clk?id=64882990&amp;iu=/8900/24.com/Web/News24/Homepage" target="_blank">Online Loans, Instant Approval</a></td>
+			<td>&nbsp;</td>
+	  
+			<td style="width:35px;"><a href="../../Controls/Common/#" id="lnkSponsorImg"><img src="http://cdn.24.co.za/files/Cms/General/d/2735/032cce50a4fc45819f69e20b0f5831bb.jpg" style="width:27px;" /></a></td>
+			<td align="left"><a href="http://pubads.g.doubleclick.net/gampad/clk?id=73484470&amp;iu=/8900/24.com/Web/News24" target="_blank">Personal Loan inseconds  </a></td>
+		  </tr>
+	  
+		</tbody></table>
+	  
+</div>
+    <div class="spacer clr">
+        </div>
+    <div class="clr10 clr"> </div>
+<script src="http://scripts.24.co.za/libs/kalahari/2.2/Scripts/kalahari.carousel.widget.js" type="text/javascript"></script>
+<div id="oprahwidgetcontainer">
+<script type="text/javascript">
+jQuery('head').append("<link href='http://scripts.24.co.za/libs/kalahari/2.2/Styles/kalahari.carousel.css' type='text/css' rel='stylesheet' ></link>")
+var Widget = new kalaharicarouselwidget({
+sku: [46656550,47824635,33940581,47332198,46848097],
+token: "563",
+container: "oprahwidgetcontainer",
+visible:1,
+refUrl: 'URL: http://www.kalahari.com/?linkId=46213&affiliateId=563&linkType=ORDER_REFERRAL'
+});
+</script>
+</div>
+<div class="clr10 clr"> </div>
+
+
+    <div class="spacer clr">
+        </div>
+    
+
+<script type="text/javascript">
+    jQuery(function () {
+        var submitFunc = function() { window.open('http://www.pricecheck.co.za/search/?utm_source=news24&utm_medium=affiliate&utm_campaign=sidebar&search=' + jQuery('#txtPriceCheckSearch').val()) };jQuery("#btnPriceCheckSubmit").click(submitFunc);jQuery("#txtPriceCheckSearch").keypress(function(e){if(e.keyCode===13){submitFunc();return false}})});
+</script>
+
+<div class="pricecheckBlock">
+    <a href="http://www.pricecheck.co.za/?utm_source=news_24&utm_medium=affiliate&utm_campaign=sidebar" target="_blank" id="lnkPriceCheckHeader" style="height:51px;left:0;position:absolute;top:0;width:298px;"></a>
+    <div class="priceContent">
+        <div class="priceBlurb">
+            <p><a href="http://www.pricecheck.co.za/offers/30413329/BlackBerry+Curve+9380/?utm_source=news_24&utm_medium=affiliate&utm_campaign=sidebar" id="aLink" target="_blank">BlackBerry Curve 9380</a></p>
+            <p>The first BlackBerry Curve smartphone with a touch screen
+Stay connected...</p>
+            <p>
+                <a href="http://www.pricecheck.co.za/offers/30413329/BlackBerry+Curve+9380/?utm_source=news_24&utm_medium=affiliate&utm_campaign=sidebar" id="aLinkPrice" style="color:#ec3b27;" target="_blank">
+                    <span style="font-weight:normal">From</span> <strong>R1799.00</strong>
+                </a>
+            </p>
+        </div>
+        <div class="priceImage"><a href="http://www.pricecheck.co.za/offers/30413329/BlackBerry+Curve+9380/?utm_source=news_24&utm_medium=affiliate&utm_campaign=sidebar" id="aLinkImage" target="_blank"><img src="http://static.24.co.za/5/images/lazy/65x65.jpg" id="imgThumb" data-src="http://images2.pricecheck.co.za/images/objects/hash/product/d35/662/bfa/image_small_30413329.jpg" /></a></div>
+    </div>
+    <div class="clr"></div>
+    <div class="priceShopping">
+        <h4>I'm shopping for:</h4>
+        <input type="text" class="priceSearch" id="txtPriceCheckSearch" />
+        <input type="button" class="priceSubmit" value="LET'S GO!" id="btnPriceCheckSubmit" />
+    </div>
+</div>
+    <div class="spacer clr">
+        </div>
+    
+<div class="facebook_block">
+    <iframe src="http://www.facebook.com/plugins/likebox.php?href=http%3A%2F%2Fwww.facebook.com%2Fpages%2FNews24com%2F10227041841&width=300&height=245&show_faces=true&colorscheme=light&stream=false&show_border=true&header=false" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:300px; height:245px;" allowTransparency="true"></iframe>
+</div>
+    <div class="spacer clr">
+        </div>
+    
+
+<div id="horoscopes_tab" class="tab-wrapper horoscope relative">
+    <div class="horoscope_header"> Horoscopes</div>
+    <div class="horoscope_women"><img src="http://static.24.co.za/5/images/women_horoscope.png" width="120" height="21" border="0" /></div>
+	<div class="horoscope_midlevel">
+        <div class="zodiac">
+		    <select onchange="toggleSubmit(this)" name="ptype" id="ptype" class="absolute">
+			     <option selected="selected" value="aquarius">Aquarius  (20 Jan - 18 Feb)</option>
+			     <option value="aries">Aries  (21 Mar - 20 Apr)</option>
+			     <option value="cancer">Cancer  (21Jun - 21 Jul)</option>
+			     <option value="capricorn">Capricorn  (21Dec - 19 Jan)</option>
+			     <option value="gemini">Gemini  (21 May - 20 Jun)</option>
+			     <option value="leo">Leo  (22 Jul - 21 Aug)</option>
+			     <option value="libra">Libra  (22 Sep - 22 Oct)</option>
+			     <option value="pisces">Pisces  (19 Feb - 20 Mar)</option>
+			     <option value="sagittarius">Sagittarius (22 Nov - 20 Dec)</option>
+			     <option value="scorpio">Scorpio  (23 Oct - 21 Nov)</option>
+			     <option value="taurus">Taurus  (21 Apr - 20 May)</option>
+			     <option value="virgo">Virgo  (22 Aug - 21 Sep)</option>
+    	      </select>
+	    </div>
+        
+                    <div id="d0" style="display:block;">
+	                   <img src="http://static.24.co.za/5/images/lazy/65x65.jpg" class="left" data-src="http://www.women24.com/Images/icons/starsigns/Aquarius_icon.gif" alt="Aquarius" />
+	                    <div class="item relative">
+                           <h5><a href="http://www.women24.com/BooksAndAstrology/Astrology/DailyHoroscope/Aquarius" title="Aquarius" alt="Aquarius" data-track="outbound,home,horoscope-aquarius">Aquarius</a></h5>
+                           <p>Something at home may have stirred up your emotions. You may need to find a creative or fun outlet to let go of inner tensions....<a href="http://www.women24.com/BooksAndAstrology/Astrology/DailyHoroscope/Aquarius" class="readmore" alt="...read more" title="...read more" data-track="outbound,home,horoscope-aquarius">read more</a></p>                               	              
+	                    </div>
+	                 </div>
+          
+                    <div id="d1" style="display:none;">
+	                   <img src="http://static.24.co.za/5/images/lazy/65x65.jpg" class="left" data-src="http://www.women24.com/Images/icons/starsigns/Aries_icon.gif" alt="Aries" />
+	                    <div class="item relative">
+                           <h5><a href="http://www.women24.com/BooksAndAstrology/Astrology/DailyHoroscope/Aries" title="Aries" alt="Aries" data-track="outbound,home,horoscope-aries">Aries</a></h5>
+                           <p>You may find you are in a chatty mood and have a lot to say. There is a strong energy of excitement and you are in the mood to...<a href="http://www.women24.com/BooksAndAstrology/Astrology/DailyHoroscope/Aries" class="readmore" alt="...read more" title="...read more" data-track="outbound,home,horoscope-aries">read more</a></p>                               	              
+	                    </div>
+	                 </div>
+          
+                    <div id="d2" style="display:none;">
+	                   <img src="http://static.24.co.za/5/images/lazy/65x65.jpg" class="left" data-src="http://www.women24.com/Images/icons/starsigns/Cancer_icon.gif" alt="Cancer" />
+	                    <div class="item relative">
+                           <h5><a href="http://www.women24.com/BooksAndAstrology/Astrology/DailyHoroscope/Cancer" title="Cancer" alt="Cancer" data-track="outbound,home,horoscope-cancer">Cancer</a></h5>
+                           <p>You may be in the midst of people, meetings and other social obligations, but inwardly you may have the urge to escape and a need...<a href="http://www.women24.com/BooksAndAstrology/Astrology/DailyHoroscope/Cancer" class="readmore" alt="...read more" title="...read more" data-track="outbound,home,horoscope-cancer">read more</a></p>                               	              
+	                    </div>
+	                 </div>
+          
+                    <div id="d3" style="display:none;">
+	                   <img src="http://static.24.co.za/5/images/lazy/65x65.jpg" class="left" data-src="http://www.women24.com/Images/icons/starsigns/Capricorn_icon.gif" alt="Capricorn" />
+	                    <div class="item relative">
+                           <h5><a href="http://www.women24.com/BooksAndAstrology/Astrology/DailyHoroscope/Capricorn" title="Capricorn" alt="Capricorn" data-track="outbound,home,horoscope-capricorn">Capricorn</a></h5>
+                           <p>Things may be slightly fragmented as you may be stretched in so many directions. There may be technical problems or things may not...<a href="http://www.women24.com/BooksAndAstrology/Astrology/DailyHoroscope/Capricorn" class="readmore" alt="...read more" title="...read more" data-track="outbound,home,horoscope-capricorn">read more</a></p>                               	              
+	                    </div>
+	                 </div>
+          
+                    <div id="d4" style="display:none;">
+	                   <img src="http://static.24.co.za/5/images/lazy/65x65.jpg" class="left" data-src="http://www.women24.com/Images/icons/starsigns/Gemini_icon.gif" alt="Gemini" />
+	                    <div class="item relative">
+                           <h5><a href="http://www.women24.com/BooksAndAstrology/Astrology/DailyHoroscope/Gemini" title="Gemini" alt="Gemini" data-track="outbound,home,horoscope-gemini">Gemini</a></h5>
+                           <p>People may notice you today and are attracted to you. You have a magnetic energy that may draw attention. You are in a flirty and...<a href="http://www.women24.com/BooksAndAstrology/Astrology/DailyHoroscope/Gemini" class="readmore" alt="...read more" title="...read more" data-track="outbound,home,horoscope-gemini">read more</a></p>                               	              
+	                    </div>
+	                 </div>
+          
+                    <div id="d5" style="display:none;">
+	                   <img src="http://static.24.co.za/5/images/lazy/65x65.jpg" class="left" data-src="http://www.women24.com/Images/icons/starsigns/Leo_icon.gif" alt="Leo" />
+	                    <div class="item relative">
+                           <h5><a href="http://www.women24.com/BooksAndAstrology/Astrology/DailyHoroscope/Leo" title="Leo" alt="Leo" data-track="outbound,home,horoscope-leo">Leo</a></h5>
+                           <p>There is an undercurrent of excitement that could lead you to act or speak impulsively or jump into something too quickly. You...<a href="http://www.women24.com/BooksAndAstrology/Astrology/DailyHoroscope/Leo" class="readmore" alt="...read more" title="...read more" data-track="outbound,home,horoscope-leo">read more</a></p>                               	              
+	                    </div>
+	                 </div>
+          
+                    <div id="d6" style="display:none;">
+	                   <img src="http://static.24.co.za/5/images/lazy/65x65.jpg" class="left" data-src="http://www.women24.com/Images/icons/starsigns/Libra_icon.gif" alt="Libra" />
+	                    <div class="item relative">
+                           <h5><a href="http://www.women24.com/BooksAndAstrology/Astrology/DailyHoroscope/Libra" title="Libra" alt="Libra" data-track="outbound,home,horoscope-libra">Libra</a></h5>
+                           <p>Over the next few days you need to brace yourself for unexpected and unpredictable circumstances.  Simplify, stay centred and...<a href="http://www.women24.com/BooksAndAstrology/Astrology/DailyHoroscope/Libra" class="readmore" alt="...read more" title="...read more" data-track="outbound,home,horoscope-libra">read more</a></p>                               	              
+	                    </div>
+	                 </div>
+          
+                    <div id="d7" style="display:none;">
+	                   <img src="http://static.24.co.za/5/images/lazy/65x65.jpg" class="left" data-src="http://www.women24.com/Images/icons/starsigns/Pisces_icon.gif" alt="Pisces" />
+	                    <div class="item relative">
+                           <h5><a href="http://www.women24.com/BooksAndAstrology/Astrology/DailyHoroscope/Pisces" title="Pisces" alt="Pisces" data-track="outbound,home,horoscope-pisces">Pisces</a></h5>
+                           <p>Venus and the Moon are connected showering you with strong feelings of love and affection. There is an element of excitement and...<a href="http://www.women24.com/BooksAndAstrology/Astrology/DailyHoroscope/Pisces" class="readmore" alt="...read more" title="...read more" data-track="outbound,home,horoscope-pisces">read more</a></p>                               	              
+	                    </div>
+	                 </div>
+          
+                    <div id="d8" style="display:none;">
+	                   <img src="http://static.24.co.za/5/images/lazy/65x65.jpg" class="left" data-src="http://www.women24.com/Images/icons/starsigns/Sagittarius_icon.gif" alt="Sagittarius" />
+	                    <div class="item relative">
+                           <h5><a href="http://www.women24.com/BooksAndAstrology/Astrology/DailyHoroscope/Sagittarius" title="Sagittarius" alt="Sagittarius" data-track="outbound,home,horoscope-sagittarius">Sagittarius</a></h5>
+                           <p>There is an emphasis on partner, relating and connecting in a loving and affectionate way. The Gemini Moon and Gemini Venus add a...<a href="http://www.women24.com/BooksAndAstrology/Astrology/DailyHoroscope/Sagittarius" class="readmore" alt="...read more" title="...read more" data-track="outbound,home,horoscope-sagittarius">read more</a></p>                               	              
+	                    </div>
+	                 </div>
+          
+                    <div id="d9" style="display:none;">
+	                   <img src="http://static.24.co.za/5/images/lazy/65x65.jpg" class="left" data-src="http://www.women24.com/Images/icons/starsigns/Scorpio_icon.gif" alt="Scorpio" />
+	                    <div class="item relative">
+                           <h5><a href="http://www.women24.com/BooksAndAstrology/Astrology/DailyHoroscope/Scorpio" title="Scorpio" alt="Scorpio" data-track="outbound,home,horoscope-scorpio">Scorpio</a></h5>
+                           <p>The emphasis is on mental sharpness and nerves. Your intuition is sharp and it is important to connect to those “gut instincts” as...<a href="http://www.women24.com/BooksAndAstrology/Astrology/DailyHoroscope/Scorpio" class="readmore" alt="...read more" title="...read more" data-track="outbound,home,horoscope-scorpio">read more</a></p>                               	              
+	                    </div>
+	                 </div>
+          
+                    <div id="d10" style="display:none;">
+	                   <img src="http://static.24.co.za/5/images/lazy/65x65.jpg" class="left" data-src="http://www.women24.com/Images/icons/starsigns/Taurus_icon.gif" alt="Taurus" />
+	                    <div class="item relative">
+                           <h5><a href="http://www.women24.com/BooksAndAstrology/Astrology/DailyHoroscope/Taurus" title="Taurus" alt="Taurus" data-track="outbound,home,horoscope-taurus">Taurus</a></h5>
+                           <p>Comfort and indulgence are still top of the list. You have strong desires and needs and it may be hard to think clearly as your...<a href="http://www.women24.com/BooksAndAstrology/Astrology/DailyHoroscope/Taurus" class="readmore" alt="...read more" title="...read more" data-track="outbound,home,horoscope-taurus">read more</a></p>                               	              
+	                    </div>
+	                 </div>
+          
+                    <div id="d11" style="display:none;">
+	                   <img src="http://static.24.co.za/5/images/lazy/65x65.jpg" class="left" data-src="http://www.women24.com/Images/icons/starsigns/Virgo_icon.gif" alt="Virgo" />
+	                    <div class="item relative">
+                           <h5><a href="http://www.women24.com/BooksAndAstrology/Astrology/DailyHoroscope/Virgo" title="Virgo" alt="Virgo" data-track="outbound,home,horoscope-virgo">Virgo</a></h5>
+                           <p>The research that you have been working on may be needed in your working environment today....<a href="http://www.women24.com/BooksAndAstrology/Astrology/DailyHoroscope/Virgo" class="readmore" alt="...read more" title="...read more" data-track="outbound,home,horoscope-virgo">read more</a></p>                               	              
+	                    </div>
+	                 </div>
+          
+	</div>
+    <div class="perfect_match">
+        <a href="http://love2meet.news24.com/" data-track="outbound,home,horoscope-love2meet.news24.com">Who’s your perfect match?<br />
+<span>Click here to find out!</span></a>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    function toggleSubmit(obj) { count = 0; while (document.getElementById("d" + count)) { document.getElementById("d" + count).style.display = "none"; count++ } document.getElementById("d" + obj.selectedIndex).style.display = "block" } var date = new Date; var day = date.getDate(); var month = date.getMonth(); var currentZodiac; switch (month) { case 0: { if (day >= 20) currentZodiac = "aquarius"; else currentZodiac = "sagittarius"; break }; case 1: { if (day >= 19) currentZodiac = "pisces"; else currentZodiac = "aquarius"; break }; case 2: { if (day >= 21) currentZodiac = "aries"; else currentZodiac = "pisces"; break }; case 3: { if (day >= 21) currentZodiac = "taurus"; else currentZodiac = "aries"; break }; case 4: { if (day >= 21) currentZodiac = "gemini"; else currentZodiac = "taurus"; break }; case 5: { if (day >= 21) currentZodiac = "cancer"; else currentZodiac = "gemini"; break }; case 6: { if (day >= 22) currentZodiac = "leo"; else currentZodiac = "cancer"; break }; case 7: { if (day >= 22) currentZodiac = "virgo"; else currentZodiac = "leo"; break }; case 8: { if (day >= 22) currentZodiac = "libra"; else currentZodiac = "virgo"; break }; case 9: { if (day >= 23) currentZodiac = "scorpio"; else currentZodiac = "libra"; break }; case 10: { if (day >= 22) currentZodiac = "sagittarius"; else currentZodiac = "scorpio"; break }; case 11: { if (day >= 21) currentZodiac = "capricorn"; else currentZodiac = "sagittarius"; break } } $j(".zodiac #ptype").val(currentZodiac); toggleSubmit($j(".zodiac #ptype")[0])</script>
+    <div class="spacer clr">
+        </div>
+    <div class="col299 relative endcolumn">
+        </div>
+
+            </div>
+            <div class="spacer clr white"></div>
+        </div>
+        <div id="footer" class="relative clr">
+                       
+            
+
+<div class="clr10 clr">&nbsp;</div>
+<div id="divServices" class="services left">
+  <h3 class="bold">services</h3>
+  
+      <div class="item left">
+        <a href="http://www.news24.com/Newsletters" target="_top"><img src="http://cdn.24.co.za/files/Cms/General/d/167/3d5262fc76764b0abd11667baf454f84.png" class="left" width="42" height="42" /></a>
+        <p><strong class="block bold"><a href="http://www.news24.com/Newsletters" target="_top">E-mail Alerts</a></strong>
+        The latest headlines in your inbox 
+        </p>
+      </div>
+    
+      <div class="item left">
+        <a href="http://www.news24.com/SiteElements/Services/News24-RSS-Feeds-20111202-2" target="_self"><img src="http://cdn.24.co.za/files/Cms/General/d/495/7125197ea74a4880879e2bd187f630c9.png" class="left" width="42" height="42" /></a>
+        <p><strong class="block bold"><a href="http://www.news24.com/SiteElements/Services/News24-RSS-Feeds-20111202-2" target="_self">RSS feeds</a></strong>
+        News delivered really simply.
+        </p>
+      </div>
+    
+      <div class="item left">
+        <a href="http://m.news24.com/news24" target="_top"><img src="http://cdn.24.co.za/files/Cms/General/d/167/decc890f19a644579a0c033e19edbc40.png" class="left" width="42" height="42" /></a>
+        <p><strong class="block bold"><a href="http://m.news24.com/news24" target="_top">Mobile</a></strong>
+        News24 on your mobile or PDA
+        </p>
+      </div>
+    
+      <div class="item left last">
+        <a href="http://www.news24.com/Newsletters" target="_top"><img src="http://cdn.24.co.za/files/Cms/General/d/167/432cbe0789a040e9ae3627685a099a0e.png" class="left" width="42" height="42" /></a>
+        <p><strong class="block bold"><a href="http://www.news24.com/Newsletters" target="_top">E-mail Newsletters</a></strong>
+        You choose what you want 
+        </p>
+      </div>
+    
+      <div class="item left">
+        <a href="http://www.news24.com/xArchive/News24/Get-News24-on-your-iPhone-20090428" target="_top"><img src="http://cdn.24.co.za/files/Cms/General/d/495/e2ae1ce7a6c74cd19e793cb31873a54e.png" class="left" width="42" height="42" /></a>
+        <p><strong class="block bold"><a href="http://www.news24.com/xArchive/News24/Get-News24-on-your-iPhone-20090428" target="_top">News24 on your iPhone</a></strong>
+        Get News24 headlines on your iPhone.
+        </p>
+      </div>
+    
+      <div class="item left">
+        <a href="http://mobile.24.com/?p=minisite_news" target="_top"><img src="http://cdn.24.co.za/files/Cms/General/d/168/7c086371afe44063bfadd3ff26fde57d.png" class="left" width="42" height="42" /></a>
+        <p><strong class="block bold"><a href="http://mobile.24.com/?p=minisite_news" target="_top">SMS Alerts</a></strong>
+        Get breaking news stories via SMS.
+        </p>
+      </div>
+    
+      <div class="item left">
+        <a href="http://blogs.24.com/" target="_top"><img src="http://cdn.24.co.za/files/Cms/General/d/168/4a134cf303084f35bec18b1262fecf3e.png" class="left" width="42" height="42" /></a>
+        <p><strong class="block bold"><a href="http://blogs.24.com/" target="_top">Blogs</a></strong>
+        Your opinion on you, me and everyone. 
+
+        </p>
+      </div>
+    
+      <div class="item left last">
+        <a href="http://opencalais.com/" target="_top"><img src="http://cdn.24.co.za/files/Cms/General/d/175/09ea1738b1764dca88d3100f383052c1.png" class="left" width="42" height="42" /></a>
+        <p><strong class="block bold"><a href="http://opencalais.com/" target="_top">Calais</a></strong>
+        Website keywords automated by OpenCalais.
+        </p>
+      </div>
+    
+</div>
+<div class="clr">&nbsp;</div>
+            
+
+<div id="footernav" class="relative">
+  	<a href="http://www.24.com" class="absolute logo24"><img class="absolute logo24" width="56" height="42" src="http://static.24.co.za/5/images/24com_logo.png"/></a>
+	<a href="http://www.iabsa.net/" class="absolute dmma" title="Interactive Advertising Bureau" target="_blank"><img src="http://static.24.co.za/5/images/iablogo.png" width="71" height="50" alt="Interactive Advertising Bureau" border="0" class="absolute dmma" /></a>
+	
+    <div class="copy absolute">
+	    <ul>
+	        
+		            <li><a href="http://www.news24.com/search">Search</a> ·</li>  
+	            
+		            <li><a href="http://www.news24.com/SiteElements/Footer/About-Us-20090703-4">About Us</a> ·</li>  
+	            
+		            <li><a href="http://www.thespacestation.co.za/channel/news24/">Advertise on News24</a> ·</li>  
+	            
+		            <li><a href="http://www.news24.com/SiteElements/Services/Terms-and-Conditions-20120413">Terms & Conditions</a> ·</li>  
+	            
+		            <li><a href="http://www.news24.com/PressReleases">Press Releases</a> ·</li>  
+	            
+		            <li><a href="http://www.news24.com/Jobs/">Jobs at News24</a> ·</li>  
+	            
+            <li><a id="lnkFooterContactUs" class="group" href="http://www.news24.com/FeedBack.aspx?iframe" class="footerLink">Contact us</a></li>
+        </ul>
+        <div class="clr10 clr">&nbsp;</div>
+        
+        &copy; 2014 24.com. All rights reserved.
+    </div>
+ 
+</div>
+
+        </div>
+        <div class="clr white"></div>
+    </div>
+
+            
+
+<div id="socialbarHPStories">
+    <div id="socialbar-newstories" class="bottom">
+        <span onclick="HPRedirect('http://www.news24.com/');">There are&nbsp;<strong>new stories</strong>&nbsp;on the homepage. Click here to see them.</span>
+        <div id="close" onclick=" CloseNewStoriesPopup(); ">&nbsp;</div>
+        <div class="arrow"></div>
+    </div>
+</div>
+            <div id="retail_ad_spacer"></div> 
+        </div>
+        <div id='ad-1000x1000-1' class='24ad1000x1000'><script type='text/javascript'>if(typeof za24_DisplayAd != 'undefined') za24_DisplayAd('1000x1000','1');</script></div><noscript><a href='http://pubads.g.doubleclick.net/gampad/jump?iu=/8900/24.com/Web/News24/SouthAfrica/Articles&sz=1000x1000&c=634586355&t=artid%3d1370d9df-3a3f-4eed-9c29-a3d036173ac4%26Places%3djohannesburg%26Topics%3dcrime%2cchild+abuse%26posno%3d1' target='_blank'><img src='http://pubads.g.doubleclick.net/gampad/ad?iu=/8900/24.com/Web/News24/SouthAfrica/Articles&sz=1000x1000&c=634586355&t=artid%3d1370d9df-3a3f-4eed-9c29-a3d036173ac4%26Places%3djohannesburg%26Topics%3dcrime%2cchild+abuse%26posno%3d1' border='0' alt=''></a></noscript>
+        <div id='ad-20x20-1' class='24ad20x20'><script type='text/javascript'>if(typeof za24_DisplayAd != 'undefined') za24_DisplayAd('20x20','1');</script></div><noscript><a href='http://pubads.g.doubleclick.net/gampad/jump?iu=/8900/24.com/Web/News24/SouthAfrica/Articles&sz=20x20&c=634586355&t=artid%3d1370d9df-3a3f-4eed-9c29-a3d036173ac4%26Places%3djohannesburg%26Topics%3dcrime%2cchild+abuse%26posno%3d1' target='_blank'><img src='http://pubads.g.doubleclick.net/gampad/ad?iu=/8900/24.com/Web/News24/SouthAfrica/Articles&sz=20x20&c=634586355&t=artid%3d1370d9df-3a3f-4eed-9c29-a3d036173ac4%26Places%3djohannesburg%26Topics%3dcrime%2cchild+abuse%26posno%3d1' border='0' alt=''></a></noscript>
+        <div id="ad300bottom">
+            <div id='ad-980x415-1' class='24ad980x415'><script type='text/javascript'>if(typeof za24_DisplayAd != 'undefined') za24_DisplayAd('980x415','1');</script></div><noscript><a href='http://pubads.g.doubleclick.net/gampad/jump?iu=/8900/24.com/Web/News24/SouthAfrica/Articles&sz=980x415&c=634586355&t=artid%3d1370d9df-3a3f-4eed-9c29-a3d036173ac4%26Places%3djohannesburg%26Topics%3dcrime%2cchild+abuse%26posno%3d1' target='_blank'><img src='http://pubads.g.doubleclick.net/gampad/ad?iu=/8900/24.com/Web/News24/SouthAfrica/Articles&sz=980x415&c=634586355&t=artid%3d1370d9df-3a3f-4eed-9c29-a3d036173ac4%26Places%3djohannesburg%26Topics%3dcrime%2cchild+abuse%26posno%3d1' border='0' alt=''></a></noscript>
+        </div>
+        <div class="clr"></div>
+    
+
+<script type="text/javascript">
+//<![CDATA[
+var gotravelCount=5;//]]>
+</script>
+
+<div id="CmsStats" style="z-index:-1; visibility:hidden;">
+<script type="text/javascript" language="JavaScript" >
+var cmsStatsImage = new Image();
+cmsStatsImage.src = "http://stats.24.com/content/image.articleview?rnd=635392200724189615&s=5&c=1059&a=1370d9df-3a3f-4eed-9c29-a3d036173ac4&t=%27House+of+horrors%27+wife+appears+in+court&ct=SouthAfrica/News&u=http%3a%2f%2fwww.news24.com%2fSouthAfrica%2fNews%2fHouse-of-horrors-wife-appears-in-court-20140624&uid=&luid=&sn=";
+</script>
+<noscript>
+<img src="http://stats.24.com/content/image.articleview?rnd=635392200724189615&s=5&c=1059&a=1370d9df-3a3f-4eed-9c29-a3d036173ac4&t=%27House+of+horrors%27+wife+appears+in+court&ct=SouthAfrica/News&u=http%3a%2f%2fwww.news24.com%2fSouthAfrica%2fNews%2fHouse-of-horrors-wife-appears-in-court-20140624&uid=&luid=&sn=" alt=""/>
+</noscript>
+</div>
+
+<script type="text/javascript">
+//<![CDATA[
+var _virtualPath = 'http://www.news24.com/';//]]>
+</script>
+</form>
+    
+    
+
+
+
+    <div class="personalisationContainer">
+        <div class="personalisationNav">
+            <div class="topNavWrapper">
+                <div class="left bold headerLinks">
+                    <span id="site_languages_dropdown"><a href="http://www.news24.com" data-track="outbound,topbar,news24.com" class="deepblue bold">News24</a></span>
+                </div>
+                <div class="site_languages">
+                    <div style="color: #848484;">
+                        English</div>
+                    <div style="margin-top: 10px;">
+                        <a href="http://afrikaans.news24.com">Afrikaans</a></div>
+                    <div style="margin-top: 10px;">
+                        <a href="http://isizulu.news24.com">isiZulu</a></div>
+                </div>
+                <div class="bold headerLinks left" style="margin-left:5px;">
+                    <span class="grey">|&nbsp;&nbsp;<a href="http://www.olx.co.za" data-track="outbound,topbar,olx.co.za" class="grey bold">OLX</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="http://www.pricecheck.co.za/" data-track="outbound,topbar,pricecheck.co.za" class="grey bold">PriceCheck</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="http://www.property24.com" data-track="outbound,topbar,property24.com" class="grey bold">Property24</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="http://etrader.kalahari.com/referral.asp?linkid=7002&partnerid=9180" data-track="outbound,topbar,kalahari.com" class="grey bold">Kalahari.com</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="http://www.careers24.com" data-track="outbound,topbar,careers24.com" class="grey bold">Careers24</a></span>
+                </div>
+            </div>
+            
+
+<script type="text/javascript">
+    function CheckUsernameAvailable() { var a = $j("#txtUsername").val(); var b = new RegExp("^[a-zA-Z0-9-_]*$"); if (!a == "") { if (!a.match(b)) $j("#originalHeader").fadeOut("fast", function () { $j("#headerUsernameError").html("Your username may not contain any spaces or special characters.").fadeIn("fast") }); else news24.getAjax("/Ajax/UgcData/", "CheckUsernameAvailability", { 'username': a }, CheckUsernameAvailableCallback) } else $j("#originalHeader").fadeOut("fast", function () { $j("#headerUsernameError").html('Please enter a username and then click "Register"').fadeIn("fast") }) } function CheckUsernameAvailableCallback(a) { if (!a.error && a != "error") { if (a == true) { $j("#enterUsernameDiv").fadeOut("fast", function () { $j("#spanNewUsername").html($j("#txtUsername").val()); $j("#txtDisplayName").val($j("#txtUsername").val()); $j("#personaliseProfileDiv").fadeIn("fast") }) } else $j("#originalHeader").fadeOut("fast", function () { $j("#headerUsernameError").html("Sorry, that username is not available").fadeIn("fast") }) } } function ResetAvatar() { $j.ajax({ url: "/AvatarRemove.axd?filename=" + $j("#avatarImage").attr("src"), type: "POST" }); $j("#avatarImage").attr("src", user.avatarUrl); $j("#btnResetAvatar").fadeOut() } function SaveUserProfile() {$j("#displayNameError").fadeOut("fast"); $j("#profileSaveError").fadeOut("fast"); var a = true; var b = escape($j("#txtDisplayName").val()); user.bio = escape($j("#txtAboutMe").val()); user.avatarUrl = $j("#avatarImage").attr("src"); user.name = escape($j("#txtUsername").val()); if (b == "") { a = false; $j("#displayNameError").fadeIn("fast") } else user.displayName = b; if (a) { $j("#personaliseProfileDiv").fadeOut("fast"); $j(".saveProfile").fadeIn("fast"); var data = JSON.stringify({ userSettings: user }); news24.getAjax("/Ajax/UgcData/", "SaveTinaProfile", data, SaveUserProfileCallback, null, "POST") }} function SaveUserProfileCallback(a) { if (!a.error && a.value != "error") { if (a.value === "upload") { $j(".saveProfile").fadeOut("fast"); $j("#personaliseProfileDiv").fadeIn("fast"); $j("a.call2action").click(); user.referrer = "" } else { $j("#fancybox-close").click(); location.reload(true) } } else { $j(".saveProfile").fadeOut("fast"); $j("#personaliseProfileDiv").fadeIn("fast"); $j("#profileSaveError").fadeIn("fast") } } function CheckCharacterCount(a) { a = a || window.event; var b = a.keyCode; if (b == 8 || b == 46) return true; else if ($j("#txtAboutMe").val().length < 1e3) return true; else return false } var user = { name: "", displayName: "", userid: "", avatarUrl: "", bio: "", referrer: "" }; var hasProfile = ""; $j(document).ready(function () { $j("#createProfileFire").fancybox({ padding: 0, centerOnScroll: true }); var a = $j("#btnUploadAvatar"); var b = $j("#avatarError"); new AjaxUpload(a, { action: "/AvatarUpload.axd", name: "uploadfile", data: { userid: user.userid }, onSubmit: function (a, c) { if (!(c && /^(jpg|png|jpeg|gif)$/.test(c))) { b.html("Only JPG, PNG or GIF files are allowed").fadeIn(); return false } b.html("Uploading...").fadeIn() }, onComplete: function (a, c) { b.html(""); if (!c.error) { var d = $j($j(c)[1]).html(); if (d != "error") { user.avatarUrl = $j("#avatarImage").attr("src"); $j("#avatarImage").attr("src", d); b.fadeOut().html(""); $j("#btnResetAvatar").fadeIn() } else b.html("* The image you selected could not be uploaded.").fadeIn() } else b.html("* The image you selected could not be uploaded.").fadeIn() } }); if (hasProfile == "true") { $j("#enterUsernameDiv").hide(); $j("#spanNewUsername").html(unescape(user.name)); $j("#txtDisplayName").val(unescape(user.displayName)); $j("#txtAboutMe").val(unescape(user.bio)); $j("#personaliseProfileDiv").show() } })
+</script>
+
+<a id="createProfileFire" style="display:none;" href="#createProfileModal">&nbsp;</a>
+<input type="hidden" name="userid" value="" />
+<div style="display:none;">
+    <div id="createProfileModal">
+        <div id="enterUsernameDiv">
+            <div class="userheader"><h2>Hello&nbsp;<strong></strong></h2></div>
+            <div class="step1_content">
+                <h3>Create Profile</h3>
+                 <p>Creating your profile will enable you to submit photos and stories to get published on News24.</p><br />
+                <h3 id="originalHeader">Please provide a username for your profile page:</h3>
+                <h3 id="headerUsernameError" style="display:none"></h3>
+                <p>This username must be unique, cannot be edited and will be used in the URL to your profile page across the entire 24.com network.</p>
+                <div class="formborder">
+                    <input type="text" id="txtUsername" class="username_form" />
+                </div>
+            </div>
+            <div class="reg_btn2"><input type="button" id="btnRegister" value="Register" onclick="CheckUsernameAvailable();" /></div>
+        </div>
+        <div id="personaliseProfileDiv" style="display:none;">
+            <div class="userheader"><h2>Hello&nbsp;<strong><span id="spanNewUsername"></span></strong></h2></div>
+            <div class="step2_content">
+                <h3>Choose a display name:</h3>
+                <div class="formborder">
+                    <input type="text" id="txtDisplayName" />
+                </div>
+                <span id="displayNameError" >* You must provide a display name.</span>
+                <h3>Edit your avatar:</h3>
+                <div class="changeprofile">
+                    <img id="avatarImage" height="35" width="35" />
+                    <span class="selectp_img">Select an image file on your computer (max 4MB):</span>
+                    <input type="button" id="btnUploadAvatar" value="Upload" />
+                    <input type="button" id="btnResetAvatar" value="Reset" onclick="ResetAvatar();"  style="display:none;"/>
+                    <span id="avatarError">* The image you selected could not be uploaded.</span>
+                </div>
+                <h3>Tell us a bit about yourself:</h3>
+                <textarea id="txtAboutMe" cols="55" rows="6" onkeydown="return CheckCharacterCount(event);"></textarea>
+                <div id="profileSaveError" style="color:Red;font-size:12px;display:none;">* Your profile could not be saved at the moment. Please try again later.</div>
+            </div>
+            <div class="reg_btn"><input type="button" id="btnSaveUserProfile" value="Save" onclick="SaveUserProfile();" /></div>
+        </div>
+        <div class="saveProfile" style="text-align:center;display:none;">
+            <div style="height:170px;">&nbsp;</div>
+            <div style="height:40px;">
+                <h3 style="font-weight:bold;font-size: 20px;">Saving your profile</h3>
+                <img src="http://static.24.co.za/5/images/ajax-loader-bar.gif" />
+            </div>
+            <div style="height:170px;">&nbsp;</div>
+        </div>
+    </div>
+</div>
+            
+<div id="toppanel">
+    <div class="tab right">
+        
+        <div id="pnlLoggedOut">
+	
+            <ul class="loggedOut">
+                <li id="togglePanel" class="logout"><a id="openPanel" class="point_down" href="javascript:void(0);">Login / SignUp</a> <a id="closePanel" style="display: none;" class="point_up" href="#">Login / SignUp</a> </li>
+            </ul>
+        
+</div>
+    </div>
+    <div id="pnlSettings">
+	
+        <div id="panel">
+            <div class="content">
+                <h1 class="bold">
+                    Settings</h1>
+                
+                <div id="divModalContent">
+                    <div class="info">
+                        <a href="#" class="name">Location Settings</a><br />
+                        <p>
+                            News24 allows you to edit the display of certain components based on a location.
+                            If you wish to personalise the page based on your preferences, please select a
+                            location for each component and click "Submit" in order for the changes to
+                            take affect.</p>
+                    </div>
+                    <div class="info left">
+                        <div class="left selectBox">
+                            <label>
+                                Most Read Block</label><br />
+                            <select name="ctl00$ctl00$personalisationMenu$selUserLocation" id="selUserLocation" class="location" orig="2">
+		<option value="">Change your location</option>
+		<option value="default">National</option>
+		<option selected="selected" value="capetown">Cape Town</option>
+		<option value="george">George</option>
+		<option value="johannesburg">Johannesburg</option>
+		<option value="pretoria">Pretoria</option>
+		<option value="eastlondon">East London</option>
+		<option value="portelizabeth">Port Elizabeth</option>
+		<option value="bloemfontein">Bloemfontein</option>
+		<option value="durban">Durban</option>
+		<option value="pietermaritzburg">Pietermaritzburg</option>
+		<option value="polokwane">Polokwane</option>
+		<option value="nelspruit">Mbombela</option>
+		<option value="kimberley">Kimberley</option>
+		<option value="mafikeng">Mahikeng</option>
+	</select>
+                            <span id="userLocationError" style="display: none; color: Red;">*</span>
+                        </div>
+                        <div class="left selectBox">
+                            <label>
+                                Weather</label><br />
+                            <select name="ctl00$ctl00$personalisationMenu$selWeatherLocation" id="selWeatherLocation" class="location" orig="2">
+		<option value="">Change your location</option>
+		<option value="default">National</option>
+		<option selected="selected" value="capetown">Cape Town</option>
+		<option value="george">George</option>
+		<option value="johannesburg">Johannesburg</option>
+		<option value="pretoria">Pretoria</option>
+		<option value="eastlondon">East London</option>
+		<option value="portelizabeth">Port Elizabeth</option>
+		<option value="bloemfontein">Bloemfontein</option>
+		<option value="durban">Durban</option>
+		<option value="pietermaritzburg">Pietermaritzburg</option>
+		<option value="polokwane">Polokwane</option>
+		<option value="nelspruit">Mbombela</option>
+		<option value="kimberley">Kimberley</option>
+		<option value="mafikeng">Mahikeng</option>
+	</select>
+                            <span id="weatherLocationError" style="display: none; color: Red;">*</span>
+                        </div>
+                        <div class="left selectBox">
+                            <label>
+                                Traffic</label><br />
+                            <select name="ctl00$ctl00$personalisationMenu$selTrafficLocation" id="selTrafficLocation" class="location" orig="2">
+		<option value="">Change your location</option>
+		<option value="default">National</option>
+		<option selected="selected" value="western cape">Western Cape</option>
+		<option value="gauteng">Gauteng</option>
+		<option value="eastern cape">Eastern Cape</option>
+		<option value="free state">Free State</option>
+		<option value="kwazulu-natal">KwaZulu-Natal</option>
+		<option value="limpopo">Limpopo</option>
+		<option value="mpumalanga">Mpumalanga</option>
+		<option value="northern cape">Northern Cape</option>
+		<option value="north-west">North-West</option>
+	</select>
+                            <span id="trafficLocationError" style="display: none; color: Red;">*</span>
+                        </div>
+                        <div class="left selectBox">
+                            <label>
+                                Jobs</label><br />
+                            <select name="ctl00$ctl00$personalisationMenu$selJobLocation" id="selJobLocation" class="location" orig="2">
+		<option value="">Change your location</option>
+		<option value="default">National</option>
+		<option selected="selected" value="western cape">Western Cape</option>
+		<option value="gauteng">Gauteng</option>
+		<option value="eastern cape">Eastern Cape</option>
+		<option value="free state">Free State</option>
+		<option value="kwazulu-natal">KwaZulu-Natal</option>
+		<option value="limpopo">Limpopo</option>
+		<option value="mpumalanga">Mpumalanga</option>
+		<option value="northern cape">Northern Cape</option>
+		<option value="north-west">North-West</option>
+	</select>
+                            <span id="careersLocationError" style="display: none; color: Red;">*</span>
+                        </div>
+                        <div class="left selectBox">
+                            <label>
+                                Property Listings</label><br />
+                            <select name="ctl00$ctl00$personalisationMenu$selPropertyLocation" id="selPropertyLocation" class="location" orig="2">
+		<option value="">Change your location</option>
+		<option value="default">National</option>
+		<option selected="selected" value="western cape">Western Cape</option>
+		<option value="gauteng">Gauteng</option>
+		<option value="eastern cape">Eastern Cape</option>
+		<option value="free state">Free State</option>
+		<option value="kwazulu-natal">KwaZulu-Natal</option>
+		<option value="limpopo">Limpopo</option>
+		<option value="mpumalanga">Mpumalanga</option>
+		<option value="northern cape">Northern Cape</option>
+		<option value="north-west">North-West</option>
+	</select>
+                            <span id="propertyLocationError" style="display: none; color: Red;">*</span>
+                        </div>
+                        <div class="left selectBox">
+                            <label>
+                                Kalahari Listings</label><br />
+                            <select name="ctl00$ctl00$personalisationMenu$selKalahariLocation" id="selKalahariLocation" class="location" orig="2">
+		<option value="">Change your location</option>
+		<option value="default">National</option>
+		<option selected="selected" value="capetown">Cape Town</option>
+		<option value="george">George</option>
+		<option value="johannesburg">Johannesburg</option>
+		<option value="pretoria">Pretoria</option>
+		<option value="eastlondon">East London</option>
+		<option value="portelizabeth">Port Elizabeth</option>
+		<option value="bloemfontein">Bloemfontein</option>
+		<option value="durban">Durban</option>
+		<option value="pietermaritzburg">Pietermaritzburg</option>
+		<option value="polokwane">Polokwane</option>
+		<option value="nelspruit">Mbombela</option>
+		<option value="kimberley">Kimberley</option>
+		<option value="mafikeng">Mahikeng</option>
+	</select>
+                            <span id="kalahariLocationError" style="display: none; color: Red;">*</span>
+                            <p id="errorMessage" style="display: none; color: Red;">
+                                Please select a value from the drop down box.</p>
+                        </div>
+                        <br />
+                        <div class="left" style="clear:both;">
+                            <input id="btCloseSettings" type="button" name="submit" value="Close" class="bt_login" />
+                            <input id="bntSaveLocations" type="button" name="submit" value="Save" class="bt_login" />
+                        </div>
+                    </div>
+                </div>
+                <div id="savingSettings" style="display: none;">
+                    <div class="info" style="margin-top: 95px; text-align: center;">
+                        <h3 style="font-weight: bold; font-size: 20px; margin-bottom: 20px;">
+                            Saving your settings</h3>
+                        <img src="http://static.24.co.za/5/images/ajax-loader-bar.gif"  />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /login -->
+    
+</div>
+    <div id="logoutPanel">
+        <div class="content">
+            <h1 class="bold">
+                Facebook Sign-In</h1>
+            <div>
+                <div class="info">
+                    <p>
+                        <strong>Hi News addict,</strong>
+                    </p>
+                    <p>
+                        Join the News24 Community to be involved in breaking the news.
+                    </p>
+                    <p>
+                        Log in with Facebook to comment and personalise news, weather and listings.
+                    </p>                
+                    <div class="facebook_login">                          
+                        <a href="javascript:void(0);" class="submit_button">
+                            <img src="http://static.24.co.za/5/images/facebookicon_login.png" width="228" height="75" border="0" title="Login with your Facebook account" alt="Login with your Facebook account" /></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    function setLocationDropdowns() { $j("#selUserLocation")[0].selectedIndex = $j("#selUserLocation").attr("orig"); $j("#selWeatherLocation")[0].selectedIndex = $j("#selWeatherLocation").attr("orig"); $j("#selTrafficLocation")[0].selectedIndex = $j("#selTrafficLocation").attr("orig"); $j("#selJobLocation")[0].selectedIndex = $j("#selJobLocation").attr("orig"); $j("#selPropertyLocation")[0].selectedIndex = $j("#selPropertyLocation").attr("orig"); $j("#selKalahariLocation")[0].selectedIndex = $j("#selKalahariLocation").attr("orig") } $j("#open").click(function () { $j("div#panel").slideDown("slow"); setLocationDropdowns() }); $j("#openPanel,#closePanel").click(function () { if ($j("div#logoutPanel").is(":visible")) { $j("div#logoutPanel").hide("fast") } else { $j("div#logoutPanel").slideDown("fast") } }); $j("#close,#btCloseSettings").click(function () { $j("div#panel").slideUp("fast"); setLocationDropdowns() }); $j("#toggle a,#btCloseSettings").click(function () { $j("#toggle a").toggle(); if ($j(".top_user_profile_edit").is(":visible")) { $j("#toppanel #lnkEditProfile").attr("class", "point_down"); $j(".top_user_profile_edit").hide() } }); $j("#togglePanel a").click(function () { $j("#togglePanel a").toggle() }); $j("#bntSaveLocations").click(function () { $j("#divModalContent").hide(); $j("#savingSettings").fadeIn("slow"); var a = "/Handlers/SaveLocations.ashx?"; a += "UserLocation=" + $j("#selUserLocation").val() + "&"; a += "WeatherLocation=" + $j("#selWeatherLocation").val() + "&"; a += "TrafficLocation=" + $j("#selTrafficLocation").val() + "&"; a += "JobLocation=" + $j("#selJobLocation").val() + "&"; + "&"; a += "PropertyLocation=" + $j("#selPropertyLocation").val() + "&"; a += "KalahariLocation=" + $j("#selKalahariLocation").val(); $j.ajax({ type: "GET", url: a, success: function (a) { if (a != "error") { location.reload(true) } } }); return false }); $j("#btnLogout").click(function () { window.location = "http://auth.news24.com/DeAuthenticate.aspx?surl=http://www.news24.com/SouthAfrica/News/House-of-horrors-wife-appears-in-court-20140624" }); $j("#toppanel li.user").click(function () { if ($j(".top_user_profile_edit").is(":visible")) $j("#toppanel #lnkEditProfile").attr("class", "point_down"); else $j("#toppanel #lnkEditProfile").attr("class", "point_up"); $j(".top_user_profile_edit").toggle(); $j("#toggle a.close").hide(); $j("#toggle a.open").show(); $j("div#panel").slideUp("fast"); setLocationDropdowns() });
+</script>
+
+            <div class="clr10">&nbsp;</div>
+        </div>
+    </div>
+    
+    
+    <script type="text/javascript" language="javascript" src="http://scripts.24.co.za/libs/json/json2.js?v=20140620" ></script>
+    <script type="text/javascript" language="javascript" src="http://scripts.24.co.za/libs/24com/tina/1.0/loginwindow.js?v=20140620" ></script>
+    
+    <script type="text/javascript" language="javascript" src="http://static.24.co.za/5/scripts/minified/basescript2.min.js?v=20140620" ></script>
+    
+    <script type="text/javascript">
+        $j(document).ready(function () {$j("a.group,a.mynewspics").easyTooltip();});
+        $j('.submit_button').click(function () { OpenTinaLoginWindow(); });
+         function OpenTinaLoginWindow(permission) {
+            json = { refreshPage: true, loginProvider: 'Facebook', tinaBaseUrl: 'http://auth.news24.com' };
+            json.scope = this;
+             if (permission)
+                 json.permission = permission;
+             Tina.openLoginWindow(json);
+         }
+        tinaUrl = 'http://auth.news24.com';
+    </script>
+    
+
+    
+        
+<script type='text/javascript'>
+    var SiteSection = window.location.pathname.replace(/^\/([^\/]*).*$/, '$1');
+    if (SiteSection == "")
+        SiteSection = "HomePage";
+    var _sf_async_config = {}; _sf_async_config.uid = 8959; _sf_async_config.domain = "news24.com"; _sf_async_config.sections = SiteSection ; _sf_async_config.authors = "News24"; (function () { function a() { window._sf_endpt = (new Date).getTime(); var a = document.createElement("script"); a.setAttribute("language", "javascript"); a.setAttribute("type", "text/javascript"); a.setAttribute("src", ("https:" == document.location.protocol ? "https://a248.e.akamai.net/chartbeat.download.akamai.com/102508/" : "http://static.chartbeat.com/") + "js/chartbeat.js"); document.body.appendChild(a) } var b = window.onload; window.onload = typeof window.onload != "function" ? a : function () { b(); a() } })()
+</script>
+    <script type="text/javascript">
+var idleInterval;var idleTime = 0;
+$j(document).ready(function() {
+if(!jQuery.cookie('closeidlead')){
+idleInterval = setInterval("timerIncrement()", 1000); 
+$j(this).mousemove(function(e) {idleTime = 0;});
+$j(this).keypress(function(e) {idleTime = 0;});
+$j(this).click(function (e) {idleTime = 0;});
+}
+});
+function timerIncrement() {
+idleTime = idleTime + 1;
+if (idleTime == 1800) {
+clearInterval(idleInterval);
+GA24.trackEvent('IdleAd,open');
+var popupUrl = '/IdlePopupPage.html?domain=' + document.domain + '&zone=' + za24_AdZone; 
+$j("<a href='" + popupUrl + "'></a>" ).fancybox({'width':730,'height':508, 'type': 'iframe', 'padding': '0px', 'scrolling':'auto'}).click();
+} 
+}
+</script>
+
+    <div id='ad-200x400-1' class='24ad200x400'><script type='text/javascript'>if(typeof za24_DisplayAd != 'undefined') za24_DisplayAd('200x400','1');</script></div><noscript><a href='http://pubads.g.doubleclick.net/gampad/jump?iu=/8900/24.com/Web/News24/SouthAfrica/Articles&sz=200x400&c=634586355&t=artid%3d1370d9df-3a3f-4eed-9c29-a3d036173ac4%26Places%3djohannesburg%26Topics%3dcrime%2cchild+abuse%26posno%3d1' target='_blank'><img src='http://pubads.g.doubleclick.net/gampad/ad?iu=/8900/24.com/Web/News24/SouthAfrica/Articles&sz=200x400&c=634586355&t=artid%3d1370d9df-3a3f-4eed-9c29-a3d036173ac4%26Places%3djohannesburg%26Topics%3dcrime%2cchild+abuse%26posno%3d1' border='0' alt=''></a></noscript>
+</body>
+</html>
+"""
+        
+        doc = Document()
+        doc.url = 'http://www.news24.com/SouthAfrica/News/House-of-horrors-wife-appears-in-court-20140624'
+        self.crawler.extract(doc, html)
+
+        self.maxDiff = None
+
+        self.assertEqual(doc.title, u"'House of horrors' wife appears in court")
+        self.assertEqual(doc.summary, 'The wife of the man accused of abusing her and their five children and holding them captive has appeared in court, where her case was postponed for a bail application.')
+        self.assertEqual(doc.published_at.strftime('%d %m %Y'), '24 06 2014')
+        self.assertEqual(doc.author.name, "SAPA")
+        self.assertEqual(doc.medium.name, 'News24')
+
+        self.assertEqual(doc.text, u"""Johannesburg - The wife of the man accused of abusing her and their five children and holding them captive appeared in the Springs Magistrate's Court on Tuesday, Beeld reported.
+
+The matter was postponed to 1 July for a formal bail application, according to the report.
+
+She was arrested for defeating the ends of justice on Monday when she decided not to co-operate with police and reportedly refused to testify against her husband.
+
+Magistrate Roy le Roux told the woman she was the second accused in the case.
+
+In addition to defeating the ends of justice she faces the same charges as her husband - attempted murder, child abuse, and assault.
+
+The woman's 36-year-old husband, who cannot be named to protect the identity of his family members, was arrested last month after allegedly assaulting his wife and five children and keeping them captive.
+
+He was denied bail by the court earlier this month. His case was postponed to 25 July.
+
+The man was arrested in May after his badly beaten 11-year-old son fled the family's house in Springs and ran to a neighbour to beg for help. The neighbour called police.
+
+The man allegedly kept his wife and five children, aged between two and 16, captive in the house for several years and assaulted them.""")
