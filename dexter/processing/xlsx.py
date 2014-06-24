@@ -202,7 +202,7 @@ class XLSXBuilder:
         rownum = 3 + self.write_table(ws, 'Origins', rows)
 
         query = db.session.query(
-                    DocumentsView.c.origin,
+                    DocumentsView.c.origin_group,
                     func.count(1).label('count')
                     )\
                     .join(Document)\
