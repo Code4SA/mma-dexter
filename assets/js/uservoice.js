@@ -4,12 +4,13 @@ UserVoice=window.UserVoice||[];(function(){var uv=document.createElement('script
 // Set colors
 UserVoice.push(['set', {
   accent_color: '#448dd6',
+  trigger_style: 'tab',
   trigger_color: 'white',
-  trigger_background_color: 'rgba(46, 49, 51, 0.6)'
+  trigger_background_color: '#419641',
 }]);
 
 // Add default trigger to the bottom-right corner of the window:
-UserVoice.push(['addTrigger', { mode: 'contact', trigger_position: 'bottom-right' }]);
+UserVoice.push(['addTrigger', { mode: 'contact', trigger_position: 'bottom-right', tab_label: 'get help' }]);
 
 (function () {
   var $body = $('body');
