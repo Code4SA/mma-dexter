@@ -25,7 +25,7 @@ class Author(db.Model):
     __tablename__ = "authors"
 
     id          = Column(Integer, primary_key=True)
-    name        = Column(String(50), index=True, nullable=False, unique=True)
+    name        = Column(String(100), index=True, nullable=False, unique=True)
     author_type_id = Column(Integer, ForeignKey('author_types.id'), nullable=False)
     person_id   = Column(Integer, ForeignKey('people.id'))
 
@@ -111,7 +111,7 @@ class AuthorType(db.Model):
 
 
 class AuthorForm(Form):
-    name              = StringField('Author', [validators.Length(max=50)], default='Unknown')
+    name              = StringField('Author', [validators.Length(max=100)], default='Unknown')
     author_type_id    = SelectField('Type', default=1)
     person_gender_id  = SelectField('Gender', default='')
     person_race_id    = SelectField('Race', default='')

@@ -31,7 +31,7 @@
     %label.control-label(for_='author-name') Author
     .row
       .col-sm-3
-        = field_input(author_form.name, required=True)
+        = field_input(author_form.name, required=True, maxlength=100)
       .col-sm-9
         .author-details
         .new-author-details(class_ = 'hidden' if not form.author_id.errors else '')
