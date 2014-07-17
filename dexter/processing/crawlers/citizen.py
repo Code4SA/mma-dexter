@@ -34,7 +34,7 @@ class CitizenCrawler(BaseCrawler):
 
         doc.title = self.extract_plaintext(soup.select("h1.article-headline"))
         doc.summary = self.extract_plaintext(soup.select(".article-excerpt"))
-        doc.text = "\n\n".join(p.text for p in soup.select(".article-content > p"))
+        doc.text = doc.summary + "\n\n" + "\n\n".join(p.text for p in soup.select(".article-content > p"))
         doc.published_at = self.parse_timestamp(self.extract_plaintext(soup.select(".page-lead-datetime")))
 
         author = self.extract_plaintext(soup.select(".article-byline"))

@@ -27,14 +27,14 @@ class TimesLiveCrawler(BaseCrawler):
 
         doc.title = self.extract_plaintext(soup.select(".articleheader h1"))
         doc.summary = self.extract_plaintext(soup.select(".articleheader h3"))
-        doc.text = "\n\n".join(p.text for p in soup.select(".column > p"))
+        doc.text = doc.summary + "\n\n" + "\n\n".join(p.text for p in soup.select(".column > p"))
 
         extra = self.extract_plaintext(soup.select(".articleheader div"))
         if "|" in extra:
-          date, author = [s.strip() for s in extra.split("|", 1)]
+            date, author = [s.strip() for s in extra.split("|", 1)]
         else:
-          date = extra
-          author = None
+            date = extra
+            author = None
 
         doc.published_at = self.parse_timestamp(date)
 

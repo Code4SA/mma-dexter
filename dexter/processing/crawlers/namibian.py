@@ -30,6 +30,9 @@ class NamibianCrawler(BaseCrawler):
             nodes = nodes[1:]
         doc.text = "\n\n".join(p.text.strip() for p in nodes)
 
+        if doc.summary:
+          doc.text = doc.summary + "\n\n" + doc.text
+
         # there are multiple divs with this id
         story_cats = soup.select("#story_cat")
         text = self.extract_plaintext(story_cats[0:1])

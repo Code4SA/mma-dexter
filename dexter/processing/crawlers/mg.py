@@ -41,7 +41,7 @@ class MGCrawler(BaseCrawler):
 
         doc.title = self.extract_plaintext(soup.select(".headline_printable"))
         doc.summary = self.extract_plaintext(soup.select(".blurb_printable"))
-        doc.text = "\n\n".join(p.text for p in soup.select(".body_printable p"))
+        doc.text = doc.summary + "\n\n" + "\n\n".join(p.text for p in soup.select(".body_printable p"))
 
         doc.published_at = self.parse_timestamp(self.extract_plaintext(soup.select(".content_place_line")))
 
