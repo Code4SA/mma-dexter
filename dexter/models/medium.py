@@ -113,6 +113,7 @@ Volksbad|print - daily|volksblad.com||za
 Weekend Argus|print - weekly|||za
 Weekend Dispatch|print - weekly|||za
 Weekend Post|print - daily|weekendpost.co.za||za
+Namibian|online|namibian.com.na||na
             """
 
         mediums = []
