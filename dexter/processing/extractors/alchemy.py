@@ -22,12 +22,19 @@ class AlchemyExtractor(BaseExtractor):
 
     def extract(self, doc):
         if doc.text:
-            self.fetch_extract_entities(doc)
-            self.fetch_extract_keywords(doc)
+            try:
+                self.fetch_extract_entities(doc)
+                self.fetch_extract_keywords(doc)
+            except ProcessingError as e:
+                if e.message == 'unsupported-text-language':
+                    log.info('Ignoring processing error: %s' % e.message)
+                else:
+                    raise e
 
     def fetch_extract_entities(self, doc):
         log.info("Extracting entities for %s" % doc)
         self.extract_entities(doc, self.fetch_entities(doc) or [])
+
 
     def extract_entities(self, doc, entities):
         log.debug("Raw extracted entities: %s" % entities)
