@@ -39,6 +39,9 @@ class NamibianCrawler(BaseCrawler):
         doc.published_at = self.parse_timestamp(' '.join(text.split("|")[1:]))
 
         author = self.extract_plaintext(story_cats[1:]).replace("By ", '')
+        # detect a junk author
+        if len(author) > 100 or author.count(' ') > 5:
+            author = None
 
         if author:
             doc.author = Author.get_or_create(author, AuthorType.journalist())
