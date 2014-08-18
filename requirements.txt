@@ -20,6 +20,7 @@ PyHAML==1.0.1
 PyYAML==3.10
 SQLAlchemy==0.9.1
 SQLAlchemy-ImageAttach==0.8.1
+Unidecode==0.04.16
 WTForms==1.0.5
 Wand==0.3.7
 WebHelpers==1.3

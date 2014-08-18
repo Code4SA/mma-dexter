@@ -3,6 +3,8 @@ from __future__ import division
 import re
 import datetime
 
+from unidecode import unidecode
+
 from wtforms import StringField, TextAreaField, validators, DateTimeField, HiddenField
 from wtforms.fields.html5 import URLField
 
@@ -165,7 +167,9 @@ class Document(db.Model):
     def add_keyword(self, keyword):
         """ Add a new keyword, but only if it's not already there. """
         for k in self.keywords:
-            if k.keyword.lower() == keyword.keyword.lower():
+            # to compare, we emulate mysql's utf8_general_ci collation:
+            # strip diacritics and lowercase
+            if unidecode(k.keyword).lower() == unidecode(keyword.keyword).lower():
                 return k.add_offsets(keyword.offsets())
                 
         self.keywords.append(keyword)

@@ -1,5 +1,7 @@
 from __future__ import division
 
+from unidecode import unidecode
+
 from sqlalchemy import (
     Column,
     DateTime,
@@ -46,8 +48,10 @@ class Utterance(db.Model):
 
 
     def __eq__(self, other):
+        # to compare, we emulate mysql's utf8_general_ci collation:
+        # strip diacritics and lowercase
         return isinstance(other, Utterance) and other.entity == self.entity and \
-                (other.quote.lower() == self.quote.lower() or self.similarity(other) >= 0.8)
+                (unidecode(other.quote).lower() == unidecode(self.quote).lower() or self.similarity(other) >= 0.8)
 
     def __repr__(self):
         return "<Utterance doc=%s, entity=%s, quote=\"%s\">" % (

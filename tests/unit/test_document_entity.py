@@ -39,7 +39,7 @@ class TestEntity(unittest.TestCase):
         self.db.drop_all()
 
     def test_add_entity(self):
-        self.assertEqual(Entity.get_or_create('person', 'Zuma'), Entity.get_or_create('person', 'Zuma]'))
+        self.assertEqual(Entity.get_or_create('person', u'Zuma'), Entity.get_or_create('person', u'Zuma]'))
 
     def test_sanitise_name(self):
         self.assertEqual('foo', sanitise_name('foo'))
