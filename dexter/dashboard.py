@@ -6,7 +6,6 @@ from dexter.app import app
 from flask import request, url_for, flash, redirect, make_response, jsonify, abort
 from flask.ext.mako import render_template
 from flask.ext.login import login_required, current_user
-from flask.ext.sqlalchemy import Pagination
 from sqlalchemy.sql import func, distinct
 from sqlalchemy.orm import joinedload
 
@@ -18,6 +17,8 @@ from wtforms import validators, HiddenField, TextField, SelectMultipleField, Boo
 from wtforms.fields.html5 import DateField
 from .forms import Form, SelectField, MultiCheckboxField, RadioField
 from .processing.xlsx import XLSXBuilder
+
+from utils import paginate
 
 @app.route('/dashboard')
 @login_required
@@ -101,7 +102,15 @@ def activity():
         return response
 
 
-    query = Document.query\
+    # setup pagination for doc ids
+    query = db.session.query(Document.id).order_by(Document.created_at.desc())
+    query = form.filter_query(query)
+    pagination = paginate(query, page, per_page)
+
+    doc_ids = [t.id for t in pagination.items]
+
+    # get documents
+    docs = Document.query\
                 .options(
                     joinedload(Document.created_by),
                     joinedload(Document.medium),
@@ -109,25 +118,19 @@ def activity():
                     joinedload(Document.origin),
                     joinedload(Document.fairness),
                     joinedload(Document.sources).lazyload('*')
-                )
-    query = form.filter_query(query)
-
-    # do manual pagination
-    query = query.order_by(Document.created_at.desc())
-    items = query.limit(per_page).offset((page - 1) * per_page).all()
-    if not items and page != 1:
-        abort(404)
-    total = form.filter_query(db.session.query(func.count(distinct(Document.id)))).scalar()
-    paged_docs = Pagination(query, page, min(per_page, len(items)), total, items)
+                )\
+                .filter(Document.id.in_(doc_ids))\
+                .order_by(Document.created_at.desc())\
+                .all()
 
     # group by date added
     doc_groups = []
-    for date, group in groupby(paged_docs.items, lambda d: d.created_at.date()):
+    for date, group in groupby(docs, lambda d: d.created_at.date()):
         doc_groups.append([date, list(group)])
 
     return render_template('dashboard/activity.haml',
                            form=form,
-                           paged_docs=paged_docs,
+                           pagination=pagination,
                            doc_groups=doc_groups)
 
 
@@ -257,9 +260,6 @@ class ActivityForm(Form):
             filename.append(self.published_at.data.replace(' ', ''))
 
         return "%s.%s" % ('-'.join(filename), self.format.data)
-
-    def as_dict(self):
-        return dict((f.name, f.data) for f in self if f.name != 'csrf_token')
 
 
 class ActivityChartHelper:

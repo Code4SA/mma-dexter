@@ -1,4 +1,5 @@
 %%def(name="paginator(endpoint, pagination, **kwargs)")
+  - kwargs.pop('page', None)
   %ul.pagination
     - for page in pagination.iter_pages():
       - if page:

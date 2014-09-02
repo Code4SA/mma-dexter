@@ -19,8 +19,8 @@
 
 %article#activity
   %h3
-    &= paged_docs.total
-    Article${'' if paged_docs.total == 1 else 's'}
+    &= pagination.total
+    Article${'' if pagination.total == 1 else 's'}
     - if form.user():
       added by ${form.user().short_name()|h}
 
@@ -148,4 +148,5 @@
 
   %section
     %%include(file='activity_list.haml')
-    = paginator('activity', paged_docs, **form.as_dict())
+    - args = request.args.to_dict(True)
+    = paginator('activity', pagination, **args)
