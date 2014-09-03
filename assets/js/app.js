@@ -34,7 +34,8 @@ $(function() {
       'Last 7 days': [now.clone().subtract(moment.duration(7, 'days')), now],
       'Last 14 days': [now.clone().subtract(moment.duration(14, 'days')), now],
       'Last 30 days': [now.clone().subtract(moment.duration(30, 'days')), now],
-      'Last 90 days': [now.clone().subtract(moment.duration(90, 'days')), now]
+      'Last 90 days': [now.clone().subtract(moment.duration(90, 'days')), now],
+      'Elections 2014': [moment('2014-03-07'), moment('2014-05-14')]
     }
   });
 });
