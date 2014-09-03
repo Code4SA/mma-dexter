@@ -21,6 +21,7 @@
       $('a[href="#tab-map"][data-toggle="tab"]').on('shown.bs.tab', self.onMapTabShown);
 
       Highcharts.setOptions({
+        credits: {enabled: false},
         chart: {
           animation: false,
         },
