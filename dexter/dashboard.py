@@ -6,7 +6,7 @@ from dexter.app import app
 from flask import request, url_for, flash, redirect, make_response, jsonify, abort
 from flask.ext.mako import render_template
 from flask.ext.login import login_required, current_user
-from sqlalchemy.sql import func, distinct
+from sqlalchemy.sql import func, distinct, or_
 from sqlalchemy.orm import joinedload
 
 from dexter.models import *
@@ -281,6 +281,7 @@ class ActivityChartHelper:
                 'media': self.media_chart(),
                 'problems': self.problems_chart(),
                 'fairness': self.fairness_chart(),
+                'markers': self.markers_chart(),
             },
             'summary': {
                 'documents': len(self.doc_ids)
@@ -375,6 +376,34 @@ class ActivityChartHelper:
             query = db.session.query(func.count(distinct(Document.id)))
             query = self.filter(p.filter_query(query))
             counts[p.short_desc] = query.scalar()
+
+        return {
+            'values': counts
+        }
+
+    def markers_chart(self):
+        counts = {}
+
+        # flagged
+        query = self.filter(db.session.query(
+                  func.count(Document.id),
+                )\
+                .filter(Document.flagged == True))
+        counts['flagged'] = query.scalar()
+
+        # with URL
+        query = self.filter(db.session.query(
+                  func.count(Document.id),
+                )\
+                .filter(Document.url != None, Document.url != ''))
+        counts['with-url'] = query.scalar()
+
+        # without URL
+        query = self.filter(db.session.query(
+                  func.count(Document.id),
+                )\
+                .filter(or_(Document.url == None, Document.url == '')))
+        counts['without-url'] = query.scalar()
 
         return {
             'values': counts

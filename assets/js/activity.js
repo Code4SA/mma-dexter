@@ -200,15 +200,46 @@
         series: [{data: vals}],
       });
 
+      // markers
+      data = charts.charts.markers.values;
+      var holder = $('.chart-markers');
+      if (!_.isEmpty(data)) {
+        holder.empty();
+
+        if (data.flagged) {
+          var html = $('<div class="indicator"><h3>' + data.flagged + '</h3><h4><a href="#">flagged</a> <i class="fa fa-flag flag-set article-flag"></i></div>');
+          holder.append(html);
+          $('a', html).on('click', function(e) {
+            e.preventDefault();
+            $('#flagged').prop('checked', true);
+            $('form.activity-refine').submit();
+          });
+        }
+
+        if (data['with-url']) {
+          holder.append($('<div class="indicator"><h3>' + data['with-url'] + '</h3><h4>with a URL <i class="fa fa-link"></i></div>'));
+        }
+
+        if (data['without-url']) {
+          holder.append($('<div class="indicator"><h3>' + data['without-url'] + '</h3><h4>without a URL</div>'));
+        }
+
+        if (holder.is(':empty')) {
+          holder.html('None');
+        }
+      } else {
+        holder.html('None');
+      }
+
       // problems
       data = charts.charts.problems.values;
-      var holder = $('.chart-problems');
+      holder = $('.chart-problems');
       if (!_.isEmpty(data)) {
         holder.empty();
 
         _.map(data, function(val, cat) {
           if (val > 0) {
-            var html = $('<div class="problem"><h3>' + val + '</h3><h4><a href="#">' + cat + '</a></div>');
+            var html = $('<div class="indicator"><h3>' + val + '</h3><h4><a href="#">' + cat + '</a></div>');
             holder.append(html);
           }
         });

@@ -9,21 +9,23 @@
     height: 150px;
   }
 
-  .chart.chart-problems {
+  .chart.chart-problems,
+  .chart.chart-markers {
     height: auto;
 
     h3, h4 {
       margin: 0px;
     }
-
-    .problem {
-      float: left;
-      width: 50%;
-      margin-bottom: 20px;
-      padding-right: 5px;
-      display: inline-block;
-    }
   }
+
+  .chart .indicator {
+    float: left;
+    width: 50%;
+    margin-bottom: 20px;
+    padding-right: 5px;
+    display: inline-block;
+  }
+
   .chart.chart-fairness {
     height: 100px;
   }
