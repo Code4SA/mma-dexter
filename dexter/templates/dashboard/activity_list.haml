@@ -10,8 +10,8 @@
           %th
           %th.user Added by
           %th
-          %th.title Title
           %th
+          %th.title Title
           %th.published_at Published on
           %th.medium Medium
 
@@ -31,15 +31,16 @@
               - elif doc.checked_by:
                 %i.fa.fa-check-circle(title='Checked by %s' % doc.checked_by.short_name())
 
+            %td
+              - if doc.url:
+                %a(href=doc.url, title='View original article', target='_blank')
+                  %i.fa.fa-link
+
             %td.title
               %a(href=url_for('show_article', id=doc.id))
                 %strong&= doc.title or '(none)'
               - if doc.flagged:
                 %i.article-flag.fa.fa-flag.flag-set(title=doc.notes or 'Article has been flagged')
-            %td
-              - if doc.url:
-                %a(href=doc.url, title='View original article', target='_blank')
-                  %i.fa.fa-link
             %td.published_at
               &=doc.published_at.strftime('%e %B %Y')
             %td.medium
