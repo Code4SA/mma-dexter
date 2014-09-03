@@ -11,8 +11,8 @@
           %th.user Added by
           %th
           %th.title Title
+          %th
           %th.published_at Published on
-          %th.wordcount Words
           %th.medium Medium
 
         - for doc in group:
@@ -36,13 +36,11 @@
                 %strong&= doc.title or '(none)'
               - if doc.flagged:
                 %i.article-flag.fa.fa-flag.flag-set(title=doc.notes or 'Article has been flagged')
+            %td
+              - if doc.url:
+                %a(href=doc.url, title='View original article', target='_blank')
+                  %i.fa.fa-link
             %td.published_at
               &=doc.published_at.strftime('%e %B %Y')
-            %td.wordcount
-              %span(title='words')
-                - if doc.text:
-                  &=doc.text.count(' ') + 1
-                - else:
-                  0
             %td.medium
               %span.label.label-default&=doc.medium.name
