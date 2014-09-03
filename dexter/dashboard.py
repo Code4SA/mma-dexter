@@ -143,6 +143,7 @@ class ActivityForm(Form):
     published_at   = TextField('Published', [validators.Optional()])
     problems       = MultiCheckboxField('Article problems', [validators.Optional()], choices=DocumentAnalysisProblem.for_select())
     flagged        = BooleanField('flagged')
+    has_url        = RadioField('hasurl', [validators.Optional()], choices=[('1', 'with URL'), ('0', 'without URL')])
     format         = HiddenField('format', default='html') 
 
     def __init__(self, *args, **kwargs):
@@ -245,6 +246,11 @@ class ActivityForm(Form):
 
         if self.flagged.data:
             query = query.filter(Document.flagged == True)
+
+        if self.has_url.data == '1':
+            query = query.filter(Document.url != None, Document.url != '')
+        elif self.has_url.data == '0':
+            query = query.filter(or_(Document.url == None, Document.url == ''))
 
         return query
 

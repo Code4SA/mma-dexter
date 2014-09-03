@@ -146,6 +146,15 @@
                   %i.fa.fa-flag.flag-set.article-flag
                   = form.flagged.label.text
 
+            .form-group.has-url
+              .btn-group(dataToggle='buttons', dataCanUntoggle='1')
+                - for fld in form.has_url:
+                  %label.btn.btn-default(class_='active' if fld.checked else '')
+                    = fld()
+                    &= fld.label.text
+                    - if fld.data == '1':
+                      %i.fa.fa-link
+
           .panel-footer
             .pull-right
               %button.btn.btn-default.download

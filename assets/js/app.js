@@ -48,6 +48,19 @@ $(function() {
   });
 });
 
+$(function() {
+  $('.btn-group[data-can-untoggle] .btn').on('click', function(e) {
+    var $btn = $(this);
+    var $radio = $('input', this);
+    if ($radio.prop('checked')) {
+      $radio.prop('checked', false);
+      $btn.removeClass('active');
+      e.preventDefault();
+      return false;
+    }
+  });
+});
+
 // globally prevent enter key from submitting forms
 $(function() {
   $(document).on('keydown', 'input[type!="submit"], select', function(event) {

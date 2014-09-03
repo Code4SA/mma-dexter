@@ -205,9 +205,10 @@
       var holder = $('.chart-markers');
       if (!_.isEmpty(data)) {
         holder.empty();
+        var html;
 
         if (data.flagged) {
-          var html = $('<div class="indicator"><h3>' + data.flagged + '</h3><h4><a href="#">flagged</a> <i class="fa fa-flag flag-set article-flag"></i></div>');
+          html = $('<div class="indicator"><h3>' + data.flagged + '</h3><h4><a href="#">flagged</a> <i class="fa fa-flag flag-set article-flag"></i></div>');
           holder.append(html);
           $('a', html).on('click', function(e) {
             e.preventDefault();
@@ -217,11 +218,23 @@
         }
 
         if (data['with-url']) {
-          holder.append($('<div class="indicator"><h3>' + data['with-url'] + '</h3><h4>with a URL <i class="fa fa-link"></i></div>'));
+          html = $('<div class="indicator"><h3>' + data['with-url'] + '</h3><h4><a href="#">with a URL</a> <i class="fa fa-link"></i></div>');
+          holder.append(html);
+          $('a', html).on('click', function(e) {
+            e.preventDefault();
+            $('input[name="has_url"][value="1"]').prop('checked', true);
+            $('form.activity-refine').submit();
+          });
         }
 
         if (data['without-url']) {
-          holder.append($('<div class="indicator"><h3>' + data['without-url'] + '</h3><h4>without a URL</div>'));
+          html = $('<div class="indicator"><h3>' + data['without-url'] + '</h3><h4><a href="#">without a URL</a></div>');
+          holder.append(html);
+          $('a', html).on('click', function(e) {
+            e.preventDefault();
+            $('input[name="has_url"][value="0"]').prop('checked', true);
+            $('form.activity-refine').submit();
+          });
         }
 
         if (holder.is(':empty')) {
