@@ -20,6 +20,8 @@ class NewstoolsCrawler(BaseCrawler):
 
         if item['author'] and item['author'].lower() != 'unknown':
             doc.author = Author.get_or_create(item['author'], AuthorType.journalist())
+        else:
+            doc.author = Author.unknown()
 
         doc.text = self.fetch_text(item['text_url'])
 
