@@ -142,10 +142,11 @@ class DocumentProcessor:
 
         This checks to see if the document's URL already exists in the database.
         If not, download the text for the URL and run processing on it, then
-        store it in the database.
+        store it in the database. This commits the current transaction.
 
         Returns the resulting document or None if the document already exists.
         """
+        self.log.info("Processing feed item: %s" % item)
         url = item['url']
 
         existing = Document.query.filter(Document.url == url).first()
@@ -155,7 +156,7 @@ class DocumentProcessor:
 
         crawler = NewstoolsCrawler()
         if not crawler.offer(url):
-            self.log("No medium for URL, ignoring: %s" % url)
+            self.log.info("No medium for URL, ignoring: %s" % url)
             return
 
         try:

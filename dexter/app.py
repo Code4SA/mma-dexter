@@ -38,6 +38,17 @@ from flask_wtf.csrf import CsrfProtect
 CsrfProtect(app)
 
 
+# setup extraction
+from .processing.extractors.alchemy import AlchemyExtractor
+from .processing.extractors.calais import CalaisExtractor
+AlchemyExtractor.API_KEY = app.config.get('ALCHEMY_API_KEY')
+CalaisExtractor.API_KEY = app.config.get('CALAIS_API_KEY')
+
+# setup crawlers
+from .processing import DocumentProcessor
+DocumentProcessor.FEED_PASSWORD = app.config.get('NEWSTOOLS_FEED_PASSWORD')
+
+
 # user authentication
 from flask.ext.login import LoginManager
 login_manager = LoginManager()
@@ -77,3 +88,9 @@ request_started.connect(log_attach_user_id, app)
 # file attachments
 from .attachments import setup_attachments
 setup_attachments(app)
+
+
+# celery tasks
+from celery import Celery
+celery_app = Celery('dexter', include=['dexter.tasks', 'dexter.app'])
+celery_app.config_from_object('dexter.config.celeryconfig')
