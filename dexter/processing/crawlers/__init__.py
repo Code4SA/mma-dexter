@@ -6,3 +6,4 @@ from .news24 import News24Crawler
 from .iol import IOLCrawler
 from .namibian import NamibianCrawler
 from .generic import GenericCrawler
+from .newstools import NewstoolsCrawler

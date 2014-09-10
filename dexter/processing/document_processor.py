@@ -3,7 +3,7 @@ from itertools import chain
 from ..models import Document, Entity, db, Gender, Person, DocumentType, DocumentFairness, Fairness
 from ..processing import ProcessingError
 
-from .crawlers import MGCrawler, TimesLiveCrawler, IOLCrawler, CitizenCrawler, DailysunCrawler, News24Crawler, NamibianCrawler, GenericCrawler
+from .crawlers import MGCrawler, TimesLiveCrawler, IOLCrawler, CitizenCrawler, DailysunCrawler, News24Crawler, NamibianCrawler, GenericCrawler, NewstoolsCrawler
 from .extractors import AlchemyExtractor, CalaisExtractor, SourcesExtractor, PlacesExtractor
 
 import requests
@@ -111,7 +111,7 @@ class DocumentProcessor:
         """ Fetch the feed for +day+ and yields the items. """
         tree = self.fetch_daily_feeds(day)
 
-        items = tree.findall('/channel/item')
+        items = tree.findall('channel/item')
         self.log.info("Got %d items from feeds for %s" % (len(items), day))
 
         for item in items:
@@ -146,16 +146,20 @@ class DocumentProcessor:
 
         Returns the resulting document or None if the document already exists.
         """
-        existing = Document.query.filter(Document.url == item['url']).first()
+        url = item['url']
+
+        existing = Document.query.filter(Document.url == url).first()
         if existing:
-            self.log.info("URL has already been processed, ignoring: %s" % item['url'])
+            self.log.info("URL has already been processed, ignoring: %s" % url)
             return None
 
-        # TODO: only process documents we have a medium for, so offer it
-        # to the crawler and only proceed if it accepts
+        crawler = NewstoolsCrawler()
+        if not crawler.offer(url):
+            self.log("No medium for URL, ignoring: %s" % url)
+            return
 
         try:
-            doc = NewstoolsCrawler().crawl(item)
+            doc = crawler.crawl(item)
             self.process_document(doc)
         except HTTPError as e:
             raise ProcessingError("Error fetching document: %s" % (e,))
@@ -174,7 +178,8 @@ class DocumentProcessor:
             raise ValueError("%s.FEED_PASSWORD must be set." % self.__class__.__name__)
 
         r =  requests.get(self.FEED_URL % day.strftime('%d-%m-%Y'),
-                          auth=(self.FEED_USER, self.FEED_PASSWORD))
+                          auth=(self.FEED_USER, self.FEED_PASSWORD),
+                          verify=False)
         r.raise_for_status()
 
-        return ET.parse(r.text)
+        return ET.fromstring(r.text)
