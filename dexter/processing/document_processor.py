@@ -1,6 +1,6 @@
 from itertools import chain
 
-from ..models import Document, Entity, db, Gender, Person, DocumentType, DocumentFairness, Fairness
+from ..models import Document, Entity, db, Gender, Person, DocumentType, DocumentFairness, Fairness, AnalysisNature
 from ..processing import ProcessingError
 
 from .crawlers import MGCrawler, TimesLiveCrawler, IOLCrawler, CitizenCrawler, DailysunCrawler, News24Crawler, NamibianCrawler, GenericCrawler, NewstoolsCrawler
@@ -161,6 +161,7 @@ class DocumentProcessor:
 
         try:
             doc = crawler.crawl(item)
+            doc.analysis_nature = AnalysisNature.SIMPLE
             self.process_document(doc)
         except HTTPError as e:
             raise ProcessingError("Error fetching document: %s" % (e,))

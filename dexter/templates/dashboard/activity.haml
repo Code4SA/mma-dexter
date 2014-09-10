@@ -109,10 +109,9 @@
             .form-group
               .btn-group(dataToggle='buttons')
                 - for fld in form.analysis_nature_id:
-                  %label.btn.btn-default(class_='active' if fld.checked else '')
+                  %label.btn.btn-default(class_='active' if fld.checked else '', title=fld.label.text)
                     = fld()
                     %i.fa(class_=AnalysisNature.ICONS.get(int(fld.data)))
-                    &= fld.label.text
 
             = vertical_field(form.user_id)
             = vertical_field(form.country_id)

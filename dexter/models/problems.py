@@ -1,3 +1,5 @@
+from dexter.models.analysis_nature import AnalysisNature
+
 class DocumentAnalysisProblem(object):
     """
     A helper class that describes a problem with a document's analysis.
@@ -5,6 +7,7 @@ class DocumentAnalysisProblem(object):
     problem, describing the problem, etc.
     """
     _problems = {}
+    natures = None
 
     def check(self, doc):
         raise NotImplementedError()
@@ -20,7 +23,8 @@ class DocumentAnalysisProblem(object):
 
     @classmethod
     def for_document(cls, doc):
-        return [p for p in cls.all() if p.check(doc)]
+        return [p for p in cls.all()
+                if (not p.natures or doc.analysis_nature in p.natures) and p.check(doc)]
 
     @classmethod
     def for_select(cls):
@@ -35,6 +39,7 @@ class MissingTopic(DocumentAnalysisProblem):
     code = 'missing-topic'
     short_desc = 'missing a topic'
     long_desc  = 'This document is missing a topic.'
+    natures = (AnalysisNature.CHILDREN, AnalysisNature.ELECTIONS)
 
     def check(self, doc):
         return doc.topic is None
@@ -48,6 +53,7 @@ class MissingOrigin(DocumentAnalysisProblem):
     code = 'missing-origin'
     short_desc = 'missing an origin'
     long_desc  = 'This document is missing an origin.'
+    natures = (AnalysisNature.CHILDREN, AnalysisNature.ELECTIONS)
 
     def check(self, doc):
         return doc.origin_location_id is None
@@ -61,6 +67,7 @@ class NotChildFocused(DocumentAnalysisProblem):
     code = 'unclear-child-focused'
     short_desc = 'unclear child focus'
     long_desc  = 'Not clear if this document is child focused or not.'
+    natures = (AnalysisNature.CHILDREN, AnalysisNature.ELECTIONS)
 
     def check(self, doc):
         from . import AnalysisNature
@@ -79,6 +86,7 @@ class SourceWithoutFunction(DocumentAnalysisProblem):
     code = 'source-without-function'
     short_desc = 'source without a function'
     long_desc  = 'This document has a source without a function.'
+    natures = (AnalysisNature.CHILDREN, AnalysisNature.ELECTIONS)
 
     def check(self, doc):
         return any(ds.source_type != 'child' and ds.source_function_id is None for ds in doc.sources)
@@ -95,6 +103,7 @@ class SourceWithoutAffiliation(DocumentAnalysisProblem):
     code = 'source-without-affiliation'
     short_desc = 'source without an affiliation'
     long_desc  = 'This document has a source without an affiliation.'
+    natures = (AnalysisNature.CHILDREN, AnalysisNature.ELECTIONS)
 
     def check(self, doc):
         return any(ds.source_type != 'child' and ds.affiliation_id is None for ds in doc.sources)
@@ -111,6 +120,7 @@ class ChildSourceWithoutAge(DocumentAnalysisProblem):
     code = 'child-source-without-age'
     short_desc = 'child source without an age'
     long_desc  = 'This document has a child source without an age.'
+    natures = (AnalysisNature.CHILDREN, AnalysisNature.ELECTIONS)
 
     def check(self, doc):
         return any(ds.source_type == 'child' and ds.source_age_id is None for ds in doc.sources)
@@ -127,6 +137,7 @@ class ChildSourceWithoutRole(DocumentAnalysisProblem):
     code = 'child-source-without-role'
     short_desc = 'child source without a role'
     long_desc  = 'This document has a child source without a role.'
+    natures = (AnalysisNature.CHILDREN, AnalysisNature.ELECTIONS)
 
     def check(self, doc):
         return any(ds.source_type == 'child' and ds.source_role_id is None for ds in doc.sources)
