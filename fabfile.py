@@ -51,7 +51,9 @@ def deploy():
 
     # link in upstart config
     sudo('ln -fs %s/resources/upstart/dexter.conf /etc/init/' % repo_dir)
+    sudo('ln -fs %s/resources/upstart/dexter-celery.conf /etc/init/' % repo_dir)
     sudo('initctl reload-configuration')
 
     # restart dexter
     sudo('initctl restart dexter')
+    sudo('initctl restart dexter-celery')
