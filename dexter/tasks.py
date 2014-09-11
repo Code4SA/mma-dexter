@@ -23,13 +23,16 @@ def fetch_yesterdays_feeds():
 def fetch_daily_feeds(self, day):
     """ Fetch feed of URLs to crawl and queue up a task to grab and process
     each url. """
-    day = parse(day)
+    try:
+        day = parse(day)
 
-    dp = DocumentProcessor()
-    count = 0
-    for item in dp.fetch_daily_feed_items(day):
-        get_feed_item.delay(item)
-        count += 1
+        dp = DocumentProcessor()
+        count = 0
+        for item in dp.fetch_daily_feed_items(day):
+            get_feed_item.delay(item)
+            count += 1
+    except Exception as e:
+        self.retry(exc=e)
 
     if count == 0:
         # nothing to do, retry later
@@ -37,8 +40,11 @@ def fetch_daily_feeds(self, day):
 
 
 # retry every minute, for up to 24 hours.
-@app.task(rate_limit="10/m", default_retry_delay=60, max_retries=24*60)
-def get_feed_item(item):
+@app.task(bind=True, rate_limit="10/m", default_retry_delay=60, max_retries=24*60)
+def get_feed_item(self, item):
     """ Fetch and process a document feed item. """
-    dp = DocumentProcessor()
-    dp.process_feed_item(item)
+    try:
+        dp = DocumentProcessor()
+        dp.process_feed_item(item)
+    except Exception as e:
+        self.retry(exc=e)
