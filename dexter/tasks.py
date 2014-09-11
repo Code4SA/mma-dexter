@@ -5,6 +5,9 @@ from dateutil.parser import parse
 from dexter.app import celery_app as app
 from dexter.processing import DocumentProcessor
 
+# force configs for API keys to be set
+import dexter.core
+
 # This is a collection of periodic tasks for Dexter, using
 # Celery to drive task completion.
 
