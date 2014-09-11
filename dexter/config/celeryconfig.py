@@ -3,6 +3,8 @@ from datetime import timedelta
 
 BROKER_URL = 'amqp://guest:guest@localhost:5672'
 
+# all our tasks can by retried if the worker fails
+CELERY_ACKS_LATE = True
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_ACCEPT_CONTENT=['json']
