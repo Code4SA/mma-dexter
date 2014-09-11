@@ -181,7 +181,8 @@ class DocumentProcessor:
 
         r =  requests.get(self.FEED_URL % day.strftime('%d-%m-%Y'),
                           auth=(self.FEED_USER, self.FEED_PASSWORD),
-                          verify=False)
+                          verify=False,
+                          timeout=60)
         r.raise_for_status()
 
         return ET.fromstring(r.text)

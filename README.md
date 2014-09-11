@@ -82,6 +82,7 @@ export ALCHEMY_API_KEY=thekey
 export CALAIS_API_KEY=anotherkey
 export AWS_ACCESS_KEY_ID=access-key
 export AWS_SECRET_ACCESS_KEY=secret
+export NEWSTOOLS_FEED_PASSWORD=password
 ```
 
 **Note:** DO NOT commit `production-settings.sh` into source control!

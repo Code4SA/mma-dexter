@@ -31,6 +31,6 @@ class NewstoolsCrawler(BaseCrawler):
         return doc
 
     def fetch_text(self, url):
-        r = requests.get(url, verify=False)
+        r = requests.get(url, verify=False, timeout=60)
         r.raise_for_status()
         return r.text
