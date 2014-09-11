@@ -8,13 +8,29 @@ VIRTUALENV_DIR = 'env'
 CODE_DIR = 'mma-dexter'
 PROD_HOSTS = ['mma-dexter.code4sa.org']
 
+PACKAGES = [
+    'git-core',
+    'python-pip',
+    'mysql-server-5.6',
+    'libmysqlclient-dev',
+    'rabbitmq-server',
+    ]
+
 @task
 def prod():
     env.deploy_type = 'prod'
+    # this must be an absolute directory
     env.deploy_dir = '/home/mma/'
     env.branch = 'master'
     env.hosts = PROD_HOSTS
     env.user = 'mma'
+
+
+@task
+def provision():
+    sudo('apt-get update')
+    sudo('apt-get install --yes --no-upgrade %s' % ' '.join(PACKAGES))
+    sudo('pip install virtualenv')
 
 
 @task

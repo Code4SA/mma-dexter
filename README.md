@@ -40,15 +40,16 @@ export CALAIS_API_KEY=anotherkey
 
 ## Production
 
+Note: if you're on Ubuntu 12.04 you will need to manually [install mysql 5.6](https://rtcamp.com/tutorials/mysql/mysql-5-6-ubuntu-12-04/)
+
 Deploy the code using Fabric:
 
 ```
-fab prod deploy
+fab prod provision deploy
 ```
 
 ### Database
 
-* setup the database by [installing mysql 5.6](https://rtcamp.com/tutorials/mysql/mysql-5-6-ubuntu-12-04/)
 * Add the DB user: 
 
 ```
