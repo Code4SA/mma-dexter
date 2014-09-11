@@ -1,7 +1,7 @@
 import os
 import pwd
 
-from fabric.api import cd, env, task, require, run, sudo, prefix, shell_env
+from fabric.api import cd, env, task, require, run, sudo, prefix, shell_env, warn_only
 from fabric.contrib.files import exists, upload_template
 
 VIRTUALENV_DIR = 'env'
@@ -9,11 +9,17 @@ CODE_DIR = 'mma-dexter'
 PROD_HOSTS = ['mma-dexter.code4sa.org']
 
 PACKAGES = [
+    'build-essential',
+    'python-dev',
+    'libxml2-dev',
+    'libxslt1-dev',
     'git-core',
     'python-pip',
     'mysql-server-5.6',
     'libmysqlclient-dev',
+    'nginx',
     'rabbitmq-server',
+    's3cmd',
     ]
 
 @task
@@ -71,5 +77,10 @@ def deploy():
     sudo('initctl reload-configuration')
 
     # restart dexter
-    sudo('initctl restart dexter')
-    sudo('initctl restart dexter-celery')
+    # on first deploy these aren't running
+    with warn_only():
+        sudo('initctl stop dexter')
+        sudo('initctl stop dexter-celery')
+
+    sudo('initctl start dexter')
+    sudo('initctl start dexter-celery')
