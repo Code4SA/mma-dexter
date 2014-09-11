@@ -60,6 +60,6 @@ requests==1.2.3
 six==1.5.2
 tld==0.6.3
 tornado==4.0.1
-twill==0.9
+twill==0.9.1
 webassets==0.8
 wsgiref==0.1.2
