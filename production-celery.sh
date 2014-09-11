@@ -8,7 +8,7 @@ source production-settings.sh
 export FLASK_ENV=production
 export NEW_RELIC_CONFIG_FILE=./dexter/config/newrelic.ini
 
-exec newrelic-admin run-program celeryd\
+exec newrelic-admin run-program celery worker \
     --app dexter.tasks\
     --beat\
     --concurrency 1\

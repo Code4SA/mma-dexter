@@ -17,6 +17,7 @@ PACKAGES = [
     'python-pip',
     'mysql-server-5.6',
     'libmysqlclient-dev',
+    'libmagickwand-dev',
     'nginx',
     'rabbitmq-server',
     's3cmd',
