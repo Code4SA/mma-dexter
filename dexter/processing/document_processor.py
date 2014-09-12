@@ -162,7 +162,7 @@ class DocumentProcessor:
 
             try:
                 doc = crawler.crawl(item)
-                doc.analysis_nature = AnalysisNature.SIMPLE
+                doc.analysis_nature = AnalysisNature.query.get(AnalysisNature.SIMPLE)
                 self.process_document(doc)
             except HTTPError as e:
                 raise ProcessingError("Error fetching document: %s" % (e,))
