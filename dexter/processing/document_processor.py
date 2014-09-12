@@ -146,27 +146,32 @@ class DocumentProcessor:
 
         Returns the resulting document or None if the document already exists.
         """
-        self.log.info("Processing feed item: %s" % item)
-        url = item['url']
-
-        existing = Document.query.filter(Document.url == url).first()
-        if existing:
-            self.log.info("URL has already been processed, ignoring: %s" % url)
-            return None
-
-        crawler = NewstoolsCrawler()
-        if not crawler.offer(url):
-            self.log.info("No medium for URL, ignoring: %s" % url)
-            return
-
         try:
-            doc = crawler.crawl(item)
-            doc.analysis_nature = AnalysisNature.SIMPLE
-            self.process_document(doc)
-        except HTTPError as e:
-            raise ProcessingError("Error fetching document: %s" % (e,))
+            self.log.info("Processing feed item: %s" % item)
+            url = item['url']
 
-        db.session.add(doc)
+            existing = Document.query.filter(Document.url == url).first()
+            if existing:
+                self.log.info("URL has already been processed, ignoring: %s" % url)
+                return None
+
+            crawler = NewstoolsCrawler()
+            if not crawler.offer(url):
+                self.log.info("No medium for URL, ignoring: %s" % url)
+                return
+
+            try:
+                doc = crawler.crawl(item)
+                doc.analysis_nature = AnalysisNature.SIMPLE
+                self.process_document(doc)
+            except HTTPError as e:
+                raise ProcessingError("Error fetching document: %s" % (e,))
+
+            db.session.add(doc)
+        except:
+            db.session.rollback()
+            raise
+
         db.session.commit()
 
         return doc

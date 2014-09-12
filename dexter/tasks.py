@@ -32,6 +32,7 @@ def fetch_daily_feeds(self, day):
             get_feed_item.delay(item)
             count += 1
     except Exception as e:
+        log.error("Error processing daily feeds for %s" % day, exc_info=e)
         self.retry(exc=e)
 
     if count == 0:
@@ -47,4 +48,5 @@ def get_feed_item(self, item):
         dp = DocumentProcessor()
         dp.process_feed_item(item)
     except Exception as e:
+        log.error("Error feed item: %s" % item, exc_info=e)
         self.retry(exc=e)
