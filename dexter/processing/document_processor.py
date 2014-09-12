@@ -173,6 +173,7 @@ class DocumentProcessor:
             raise
 
         db.session.commit()
+        self.log.info("Successfully processed feed item: %s" % url)
 
         return doc
 
