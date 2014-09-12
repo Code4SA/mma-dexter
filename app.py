@@ -8,5 +8,5 @@ newrelic.agent.initialize('dexter/config/newrelic.ini',
 from dexter.core import app
 
 if __name__ == '__main__':
-  app.debug = True
-  app.run()
+    app.debug = True
+    app.run()

@@ -4,8 +4,6 @@ from dateutil.parser import parse
 import logging
 import requests
 
-from tld import get_tld
-
 from ...models import Medium
 
 class BaseCrawler(object):
@@ -46,29 +44,17 @@ class BaseCrawler(object):
         """ Run extractions on the HTML. Subclasses should override this
         method and call super() in their implementations. """
         doc.medium = self.identify_medium(doc)
-        if doc.medium:
-            doc.country = doc.medium.country
+        doc.country = doc.medium.country
 
     def extract_plaintext(self, lst):
         if len(lst) > 0:
             return lst[0].text.strip()
         return ""
 
-
     def parse_timestamp(self, ts):
         return parse(ts, dayfirst=True)
 
     def identify_medium(self, doc):
         if doc.url:
-            domain = get_tld(doc.url)
-            parts = urlparse(doc.url)
-
-            # iol.co.za/isolezwe
-            domain = domain + parts.path
-
-            # find the medium with the longest matching domain
-            for medium in sorted(Medium.query.all(), key=lambda m: len(m.domain or ''), reverse=True):
-                if medium.domain and domain.startswith(medium.domain):
-                    return medium
-
-        return Medium.query.filter(Medium.name == "Unknown").one()
+            medium = Medium.for_url(doc.url)
+        return medium or Medium.query.filter(Medium.name == "Unknown").one()

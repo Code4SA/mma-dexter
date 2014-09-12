@@ -26,6 +26,15 @@ with open('%s/config/%s-logging.yaml' % (app.root_path, env)) as f:
     import yaml
     logging.config.dictConfig(yaml.load(f))
 
+# attach the user id to logs
+from flask import request_started, session
+from logs import UserIdFilter
+
+def log_attach_user_id(sender, **extra):
+    UserIdFilter.set_userid(session.get('user_id', '-'))
+request_started.connect(log_attach_user_id, app)
+
+
 # setup templates and haml
 from flask.ext.mako import MakoTemplates, _lookup
 import haml
@@ -34,6 +43,7 @@ app.config['MAKO_PREPROCESSOR'] = haml.preprocessor
 app.config['MAKO_TRANSLATE_EXCEPTIONS'] = False
 app.config['MAKO_DEFAULT_FILTERS'] = ['decode.utf8']
 
+# CSRF protection
 from flask_wtf.csrf import CsrfProtect
 CsrfProtect(app)
 
@@ -66,14 +76,12 @@ app.config['HTAUTH_REALM'] = 'Dexter'
 htauth.HTAuth(app)
 
 
-# attach the user id to logs
-from flask import request_started, session
-from logs import UserIdFilter
-
-def log_attach_user_id(sender, **extra):
-    UserIdFilter.set_userid(session.get('user_id', '-'))
-request_started.connect(log_attach_user_id, app)
-
 # file attachments
 from .attachments import setup_attachments
 setup_attachments(app)
+
+
+# celery tasks
+from celery import Celery
+celery_app = Celery('dexter', include=['dexter.tasks', 'dexter.app'])
+celery_app.config_from_object('dexter.config.celeryconfig')

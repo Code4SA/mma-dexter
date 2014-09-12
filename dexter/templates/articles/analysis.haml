@@ -42,15 +42,16 @@
 
             %%include(file="analysis_warnings.haml")
 
-            .row.topic-origin
-              .col-sm-7
-                %dl
-                  %dt Topic
-                  %dd&= document.topic.name if document.topic else '(none)'
-              .col-sm-5
-                %dl
-                  %dt Origin
-                  %dd&= document.origin.name if document.origin else '(none)'
+            - if document.analysis_nature != AnalysisNature.SIMPLE:
+              .row.topic-origin
+                .col-sm-7
+                  %dl
+                    %dt Topic
+                    %dd&= document.topic.name if document.topic else '(none)'
+                .col-sm-5
+                  %dl
+                    %dt Origin
+                    %dd&= document.origin.name if document.origin else '(none)'
 
 
           %section

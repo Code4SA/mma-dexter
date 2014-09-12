@@ -1,4 +1,7 @@
 from itertools import groupby
+from urlparse import urlparse
+
+from tld import get_tld
 
 from sqlalchemy import (
     Column,
@@ -28,6 +31,20 @@ class Medium(db.Model):
 
     def group_name(self):
         return self.medium_group or self.name
+
+    @classmethod
+    def for_url(cls, url):
+        domain = get_tld(url)
+        parts = urlparse(url)
+
+        # iol.co.za/isolezwe
+        domain = domain + parts.path
+
+        # find the medium with the longest matching domain
+        for medium in sorted(Medium.query.all(), key=lambda m: len(m.domain or ''), reverse=True):
+            if medium.domain and domain.startswith(medium.domain):
+                return medium
+        return None
 
     @classmethod
     def for_select_widget(cls):

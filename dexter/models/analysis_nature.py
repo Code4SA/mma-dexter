@@ -11,16 +11,21 @@ from .support import db
 from wtforms import StringField, TextAreaField, BooleanField, validators, DateTimeField, HiddenField
 from ..forms import Form, MultiCheckboxField, IntegerField, SelectField, RadioField, YesNoField
 
-class ElectionsAnalysisForm(Form):
+class SimpleAnalysisForm(Form):
+    """
+    Simple (automated) analysis of a document
+    """
+    flagged             = BooleanField('Flagged')
+    notes               = TextAreaField('Notes')
+
+
+class ElectionsAnalysisForm(SimpleAnalysisForm):
     """
     Analysis of a document from an elections standpoint.
     """
     topic_id            = SelectField('Topic')
     issues              = MultiCheckboxField('Issues')
     origin_location_id  = SelectField('Origin')
-
-    flagged             = BooleanField('Flagged')
-    notes               = TextAreaField('Notes')
 
     def __init__(self, *args, **kwargs):
         super(ElectionsAnalysisForm, self).__init__(*args, **kwargs)
@@ -97,15 +102,18 @@ class AnalysisNature(db.Model):
 
     ELECTIONS = 1
     CHILDREN  = 2
+    SIMPLE    = 3
 
     FORMS = {
+        SIMPLE   : SimpleAnalysisForm,
         ELECTIONS: ElectionsAnalysisForm,
-        CHILDREN : ChildrenAnalysisForm
+        CHILDREN : ChildrenAnalysisForm,
     }
 
     ICONS = {
         ELECTIONS: 'fa-university',
         CHILDREN : 'fa-child',
+        SIMPLE   : 'fa-dot-circle-o',
     }
 
     id          = Column(Integer, primary_key=True)
@@ -141,6 +149,14 @@ class AnalysisNature(db.Model):
             return NotImplemented
 
 
+    def __ne__(self, other):
+        # when comparing with an int, compare based on id
+        if isinstance(other, int):
+            return self.id != other
+        else:
+            return NotImplemented
+
+
     @classmethod
     def lookup(cls, name):
         return cls.query.filter(cls.name == name).first()
@@ -155,7 +171,11 @@ class AnalysisNature(db.Model):
         children.id = cls.CHILDREN
         children.name = 'children'
 
-        return [elections, children]
+        simple = AnalysisNature()
+        simple.id = cls.SIMPLE
+        simple.name = 'simple'
+
+        return [elections, children, simple]
 
     @classmethod
     def all(cls):

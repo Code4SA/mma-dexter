@@ -1,16 +1,21 @@
 from itertools import chain
 
-from ..models import Document, Entity, db, Gender, Person, DocumentType, DocumentFairness, Fairness
+from ..models import Document, Entity, db, Gender, Person, DocumentType, DocumentFairness, Fairness, AnalysisNature
 from ..processing import ProcessingError
 
-from .crawlers import MGCrawler, TimesLiveCrawler, IOLCrawler, CitizenCrawler, DailysunCrawler, News24Crawler, NamibianCrawler, GenericCrawler
+from .crawlers import MGCrawler, TimesLiveCrawler, IOLCrawler, CitizenCrawler, DailysunCrawler, News24Crawler, NamibianCrawler, GenericCrawler, NewstoolsCrawler
 from .extractors import AlchemyExtractor, CalaisExtractor, SourcesExtractor, PlacesExtractor
 
+import requests
 from requests.exceptions import HTTPError
 import logging
 
 class DocumentProcessor:
     log = logging.getLogger(__name__)
+
+    FEED_URL = 'https://www.newstools.co.za/newstoolspider/index.php/dexter/articles/%s'
+    FEED_USER = 'dexter'
+    FEED_PASSWORD = None
 
     def __init__(self):
         self.crawlers = [
@@ -100,3 +105,90 @@ class DocumentProcessor:
 
         entities[key] = entity
         return entity
+
+
+    def fetch_daily_feed_items(self, day):
+        """ Fetch the feed for +day+ and yields the items. """
+        tree = self.fetch_daily_feeds(day)
+
+        items = tree.findall('channel/item')
+        self.log.info("Got %d items from feeds for %s" % (len(items), day))
+
+        for item in items:
+            # <item>
+            #    <url>http://citizen.co.za/afp_feed_article/yankees-pay-tribute-to-retiring-captain-jeter</url>
+            #    <publisher>Citizen</publisher>
+            #    <contenttype>news</contenttype>
+            #    <contenttypeverified>false</contenttypeverified>
+            #    <publishdate>2014-09-07 23:51:00</publishdate>
+            #    <crawldate>2014-09-08 00:03:47</crawldate>
+            #    <title>Yankees pay tribute to retiring captain Jeter</title>
+            #    <author>Unknown</author>
+            #    <text>https://www.newstools.co.za/data/texts/SFM-7IVZ63RG1MZ2XZF4OTTC.txt</text>
+            # </item>
+
+            item = {
+                    'url': item.find('url').text,
+                    'publishdate': item.find('publishdate').text,
+                    'title': item.find('title').text,
+                    'author': item.find('author').text,
+                    'text_url': item.find('text').text,
+            }
+            yield item
+
+
+    def process_feed_item(self, item):
+        """ Process an item pulled from an RSS feed.
+
+        This checks to see if the document's URL already exists in the database.
+        If not, download the text for the URL and run processing on it, then
+        store it in the database. This commits the current transaction.
+
+        Returns the resulting document or None if the document already exists.
+        """
+        try:
+            self.log.info("Processing feed item: %s" % item)
+            url = item['url']
+
+            existing = Document.query.filter(Document.url == url).first()
+            if existing:
+                self.log.info("URL has already been processed, ignoring: %s" % url)
+                return None
+
+            crawler = NewstoolsCrawler()
+            if not crawler.offer(url):
+                self.log.info("No medium for URL, ignoring: %s" % url)
+                return
+
+            try:
+                doc = crawler.crawl(item)
+                doc.analysis_nature = AnalysisNature.query.get(AnalysisNature.SIMPLE)
+                self.process_document(doc)
+            except HTTPError as e:
+                raise ProcessingError("Error fetching document: %s" % (e,))
+
+            db.session.add(doc)
+        except:
+            db.session.rollback()
+            raise
+
+        db.session.commit()
+        self.log.info("Successfully processed feed item: %s" % url)
+
+        return doc
+
+
+    def fetch_daily_feeds(self, day):
+        """ Fetch the feed for +day+ and returns an ElementTree instance. """
+        import xml.etree.ElementTree as ET
+
+        if self.FEED_PASSWORD is None:
+            raise ValueError("%s.FEED_PASSWORD must be set." % self.__class__.__name__)
+
+        r =  requests.get(self.FEED_URL % day.strftime('%d-%m-%Y'),
+                          auth=(self.FEED_USER, self.FEED_PASSWORD),
+                          verify=False,
+                          timeout=60)
+        r.raise_for_status()
+
+        return ET.fromstring(r.text)

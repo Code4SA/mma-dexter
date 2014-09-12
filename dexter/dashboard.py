@@ -149,7 +149,7 @@ class ActivityForm(Form):
     def __init__(self, *args, **kwargs):
         super(ActivityForm, self).__init__(*args, **kwargs)
 
-        self.user_id.choices = [['', '(any)']] + [
+        self.user_id.choices = [['', '(any)'], ['-', '(none)']] + [
                 [str(u.id), u.short_name()] for u in sorted(User.query.all(), key=lambda u: u.short_name())]
 
         self.medium_id.choices = [(str(m.id), m.name) for m in Medium.query.order_by(Medium.name).all()]
@@ -162,7 +162,7 @@ class ActivityForm(Form):
 
 
     def user(self):
-        if self.user_id.data:
+        if self.user_id.data and self.user_id.data != '-':
             return User.query.get(self.user_id.data)
         return None
 
@@ -223,7 +223,10 @@ class ActivityForm(Form):
             query = query.filter(Document.medium_id.in_(self.medium_id.data))
 
         if self.user_id.data:
-            query = query.filter(Document.created_by_user_id == self.user_id.data)
+            if self.user_id.data == '-':
+                query = query.filter(Document.created_by_user_id == None)
+            else:
+                query = query.filter(Document.created_by_user_id == self.user_id.data)
 
         if self.country_id.data:
             query = query.filter(Document.country_id == self.country_id.data)
