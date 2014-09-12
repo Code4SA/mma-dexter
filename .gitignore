@@ -8,3 +8,4 @@ dexter/public
 .idea
 cache
 server.key
+celerybeat-schedule
