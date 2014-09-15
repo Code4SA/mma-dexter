@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import unittest
 
 from mock import MagicMock
@@ -37,3 +38,7 @@ class TestNewstoolsCrawler(unittest.TestCase):
         self.assertEqual("DON'T MISS THIS: Oliver 'Tuku' Mtukudzi, the DStv Delicious Festival and City Hall Sessions", doc.title)
         self.assertEqual("This is the text.", doc.text)
         self.assertEqual('Mail and Guardian', doc.medium.name)
+
+    def test_unescape(self):
+        self.assertEqual(self.crawler.unescape('people &#x201C;who want him to be removed as the provincial commissioner&#x201D;.'),
+                u"people “who want him to be removed as the provincial commissioner”.")

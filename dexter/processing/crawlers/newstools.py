@@ -1,3 +1,4 @@
+import HTMLParser
 import requests
 from dateutil.parser import parse
 
@@ -33,4 +34,8 @@ class NewstoolsCrawler(BaseCrawler):
     def fetch_text(self, url):
         r = requests.get(url, verify=False, timeout=60)
         r.raise_for_status()
-        return r.text
+        return self.unescape(r.text)
+
+    def unescape(self, text):
+        html_parser = HTMLParser.HTMLParser()
+        return html_parser.unescape(text)
