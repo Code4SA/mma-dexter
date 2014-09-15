@@ -167,7 +167,11 @@ class DocumentProcessor:
             except HTTPError as e:
                 raise ProcessingError("Error fetching document: %s" % (e,))
 
-            db.session.add(doc)
+            # only add a document if it has sources or utterances
+            if doc.sources or doc.utterances:
+                db.session.add(doc)
+            else:
+                self.log.info("Document has no sources or utterances, ignoring: %s" % url)
         except:
             db.session.rollback()
             raise
