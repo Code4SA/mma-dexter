@@ -148,7 +148,7 @@ class DocumentProcessor:
         """
         try:
             self.log.info("Processing feed item: %s" % item)
-            url = item['url']
+            url = self.canonicalise_url(item['url'])
 
             existing = Document.query.filter(Document.url == url).first()
             if existing:
