@@ -146,3 +146,5 @@
         %li(dataOffsets=(src.offset_list if src.person else src.entity.offset_list) or '0:0')
           %a.source(href="#", dataName=src.friendly_name(), dataRace=src.race().name if src.race() else '', dataGender=src.gender().name if src.gender() else '')
             &= src.friendly_name()
+            - if src.utterances():
+              %i.fa.fa-comment
