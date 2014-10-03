@@ -5,7 +5,8 @@ from flask import request, url_for, flash, redirect, make_response, jsonify
 from flask.ext.mako import render_template
 from flask.ext.login import login_required, current_user
 
-from werkzeug.exceptions import BadRequest, Forbidden, NotAcceptable
+from werkzeug.exceptions import Forbidden, NotAcceptable
+from wand.exceptions import WandError
 
 from .app import app
 from .models import db, Document, Issue, Person, DocumentPlace, DocumentAttachment
@@ -312,16 +313,24 @@ def edit_article_analysis_nature(id):
 @app.route('/articles/attachments', methods=['POST'])
 @login_required
 def create_article_attachment():
-    if 'file' in request.files:
-        upload = request.files['file']
+    try:
+        if 'file' in request.files:
+            upload = request.files['file']
 
-        if not DocumentAttachment.is_acceptable(upload):
-            raise NotAcceptable()
+            if not DocumentAttachment.is_acceptable(upload):
+                raise ValueError('Only image and PDF attachments are supported')
 
-        attachment = DocumentAttachment.from_upload(upload, current_user)
-        db.session.add(attachment)
-        db.session.commit()
+            try:
+                attachment = DocumentAttachment.from_upload(upload, current_user)
+            except WandError as e:
+                log.warn("Couldn't process attachment: %s, %s: %s" % (upload.mimetype, upload.filename, e.message), exc_info=e)
+                raise ValueError('Only image and PDF attachments are supported')
 
-        return jsonify({'attachment': attachment.to_json()})
+            db.session.add(attachment)
+            db.session.commit()
 
-    raise BadRequest("Need a file attachment")
+            return jsonify({'attachment': attachment.to_json()})
+
+        raise ValueError("Need a file attachment")
+    except ValueError as e:
+        return (make_response(e.message), 400, [])
