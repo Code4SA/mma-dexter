@@ -1,4 +1,6 @@
 from __future__ import absolute_import
+
+import logging
 from datetime import date, timedelta
 from dateutil.parser import parse
 
@@ -10,6 +12,8 @@ import dexter.core
 
 # This is a collection of periodic tasks for Dexter, using
 # Celery to drive task completion.
+
+log = logging.getLogger(__name__)
 
 @app.task
 def fetch_yesterdays_feeds():
@@ -48,5 +52,5 @@ def get_feed_item(self, item):
         dp = DocumentProcessor()
         dp.process_feed_item(item)
     except Exception as e:
-        log.error("Error feed item: %s" % item, exc_info=e)
+        log.error("Error processing feed item: %s" % item, exc_info=e)
         self.retry(exc=e)
