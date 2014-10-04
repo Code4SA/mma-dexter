@@ -57,7 +57,7 @@ class Author(db.Model):
         a = Author.query.filter(Author.name == name).first()
         if not a:
             a = Author()
-            a.name = name
+            a.name = name[0:100]
             a.author_type = author_type
 
             if a.author_type.name in ['Journalist', 'Guest Writer']:

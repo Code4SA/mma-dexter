@@ -3,7 +3,7 @@ import requests
 
 from .base import BaseExtractor
 from ...processing import ProcessingError
-from ...models import DocumentKeyword, DocumentEntity, Entity, Utterance
+from ...models import DocumentEntity, Entity, Utterance
 
 import logging
 log = logging.getLogger(__name__)

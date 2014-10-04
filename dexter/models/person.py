@@ -210,7 +210,7 @@ class Person(db.Model):
         p = Person.query.filter(Person.name == name).first()
         if not p:
             p = Person()
-            p.name = name
+            p.name = name[0:100]
 
             if gender:
                 p.gender = gender

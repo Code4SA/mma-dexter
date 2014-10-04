@@ -74,8 +74,8 @@ class Entity(db.Model):
         e = Entity.query.filter(Entity.group == group, Entity.name == name).first()
         if not e:
             e = Entity()
-            e.group = group
-            e.name = name
+            e.group = group[0:50]
+            e.name = name[0:150]
             db.session.add(e)
             # force a db write (within the transaction) so subsequent lookups
             # find this entity

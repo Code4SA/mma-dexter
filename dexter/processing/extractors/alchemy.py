@@ -93,7 +93,7 @@ class AlchemyExtractor(BaseExtractor):
                 continue
 
             k = DocumentKeyword()
-            k.keyword = kw['text']
+            k.keyword = kw['text'][0:100]
             k.relevance = float(kw['relevance'])
             k.offset_list = self.all_offsets(doc.text, k.keyword)
 
