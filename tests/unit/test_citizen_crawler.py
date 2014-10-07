@@ -27,8 +27,6 @@ class TestTimesliveCrawler(unittest.TestCase):
 
     def test_offer(self):
         self.assertEqual(self.crawler.offer('http://citizen.co.za/153078/outa-claims-proof-e-toll-mismanagement/'), True)
-        # ignore AFP articles
-        self.assertEqual(self.crawler.offer('http://citizen.co.za/afp_feed_article/nba-extends-lucrative-us-tv-deals-for-nine-years/'), False)
         # ignore non-citizen
         self.assertEqual(self.crawler.offer('http://www.iol.co.za/news/crime-courts/justice-system-not-equipped-for-cable-theft-1.1760799'), False)
 

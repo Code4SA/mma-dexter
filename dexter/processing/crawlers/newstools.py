@@ -1,3 +1,4 @@
+from urlparse import urlparse, urlunparse
 import HTMLParser
 import requests
 from dateutil.parser import parse
@@ -10,7 +11,16 @@ class NewstoolsCrawler(BaseCrawler):
     def offer(self, url):
         """ Can this crawler process this URL?
         We only allow urls we have a medium for. """
-        return Medium.for_url(url) is not None
+        if Medium.for_url(url) is None:
+            return False
+
+        # ignore citizen AFP articles
+        parts = urlparse(url)
+        if parts.path.startswith('/afp_feed_article'):
+            return False
+
+        return True
+
 
     def crawl(self, item):
         """ Crawl this newstools feed item and return a document. """

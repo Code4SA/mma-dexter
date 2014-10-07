@@ -13,15 +13,7 @@ class CitizenCrawler(BaseCrawler):
     def offer(self, url):
         """ Can this crawler process this URL? """
         parts = urlparse(url)
-
-        if not bool(self.TL_RE.match(parts.netloc)):
-            return False
-
-        # ignore citizen AFP articles
-        if parts.path.startswith('/afp_feed_article'):
-            return False
-
-        return True
+        return bool(self.TL_RE.match(parts.netloc))
 
     def canonicalise_url(self, url):
         """ Strip anchors, etc. """
