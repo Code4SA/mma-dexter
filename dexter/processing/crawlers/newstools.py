@@ -14,9 +14,14 @@ class NewstoolsCrawler(BaseCrawler):
         if Medium.for_url(url) is None:
             return False
 
-        # ignore citizen AFP articles
         parts = urlparse(url)
+
+        # ignore citizen AFP articles
         if parts.path.startswith('/afp_feed_article'):
+            return False
+
+        # ignore IOL world articles
+        if parts.path.startswith('/news/world/'):
             return False
 
         return True
