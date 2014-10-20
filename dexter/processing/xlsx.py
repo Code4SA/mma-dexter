@@ -9,7 +9,7 @@ from dateutil.parser import parse
 from sqlalchemy.sql import func
 from sqlalchemy.types import Integer
 
-from .bias import BiasCalculator
+from ..analysis import BiasCalculator
 from ..models import Document, db, AnalysisNature
 
 class XLSXBuilder:
