@@ -216,6 +216,10 @@ class ActivityForm(Form):
             return self.published_from
 
 
+    def document_ids(self):
+        return [d[0] for d in self.filter_query(db.session.query(Document.id)).all()]
+
+
     def filter_query(self, query):
         query = query.filter(Document.analysis_nature_id == self.analysis_nature_id.data)
 
