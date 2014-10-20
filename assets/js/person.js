@@ -47,16 +47,8 @@
       self.entityHound = new Bloodhound({
         name: 'people',
         remote: {
-          url: '/api/entities?q=%QUERY',
+          url: '/api/entities?limit=5&q=%QUERY',
           filter: function(resp) { return resp.entities; },
-        },
-        sorter: function(a, b) {
-          // compare on length, then alphabetically
-          if (a.name.length == b.name.length) {
-            return a.name.localeCompare(b.name);
-          } else {
-            return a.name.length - b.name.length;
-          }
         },
         dupDetector: function(remote, local) { return remote.id == local.id; },
         datumTokenizer: function(d) { return Bloodhound.tokenizers.whitespace(d.name); },

@@ -215,7 +215,7 @@
       self.authorHound = new Bloodhound({
         name: 'authors',
         remote: {
-          url: '/api/authors?q=%QUERY',
+          url: '/api/authors?limit=5&q=%QUERY',
           ajax: {
             beforeSend: function(xhr) {
               self.$authorName.addClass('spinner');

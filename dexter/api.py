@@ -18,12 +18,20 @@ from .processing import BiasCalculator
 @login_required
 def api_authors():
     q = request.args.get('q', '').strip()
+    try:
+        limit = max(int(request.args.get('limit', 10)), 0)
+    except:
+        limit = 10
 
-    query = Author.query.order_by(Author.name)
+    query = Author.query
     if q:
         q = '%' + q.replace('%', '%%').replace(' ', '%') + '%'
-        query = query.filter(Author.name.like(q))
-    authors = query.all()
+        query = query.filter(Author.name.like(q))\
+                     .order_by(func.length(Author.name))
+
+    authors = query.order_by(Author.name)\
+                   .limit(limit)\
+                   .all()
 
     return jsonify({'authors': [a.json() for a in authors]})
 
@@ -31,30 +39,45 @@ def api_authors():
 @login_required
 def api_people():
     q = request.args.get('q', '').strip()
+    try:
+        limit = max(int(request.args.get('limit', 10)), 0)
+    except:
+        limit = 10
 
     if q and request.args.get('similar'):
         people = [p for p, _ in Person.similarly_named_to(q, 0.7)]
     else:
         query = Person.query\
-            .options(joinedload(Person.affiliation))\
-            .order_by(Person.name)
+            .options(joinedload(Person.affiliation))
         if q:
             q = '%' + q.replace('%', '%%').replace(' ', '%') + '%'
-            query = query.filter(Person.name.like(q))
-        people = query.all()
+            query = query.filter(Person.name.like(q))\
+                         .order_by(func.length(Person.name))
+
+        people = query.order_by(Person.name)\
+                      .limit(limit)\
+                      .all()
 
     return jsonify({'people': [p.json() for p in people]})
 
 @app.route('/api/entities')
 @login_required
 def api_entities():
-    query = Entity.query.order_by(Entity.name)
     q = request.args.get('q', '').strip()
+    try:
+        limit = max(int(request.args.get('limit', 10)), 0)
+    except:
+        limit = 10
+
+    query = Entity.query
     if q:
         q = '%' + q.replace('%', '%%').replace(' ', '%') + '%'
-        query = query.filter(Entity.name.like(q))
+        query = query.filter(Entity.name.like(q))\
+                     .order_by(func.length(Entity.name))
 
-    entities = query.all()
+    entities = query.order_by(Entity.name)\
+                    .limit(limit)\
+                    .all()
 
     return jsonify({'entities': [e.json() for e in entities]})
 

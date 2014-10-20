@@ -52,17 +52,9 @@
       self.personHound = new Bloodhound({
         name: 'people',
         remote: {
-          url: '/api/people?q=%QUERY',
+          url: '/api/people?limit=5&q=%QUERY',
           ajax: {beforeSend: function(xrh) { self.ttShowSpinner(); }},
           filter: function(resp) { self.ttHideSpinner(); return resp.people; },
-        },
-        sorter: function(a, b) {
-          // compare on length, then alphabetically
-          if (a.name.length == b.name.length) {
-            return a.name.localeCompare(b.name);
-          } else {
-            return a.name.length - b.name.length;
-          }
         },
         datumTokenizer: function(d) { return Bloodhound.tokenizers.whitespace(d.name); },
         queryTokenizer: Bloodhound.tokenizers.whitespace
@@ -149,7 +141,7 @@
       if (!self.personTypeaheadEnabled) {
         $('.name input', $row)
           .typeahead({
-            minLength: 3,
+            minLength: 2,
             highlight: true,
             autoselect: true,
           }, {
