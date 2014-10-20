@@ -52,6 +52,7 @@ class XLSXBuilder:
         self.documents_worksheet(workbook)
         self.sources_worksheet(workbook)
         self.places_worksheet(workbook)
+        self.keywords_worksheet(workbook)
         self.everything_worksheet(workbook)
 
         workbook.close()
@@ -130,6 +131,21 @@ class XLSXBuilder:
                     .join(Document)\
                     .join(DocumentSourcesView)).all()
         self.write_table(ws, 'Sources', rows)
+
+    def keywords_worksheet(self, wb):
+        from dexter.models.views import DocumentsView, DocumentKeywordsView
+
+        ws = wb.add_worksheet('raw_keywords')
+
+        tables = OrderedDict()
+        tables['doc'] = DocumentsView
+        tables['keywords'] = DocumentKeywordsView
+
+        rows = self.filter(db.session\
+                    .query(*self.merge_views(tables, ['document_id']))\
+                    .join(Document)\
+                    .join(DocumentKeywordsView)).all()
+        self.write_table(ws, 'Keywords', rows)
 
     def fairness_worksheet(self, wb):
         from dexter.models.views import DocumentsView, DocumentFairnessView

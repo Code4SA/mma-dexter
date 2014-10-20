@@ -171,3 +171,17 @@ from
 where
   an.name = 'children'
 ;
+
+-- documents_keywords_view:
+--   keywords for all documents (there can be multiple keywords for the same document)
+create or replace view documents_keywords_view as
+select
+  d.id as `document_id`,
+  dk.keyword as `keyword`,
+  dk.relevance as `relevance`,
+  -- number of occurrences
+  if(dk.offset_list is null or dk.offset_list = '', 1, length(dk.offset_list) - length(replace(dk.offset_list, ' ', ''))+1) as `occurrences`
+from
+  documents d
+  left join document_keywords dk on dk.doc_id = d.id
+;
