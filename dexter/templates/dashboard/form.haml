@@ -1,7 +1,7 @@
 %%namespace(file="../bootstrap_wtf.haml", **{'import': '*'})
 - from dexter.models import AnalysisNature
 
-%form.activity-refine(action=url_for('activity'), method='GET')
+%form.activity-refine(action=url_for(request.url_rule.endpoint), method='GET')
 
   .panel.panel-default
     .panel-heading

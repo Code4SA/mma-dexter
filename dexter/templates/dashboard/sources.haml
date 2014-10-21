@@ -1,13 +1,11 @@
-%%inherit(file="../layout.haml")
+%%inherit(file="layout.haml")
 
 %%block(name='title')
   Source Analysis
 
-%%block(name='extra_javascript')
-  - for url in webassets('activity'):
-    %script(src=url)
+%section#activity_sources
+  %h3 Top Sources
 
-%article#activity
   %table.table.table-striped.table-condensed
     - for source in source_analyzer.top_people:
       %tr

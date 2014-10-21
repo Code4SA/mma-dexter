@@ -153,7 +153,7 @@ def activity_map():
 
 @app.route('/activity/sources')
 @login_required
-def sources_activity():
+def activity_sources():
     form = ActivityForm(request.args)
 
     if form.format.data == 'xlsx':

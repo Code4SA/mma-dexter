@@ -11,6 +11,9 @@
         %li(class_=('active' if request.url_rule.endpoint == 'activity' else ''))
           %a(href=url_for('activity', **request.args)) Graphs
 
+        %li(class_=('active' if request.url_rule.endpoint == 'activity_sources' else ''))
+          %a(href=url_for('activity_sources', **request.args)) Sources
+
         %li(class_=('active' if request.url_rule.endpoint == 'activity_map' else ''))
           %a(href=url_for('activity_map', **request.args)) Map
 
