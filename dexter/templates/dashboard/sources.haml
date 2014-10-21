@@ -7,13 +7,13 @@
   %h3 Top Person Sources
 
 %section
-  %table.table.table-striped.table-condensed
+  %table.table.table-striped.table-condensed.source-analysis
     %tr
       %th Person
+      %th.sparkline(colspan="2") Source frequency
       %th Affiliation
-      %th Sourced
       %th
-        %i.fa.fa-comment
+        %i.fa.fa-comment(title='Quotations')
 
     - for source in source_analyzer.top_people:
       %tr
@@ -27,6 +27,7 @@
               •
               %span(title=source.person.race.name)&= source.person.race.abbr()
 
-        %td&= source.person.affiliation and source.person.affiliation.name or ''
+        %td.sparkline(dataSparkline=','.join(str(i) for i in source.source_counts))
         %td&= source.count
+        %td&= source.person.affiliation and source.person.affiliation.name or ''
         %td&= source.utterance_count or ''

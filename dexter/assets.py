@@ -64,6 +64,7 @@ assets.register('dashboard',
         maps,
         'js/highcharts-4.0.1.js',
         'js/underscore-1.6.0.js',
+        'js/sparklines.js',
         'js/dashboard/*.js',
         output='js/dashboard.%(version)s.js'))
 

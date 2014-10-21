@@ -2,6 +2,16 @@
   margin-top: 10px;
 }
 
+.source-analysis {
+  th.sparkline {
+    text-align: center;
+  }
+
+  td.sparkline {
+    width: 120px;
+  }
+}
+
 #charts {
   .chart.chart-created,
   .chart.chart-published {

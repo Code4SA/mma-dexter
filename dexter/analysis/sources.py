@@ -1,3 +1,7 @@
+from itertools import groupby
+from datetime import datetime
+from dateutil.parser import parse
+
 from dexter.models import db, Document, DocumentSource, Person, Utterance, Entity
 
 from sqlalchemy.sql import func, distinct, or_, desc
@@ -14,10 +18,12 @@ class SourceAnalyzer(object):
         self.form = form
         self.doc_ids = form.document_ids()
 
+        self._calculate_date_range()
+
         self.top_people = None
 
         # max results for most analyses
-        self.row_limit = 100
+        self.row_limit = 20
 
 
     def analyze(self):
@@ -46,12 +52,14 @@ class SourceAnalyzer(object):
 
         people = self._lookup_people([r[0] for r in rows])
         utterance_count = self._count_utterances(people.keys())
+        source_counts = self._count_source_freq(people.keys())
 
         for row in (r._asdict() for r in query.all()):
             src = AnalyzedSource()
             src.person = people[row['person_id']]
             src.count = row['count']
             src.utterance_count = utterance_count.get(src.person.id, 0)
+            src.source_counts = source_counts[src.person.id]
             sources.append(src)
 
         self.top_people = sources
@@ -63,6 +71,7 @@ class SourceAnalyzer(object):
                 .filter(Person.id.in_(ids))
 
         return dict([p.id, p] for p in query.all())
+
 
     def _count_utterances(self, ids):
         """
@@ -80,3 +89,53 @@ class SourceAnalyzer(object):
                 .all()
 
         return dict((p.id, p[1]) for p in rows)
+
+
+    def _count_source_freq(self, ids):
+        """
+        Return dict from person ID to a list of how frequently each
+        source was used per day, over the period.
+        """
+        rows = db.session.query(
+                    DocumentSource.person_id,
+                    func.date_format(Document.published_at, '%Y-%m-%d').label('date'),
+                    func.count(1).label('count')
+                )\
+                .join(Document, DocumentSource.doc_id == Document.id)\
+                .filter(
+                        DocumentSource.doc_id.in_(self.doc_ids),
+                        DocumentSource.person_id.in_(ids))\
+                .group_by(DocumentSource.person_id, 'date')\
+                .order_by(DocumentSource.person_id, Document.published_at)\
+                .all()
+
+        freqs = {}
+        for person_id, group in groupby(rows, lambda r: r[0]):
+            freqs[person_id] = [0] * (self.days+1)
+
+            # set day buckets based on date
+            for row in group:
+                d, n = parse(row[1]).date(), row[2]
+                day = (d - self.start_date).days
+                freqs[person_id][day] = n
+
+        return freqs
+
+    def _calculate_date_range(self):
+        """
+        The date range is the range of publication dates for the given
+        documents.
+        """
+        row = db.session.query(
+                func.min(Document.published_at),
+                func.max(Document.published_at))\
+                .filter(Document.id.in_(self.doc_ids))\
+                .first()
+
+        if row and row[0]:
+            self.start_date = row[0].date()
+            self.end_date = row[1].date()
+        else:
+            self.start_date = self.end_date = datetime.utcnow()
+
+        self.days = max((self.end_date - self.start_date).days, 1)
