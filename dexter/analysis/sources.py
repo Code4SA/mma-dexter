@@ -88,7 +88,7 @@ class SourceAnalyzer(object):
                 .filter(Person.id.in_(ids))\
                 .all()
 
-        return dict((p.id, p[1]) for p in rows)
+        return dict((p[0], p[1]) for p in rows)
 
 
     def _count_source_freq(self, ids):
