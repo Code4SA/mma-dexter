@@ -192,7 +192,7 @@ class ActivityForm(Form):
 
         # dynamic default
         if not self.created_at.data and not self.published_at.data and not self.user_id.data and not self.medium_id.data:
-            self.created_at.data = ' - '.join(d.strftime("%Y/%m/%d") for d in [datetime.utcnow() - timedelta(days=14), datetime.utcnow()])
+            self.published_at.data = ' - '.join(d.strftime("%Y/%m/%d") for d in [datetime.utcnow() - timedelta(days=14), datetime.utcnow()])
 
 
     def user(self):
