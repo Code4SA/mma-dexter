@@ -87,22 +87,26 @@
                   %li&= entity.name
 
     %section
-      %h4
+      %h3
         Sourced by ${pagination.total} articles
 
-      %ul.list-unstyled
-        - for doc in docs:
-          %li.list-item-document
-            %i.fa.fa-chevron-right
-            &=doc.published_at.strftime('%e %B %Y') + ' - '
-            %a(href= url_for('show_article', id=doc.id))
-              %strong&= doc.title
-            %span.pull-right
-              %span.label.label-primary.pull-right&=doc.medium.name
-            - for utterance in doc.utterances:
-              - if utterance.entity in person.entities:
-                %li.list-item-utterance
-                  %blockquote
-                    %em&=utterance.quote
+      - for date, group in grouped_docs:
+        %section
+          %h4
+            &= date.strftime('%e %B %Y')
+            %span.badge.badge-default&= len(group)
+
+          %ul.list-unstyled
+            - for doc in group:
+              %li.list-item-document
+                %a(href= url_for('show_article', id=doc.id))&= doc.title
+                %span.label.label-primary&=doc.medium.name
+
+                %ul.fa-ul
+                  - for utterance in doc.utterances:
+                    - if utterance.entity in person.entities:
+                      %li
+                        %i.fa-li.fa.fa-quote-left
+                        &=utterance.quote
 
       = paginator('show_person', pagination, id=person.id)

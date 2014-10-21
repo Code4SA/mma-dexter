@@ -1,3 +1,4 @@
+from itertools import groupby
 import logging
 log = logging.getLogger(__name__)
 
@@ -82,10 +83,15 @@ def show_person(id):
         .order_by(Document.published_at.desc())\
         .all()
 
+    # group docs by date
+    grouped_docs = []
+    for date, group in groupby(docs, lambda d: d.published_at.date()):
+        grouped_docs.append([date, list(group)])
+
     return render_template('person/show.haml',
         person=person,
         form=form,
-        docs=docs,
+        grouped_docs=grouped_docs,
         pagination=pagination)
 
 @app.route('/people/<int:id>/merge', methods=['POST'])
