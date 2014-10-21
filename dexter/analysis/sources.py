@@ -1,3 +1,4 @@
+from math import sqrt
 from itertools import groupby
 from datetime import datetime
 from dateutil.parser import parse
@@ -60,6 +61,7 @@ class SourceAnalyzer(object):
             src.count = row['count']
             src.utterance_count = utterance_count.get(src.person.id, 0)
             src.source_counts = source_counts[src.person.id]
+            src.source_counts_trend = mwazscore(src.source_counts, 0.8)
             sources.append(src)
 
         self.top_people = sources
@@ -152,3 +154,36 @@ class SourceAnalyzer(object):
                     .filter(Document.published_at <= self.end_date.strftime('%Y-%m-%d 23:59:59'))\
                     .all()
             self.doc_ids = [r[0] for r in rows]
+
+
+def mwazscore(obs, decay=0.8):
+    """
+    Calculate a moving-weighted average z-score, based on +obs+,
+    a list of observations, and +decay+, the rate at which
+    observations decay.
+
+    See http://stackoverflow.com/questions/787496/what-is-the-best-way-to-compute-trending-topics-or-tags
+    See http://pandas.pydata.org/pandas-docs/stable/generated/pandas.ewma.html#pandas.ewma
+    """
+    avg = 0.0
+    sqAvg = 0.0
+
+    last = len(obs)-1
+
+    for i, x in enumerate(obs):
+        if i == 0:
+            # first item
+            avg = float(x)
+            sqAvg = float(x ** 2)
+
+        elif i == last:
+            # basic std deviation
+            std = sqrt(sqAvg - avg ** 2)
+            if std == 0:
+                return x - avg
+            else:
+                return (x - avg) / std
+        else:
+            # fold it in
+            avg = avg * decay + (1.0-decay) * x
+            sqAvg = sqAvg * decay + (1.0-decay) * (x ** 2)

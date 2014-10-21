@@ -28,6 +28,14 @@
               %span(title=source.person.race.name)&= source.person.race.abbr()
 
         %td.sparkline(dataSparkline=','.join(str(i) for i in source.source_counts))
-        %td&= source.count
+        %td
+          &= source.count
+          - if source.source_counts_trend > 0.5:
+            %i.fa.fa-arrow-up
+          - elif source.source_counts_trend < -0.5:
+            %i.fa.fa-arrow-down
+          - else:
+            %i.fa.fa-arrow-right
+          &= source.source_counts_trend
         %td&= source.person.affiliation and source.person.affiliation.name or ''
         %td&= source.utterance_count or ''
