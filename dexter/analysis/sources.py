@@ -80,12 +80,13 @@ class SourceAnalyzer(object):
         """
         rows = db.session.query(
                 Person.id,
-                func.count(Utterance.id).label('count')
+                func.count(1).label('count')
                 )\
                 .join(Entity, Entity.person_id == Person.id)\
                 .join(Utterance, Utterance.entity_id == Entity.id)\
                 .filter(Utterance.doc_id.in_(self.doc_ids))\
                 .filter(Person.id.in_(ids))\
+                .group_by(Person.id)\
                 .all()
 
         return dict((p[0], p[1]) for p in rows)
