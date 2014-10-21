@@ -1,0 +1,65 @@
+%%namespace(file="../bootstrap_wtf.haml", **{'import': '*'})
+- from dexter.models import AnalysisNature
+
+%form.activity-refine(action=url_for('activity'), method='GET')
+
+  .panel.panel-default
+    .panel-heading
+      %h3.panel-title
+        Refine
+
+    .panel-body
+      .form-group
+        .btn-group(dataToggle='buttons')
+          - for fld in form.analysis_nature_id:
+            %label.btn.btn-default(class_='active' if fld.checked else '', title=fld.label.text)
+              = fld()
+              %i.fa(class_=AnalysisNature.ICONS.get(int(fld.data)))
+
+      = vertical_field(form.user_id)
+      = vertical_field(form.country_id)
+      = vertical_field(form.medium_id, class_='select2')
+      .form-group
+        = form.created_at.label()
+        .input-group
+          = form.created_at(class_='form-control use-daterangepicker')
+          %span.input-group-btn
+            %button.btn.btn-default(dataClear='input-group')
+              %i.fa.fa-times
+      .form-group
+        = form.published_at.label()
+        .input-group
+          = form.published_at(class_='form-control use-daterangepicker')
+          %span.input-group-btn
+            %button.btn.btn-default(dataClear='input-group')
+              %i.fa.fa-times
+      .form-group
+        = form.problems.label()
+        .input-group
+          - for fld in form.problems:
+            .checkbox
+              = fld
+              = fld.label()
+      .form-group
+        .checkbox
+          = form.flagged
+          - kwargs = {"for": 'flagged'}
+          %label(**kwargs)
+            %i.fa.fa-flag.flag-set.article-flag
+            = form.flagged.label.text
+
+      .form-group.has-url
+        .btn-group(dataToggle='buttons', dataCanUntoggle='1')
+          - for fld in form.has_url:
+            %label.btn.btn-default(class_='active' if fld.checked else '')
+              = fld()
+              &= fld.label.text
+              - if fld.data == '1':
+                %i.fa.fa-link
+
+    .panel-footer
+      .pull-right
+        %button.btn.btn-default.download
+          %i.fa.fa-download
+          Download XLSX
+      %input.btn.btn-success(type='Submit', value='Update')

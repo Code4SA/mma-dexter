@@ -18,6 +18,8 @@
         maxZoom: 16,
         attribution: 'Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'});	
       self.map.addLayer(osm);
+
+      self.loadAndDrawPlaces();
     };
 
     self.invalidate = function() {

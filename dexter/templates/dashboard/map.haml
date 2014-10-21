@@ -1,0 +1,10 @@
+%%inherit(file="layout.haml")
+
+%%block(name='title')
+  Places
+
+%%block(name="extra_header_tags")
+  - for url in webassets('maps-css'):
+    %link(rel="stylesheet", href=url)
+
+#slippy-map

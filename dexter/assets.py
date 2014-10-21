@@ -64,7 +64,7 @@ assets.register('activity',
         maps,
         'js/highcharts-4.0.1.js',
         'js/underscore-1.6.0.js',
-        'js/activity.js',
+        'js/activity/*.js',
         output='js/activity.%(version)s.js'))
 
 assets.register('documents',

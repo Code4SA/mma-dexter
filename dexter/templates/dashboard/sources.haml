@@ -1,0 +1,18 @@
+%%inherit(file="../layout.haml")
+
+%%block(name='title')
+  Source Analysis
+
+%%block(name='extra_javascript')
+  - for url in webassets('activity'):
+    %script(src=url)
+
+%article#activity
+  %table.table.table-striped.table-condensed
+    - for source in source_analyzer.top_people:
+      %tr
+        %td
+          %a(href=url_for('show_person', id=source.person.id))&= source.person.name
+        %td&= source.person.gender and source.person.gender.name or ''
+        %td&= source.person.race and source.person.race.name or ''
+        %td&= source.count
