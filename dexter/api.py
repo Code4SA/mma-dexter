@@ -12,7 +12,7 @@ from sqlalchemy.sql import func
 
 from .app import app
 from .models import db, Author, Person, Entity, Document, DocumentSource, Medium, Location, Topic, Affiliation, DocumentPlace, Place
-from .processing import BiasCalculator
+from .analysis import BiasCalculator
 
 @app.route('/api/authors')
 @login_required

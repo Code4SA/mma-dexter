@@ -17,6 +17,7 @@ from wtforms import validators, HiddenField, TextField, SelectMultipleField, Boo
 from wtforms.fields.html5 import DateField
 from .forms import Form, SelectField, MultiCheckboxField, RadioField
 from .processing.xlsx import XLSXBuilder
+from .analysis import SourceAnalyzer
 
 from utils import paginate
 
@@ -133,6 +134,39 @@ def activity():
                            pagination=pagination,
                            doc_groups=doc_groups)
 
+@app.route('/activity/map')
+@login_required
+def activity_map():
+    form = ActivityForm(request.args)
+
+    if form.format.data == 'places-json':
+        # places in json format
+        query = Document.query\
+                  .options(joinedload('places').joinedload('place'))
+        query = form.filter_query(query)
+
+        return jsonify(DocumentPlace.summary_for_docs(query.all()))
+
+    return render_template('dashboard/map.haml',
+                           form=form)
+
+
+@app.route('/activity/sources')
+@login_required
+def activity_sources():
+    form = ActivityForm(request.args)
+
+    if form.format.data == 'xlsx':
+        # TODO
+        1/0
+
+    sa = SourceAnalyzer(form)
+    sa.analyze()
+
+    return render_template('dashboard/sources.haml',
+                           form=form,
+                           source_analyzer=sa)
+
 
 class ActivityForm(Form):
     analysis_nature_id = RadioField('Analysis', default=default_analysis_nature_id)
@@ -214,6 +248,10 @@ class ActivityForm(Form):
             return self.published_at.data.split(' - ')[1].strip() + ' 23:59:59'
         else:
             return self.published_from
+
+
+    def document_ids(self):
+        return [d[0] for d in self.filter_query(db.session.query(Document.id)).all()]
 
 
     def filter_query(self, query):

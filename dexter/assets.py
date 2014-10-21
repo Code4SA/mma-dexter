@@ -59,13 +59,14 @@ maps = Bundle(
         'http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.js',
         'js/maps.js')
 
-assets.register('activity',
+assets.register('dashboard',
     Bundle(
         maps,
         'js/highcharts-4.0.1.js',
         'js/underscore-1.6.0.js',
-        'js/activity.js',
-        output='js/activity.%(version)s.js'))
+        'js/sparklines.js',
+        'js/dashboard/*.js',
+        output='js/dashboard.%(version)s.js'))
 
 assets.register('documents',
     Bundle(

@@ -2,24 +2,11 @@
   if (typeof exports.Dexter == 'undefined') exports.Dexter = {};
   var Dexter = exports.Dexter;
 
-  // view when looking at document activity
-  Dexter.ActivityView = function() {
+  // view when looking at document activity graphs
+  Dexter.ActivityGraphsView = function() {
     var self = this;
 
-    self.placesSetup = false;
-
     self.init = function() {
-      $('form.activity-refine .btn.download').on('click', function(e) {
-        e.preventDefault();
-
-        $('form.activity-refine').append('<input type="hidden" name="format" value="xlsx">');
-        $('form.activity-refine').submit();
-        $('form.activity-refine input[name="format"]').remove();
-      });
-
-      // toggle maps
-      $('a[href="#tab-map"][data-toggle="tab"]').on('shown.bs.tab', self.onMapTabShown);
-
       Highcharts.setOptions({
         credits: {enabled: false},
         chart: {
@@ -58,18 +45,9 @@
           enabled: false
         }
       });
-      self.updateCharts();
-    };
 
-    self.onMapTabShown = function(e) {
-      // invalidate the map so that it gets resized correctly
-      $($(this).attr('href') + ' .leaflet-container').each(function(i, map) {
-        Dexter.maps.invalidate();
-      });
-
-      if (!self.placesSetup) {
-        Dexter.maps.loadAndDrawPlaces();
-        self.placesSetup = true;
+      if ($('#charts').length > 0) {
+        self.updateCharts();
       }
     };
 
@@ -283,5 +261,5 @@
 })(jQuery, window);
 
 $(function() {
-  new Dexter.ActivityView().init();
+  new Dexter.ActivityGraphsView().init();
 });

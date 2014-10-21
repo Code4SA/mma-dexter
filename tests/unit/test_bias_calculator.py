@@ -1,6 +1,6 @@
 import unittest
 
-from dexter.processing.bias import BiasCalculator
+from dexter.analysis.bias import BiasCalculator
 
 class TestUser(unittest.TestCase):
     def setUp(self):

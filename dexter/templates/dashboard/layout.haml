@@ -1,0 +1,24 @@
+%%inherit(file="../layout.haml")
+
+%%block(name='extra_javascript')
+  - for url in webassets('dashboard'):
+    %script(src=url)
+
+%article#activity
+  .row
+    .col-sm-9
+      %ul.nav.nav-tabs
+        %li(class_=('active' if request.url_rule.endpoint == 'activity' else ''))
+          %a(href=url_for('activity', **request.args)) Graphs
+
+        %li(class_=('active' if request.url_rule.endpoint == 'activity_sources' else ''))
+          %a(href=url_for('activity_sources', **request.args)) Sources
+
+        %li(class_=('active' if request.url_rule.endpoint == 'activity_map' else ''))
+          %a(href=url_for('activity_map', **request.args)) Map
+
+      %section.tab-content
+        ${next.body()}
+
+    .col-sm-3
+      %%include(file='form.haml')

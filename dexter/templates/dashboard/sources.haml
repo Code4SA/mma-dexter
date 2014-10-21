@@ -1,0 +1,33 @@
+%%inherit(file="layout.haml")
+
+%%block(name='title')
+  Source Analysis
+
+%section
+  %h3 Top Person Sources
+
+%section
+  %table.table.table-striped.table-condensed.source-analysis
+    %tr
+      %th Person
+      %th.sparkline(colspan="2") Source frequency
+      %th Affiliation
+      %th
+        %i.fa.fa-comment(title='Quotations')
+
+    - for source in source_analyzer.top_people:
+      %tr
+        %td
+          %a(href=url_for('show_person', id=source.person.id))&= source.person.name
+          %span.text-muted
+            - if source.person.gender:
+              •
+              %span(title=source.person.gender.name)&= source.person.gender.abbr()
+            - if source.person.race:
+              •
+              %span(title=source.person.race.name)&= source.person.race.abbr()
+
+        %td.sparkline(dataSparkline=','.join(str(i) for i in source.source_counts))
+        %td&= source.count
+        %td&= source.person.affiliation and source.person.affiliation.name or ''
+        %td&= source.utterance_count or ''

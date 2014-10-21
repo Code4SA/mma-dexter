@@ -1,6 +1,5 @@
-%%inherit(file="../layout.haml")
+%%inherit(file="layout.haml")
 %%namespace(file="../paginator.haml", **{'import': '*'})
-%%namespace(file="../bootstrap_wtf.haml", **{'import': '*'})
 
 %%block(name='title')
   Recently added articles
@@ -9,159 +8,74 @@
   - for url in webassets('maps-css'):
     %link(rel="stylesheet", href=url)
 
-
-%%block(name='extra_javascript')
-  - for url in webassets('activity'):
-    %script(src=url)
-
-- from dexter.models import AnalysisNature
-
-
-%article#activity
+%section
   %h3
     &= pagination.total
     Article${'' if pagination.total == 1 else 's'}
     - if form.user():
       added by ${form.user().short_name()|h}
 
+%section#charts
   .row
-    .col-sm-9
-      %ul.nav.nav-tabs
-        %li.active
-          %a(href="#tab-charts", dataToggle="tab") Graphs
-        %li
-          %a(href="#tab-map", dataToggle="tab") Map
+    .col-sm-6
+      .panel.panel-default
+        .panel-heading
+          %h4.panel-title Date added
+        .panel-body
+          .chart.chart-created
+            Loading...
 
-      .tab-content
-        #tab-charts.tab-pane.active
-          %section#charts
-            .row
-              .col-sm-6
-                .panel.panel-default
-                  .panel-heading
-                    %h4.panel-title Date added
-                  .panel-body
-                    .chart.chart-created
-                      Loading...
+      .panel.panel-default
+        .panel-heading
+          %h4.panel-title Countries
+        .panel-body
+          .chart.chart-countries
+            Loading...
 
-                .panel.panel-default
-                  .panel-heading
-                    %h4.panel-title Countries
-                  .panel-body
-                    .chart.chart-countries
-                      Loading...
+      .panel.panel-default
+        .panel-heading
+          %h4.panel-title Media
+        .panel-body
+          .chart.chart-media
+            Loading...
 
-                .panel.panel-default
-                  .panel-heading
-                    %h4.panel-title Media
-                  .panel-body
-                    .chart.chart-media
-                      Loading...
+    .col-sm-6
+      .panel.panel-default
+        .panel-heading
+          %h4.panel-title Publication date
+        .panel-body
+          .chart.chart-published
+            Loading...
 
-              .col-sm-6
-                .panel.panel-default
-                  .panel-heading
-                    %h4.panel-title Publication date
-                  .panel-body
-                    .chart.chart-published
-                      Loading...
+      .panel.panel-default
+        .panel-heading
+          %h4.panel-title Users
+        .panel-body
+          .chart.chart-users
+            Loading...
 
-                .panel.panel-default
-                  .panel-heading
-                    %h4.panel-title Users
-                  .panel-body
-                    .chart.chart-users
-                      Loading...
+      .panel.panel-default
+        .panel-heading
+          %h4.panel-title Article problems
+        .panel-body
+          .chart.chart-problems
+            Loading...
 
-                .panel.panel-default
-                  .panel-heading
-                    %h4.panel-title Article problems
-                  .panel-body
-                    .chart.chart-problems
-                      Loading...
+      .panel.panel-default
+        .panel-heading
+          %h4.panel-title Markers
+        .panel-body
+          .chart.chart-markers
+            Loading...
 
-                .panel.panel-default
-                  .panel-heading
-                    %h4.panel-title Markers
-                  .panel-body
-                    .chart.chart-markers
-                      Loading...
+      .panel.panel-default
+        .panel-heading
+          %h4.panel-title Fairness
+        .panel-body
+          .chart.chart-fairness
+            Loading...
 
-                .panel.panel-default
-                  .panel-heading
-                    %h4.panel-title Fairness
-                  .panel-body
-                    .chart.chart-fairness
-                      Loading...
-
-        #tab-map.tab-pane
-          #slippy-map
-
-    .col-sm-3
-      %form.activity-refine(action=url_for('activity'), method='GET')
-
-        .panel.panel-default
-          .panel-heading
-            %h3.panel-title
-              Refine
-
-          .panel-body
-            .form-group
-              .btn-group(dataToggle='buttons')
-                - for fld in form.analysis_nature_id:
-                  %label.btn.btn-default(class_='active' if fld.checked else '', title=fld.label.text)
-                    = fld()
-                    %i.fa(class_=AnalysisNature.ICONS.get(int(fld.data)))
-
-            = vertical_field(form.user_id)
-            = vertical_field(form.country_id)
-            = vertical_field(form.medium_id, class_='select2')
-            .form-group
-              = form.created_at.label()
-              .input-group
-                = form.created_at(class_='form-control use-daterangepicker')
-                %span.input-group-btn
-                  %button.btn.btn-default(dataClear='input-group')
-                    %i.fa.fa-times
-            .form-group
-              = form.published_at.label()
-              .input-group
-                = form.published_at(class_='form-control use-daterangepicker')
-                %span.input-group-btn
-                  %button.btn.btn-default(dataClear='input-group')
-                    %i.fa.fa-times
-            .form-group
-              = form.problems.label()
-              .input-group
-                - for fld in form.problems:
-                  .checkbox
-                    = fld
-                    = fld.label()
-            .form-group
-              .checkbox
-                = form.flagged
-                - kwargs = {"for": 'flagged'}
-                %label(**kwargs)
-                  %i.fa.fa-flag.flag-set.article-flag
-                  = form.flagged.label.text
-
-            .form-group.has-url
-              .btn-group(dataToggle='buttons', dataCanUntoggle='1')
-                - for fld in form.has_url:
-                  %label.btn.btn-default(class_='active' if fld.checked else '')
-                    = fld()
-                    &= fld.label.text
-                    - if fld.data == '1':
-                      %i.fa.fa-link
-
-          .panel-footer
-            .pull-right
-              %button.btn.btn-default.download
-                %i.fa.fa-download
-                Download XLSX
-            %input.btn.btn-success(type='Submit', value='Update')
-
-  %section
-    %%include(file='activity_list.haml')
-    - args = request.args.to_dict(True)
-    = paginator('activity', pagination, **args)
+%section
+  %%include(file='activity_list.haml')
+  - args = request.args.to_dict(True)
+  = paginator('activity', pagination, **args)

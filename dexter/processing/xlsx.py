@@ -9,7 +9,7 @@ from dateutil.parser import parse
 from sqlalchemy.sql import func
 from sqlalchemy.types import Integer
 
-from .bias import BiasCalculator
+from ..analysis import BiasCalculator
 from ..models import Document, db, AnalysisNature
 
 class XLSXBuilder:
@@ -19,7 +19,7 @@ class XLSXBuilder:
 
         # we use these to filter our queries, rather than trying to pull
         # complex filter logic into our view queries
-        self.doc_ids = [d[0] for d in form.filter_query(db.session.query(Document.id)).all()]
+        self.doc_ids = form.doc_ids()
 
     def build(self):
         """
