@@ -5,6 +5,10 @@
 %%block(name="title")
   &= person.name
 
+%%block(name='extra_javascript')
+  - for url in webassets('charts'):
+    %script(src=url)
+
 #show-person(dataPersonId=person.id, dataPersonName=person.name)
   #merge-modal.modal.fade
     %%include(file='merge.haml')
@@ -87,8 +91,14 @@
                   %li&= entity.name
 
     %section
-      %h3
-        Sourced by ${pagination.total} articles
+      .row
+        .col-sm-6
+          %h3 Sourced by ${pagination.total} articles
+        .col-sm-6
+          .pull-left
+            %h4 Last 14 days
+          .pull-left
+            .sparkline(dataSparkline=','.join(str(i) for i in source_counts))
 
       - for date, group in grouped_docs:
         %section

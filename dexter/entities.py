@@ -8,10 +8,13 @@ from flask.ext.login import login_required, current_user
 from sqlalchemy.orm import subqueryload
 from sqlalchemy import distinct
 
+from datetime import datetime, timedelta
+
 from .app import app
 from .models import db, Document, Entity, Utterance, DocumentEntity, DocumentSource, Person
 from .models.person import PersonForm
 from .utils import paginate
+from .analysis import SourceAnalyzer
 
 import urllib
 
@@ -88,9 +91,15 @@ def show_person(id):
     for date, group in groupby(docs, lambda d: d.published_at.date()):
         grouped_docs.append([date, list(group)])
 
+    # source frequency
+    today = datetime.utcnow().date()
+    sa = SourceAnalyzer(start_date=(today - timedelta(days=14)), end_date=today)
+    source_counts = sa.source_frequencies([person.id]).get(person.id, [0]*sa.days)
+
     return render_template('person/show.haml',
         person=person,
         form=form,
+        source_counts=source_counts,
         grouped_docs=grouped_docs,
         pagination=pagination)
 

@@ -160,7 +160,7 @@ def activity_sources():
         # TODO
         1/0
 
-    sa = SourceAnalyzer(form)
+    sa = SourceAnalyzer(doc_ids=form.document_ids())
     sa.analyze()
 
     return render_template('dashboard/sources.haml',

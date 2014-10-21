@@ -93,4 +93,15 @@ $(function() {
 
       return new Highcharts.Chart(options, callback);
   };
+
+  $('*[data-sparkline]').each(function(i, e) {
+    var $e = $(e);
+
+    $e.highcharts('SparkLine', {
+      series: [{
+        data: $.map($e.data('sparkline').split(','), parseFloat),
+        pointStart: 1
+      }]
+    });
+  });
 });

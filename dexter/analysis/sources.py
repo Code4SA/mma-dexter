@@ -14,14 +14,14 @@ class SourceAnalyzer(object):
     """
     Helper that runs analyses on document sources.
     """
-    def __init__(self, form):
-        self.form = form
-        self.doc_ids = form.document_ids()
-
+    def __init__(self, doc_ids=None, start_date=None, end_date=None):
+        self.doc_ids = doc_ids
+        self.start_date = start_date
+        self.end_date = end_date
         self._calculate_date_range()
+        self._fetch_doc_ids()
 
         self.top_people = None
-
         # max results for most analyses
         self.row_limit = 20
 
@@ -52,7 +52,7 @@ class SourceAnalyzer(object):
 
         people = self._lookup_people([r[0] for r in rows])
         utterance_count = self._count_utterances(people.keys())
-        source_counts = self._count_source_freq(people.keys())
+        source_counts = self.source_frequencies(people.keys())
 
         for row in (r._asdict() for r in query.all()):
             src = AnalyzedSource()
@@ -92,7 +92,7 @@ class SourceAnalyzer(object):
         return dict((p[0], p[1]) for p in rows)
 
 
-    def _count_source_freq(self, ids):
+    def source_frequencies(self, ids):
         """
         Return dict from person ID to a list of how frequently each
         source was used per day, over the period.
@@ -103,9 +103,8 @@ class SourceAnalyzer(object):
                     func.count(1).label('count')
                 )\
                 .join(Document, DocumentSource.doc_id == Document.id)\
-                .filter(
-                        DocumentSource.doc_id.in_(self.doc_ids),
-                        DocumentSource.person_id.in_(ids))\
+                .filter(DocumentSource.person_id.in_(ids))\
+                .filter(DocumentSource.doc_id.in_(self.doc_ids))\
                 .group_by(DocumentSource.person_id, 'date')\
                 .order_by(DocumentSource.person_id, Document.published_at)\
                 .all()
@@ -127,16 +126,29 @@ class SourceAnalyzer(object):
         The date range is the range of publication dates for the given
         documents.
         """
-        row = db.session.query(
-                func.min(Document.published_at),
-                func.max(Document.published_at))\
-                .filter(Document.id.in_(self.doc_ids))\
-                .first()
+        if not self.start_date or not self.end_date:
+            if self.doc_ids is None:
+                raise ValueError("Need either doc_ids, or both start_date and end_date")
 
-        if row and row[0]:
-            self.start_date = row[0].date()
-            self.end_date = row[1].date()
-        else:
-            self.start_date = self.end_date = datetime.utcnow()
+            row = db.session.query(
+                    func.min(Document.published_at),
+                    func.max(Document.published_at))\
+                    .filter(Document.id.in_(self.doc_ids))\
+                    .first()
+
+            if row and row[0]:
+                self.start_date = row[0].date()
+                self.end_date = row[1].date()
+            else:
+                self.start_date = self.end_date = datetime.utcnow()
 
         self.days = max((self.end_date - self.start_date).days, 1)
+
+
+    def _fetch_doc_ids(self):
+        if self.doc_ids is None:
+            rows = db.session.query(Document.id)\
+                    .filter(Document.published_at >= self.start_date.strftime('%Y-%m-%d 00:00:00'))\
+                    .filter(Document.published_at <= self.end_date.strftime('%Y-%m-%d 23:59:59'))\
+                    .all()
+            self.doc_ids = [r[0] for r in rows]
