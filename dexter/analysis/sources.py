@@ -53,7 +53,7 @@ class SourceAnalyzer(object):
 
         people = self._lookup_people([r[0] for r in rows])
         utterance_count = self._count_utterances(people.keys())
-        source_counts = self.source_frequencies(people.keys())
+        source_counts = self.source_frequencies(people.keys(), normalize=True)
 
         for row in (r._asdict() for r in query.all()):
             src = AnalyzedSource()
@@ -94,7 +94,7 @@ class SourceAnalyzer(object):
         return dict((p[0], p[1]) for p in rows)
 
 
-    def source_frequencies(self, ids):
+    def source_frequencies(self, ids, normalize=True):
         """
         Return dict from person ID to a list of how frequently each
         source was used per day, over the period.
@@ -111,6 +111,7 @@ class SourceAnalyzer(object):
                 .order_by(DocumentSource.person_id, Document.published_at)\
                 .all()
 
+        totals = [0] * (self.days+1)
         freqs = {}
         for person_id, group in groupby(rows, lambda r: r[0]):
             freqs[person_id] = [0] * (self.days+1)
@@ -120,6 +121,13 @@ class SourceAnalyzer(object):
                 d, n = parse(row[1]).date(), row[2]
                 day = (d - self.start_date).days
                 freqs[person_id][day] = n
+                totals[day] += n
+
+        if normalize:
+            # normalize by total counts per day
+            for vals in freqs.itervalues():
+                for i, n in enumerate(vals):
+                    vals[i] = 100.0 * n / totals[i]
 
         return freqs
 
