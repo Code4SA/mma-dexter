@@ -28,7 +28,7 @@
           &= person.affiliation.name
 
         - affiliations = person.all_affiliations()
-        - if affiliations and affiliations[0][0] != person.affiliation:
+        - if len(affiliations) > 1 or affiliations[0][0] != person.affiliation:
           %table.affiliation-table.table-condensed
             - total = sum(a[1] for a in affiliations)
             - for affiliation, count in person.all_affiliations():
