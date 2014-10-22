@@ -127,7 +127,10 @@ class SourceAnalyzer(object):
             # normalize by total counts per day
             for vals in freqs.itervalues():
                 for i, n in enumerate(vals):
-                    vals[i] = 100.0 * n / totals[i]
+                    if totals[i] == 0:
+                        vals[i] = 0
+                    else:
+                        vals[i] = 100.0 * n / totals[i]
 
         return freqs
 
