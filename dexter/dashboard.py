@@ -156,10 +156,6 @@ def activity_map():
 def activity_sources():
     form = ActivityForm(request.args)
 
-    if form.format.data == 'xlsx':
-        # TODO
-        pass
-
     sa = SourceAnalyser(doc_ids=form.document_ids())
     sa.analyse()
 

@@ -10,9 +10,15 @@
       $('form.activity-refine .btn.download').on('click', function(e) {
         e.preventDefault();
 
-        $('form.activity-refine').append('<input type="hidden" name="format" value="xlsx">');
-        $('form.activity-refine').submit();
-        $('form.activity-refine input[name="format"]').remove();
+        var $form = $('form.activity-refine');
+        var old_action = $form.attr('action');
+
+        $form.append('<input type="hidden" name="format" value="xlsx">');
+        $form.attr('action', '/activity');
+        $form.submit();
+
+        $form.attr('action', old_action);
+        $('input[name="format"]', $form).remove();
       });
     };
   };
