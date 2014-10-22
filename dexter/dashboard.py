@@ -17,7 +17,7 @@ from wtforms import validators, HiddenField, TextField, SelectMultipleField, Boo
 from wtforms.fields.html5 import DateField
 from .forms import Form, SelectField, MultiCheckboxField, RadioField
 from .processing.xlsx import XLSXBuilder
-from .analysis import SourceAnalyzer
+from .analysis import SourceAnalyser
 
 from utils import paginate
 
@@ -158,14 +158,14 @@ def activity_sources():
 
     if form.format.data == 'xlsx':
         # TODO
-        1/0
+        pass
 
-    sa = SourceAnalyzer(doc_ids=form.document_ids())
-    sa.analyze()
+    sa = SourceAnalyser(doc_ids=form.document_ids())
+    sa.analyse()
 
     return render_template('dashboard/sources.haml',
                            form=form,
-                           source_analyzer=sa)
+                           source_analyser=sa)
 
 
 class ActivityForm(Form):

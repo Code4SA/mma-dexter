@@ -1,6 +1,7 @@
 %%inherit(file="../layout.haml")
 %%namespace(file="../bootstrap_wtf.haml", **{'import': '*'})
 %%namespace(file="../paginator.haml", **{'import': '*'})
+%%namespace(file="../helpers/trends.haml", **{'import': '*'})
 
 %%block(name="title")
   &= person.name
@@ -94,11 +95,15 @@
       .row
         .col-sm-6
           %h3 Sourced by ${pagination.total} articles
-        .col-sm-6
-          .pull-left
-            %h4 Last 14 days
-          .pull-left
-            .sparkline(dataSparkline=','.join(str(i) for i in source_counts))
+        .col-sm-2
+          %h4 Last 14 days
+        .col-sm-2
+          - if source_analysis:
+            .pull-left
+              .sparkline(dataSparkline=','.join(str(round(i, 0)) for i in source_analysis.source_counts), dataLabel='{point.y}%')
+            .pull-left
+              &= source_analysis.source_counts_total
+              = trend_arrow(source_analysis.source_counts_trend)
 
       - for date, group in grouped_docs:
         %section

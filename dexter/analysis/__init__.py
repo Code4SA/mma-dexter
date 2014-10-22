@@ -1,2 +1,2 @@
 from bias import BiasCalculator
-from sources import SourceAnalyzer
+from sources import SourceAnalyser

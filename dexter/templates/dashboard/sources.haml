@@ -1,10 +1,13 @@
 %%inherit(file="layout.haml")
+%%namespace(file="../helpers/trends.haml", **{'import': '*'})
 
 %%block(name='title')
   Source Analysis
 
+- import itertools
+
 %section
-  %h3 Top Person Sources
+  %h3 Top People Sources
 
 %section
   %table.table.table-striped.table-condensed.source-analysis
@@ -16,7 +19,7 @@
       %th
         %i.fa.fa-comment(title='Quotations')
 
-    - for source in source_analyzer.top_people:
+    - for source in source_analyser.top_people:
       %tr
         %td
           %a(href=url_for('show_person', id=source.person.id))&= source.person.name
@@ -30,12 +33,39 @@
 
         %td.sparkline(dataSparkline=','.join(str(round(i, 0)) for i in source.source_counts), dataLabel='{point.y}%')
         %td.trend
-          &= source.count
-          - if source.source_counts_trend > 0.5:
-            %i.fa.fa-arrow-up.fa-rotate-45.trend-up
-          - elif source.source_counts_trend < -0.5:
-            %i.fa.fa-arrow-down.fa-rotate--45.trend-down
-          - else:
-            %i.fa.fa-arrow-right.trend-steady
+          &= source.source_counts_total
+          = trend_arrow(source.source_counts_trend)
+        %td&= source.person.affiliation and source.person.affiliation.name or ''
+        %td&= source.utterance_count or ''
+
+%section
+  %h3 Trending People
+
+%section
+  %table.table.table-striped.table-condensed.source-analysis
+    %tr
+      %th Person
+      %th.sparkline Source frequency
+      %th
+      %th Affiliation
+      %th
+        %i.fa.fa-comment(title='Quotations')
+
+    - for source in itertools.chain(source_analyser.people_trending_up, source_analyser.people_trending_down):
+      %tr
+        %td
+          %a(href=url_for('show_person', id=source.person.id))&= source.person.name
+          %span.text-muted
+            - if source.person.gender:
+              •
+              %span(title=source.person.gender.name)&= source.person.gender.abbr()
+            - if source.person.race:
+              •
+              %span(title=source.person.race.name)&= source.person.race.abbr()
+
+        %td.sparkline(dataSparkline=','.join(str(round(i, 0)) for i in source.source_counts), dataLabel='{point.y}%')
+        %td.trend
+          &= source.source_counts_total
+          = trend_arrow(source.source_counts_trend)
         %td&= source.person.affiliation and source.person.affiliation.name or ''
         %td&= source.utterance_count or ''

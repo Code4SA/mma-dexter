@@ -8,10 +8,13 @@ from dexter.models import db, Document, DocumentSource, Person, Utterance, Entit
 from sqlalchemy.sql import func, distinct, or_, desc
 from sqlalchemy.orm import joinedload
 
-class AnalyzedSource(object):
+class AnalysedSource(object):
     pass
 
-class SourceAnalyzer(object):
+class SourceAnalyser(object):
+    TREND_UP = 0.5
+    TREND_DOWN = -0.5
+
     """
     Helper that runs analyses on document sources.
     """
@@ -19,63 +22,92 @@ class SourceAnalyzer(object):
         self.doc_ids = doc_ids
         self.start_date = start_date
         self.end_date = end_date
+
+        # we need either a date range or document ids, fill in
+        # whichever is missing
         self._calculate_date_range()
         self._fetch_doc_ids()
 
         self.top_people = None
-        # max results for most analyses
-        self.row_limit = 20
+        self.people_trending_up = None
+        self.people_trending_down = None
 
 
-    def analyze(self):
-        self._analyze_top_people()
+    def analyse(self):
+        self._load_people_sources()
+        self._analyse_people_sources()
 
 
-    def _analyze_top_people(self):
+    def _load_people_sources(self):
         """
-        Calculate top people for these documents, storing the results in
-        `top_sources`.
-        Top people are those people who were sources the most over a period.
+        Load all people source data for this period.
         """
-        sources = []
-        query = db.session.query(
-                DocumentSource.person_id,
-                func.count(DocumentSource.person_id).label('count')
-                )\
+        rows = db.session.query(distinct(DocumentSource.person_id))\
                 .filter(
                         DocumentSource.doc_id.in_(self.doc_ids),
                         DocumentSource.person_id != None)\
                 .group_by(DocumentSource.person_id)\
-                .order_by(desc('count'))\
-                .limit(self.row_limit)
+                .all()
+        self.people = self._lookup_people([r[0] for r in rows])
 
-        rows = query.all()
 
-        people = self._lookup_people([r[0] for r in rows])
-        utterance_count = self._count_utterances(people.keys())
-        source_counts = self.source_frequencies(people.keys(), normalize=True)
+    def _analyse_people_sources(self):
+        """
+        Do trend analysis on people.
+        """
+        utterance_count = self.count_utterances(self.people.keys())
+        source_counts = self.source_frequencies(self.people.keys())
 
-        for row in (r._asdict() for r in query.all()):
-            src = AnalyzedSource()
-            src.person = people[row['person_id']]
-            src.count = row['count']
+        self.analysed_people = {}
+        for pid, person in self.people.iteritems():
+            src = AnalysedSource()
+            src.person = person
+
             src.utterance_count = utterance_count.get(src.person.id, 0)
             src.source_counts = source_counts[src.person.id]
+            src.source_counts_total = sum(src.source_counts)
+
+            self.analysed_people[pid] = src
+
+        # normalize by total counts per day
+        totals = [0] * (self.days+1)
+
+        # first count per-day totals
+        for src in self.analysed_people.itervalues():
+            for i, n in enumerate(src.source_counts):
+                totals[i] += n
+
+        # normalize
+        for src in self.analysed_people.itervalues():
+            for i, n in enumerate(src.source_counts):
+                if totals[i] == 0:
+                    src.source_counts[i] = 0
+                else:
+                    src.source_counts[i] = 100.0 * n / totals[i]
+
+        # calculate trends
+        for src in self.analysed_people.itervalues():
             src.source_counts_trend = mwazscore(src.source_counts, 0.8)
-            sources.append(src)
-
-        self.top_people = sources
 
 
-    def _lookup_people(self, ids):
-        query = Person.query\
-                .options(joinedload(Person.affiliation))\
-                .filter(Person.id.in_(ids))
+        # top 20 sources
+        self.top_people = sorted(
+                self.analysed_people.itervalues(),
+                key=lambda s: s.source_counts_total, reverse=True)[:20]
 
-        return dict([p.id, p] for p in query.all())
+        # trends
+        trending = sorted(
+                self.analysed_people.itervalues(),
+                key=lambda s: s.source_counts_trend)
+
+        # top 10 trending up
+        self.people_trending_up = [s for s in trending[-10:] if s.source_counts_trend > self.TREND_UP]
+
+        # top 10 trending down
+        self.people_trending_down = [s for s in trending[:10] if s.source_counts_trend < self.TREND_DOWN]
 
 
-    def _count_utterances(self, ids):
+    def count_utterances(self, ids):
         """
         Return dict from person ID to number of utterances they had in
         these documents.
@@ -94,7 +126,7 @@ class SourceAnalyzer(object):
         return dict((p[0], p[1]) for p in rows)
 
 
-    def source_frequencies(self, ids, normalize=True):
+    def source_frequencies(self, ids):
         """
         Return dict from person ID to a list of how frequently each
         source was used per day, over the period.
@@ -111,7 +143,6 @@ class SourceAnalyzer(object):
                 .order_by(DocumentSource.person_id, Document.published_at)\
                 .all()
 
-        totals = [0] * (self.days+1)
         freqs = {}
         for person_id, group in groupby(rows, lambda r: r[0]):
             freqs[person_id] = [0] * (self.days+1)
@@ -121,18 +152,17 @@ class SourceAnalyzer(object):
                 d, n = parse(row[1]).date(), row[2]
                 day = (d - self.start_date).days
                 freqs[person_id][day] = n
-                totals[day] += n
-
-        if normalize:
-            # normalize by total counts per day
-            for vals in freqs.itervalues():
-                for i, n in enumerate(vals):
-                    if totals[i] == 0:
-                        vals[i] = 0
-                    else:
-                        vals[i] = 100.0 * n / totals[i]
 
         return freqs
+
+
+    def _lookup_people(self, ids):
+        query = Person.query\
+                .options(joinedload(Person.affiliation))\
+                .filter(Person.id.in_(ids))
+
+        return dict([p.id, p] for p in query.all())
+
 
     def _calculate_date_range(self):
         """

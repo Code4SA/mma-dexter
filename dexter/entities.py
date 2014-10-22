@@ -14,7 +14,7 @@ from .app import app
 from .models import db, Document, Entity, Utterance, DocumentEntity, DocumentSource, Person
 from .models.person import PersonForm
 from .utils import paginate
-from .analysis import SourceAnalyzer
+from .analysis import SourceAnalyser
 
 import urllib
 
@@ -92,14 +92,15 @@ def show_person(id):
         grouped_docs.append([date, list(group)])
 
     # source frequency
-    today = datetime.utcnow().date()
-    sa = SourceAnalyzer(start_date=(today - timedelta(days=14)), end_date=today)
-    source_counts = sa.source_frequencies([person.id]).get(person.id, [0]*sa.days)
+    today = datetime.utcnow().date() - timedelta(days=1)
+    sa = SourceAnalyser(start_date=(today - timedelta(days=14)), end_date=today)
+    sa.analyse()
+    source_analysis = sa.analysed_people.get(person.id)
 
     return render_template('person/show.haml',
         person=person,
         form=form,
-        source_counts=source_counts,
+        source_analysis=source_analysis,
         grouped_docs=grouped_docs,
         pagination=pagination)
 

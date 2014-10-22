@@ -1,0 +1,9 @@
+%%def(name="trend_arrow(n)")
+  - from dexter.analysis import SourceAnalyser
+
+  - if n > SourceAnalyser.TREND_UP:
+    %i.fa.fa-arrow-up.fa-rotate-45.trend-up
+  - elif n < SourceAnalyser.TREND_DOWN:
+    %i.fa.fa-arrow-down.fa-rotate--45.trend-down
+  - else:
+    %i.fa.fa-arrow-right.trend-steady
