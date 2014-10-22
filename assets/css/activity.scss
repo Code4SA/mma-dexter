@@ -10,6 +10,10 @@
   td.sparkline {
     width: 120px;
   }
+
+  td.trend {
+    white-space: nowrap;
+  }
 }
 
 #charts {
@@ -47,4 +51,27 @@
   .chart.chart-media {
     height: 630px;
   }
+}
+
+// trend arrows
+.fa-rotate-45 {
+  -webkit-transform: rotate(45deg);
+  transform: rotate(45deg)
+}
+
+.fa-rotate--45 {
+  -webkit-transform: rotate(-45deg);
+  transform: rotate(-45deg)
+}
+
+.trend-up {
+  color: red;
+}
+
+.trend-down {
+  color: blue;
+}
+
+.trend-steady {
+  color: gray;
 }

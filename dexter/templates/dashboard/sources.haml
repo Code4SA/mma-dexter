@@ -10,7 +10,8 @@
   %table.table.table-striped.table-condensed.source-analysis
     %tr
       %th Person
-      %th.sparkline(colspan="2") Source frequency
+      %th.sparkline Source frequency
+      %th
       %th Affiliation
       %th
         %i.fa.fa-comment(title='Quotations')
@@ -27,15 +28,14 @@
               •
               %span(title=source.person.race.name)&= source.person.race.abbr()
 
-        %td.sparkline(dataSparkline=','.join(str(i) for i in source.source_counts))
-        %td
+        %td.sparkline(dataSparkline=','.join(str(round(i, 0)) for i in source.source_counts), dataLabel='{point.y}%')
+        %td.trend
           &= source.count
           - if source.source_counts_trend > 0.5:
-            %i.fa.fa-arrow-up
+            %i.fa.fa-arrow-up.fa-rotate-45.trend-up
           - elif source.source_counts_trend < -0.5:
-            %i.fa.fa-arrow-down
+            %i.fa.fa-arrow-down.fa-rotate--45.trend-down
           - else:
-            %i.fa.fa-arrow-right
-          &= source.source_counts_trend
+            %i.fa.fa-arrow-right.trend-steady
         %td&= source.person.affiliation and source.person.affiliation.name or ''
         %td&= source.utterance_count or ''

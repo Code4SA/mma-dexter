@@ -5,6 +5,9 @@ $(function() {
    */
   Highcharts.SparkLine = function (options, callback) {
       var defaultOptions = {
+          series: {
+            pointStart: 1
+          },
           chart: {
               renderTo: (options.chart && options.chart.renderTo) || this,
               backgroundColor: null,
@@ -97,11 +100,16 @@ $(function() {
   $('*[data-sparkline]').each(function(i, e) {
     var $e = $(e);
 
-    $e.highcharts('SparkLine', {
+    var opts = {
       series: [{
         data: $.map($e.data('sparkline').split(','), parseFloat),
-        pointStart: 1
       }]
-    });
+    };
+
+    if ($e.data('label')) {
+      opts.tooltip = {pointFormat: $e.data('label')};
+    }
+
+    $e.highcharts('SparkLine', opts);
   });
 });
