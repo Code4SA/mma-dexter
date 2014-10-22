@@ -19,7 +19,7 @@ class XLSXBuilder:
 
         # we use these to filter our queries, rather than trying to pull
         # complex filter logic into our view queries
-        self.doc_ids = form.doc_ids()
+        self.doc_ids = form.document_ids()
 
     def build(self):
         """
