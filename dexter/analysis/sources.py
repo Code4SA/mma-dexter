@@ -156,6 +156,30 @@ class SourceAnalyser(object):
         return freqs
 
 
+    def find_problem_people(self):
+        """
+        Return a list of Person instances for people sources that lack
+        a race, gender or affiliation.
+        """
+        rows = db.session.query(
+                    DocumentSource.person_id,
+                    func.count(1).label('count')
+                )\
+                .join(Person, Person.id == DocumentSource.person_id)\
+                .filter(DocumentSource.person_id != None)\
+                .filter(DocumentSource.doc_id.in_(self.doc_ids))\
+                .filter(or_(
+                    Person.race_id == None,
+                    Person.gender_id == None,
+                    Person.affiliation_id == None))\
+                .group_by(DocumentSource.person_id)\
+                .order_by(desc('count'))\
+                .limit(20)\
+                .all()
+
+        return self._lookup_people([r[0] for r in rows]).values()
+
+
     def _lookup_people(self, ids):
         query = Person.query\
                 .options(joinedload(Person.affiliation))\

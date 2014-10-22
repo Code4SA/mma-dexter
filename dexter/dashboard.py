@@ -159,8 +159,13 @@ def activity_sources():
     sa = SourceAnalyser(doc_ids=form.document_ids())
     sa.analyse()
 
+    # problem sources
+    problem_people = sa.find_problem_people()
+    problem_people.sort(key=lambda p: -sa.analysed_people[p.id].source_counts_total)
+
     return render_template('dashboard/sources.haml',
                            form=form,
+                           problem_people=problem_people,
                            source_analyser=sa)
 
 

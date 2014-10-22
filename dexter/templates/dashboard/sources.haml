@@ -69,3 +69,30 @@
           = trend_arrow(source.source_counts_trend)
         %td&= source.person.affiliation and source.person.affiliation.name or ''
         %td&= source.utterance_count or ''
+
+
+%section
+  %h3 Popular People without a race, gender or affiliation
+
+%section
+  - if not problem_people:
+    %p
+      %i None
+
+  - else:
+    %table.table.table-striped.table-condensed.source-analysis
+      %tr
+        %th
+        %th Person
+        %th Gender
+        %th Race
+        %th Affiliation
+
+      - for person in problem_people:
+        %tr
+          %td&= source_analyser.analysed_people[person.id].source_counts_total
+          %td
+            %a(href=url_for('show_person', id=person.id))&= person.name
+          %td&= person.gender and person.gender.name or ''
+          %td&= person.race and person.race.name or ''
+          %td&= person.affiliation and person.affiliation.name or ''
