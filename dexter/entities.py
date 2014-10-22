@@ -67,6 +67,12 @@ def show_person(id):
                 person.gender_id = None
             if person.race_id == '':
                 person.race_id = None
+            if person.affiliation_id == '':
+                person.affiliation_id = None
+
+            if form.reset_affiliation.data == True:
+                # change affiliation in ALL documents
+                person.reset_all_affiliations()
 
             flash('Saved.')
             db.session.commit()

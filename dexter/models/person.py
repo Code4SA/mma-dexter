@@ -13,7 +13,8 @@ from sqlalchemy import (
     func,
     )
 from sqlalchemy.orm import relationship, subqueryload
-from wtforms import StringField, validators, SelectField, HiddenField
+from wtforms import StringField, validators, SelectField, HiddenField, BooleanField
+from flask.ext.login import current_user
 
 from .support import db
 from ..forms import Form, MultiCheckboxField
@@ -200,6 +201,17 @@ class Person(db.Model):
                return
 
 
+    def reset_all_affiliations(self):
+        """
+        Change the affiliation for ALL occurrences of this person
+        to the current state.
+        """
+        from . import DocumentSource
+        DocumentSource.query\
+            .filter(DocumentSource.person_id == self.id)\
+            .update({'affiliation_id': self.affiliation_id})
+
+
     def __repr__(self):
         return "<Person id=%s, name=\"%s\">" % (self.id, self.name.encode('utf-8'))
 
@@ -231,15 +243,18 @@ class Person(db.Model):
 class PersonForm(Form):
     gender_id  = SelectField('Gender', default='')
     race_id    = SelectField('Race', default='')
+    affiliation_id   = SelectField('Affiliation', default='')
+    reset_affiliation = BooleanField('Reset affiliation for ALL documents where this person is a source? THIS IS DANGEROUS!', default=False)
     alias_entity_ids = MultiCheckboxField('Aliases')
 
     def __init__(self, *args, **kwargs):
         super(PersonForm, self).__init__(*args, **kwargs)
 
-        from . import Entity
+        from . import Entity, Affiliation
 
         self.gender_id.choices = [['', '(unknown gender)']] + [[str(g.id), g.name] for g in Gender.query.order_by(Gender.name).all()]
         self.race_id.choices = [['', '(unknown race)']] + [[str(r.id), r.name] for r in Race.query.order_by(Race.name).all()]
+        self.affiliation_id.choices = [['', '(unknown affiliation)']] + [[str(a.id), a.name] for a in Affiliation.for_country(current_user.country)]
 
         # we don't care if the entities are in the valid list or not
         self.alias_entity_ids.pre_validate = lambda form: True

@@ -17,7 +17,14 @@
       $('.gender-race a.edit').on('click', function(e) {
         e.preventDefault();
         $('.gender-race').hide();
+        $('.gender-race-controls .select2').select2();
         $('.gender-race-controls').show();
+
+        $('form#edit-person').on('submit', function(e) {
+          if ($('#reset_affiliation').prop('checked')) {
+            return confirm('Change affiliation in ALL documents?');
+          }
+        });
       });
 
       $('.gender-race-controls a.cancel').on('click', function(e) {
@@ -26,6 +33,7 @@
 
         $('.gender-race').show();
         $('.gender-race-controls').hide();
+        $('.gender-race-controls .select2').select2('destroy');
       });
 
       $('.aliases a.edit').on('click', function(e) {
