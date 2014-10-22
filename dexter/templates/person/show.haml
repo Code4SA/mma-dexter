@@ -27,6 +27,17 @@
         %h4
           &= person.affiliation.name
 
+        - affiliations = person.all_affiliations()
+        - if affiliations and affiliations[0][0] != person.affiliation:
+          %table.affiliation-table.table-condensed
+            - total = sum(a[1] for a in affiliations)
+            - for affiliation, count in person.all_affiliations():
+              %tr
+                %td&= count
+                %td.bar
+                  %div(style="width:" + str(100.0 * count / total) + "%")&nbsp;
+                %td&= affiliation.name
+
     %section
       %form#edit-person(action=url_for('show_person', id=person.id), method='POST')
         = form.csrf_token

@@ -11,6 +11,7 @@ from sqlalchemy import (
     Integer,
     String,
     func,
+    desc,
     )
 from sqlalchemy.orm import relationship, subqueryload
 from wtforms import StringField, validators, SelectField, HiddenField, BooleanField
@@ -85,6 +86,29 @@ class Person(db.Model):
             'gender': self.gender.name if self.gender else None,
             'affiliation': self.affiliation.full_name() if self.affiliation else None,
         }
+
+
+    def all_affiliations(self):
+        """
+        Get a list of [Affiliation, count] tuples for all affiliations
+        for this source.
+        """
+        from . import DocumentSource, Affiliation
+
+        rows = db.session.query(
+                DocumentSource.affiliation_id,
+                func.count(1).label('count'))\
+                .filter(DocumentSource.person_id == self.id)\
+                .filter(DocumentSource.affiliation_id != None)\
+                .group_by(DocumentSource.affiliation_id)\
+                .order_by(desc('count'))\
+                .all()
+
+        ids = [r[0] for r in rows]
+        affiliations = Affiliation.query.filter(Affiliation.id.in_(ids)).all()
+        affiliations = dict((a.id, a) for a in affiliations)
+
+        return [(affiliations[r[0]], r[1]) for r in rows]
 
 
     def relearn_affiliation(self):

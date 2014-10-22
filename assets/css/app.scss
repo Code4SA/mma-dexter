@@ -625,3 +625,14 @@ footer {
   min-height: 20px;
   overflow: show;
 }
+
+.affiliation-table {
+  .bar {
+    width: 100px;
+
+    div {
+      background-color: lightblue;
+      margin: 2px 0px;
+    }
+  }
+}
