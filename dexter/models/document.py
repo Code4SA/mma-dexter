@@ -245,13 +245,18 @@ class Document(db.Model):
 
     def places_relevance_threshold(self):
         # calculate threshold as average of all non-None relevances
-        count = 0
-        sum = 0
-        for dp in self.places:
-            if dp.relevance is not None:
-                count += 1
-                sum += dp.relevance
-        return sum/count if count > 0 else 0
+        vals = [p.relevance for p in self.places if p.relevance is not None]
+        if len(vals) == 0:
+            return 0
+        return sum(vals)/len(vals)
+
+
+    def keyword_relevance_threshold(self):
+        # calculate threshold as average of all non-None relevances
+        vals = [k.relevance for k in self.keywords if k.relevance is not None]
+        if len(vals) == 0:
+            return 0
+        return sum(vals)/len(vals)
 
 
     def make_analysis_form(self):

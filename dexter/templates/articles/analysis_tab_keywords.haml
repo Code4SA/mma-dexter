@@ -1,8 +1,9 @@
 #keywords-tab.tab-pane
   %h4 Keywords
   %table.table.table-striped.table-condensed.offsets.entities
+    - avg = document.keyword_relevance_threshold()
     - for kw in document.keywords:
-      %tr(dataOffsets=kw.offset_list)
+      %tr(dataOffsets=kw.offset_list, class_='text-muted' if kw.relevance < avg else '')
         %td&= kw.keyword
         %td&= kw.relevance
 

@@ -1,7 +1,7 @@
 import unittest
 import datetime
 
-from dexter.models import Document, DocumentEntity, Entity, Utterance, DocumentKeyword
+from dexter.models import Document, DocumentEntity, Entity, Utterance, DocumentKeyword, DocumentPlace
 
 from dexter.models.support import db
 from dexter.models.seeds import seed_db
@@ -144,3 +144,25 @@ class TestDocument(unittest.TestCase):
 
         self.db.session.delete(doc)
         self.db.session.commit()
+
+
+    def test_place_relevance(self):
+        dp1 = DocumentPlace(relevance=0.2)
+        dp2 = DocumentPlace(relevance=0.8)
+        dp3 = DocumentPlace()
+
+        doc = Document()
+        doc.places = [dp1, dp2, dp3]
+
+        self.assertAlmostEqual(doc.places_relevance_threshold(), 0.5, 3)
+
+
+    def test_keyword_relevance(self):
+        dk1 = DocumentKeyword(relevance=0.2)
+        dk2 = DocumentKeyword(relevance=0.8)
+        dk3 = DocumentKeyword()
+
+        doc = Document()
+        doc.keywords = [dk1, dk2, dk3]
+
+        self.assertAlmostEqual(doc.keyword_relevance_threshold(), 0.5, 3)
