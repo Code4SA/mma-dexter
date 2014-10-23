@@ -16,8 +16,11 @@
         $text.affix({
           offset: {
             top: $text.offset().top - 100,
+            bottom: $('footer').outerHeight(true),
           }
         });
+
+        self.resizeArticleContent();
       }
 
       $('.fixed-header')
@@ -52,6 +55,20 @@
       self.highlightEntities($('.document-container .tab-pane.active'));
 
       return self;
+    };
+
+    self.resizeArticleContent = function() {
+      // ensure the article content container fits into the display port when
+      // affixed
+      var $text = $('.article-text');
+      var offset = $('.fixed-header').height() + 50;
+
+      var f = function() {
+        $text.css('max-height', ($(window).height() - offset) + 'px');
+      };
+
+      f();
+      $(window).on('resize', $.debounce(f, 300));
     };
 
     self.highlightOffsets = function(offsets) {

@@ -10,6 +10,15 @@ article, section {
   display: none;
 }
 
+mark {
+  background-color: yellow;
+}
+
+// see https://github.com/twbs/bootstrap/issues/9342
+.affix-bottom {
+  position: relative;
+}
+
 .fixed-header {
   z-index: 9000;
 
@@ -128,7 +137,6 @@ form#edit-person {
   }
 
   .article-text {
-    height: 650px;
     border: 1px solid #ddd;
     padding: 10px;
     overflow-y: auto;
