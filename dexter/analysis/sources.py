@@ -100,10 +100,11 @@ class SourceAnalyser(object):
                 self.analysed_people.itervalues(),
                 key=lambda s: s.source_counts_trend)
 
-        # top 10 trending up
+        # top 10 trending up, most trending first
         self.people_trending_up = [s for s in trending[-10:] if s.source_counts_trend > self.TREND_UP]
+        self.people_trending_up.reverse()
 
-        # top 10 trending down
+        # top 10 trending down, most trending first
         self.people_trending_down = [s for s in trending[:10] if s.source_counts_trend < self.TREND_DOWN]
 
 
