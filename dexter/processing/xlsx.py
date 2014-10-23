@@ -134,17 +134,23 @@ class XLSXBuilder:
 
     def keywords_worksheet(self, wb):
         from dexter.models.views import DocumentsView, DocumentKeywordsView
+        from dexter.models import DocumentKeyword
 
         ws = wb.add_worksheet('raw_keywords')
 
-        tables = OrderedDict()
-        tables['doc'] = DocumentsView
-        tables['keywords'] = DocumentKeywordsView
+        # only get those that are better than the avg relevance
+        subq = db.session.query(
+                    DocumentKeyword.doc_id,
+                    func.avg(DocumentKeyword.relevance).label('avg'))\
+                    .filter(DocumentKeyword.doc_id.in_(self.doc_ids))\
+                    .group_by(DocumentKeyword.doc_id)\
+                    .subquery()
 
-        rows = self.filter(db.session\
-                    .query(*self.merge_views(tables, ['document_id']))\
-                    .join(Document)\
-                    .join(DocumentKeywordsView)).all()
+        rows = db.session.query(DocumentKeywordsView)\
+                    .join(subq, DocumentKeywordsView.c.document_id == subq.columns.doc_id)\
+                    .filter(DocumentKeywordsView.c.relevance >= subq.columns.avg)\
+                    .all()
+
         self.write_table(ws, 'Keywords', rows)
 
     def fairness_worksheet(self, wb):
