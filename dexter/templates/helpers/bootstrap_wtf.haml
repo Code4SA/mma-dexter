@@ -26,8 +26,10 @@
   %span(class_=('has-error' if fld.errors else ''))
     - if chkbox:
       .checkbox
-        = fld(**kwargs)
-        = fld.label()
+        - label_args = {'for': fld.label.field_id}
+        %label(**label_args)
+          = fld(**kwargs)
+          &= fld.label.text
         - if fld.errors:
           %p.help-block
             - for err in fld.errors:

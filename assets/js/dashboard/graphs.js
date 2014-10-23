@@ -245,9 +245,9 @@
 
           // check the matching form element and submit the form
           var cat = $(this).text();
-          $('form.activity-refine .checkbox label').each(function(i) {
-            if ($(this).text() == cat) {
-              $('#' + $(this).attr('for')).prop('checked', true);
+          $('form.activity-refine .checkbox input').each(function(i) {
+            if ($(this).data('problem') == cat) {
+              $(this).prop('checked', true);
             }
           });
 

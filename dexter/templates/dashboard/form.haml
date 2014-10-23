@@ -37,14 +37,14 @@
         = form.problems.label()
         .input-group
           - for fld in form.problems:
-            .checkbox
-              = fld
-              = fld.label()
+            - args = {'data-problem': fld.label.text}
+            = field_input(fld, **args)
       .form-group
         .checkbox
-          = form.flagged
           - kwargs = {"for": 'flagged'}
           %label(**kwargs)
+            - args = {'data-problem': form.flagged.label.text}
+            = form.flagged(**args)
             %i.fa.fa-flag.flag-set.article-flag
             = form.flagged.label.text
 
