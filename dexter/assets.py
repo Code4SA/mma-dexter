@@ -41,6 +41,7 @@ assets.register('js', Bundle(
     'js/jquery-1.10.2.min.js',
     'js/bootstrap-3.2.0.min.js',
     'js/typeahead.bundle-0.10.2.min.js',
+    'js/jquery-throttle-debounce.js',
     'js/ujs.js',
     'js/app.js',
     'js/uservoice.js',
