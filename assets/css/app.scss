@@ -10,6 +10,15 @@ article, section {
   display: none;
 }
 
+mark {
+  background-color: yellow;
+}
+
+// see https://github.com/twbs/bootstrap/issues/9342
+.affix-bottom {
+  position: relative;
+}
+
 .fixed-header {
   z-index: 9000;
 
