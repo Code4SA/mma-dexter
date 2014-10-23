@@ -16,7 +16,6 @@
         $text.affix({
           offset: {
             top: $text.offset().top - 100,
-            bottom: $('footer').outerHeight(true),
           }
         });
 
