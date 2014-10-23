@@ -112,7 +112,7 @@ class DocumentEntity(db.Model, WithOffsets):
     updated_at   = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.current_timestamp())
 
     # offsets in the document, a space-separated list of offset:length pairs.
-    offset_list  = Column(String(2048))
+    offset_list  = Column(String(4096))
 
     # Associations
     entity    = relationship("Entity", lazy=False)
