@@ -7,45 +7,54 @@
       Added
       - if document.created_by:
         by
-        &= document.created_by.short_name()
+        %a(href=url_for('activity', user_id=document.created_by.id))&= document.created_by.short_name()
       on ${document.created_at.strftime('%Y-%m-%d')}
 
-%section
-  .row
-    .col-sm-6
-      .timestamp
-        %i.fa.fa-calendar
-        - if document.published_at:
-          - if document.published_at.hour == 0 and document.published_at.minute == 0:
-            &= document.published_at.strftime('%Y-%m-%d')
-          - else:
-            &= document.published_at.strftime('%Y-%m-%d %H:%M')
-    .col-sm-6
-      .medium
-        %i.fa.fa-building-o
-        - if document.medium:
-          &= document.medium.name
-  .row
-    .col-sm-6
-      .document-type
-        %i.fa.fa-folder
-        - if document.document_type:
-          &= document.document_type.name
-    .col-sm-6
-      - if document.item_num is not None:
-        %i.fa.fa-list-ul
-        Item
-        &= document.item_num
+    - if document.url:
+      - import urllib
+      %li
+        %i.fa.fa-flask
+        %a(href="http://newstools.co.za/index.php/churnalismresults/get?search_url=%s" % urllib.quote(document.url), target="_blank")
+          Check for Churnalism
 
-  .author
-    %i.fa.fa-user
-    - if document.author:
-      - if document.author.person:
-        %a(href=url_for('show_person', id=document.author.person.id))
-          &= document.author.person.name
-      - else:
-        &= document.author.name
-      (${document.author.author_type.name|h})
+    %li
+      .row
+        .col-sm-6
+          .timestamp
+            %i.fa.fa-calendar
+            - if document.published_at:
+              %a(href=url_for('activity', published_at=document.published_at.strftime('%Y-%m-%d')))
+                - if document.published_at.hour == 0 and document.published_at.minute == 0:
+                  &= document.published_at.strftime('%Y-%m-%d')
+                - else:
+                  &= document.published_at.strftime('%Y-%m-%d %H:%M')
+        .col-sm-6
+          .medium
+            %i.fa.fa-building-o
+            - if document.medium:
+              %a(href=url_for('activity', medium_id=document.medium.id))&= document.medium.name
+    %li
+      .row
+        .col-sm-6
+          .document-type
+            %i.fa.fa-folder
+            - if document.document_type:
+              &= document.document_type.name
+        .col-sm-6
+          - if document.item_num is not None:
+            %i.fa.fa-list-ul
+            Item
+            &= document.item_num
+
+    %li.author
+        %i.fa.fa-user
+        - if document.author:
+          - if document.author.person:
+            %a(href=url_for('show_person', id=document.author.person.id))
+              &= document.author.person.name
+          - else:
+            &= document.author.name
+          (${document.author.author_type.name|h})
 
 %section
   %p.article-summary
