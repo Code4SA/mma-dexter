@@ -12,7 +12,7 @@ assets.url        = '/public'
 assets.register('css',
     Bundle(
       'css/bootstrap-3.1.1.min.css',
-      'css/bootstrap-3.1.1-theme.min.css',
+      'css/bootstrap-theme-3.1.1.min.css',
       'css/font-awesome-4.1.0.min.css',
       'css/datepicker3.css',
       'css/bootstrap-datetimepicker.min.css',
