@@ -165,6 +165,7 @@ class DocumentProcessor:
                 doc.analysis_nature = AnalysisNature.query.get(AnalysisNature.SIMPLE)
                 self.process_document(doc)
             except HTTPError as e:
+                self.log.error("Error fetching document: %s" % e, exc_info=e)
                 raise ProcessingError("Error fetching document: %s" % (e,))
 
             # only add a document if it has sources or utterances
