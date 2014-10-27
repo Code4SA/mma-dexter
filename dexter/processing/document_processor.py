@@ -18,6 +18,8 @@ class DocumentProcessor:
     FEED_PASSWORD = None
 
     def __init__(self):
+        self.newstools_crawler = NewstoolsCrawler()
+
         self.crawlers = [
                 MGCrawler(),
                 TimesLiveCrawler(),
@@ -155,18 +157,24 @@ class DocumentProcessor:
                 self.log.info("URL has already been processed, ignoring: %s" % url)
                 return None
 
-            crawler = NewstoolsCrawler()
-            if not crawler.offer(url):
+            if not self.newstools_crawler.offer(url):
                 self.log.info("No medium for URL, ignoring: %s" % url)
                 return
 
             try:
-                doc = crawler.crawl(item)
-                doc.analysis_nature = AnalysisNature.query.get(AnalysisNature.SIMPLE)
-                self.process_document(doc)
+                doc = self.newstools_crawler.crawl(item)
             except HTTPError as e:
                 self.log.error("Error fetching document: %s" % e, exc_info=e)
                 raise ProcessingError("Error fetching document: %s" % (e,))
+
+            # is it sane?
+            if not doc.text or not 'the' in doc.text:
+                self.log.info("Document %s doesn't have reasonable-looking text, ignoring: %s..." % (url, doc.text[0:100]))
+                db.session.rollback()
+                return None
+
+            doc.analysis_nature = AnalysisNature.query.get(AnalysisNature.SIMPLE)
+            self.process_document(doc)
 
             # only add a document if it has sources or utterances
             if doc.sources or doc.utterances:
