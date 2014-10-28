@@ -23,7 +23,7 @@ class NewstoolsCrawler(BaseCrawler):
 
         # ignore citypress non-articles
         if m.domain == 'citypress.co.za':
-          for prefix in ['/category/', '/author/']:
+          for prefix in ['/category/', '/author/', '/entertainment/', '/lifestyle/']:
               if parts.path.startswith(prefix):
                   return False
 
