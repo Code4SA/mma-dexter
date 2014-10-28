@@ -32,6 +32,12 @@ class TestNewstoolsCrawler(unittest.TestCase):
         # ignore IOL world articles
         self.assertEqual(self.crawler.offer('http://www.iol.co.za/news/world/dalai-lama-eyes-mountain-journey-1.1759164'), False)
 
+        # ignore citypress author pages
+        self.assertEqual(self.crawler.offer('http://www.citypress.co.za/author/poloko-tau'), False)
+
+        # ignore citypress category pages
+        self.assertEqual(self.crawler.offer('http://www.citypress.co.za/category/news'), False)
+
     def test_crawl(self):
         item = {'url': 'http://mg.co.za/article/2014-05-22-dont-miss-this-eat-listen-watch', 'text_url': 'http://www.newstools.co.za/data/texts/SFM-9VNENUOQNCNT503VVLYE.txt', 'author': 'M&G Reporters', 'publishdate': '2014-05-23 00:00:00', 'title': "DON'T MISS THIS: Oliver 'Tuku' Mtukudzi, the DStv Delicious Festival and City Hall Sessions"}
 

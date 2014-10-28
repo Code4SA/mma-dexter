@@ -11,7 +11,8 @@ class NewstoolsCrawler(BaseCrawler):
     def offer(self, url):
         """ Can this crawler process this URL?
         We only allow urls we have a medium for. """
-        if Medium.for_url(url) is None:
+        m = Medium.for_url(url)
+        if m is None:
             return False
 
         parts = urlparse(url)
@@ -19,6 +20,12 @@ class NewstoolsCrawler(BaseCrawler):
         # ignore citizen AFP articles
         if parts.path.startswith('/afp_feed_article'):
             return False
+
+        # ignore citypress non-articles
+        if m.domain == 'citypress.co.za':
+          for prefix in ['/category/', '/author/']:
+              if parts.path.startswith(prefix):
+                  return False
 
         # ignore IOL world articles
         if parts.path.startswith('/news/world/'):
