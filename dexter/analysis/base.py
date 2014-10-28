@@ -1,9 +1,10 @@
 from math import sqrt
 from datetime import datetime
 
-from dexter.models import db, Document
+from dexter.models import db, Document, Person
 
 from sqlalchemy.sql import func
+from sqlalchemy.orm import joinedload
 
 
 class BaseAnalyser(object):
@@ -56,6 +57,13 @@ class BaseAnalyser(object):
                 .filter(Document.published_at <= self.end_date.strftime('%Y-%m-%d 23:59:59'))\
                 .all()
             self.doc_ids = [r[0] for r in rows]
+
+    def _lookup_people(self, ids):
+        query = Person.query \
+            .options(joinedload(Person.affiliation)) \
+            .filter(Person.id.in_(ids))
+
+        return dict([p.id, p] for p in query.all())
 
 
 def moving_weighted_avg_zscore(obs, decay=0.8):

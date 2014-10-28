@@ -171,11 +171,3 @@ class SourceAnalyser(BaseAnalyser):
                 .all()
 
         return self._lookup_people([r[0] for r in rows]).values()
-
-
-    def _lookup_people(self, ids):
-        query = Person.query\
-                .options(joinedload(Person.affiliation))\
-                .filter(Person.id.in_(ids))
-
-        return dict([p.id, p] for p in query.all())

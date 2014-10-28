@@ -17,7 +17,7 @@ from wtforms import validators, HiddenField, TextField, SelectMultipleField, Boo
 from wtforms.fields.html5 import DateField
 from .forms import Form, SelectField, MultiCheckboxField, RadioField
 from .processing.xlsx import XLSXBuilder
-from .analysis import SourceAnalyser
+from .analysis import SourceAnalyser, TopicAnalyser
 
 from utils import paginate
 
@@ -167,6 +167,19 @@ def activity_sources():
                            form=form,
                            problem_people=problem_people,
                            source_analyser=sa)
+
+
+@app.route('/activity/topics')
+@login_required
+def activity_topics():
+    form = ActivityForm(request.args)
+
+    ta = TopicAnalyser(doc_ids=form.document_ids())
+    ta.analyse()
+
+    return render_template('dashboard/topics.haml',
+                           form=form,
+                           topic_analyser=ta)
 
 
 class ActivityForm(Form):
