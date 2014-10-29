@@ -185,6 +185,6 @@ class AttachmentImage(db.Model, Image):
     id            = Column(Integer, primary_key=True)
     width         = Column('width', Integer)
     height        = Column('height', Integer)
-    attachment_id = Column(Integer, ForeignKey('attachments.id'), index=True)
+    attachment_id = Column(Integer, ForeignKey('attachments.id', ondelete='CASCADE'), index=True)
 
 Index('attachment_images_w_h_id_ix', AttachmentImage.width, AttachmentImage.height, AttachmentImage.attachment_id, unique=True)
