@@ -21,6 +21,10 @@ class NewstoolsCrawler(BaseCrawler):
         if parts.path.startswith('/afp_feed_article'):
             return False
 
+        # ignore sports
+        if parts.path.startswith('/sports/'):
+            return False
+
         # ignore citypress non-articles
         if m.domain == 'citypress.co.za':
           for prefix in ['/category/', '/author/', '/entertainment/', '/lifestyle/']:
