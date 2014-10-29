@@ -7,16 +7,37 @@
 - import itertools
 
 %section
-  %h3 Topics
+  %h3 Topics for ${topic_analyser.n_documents} articles
 
 %section
-  %ul.topic-list
-    - for topic in topic_analyser.clustered_topics:
-      %li
-        .pull-right.badge.badge-default&= topic.n_documents
-        %h4&= topic.documents[0].title
-        %ul.list-unstyled
-          - best = topic.documents[1:5]
-          - for doc in best:
-            %li
-              %a(href=url_for('show_article', id=doc.id))&= doc.title
+  .topic-list
+    -# process two at a time, so it fits in a row
+    - total = len(topic_analyser.clustered_topics)
+    - for t in xrange(0, total, 2):
+      .row
+        - for topic in (topic_analyser.clustered_topics[i] for i in (t, t+1) if i < total):
+          .col-sm-6
+            .panel.panel-default
+              .panel-heading
+                %h4
+                  %a(href=url_for('show_article', id=topic.documents[0].id))&= topic.documents[0].title
+
+              .panel-body
+                %ul.list-unstyled.articles
+                  - best = topic.documents[1:7]
+                  - for doc in best:
+                    %li
+                      %a(href=url_for('show_article', id=doc.id))&= doc.title
+
+              .panel-footer
+                .row
+                  .col-sm-1&= topic.n_documents
+                  .col-sm-5
+                    .sparkline(dataSparkline=','.join(str(round(i*100.0, 1)) for i in topic.histogram), dataLabel='{point.y}%')
+                  .col-sm-6
+                    %ul.list-inline
+                      - for medium, count in topic.media_counts:
+                        %li
+                          .label.label-default
+                            &= medium.name
+                            &= count
