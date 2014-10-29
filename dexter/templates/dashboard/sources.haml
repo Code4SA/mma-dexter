@@ -7,12 +7,13 @@
 - import itertools
 
 %section
-  %h3 Top People Sources
+  %h3 Top People Sources for ${source_analyser.n_documents} articles
 
 %section
-  %table.table.table-striped.table-condensed.source-analysis
+  %table.table.table-striped.table-condensed.analysis
     %tr
       %th Person
+      %th
       %th.sparkline Source frequency
       %th
       %th Affiliation
@@ -31,9 +32,9 @@
               •
               %span(title=source.person.race.name)&= source.person.race.abbr()
 
+        %td&= source.source_counts_total
         %td.sparkline(dataSparkline=','.join(str(round(i, 0)) for i in source.source_counts), dataLabel='{point.y}%')
         %td.trend
-          &= source.source_counts_total
           = trend_arrow(source.source_counts_trend)
         %td&= source.person.affiliation and source.person.affiliation.name or ''
         %td&= source.utterance_count or ''
@@ -42,9 +43,10 @@
   %h3 Trending People
 
 %section
-  %table.table.table-striped.table-condensed.source-analysis
+  %table.table.table-striped.table-condensed.analysis
     %tr
       %th Person
+      %th
       %th.sparkline Source frequency
       %th
       %th Affiliation
@@ -63,9 +65,9 @@
               •
               %span(title=source.person.race.name)&= source.person.race.abbr()
 
+        %td&= source.source_counts_total
         %td.sparkline(dataSparkline=','.join(str(round(i, 0)) for i in source.source_counts), dataLabel='{point.y}%')
         %td.trend
-          &= source.source_counts_total
           = trend_arrow(source.source_counts_trend)
         %td&= source.person.affiliation and source.person.affiliation.name or ''
         %td&= source.utterance_count or ''
@@ -80,7 +82,7 @@
       %i None
 
   - else:
-    %table.table.table-striped.table-condensed.source-analysis
+    %table.table.table-striped.table-condensed.analysis
       %tr
         %th
         %th Person

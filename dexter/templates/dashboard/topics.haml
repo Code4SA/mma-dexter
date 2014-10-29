@@ -1,0 +1,51 @@
+%%inherit(file="layout.haml")
+%%namespace(file="../helpers/trends.haml", **{'import': '*'})
+
+%%block(name='title')
+  Topics
+
+- import itertools
+
+%section
+  %h3 Topics for ${topic_analyser.n_documents} articles
+
+%section
+  .topic-list
+    -# process two at a time, so it fits in a row
+    - total = len(topic_analyser.clustered_topics)
+    - for t in xrange(0, total, 2):
+      .row
+        - for i, topic in enumerate(topic_analyser.clustered_topics[i] for i in (t, t+1) if i < total):
+          .col-sm-6
+            .panel.panel-default
+              .panel-heading
+                %h4
+                  .badge.badge-default.pull-right&= topic.n_documents
+                  %a(href=url_for('show_article', id=topic.documents[0].id))&= topic.documents[0].title
+
+              .panel-body
+                .trend
+                  .sparkline(dataSparkline=','.join(str(round(i*100.0, 1)) for i in topic.histogram), dataLabel='{point.y}%')
+                  = trend_arrow(topic.trend)
+
+                %ul.list-unstyled.articles
+                  - best = topic.documents[1:7]
+                  - rest = topic.documents[7:]
+                  - for doc in best:
+                    %li
+                      %a(href=url_for('show_article', id=doc.id))&= doc.title
+                  - if rest:
+                    %li
+                      %a(href="#rest-%s" % (i+t), dataToggle='collapse') ... show ${len(rest)} more
+                    .collapse(id='rest-%s' % (i+t))
+                      - for doc in rest:
+                        %li
+                          %a(href=url_for('show_article', id=doc.id))&= doc.title
+
+              .panel-footer
+                %ul.list-inline
+                  - for medium, count in topic.media_counts:
+                    %li
+                      .label.label-default
+                        &= medium.name
+                        &= count

@@ -1,0 +1,67 @@
+%%inherit(file="layout.haml")
+%%namespace(file="../helpers/trends.haml", **{'import': '*'})
+
+%%block(name='title')
+  Mentions
+
+- import itertools
+
+%section
+  %h3 Top Mentioned People for ${topic_analyser.n_documents} articles
+
+%section
+  %table.table.table-striped.table-condensed.analysis
+    %tr
+      %th Person
+      %th
+      %th.sparkline Mentions
+      %th
+      %th Affiliation
+
+    - for topic in topic_analyser.top_people:
+      %tr
+        %td
+          %a(href=url_for('show_person', id=topic.person.id))&= topic.person.name
+          %span.text-muted
+            - if topic.person.gender:
+              •
+              %span(title=topic.person.gender.name)&= topic.person.gender.abbr()
+            - if topic.person.race:
+              •
+              %span(title=topic.person.race.name)&= topic.person.race.abbr()
+
+        %td&= topic.mention_counts_total
+        %td.sparkline(dataSparkline=','.join(str(round(i, 0)) for i in topic.mention_counts), dataLabel='{point.y}%')
+        %td.trend
+          = trend_arrow(topic.mention_counts_trend)
+        %td&= topic.person.affiliation and topic.person.affiliation.name or ''
+
+%section
+  %h3 Trending People
+
+%section
+  %table.table.table-striped.table-condensed.analysis
+    %tr
+      %th Person
+      %th
+      %th.sparkline Mentions
+      %th
+      %th Affiliation
+
+    - for topic in itertools.chain(topic_analyser.people_trending_up, topic_analyser.people_trending_down):
+      %tr
+        %td
+          %a(href=url_for('show_person', id=topic.person.id))&= topic.person.name
+          %span.text-muted
+            - if topic.person.gender:
+              •
+              %span(title=topic.person.gender.name)&= topic.person.gender.abbr()
+            - if topic.person.race:
+              •
+              %span(title=topic.person.race.name)&= topic.person.race.abbr()
+
+        %td&= topic.mention_counts_total
+        %td.sparkline(dataSparkline=','.join(str(round(i, 0)) for i in topic.mention_counts), dataLabel='{point.y}%')
+        %td.trend
+          = trend_arrow(topic.mention_counts_trend)
+        %td&= topic.person.affiliation and topic.person.affiliation.name or ''

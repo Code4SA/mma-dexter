@@ -2,7 +2,7 @@
   margin-top: 10px;
 }
 
-.source-analysis {
+.analysis {
   th.sparkline {
     text-align: center;
   }
@@ -64,6 +64,11 @@
   transform: rotate(-45deg)
 }
 
+.trend-up,
+.trend-down {
+  display: inline-block;
+}
+
 .trend-up {
   color: red;
 }
@@ -74,4 +79,15 @@
 
 .trend-steady {
   color: gray;
+}
+
+.topic-list {
+  h4 {
+    margin: 0px;
+  }
+}
+
+div.sparkline {
+  width: 120px;
+  display: inline-block;
 }
