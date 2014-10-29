@@ -56,7 +56,7 @@ class AlchemyExtractor(BaseExtractor):
             de.count = int(entity['count'])
 
             # do our best to guess occurrences
-            de.offset_list = self.all_offsets(doc.text, e.name)
+            de.offset_list = self.all_offsets(doc.text, e.name)[:100]
 
             if doc.add_entity(de):
                 entities_added += 1

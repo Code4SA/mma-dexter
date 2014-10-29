@@ -45,7 +45,7 @@ class CalaisExtractor(BaseExtractor):
                 de.entity = e
                 de.relevance = float(ent['relevance'])
                 de.count = len(ent['instances'])
-                for occurrence in ent['instances']:
+                for occurrence in ent['instances'][:100]:
                     de.add_offset((occurrence['offset'], occurrence['length']))
 
                 if doc.add_entity(de):
