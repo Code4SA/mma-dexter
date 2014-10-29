@@ -43,6 +43,10 @@ class AlchemyExtractor(BaseExtractor):
         utterances_added = 0
 
         for entity in entities:
+            # ignore short names
+            if len(entity['text']) < 2:
+                continue
+
             # entity
             e = Entity.get_or_create(self.normalise_name(entity['type']), entity['text'])
 

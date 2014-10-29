@@ -36,7 +36,7 @@ class CalaisExtractor(BaseExtractor):
             group = self.normalise_name(group)
 
             for ent in group_ents.itervalues():
-                if not 'name' in ent:
+                if not 'name' in ent or len(ent['name']) < 2:
                     continue
 
                 e = Entity.get_or_create(group, ent['name'])
