@@ -169,15 +169,15 @@ def activity_sources():
                            source_analyser=sa)
 
 
-@app.route('/activity/topics')
+@app.route('/activity/mentions')
 @login_required
-def activity_topics():
+def activity_mentions():
     form = ActivityForm(request.args)
 
     ta = TopicAnalyser(doc_ids=form.document_ids())
     ta.analyse()
 
-    return render_template('dashboard/topics.haml',
+    return render_template('dashboard/mentions.haml',
                            form=form,
                            topic_analyser=ta)
 

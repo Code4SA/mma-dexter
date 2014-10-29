@@ -14,8 +14,8 @@
         %li(class_=('active' if request.url_rule.endpoint == 'activity_sources' else ''))
           %a(href=url_for('activity_sources', **request.args)) Sources
 
-        %li(class_=('active' if request.url_rule.endpoint == 'activity_topics' else ''))
-          %a(href=url_for('activity_topics', **request.args)) Topics
+        %li(class_=('active' if request.url_rule.endpoint == 'activity_mentions' else ''))
+          %a(href=url_for('activity_mentions', **request.args)) Mentions
 
         %li(class_=('active' if request.url_rule.endpoint == 'activity_map' else ''))
           %a(href=url_for('activity_map', **request.args)) Map
