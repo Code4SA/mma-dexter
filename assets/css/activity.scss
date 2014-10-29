@@ -64,6 +64,11 @@
   transform: rotate(-45deg)
 }
 
+.trend-up,
+.trend-down {
+  display: inline-block;
+}
+
 .trend-up {
   color: red;
 }
@@ -80,4 +85,9 @@
   h4 {
     margin: 0px;
   }
+}
+
+div.sparkline {
+  width: 120px;
+  display: inline-block;
 }

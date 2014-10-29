@@ -200,10 +200,10 @@ class TopicAnalyser(BaseAnalyser):
             media = dict(collections.Counter([d.medium for d in cluster_docs]))
             topic.media_counts = sorted(media.items(), key=lambda p: p[1], reverse=True)
 
-            # TODO: trend analysis on clusters
             # publication dates
-            topic.histogram = self.date_histogram((d.published_at for d in cluster_docs),
-                                                  normalise_with=day_counts)
+            topic.histogram = self.date_histogram((d.published_at for d in cluster_docs))
+            topic.trend = moving_weighted_avg_zscore(topic.histogram)
+            topic.histogram = self.normalise_histogram(topic.histogram, day_counts)
 
             self.clustered_topics.append(topic)
 
@@ -230,23 +230,22 @@ class TopicAnalyser(BaseAnalyser):
 
         return clusters, lda_model
 
-    def date_histogram(self, dates, normalise_with=None):
+    def date_histogram(self, dates):
         """
         Bucketize an iterable of datetime instances across the period
         covered by this analysis.
 
         :param dates: iterable of datetime instances
-        :param normalise_with: histogram of counts with which to normalise the new histogram
         :return: a list of counts per day
         """
         histo = [0] * (self.days+1)
         for d in dates:
             day = (d.date() - self.start_date).days
             histo[day] += 1
+        return histo
 
-        if normalise_with is not None:
-            for i, n in enumerate(normalise_with):
-                if n > 0:
-                    histo[i] = float(histo[i]) / n
-
+    def normalise_histogram(self, histo, norm):
+        for i, n in enumerate(norm):
+            if n > 0:
+                histo[i] = float(histo[i]) / n
         return histo

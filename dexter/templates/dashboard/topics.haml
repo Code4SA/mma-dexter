@@ -20,9 +20,14 @@
             .panel.panel-default
               .panel-heading
                 %h4
+                  .badge.badge-default.pull-right&= topic.n_documents
                   %a(href=url_for('show_article', id=topic.documents[0].id))&= topic.documents[0].title
 
               .panel-body
+                .trend
+                  .sparkline(dataSparkline=','.join(str(round(i*100.0, 1)) for i in topic.histogram), dataLabel='{point.y}%')
+                  = trend_arrow(topic.trend)
+
                 %ul.list-unstyled.articles
                   - best = topic.documents[1:7]
                   - rest = topic.documents[7:]
@@ -38,14 +43,9 @@
                           %a(href=url_for('show_article', id=doc.id))&= doc.title
 
               .panel-footer
-                .row
-                  .col-sm-1&= topic.n_documents
-                  .col-sm-5
-                    .sparkline(dataSparkline=','.join(str(round(i*100.0, 1)) for i in topic.histogram), dataLabel='{point.y}%')
-                  .col-sm-6
-                    %ul.list-inline
-                      - for medium, count in topic.media_counts:
-                        %li
-                          .label.label-default
-                            &= medium.name
-                            &= count
+                %ul.list-inline
+                  - for medium, count in topic.media_counts:
+                    %li
+                      .label.label-default
+                        &= medium.name
+                        &= count
