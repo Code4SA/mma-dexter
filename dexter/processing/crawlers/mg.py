@@ -17,6 +17,7 @@ class MGCrawler(BaseCrawler):
 
     def canonicalise_url(self, url):
         """ Strip anchors, etc. """
+        url = super(MGCrawler, self).canonicalise_url(url)
         parts = urlparse(url)
 
         # force http, strip www, strip trailing slash

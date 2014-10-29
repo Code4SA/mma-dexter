@@ -17,6 +17,7 @@ class IOLCrawler(BaseCrawler):
 
     def canonicalise_url(self, url):
         """ Strip anchors, etc. """
+        url = super(IOLCrawler, self).canonicalise_url(url)
         parts = urlparse(url)
 
         # force http, www, remove trailing slash, anchors

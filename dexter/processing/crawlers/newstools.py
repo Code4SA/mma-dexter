@@ -22,7 +22,7 @@ class NewstoolsCrawler(BaseCrawler):
             return False
 
         # ignore sports
-        if parts.path.startswith('/sports/'):
+        if parts.path.startswith('/sports/') or parts.path.startswith('/sport/'):
             return False
 
         # ignore citypress non-articles

@@ -32,6 +32,9 @@ class TestNewstoolsCrawler(unittest.TestCase):
         # ignore IOL world articles
         self.assertEqual(self.crawler.offer('http://www.iol.co.za/news/world/dalai-lama-eyes-mountain-journey-1.1759164'), False)
 
+        # ignore IOL sports
+        self.assertEqual(self.crawler.offer('http://www.iol.co.za:80/sport/soccer/premier-league/austin-leads-rangers-to-victory-1.1771381'), False)
+
         # ignore citypress author pages
         self.assertEqual(self.crawler.offer('http://www.citypress.co.za/author/poloko-tau'), False)
 

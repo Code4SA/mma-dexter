@@ -18,6 +18,7 @@ class News24Crawler(BaseCrawler):
 
     def canonicalise_url(self, url):
         """ Strip anchors, etc. """
+        url = super(News24Crawler, self).canonicalise_url(url)
         parts = urlparse(url)
 
         # force http, force www

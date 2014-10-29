@@ -17,6 +17,7 @@ class DailysunCrawler(BaseCrawler):
 
     def canonicalise_url(self, url):
         """ Strip anchors, etc. """
+        url = super(DailysunCrawler, self).canonicalise_url(url)
         parts = urlparse(url)
 
         # force http, strip www, strip trailing slash

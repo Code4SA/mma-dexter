@@ -17,6 +17,8 @@ class CitizenCrawler(BaseCrawler):
 
     def canonicalise_url(self, url):
         """ Strip anchors, etc. """
+        url = super(CitizenCrawler, self).canonicalise_url(url)
+        
         parts = urlparse(url)
 
         # force http, strip www, enforce trailing slash

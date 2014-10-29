@@ -16,9 +16,10 @@ class BaseCrawler(object):
     def canonicalise_url(self, url):
         """ Strip anchors, etc."""
         parts = urlparse(url)
+        netloc = parts.netloc.strip(':80')
 
         # force http, strip trailing slash, anchors etc.
-        return urlunparse(['http', parts.netloc, parts.path.rstrip('/'), parts.params, parts.query, None])
+        return urlunparse(['http', netloc, parts.path.rstrip('/'), parts.params, parts.query, None])
 
     def crawl(self, doc):
         """ Crawl this document. """
