@@ -175,9 +175,22 @@ def activity_mentions():
     form = ActivityForm(request.args)
 
     ta = TopicAnalyser(doc_ids=form.document_ids())
-    ta.analyse()
+    ta.find_top_people()
 
     return render_template('dashboard/mentions.haml',
+                           form=form,
+                           topic_analyser=ta)
+
+
+@app.route('/activity/topics')
+@login_required
+def activity_topics():
+    form = ActivityForm(request.args)
+
+    ta = TopicAnalyser(doc_ids=form.document_ids())
+    ta.find_topics()
+
+    return render_template('dashboard/topics.haml',
                            form=form,
                            topic_analyser=ta)
 

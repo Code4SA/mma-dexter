@@ -1,0 +1,22 @@
+%%inherit(file="layout.haml")
+%%namespace(file="../helpers/trends.haml", **{'import': '*'})
+
+%%block(name='title')
+  Topics
+
+- import itertools
+
+%section
+  %h3 Topics
+
+%section
+  %ul.topic-list
+    - for topic in topic_analyser.clustered_topics:
+      %li
+        .pull-right.badge.badge-default&= topic.n_documents
+        %h4&= topic.documents[0].title
+        %ul.list-unstyled
+          - best = topic.documents[1:5]
+          - for doc in best:
+            %li
+              %a(href=url_for('show_article', id=doc.id))&= doc.title

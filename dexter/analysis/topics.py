@@ -1,4 +1,5 @@
 from math import sqrt
+import collections
 
 from itertools import groupby
 from datetime import datetime
@@ -8,7 +9,10 @@ from dexter.analysis.base import BaseAnalyser, moving_weighted_avg_zscore
 from dexter.models import db, Document, DocumentEntity, Person, Utterance, Entity
 
 from sqlalchemy.sql import func, distinct, or_, desc
-from sqlalchemy.orm import joinedload
+from sqlalchemy.orm import subqueryload
+
+class AnalysedMention(object):
+    pass
 
 
 class AnalysedTopic(object):
@@ -23,8 +27,9 @@ class TopicAnalyser(BaseAnalyser):
     def __init__(self, doc_ids=None, start_date=None, end_date=None):
         super(TopicAnalyser, self).__init__(doc_ids, start_date, end_date)
         self.top_people = None
+        self.clustered_topics = None
 
-    def analyse(self):
+    def find_top_people(self):
         self._load_people_mentions()
         self._analyse_people_mentions()
 
@@ -48,7 +53,7 @@ class TopicAnalyser(BaseAnalyser):
 
         self.analysed_people = {}
         for pid, person in self.people.iteritems():
-            topic = AnalysedTopic()
+            topic = AnalysedMention()
             topic.person = person
             topic.mention_counts = mention_counts[pid]
             topic.mention_counts_total = sum(topic.mention_counts)
@@ -121,3 +126,94 @@ class TopicAnalyser(BaseAnalyser):
                 freqs[person_id][day] = n
 
         return freqs
+
+    def find_topics(self):
+        """
+        Run clustering on these documents and identify common topics.
+
+        We use latent Dirichlet allocation (LDA) to cluster the documents
+        into an arbitrary number of clusters. We then find the strongest
+        clusters and pull representative documents for each cluster.
+
+        Clustering is based on the people and entities mentioned in the documents,
+        rather than raw text. This is based on the assumption that Opencalais and
+        AlchemyAPI have already done the work to identify pertinent things
+        and concepts in the documents, so rely on those rather than on
+        arbitrary words.
+
+        The results are stored in `clustered_topics`.
+
+        See also: https://github.com/ariddell/lda
+        """
+        from sklearn.feature_extraction import DictVectorizer
+        import numpy
+
+        # TODO: load the documents
+        # TODO: factor people into cluster calcs
+        # TODO: cluster
+        # TODO: find best clusters
+        # TODO: find documents indicative of those clusters
+
+        # load documents and their entities
+        docs = Document.query\
+            .options(subqueryload('entities'))\
+            .filter(Document.id.in_(self.doc_ids))\
+            .all()
+
+        # guess at the number of topics, between 1 and 50
+        n_topics = max(min(50, len(docs)/5), 1)
+
+        # list of entity maps for each document, from entity name to occurrence count
+        entities = [dict(('%s-%s' % (de.entity.group, de.entity.name), de.count or 1)
+                         for de in d.entities) for d in docs]
+        vec = DictVectorizer(sparse=False)
+
+        # TODO: we should ideally use sparse, but it causes the lda library to fail
+        entity_vector = vec.fit_transform(entities)
+
+        clusters, lda_model = self._run_lda(entity_vector, n_topics)
+
+        # generate topic info
+        self.clustered_topics = []
+        for cluster in clusters.itervalues():
+            # cluster is a list of (doc-index, score) pairs
+
+            # sort each cluster to put top-scoring docs first
+            cluster.sort(key=lambda p: p[1], reverse=True)
+            # top 20 of each cluster are used to characterize the cluster
+            best = cluster[0:20]
+
+            topic = AnalysedTopic()
+            # score is the average score of the best docs in the cluster
+            topic.score = numpy.average([p[1] for p in best])
+            topic.documents = [docs[i] for i, _ in best]
+            topic.n_documents = len(cluster)
+
+            self.clustered_topics.append(topic)
+
+    def _run_lda(self, data, n_topics):
+        """
+        Run LDA algorithm.
+
+        :param data: sparse vector of document features
+        :param n_topics: number of topics we want
+        :return: map from topic label (int) to list of (doc-index, score) tuples of documents
+                 in that topic cluster.
+        """
+        import lda
+
+        lda_model = lda.LDA(n_topics=n_topics, n_iter=200, random_state=1)
+        lda_model.fit(data)
+
+        clusters = collections.defaultdict(list)
+        # doc_topic_ are the per-topic scores for each document
+        for i, scores in enumerate(lda_model.doc_topic_):
+            label = scores.argmax()
+            score = scores[label]
+            clusters[label].append((i, score))
+
+        return clusters, lda_model
+
+
+
+
