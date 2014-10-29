@@ -27,6 +27,8 @@ class BaseAnalyser(object):
         self._calculate_date_range()
         self._fetch_doc_ids()
 
+        self.n_documents = len(self.doc_ids)
+
     def _calculate_date_range(self):
         """
         The date range is the range of publication dates for the given

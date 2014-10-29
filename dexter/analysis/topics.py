@@ -148,17 +148,19 @@ class TopicAnalyser(BaseAnalyser):
         from sklearn.feature_extraction import DictVectorizer
         import numpy
 
-        # TODO: load the documents
         # TODO: factor people into cluster calcs
-        # TODO: cluster
-        # TODO: find best clusters
-        # TODO: find documents indicative of those clusters
+
+        self.clustered_topics = []
 
         # load documents and their entities
         docs = Document.query\
-            .options(subqueryload('entities'))\
+            .options(subqueryload('entities'),
+                     subqueryload('medium'))\
             .filter(Document.id.in_(self.doc_ids))\
             .all()
+
+        if not docs:
+            return
 
         # guess at the number of topics, between 1 and 50
         n_topics = max(min(50, len(docs)/5), 1)
@@ -173,6 +175,9 @@ class TopicAnalyser(BaseAnalyser):
 
         clusters, lda_model = self._run_lda(entity_vector, n_topics)
 
+        # for normalising histograms
+        day_counts = self.date_histogram(d.published_at for d in docs)
+
         # generate topic info
         self.clustered_topics = []
         for cluster in clusters.itervalues():
@@ -180,6 +185,8 @@ class TopicAnalyser(BaseAnalyser):
 
             # sort each cluster to put top-scoring docs first
             cluster.sort(key=lambda p: p[1], reverse=True)
+
+            cluster_docs = [docs[p[0]] for p in cluster]
             # top 20 of each cluster are used to characterize the cluster
             best = cluster[0:20]
 
@@ -188,6 +195,15 @@ class TopicAnalyser(BaseAnalyser):
             topic.score = numpy.average([p[1] for p in best])
             topic.documents = [docs[i] for i, _ in best]
             topic.n_documents = len(cluster)
+
+            # media counts
+            media = dict(collections.Counter([d.medium for d in cluster_docs]))
+            topic.media_counts = sorted(media.items(), key=lambda p: p[1], reverse=True)
+
+            # TODO: trend analysis on clusters
+            # publication dates
+            topic.histogram = self.date_histogram((d.published_at for d in cluster_docs),
+                                                  normalise_with=day_counts)
 
             self.clustered_topics.append(topic)
 
@@ -214,6 +230,23 @@ class TopicAnalyser(BaseAnalyser):
 
         return clusters, lda_model
 
+    def date_histogram(self, dates, normalise_with=None):
+        """
+        Bucketize an iterable of datetime instances across the period
+        covered by this analysis.
 
+        :param dates: iterable of datetime instances
+        :param normalise_with: histogram of counts with which to normalise the new histogram
+        :return: a list of counts per day
+        """
+        histo = [0] * (self.days+1)
+        for d in dates:
+            day = (d.date() - self.start_date).days
+            histo[day] += 1
 
+        if normalise_with is not None:
+            for i, n in enumerate(normalise_with):
+                if n > 0:
+                    histo[i] = float(histo[i]) / n
 
+        return histo
