@@ -24,7 +24,7 @@ class CitizenCrawler(BaseCrawler):
         if not path.endswith('/'):
             path = path + '/'
 
-        return urlunparse(['http', 'citizen.co.za', path, parts.params, parts.query, None])
+        return urlunparse(['http', 'citizen.co.za', path, parts.params, None, None])
 
     def extract(self, doc, raw_html):
         """ Extract text and other things from the raw_html for this document. """

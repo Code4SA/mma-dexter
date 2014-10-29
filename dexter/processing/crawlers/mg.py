@@ -20,7 +20,7 @@ class MGCrawler(BaseCrawler):
         parts = urlparse(url)
 
         # force http, strip www, strip trailing slash
-        return urlunparse(['http', 'mg.co.za', parts.path.rstrip('/'), parts.params, parts.query, None])
+        return urlunparse(['http', 'mg.co.za', parts.path.rstrip('/'), parts.params, None, None])
 
     def fetch(self, url):
         url = url.replace("article", "print")

@@ -21,7 +21,7 @@ class News24Crawler(BaseCrawler):
         parts = urlparse(url)
 
         # force http, force www
-        return urlunparse(['http', 'www.news24.com', parts.path, parts.params, parts.query, None])
+        return urlunparse(['http', 'www.news24.com', parts.path, parts.params, None, None])
 
     def extract(self, doc, raw_html):
         """ Extract text and other things from the raw_html for this document. """

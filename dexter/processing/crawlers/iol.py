@@ -20,7 +20,7 @@ class IOLCrawler(BaseCrawler):
         parts = urlparse(url)
 
         # force http, www, remove trailing slash, anchors
-        return urlunparse(['http', 'www.iol.co.za', parts.path.rstrip('/'), parts.params, parts.query, None])
+        return urlunparse(['http', 'www.iol.co.za', parts.path.rstrip('/'), parts.params, None, None])
 
     def extract(self, doc, raw_html):
         """ Extract text and other things from the raw_html for this document. """
