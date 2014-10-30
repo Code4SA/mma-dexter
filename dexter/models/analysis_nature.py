@@ -11,15 +11,15 @@ from .support import db
 from wtforms import StringField, TextAreaField, BooleanField, validators, DateTimeField, HiddenField
 from ..forms import Form, MultiCheckboxField, IntegerField, SelectField, RadioField, YesNoField
 
-class SimpleAnalysisForm(Form):
+class AnchorAnalysisForm(Form):
     """
-    Simple (automated) analysis of a document
+    Anchor (automated) analysis of a document
     """
     flagged             = BooleanField('Flagged')
     notes               = TextAreaField('Notes')
 
 
-class ElectionsAnalysisForm(SimpleAnalysisForm):
+class ElectionsAnalysisForm(AnchorAnalysisForm):
     """
     Analysis of a document from an elections standpoint.
     """
@@ -102,10 +102,10 @@ class AnalysisNature(db.Model):
 
     ELECTIONS = 1
     CHILDREN  = 2
-    SIMPLE    = 3
+    ANCHOR    = 3
 
     FORMS = {
-        SIMPLE   : SimpleAnalysisForm,
+        ANCHOR   : AnchorAnalysisForm,
         ELECTIONS: ElectionsAnalysisForm,
         CHILDREN : ChildrenAnalysisForm,
     }
@@ -113,7 +113,7 @@ class AnalysisNature(db.Model):
     ICONS = {
         ELECTIONS: 'fa-university',
         CHILDREN : 'fa-child',
-        SIMPLE   : 'fa-dot-circle-o',
+        ANCHOR   : 'fa-dot-circle-o',
     }
 
     id          = Column(Integer, primary_key=True)
@@ -171,11 +171,11 @@ class AnalysisNature(db.Model):
         children.id = cls.CHILDREN
         children.name = 'children'
 
-        simple = AnalysisNature()
-        simple.id = cls.SIMPLE
-        simple.name = 'simple'
+        anchor = AnalysisNature()
+        anchor.id = cls.ANCHOR
+        anchor.name = 'anchor'
 
-        return [elections, children, simple]
+        return [elections, children, anchor]
 
     @classmethod
     def all(cls):

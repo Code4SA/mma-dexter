@@ -216,7 +216,7 @@ def edit_article_analysis(id):
 
         forms = [form] + new_sources + source_forms + fairness_forms
         if all(f.validate() for f in forms):
-            if nature != AnalysisNature.SIMPLE:
+            if nature != AnalysisNature.ANCHOR:
                 # convert issue id's to Issue objects
                 form.issues.data = [Issue.query.get_or_404(i) for i in form.issues.data]
 
@@ -260,7 +260,7 @@ def edit_article_analysis(id):
             else:
                 flash('Please correct the problems below and try again.', 'warning')
     else:
-        if nature != AnalysisNature.SIMPLE:
+        if nature != AnalysisNature.ANCHOR:
             # wtforms turns None values into None, which sucks
             if form.topic_id.data == 'None':
                 form.topic_id.data = ''

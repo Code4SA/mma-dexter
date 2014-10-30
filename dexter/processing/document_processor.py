@@ -179,7 +179,7 @@ class DocumentProcessor:
                 db.session.rollback()
                 return None
 
-            doc.analysis_nature = AnalysisNature.query.get(AnalysisNature.SIMPLE)
+            doc.analysis_nature = AnalysisNature.query.get(AnalysisNature.ANCHOR)
             self.process_document(doc)
 
             # only add a document if it has sources or utterances
