@@ -59,9 +59,15 @@ class DocumentProcessor:
 
         try:
             self.crawl(doc)
+        except HTTPError as e:
+            self.log.warn("Error fetching %s: %s" % (url, e), exc_info=e)
+            raise ProcessingError("Error fetching document %s: %s" % (url, e))
+
+        try:
             self.process_document(doc)
         except HTTPError as e:
-            raise ProcessingError("Error fetching document: %s" % (e,))
+            self.log.warn("Error processing %s: %s" % (url, e), exc_info=e)
+            raise ProcessingError("Error processing document %s: %s" % (url, e))
 
         return doc
 
