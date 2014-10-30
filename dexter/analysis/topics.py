@@ -172,29 +172,37 @@ class TopicAnalyser(BaseAnalyser):
 
         # TODO: we should ideally use sparse, but it causes the lda library to fail
         entity_vector = vec.fit_transform(entities)
+        features = numpy.array(vec.feature_names_)
 
         clusters, lda_model = self._run_lda(entity_vector, n_topics)
+        del entity_vector
+        del vec
 
         # for normalising histograms
         day_counts = self.date_histogram(d.published_at for d in docs)
 
         # generate topic info
-        self.clustered_topics = []
-        for cluster in clusters.itervalues():
+        for i, cluster in clusters.iteritems():
             # cluster is a list of (doc-index, score) pairs
 
             # sort each cluster to put top-scoring docs first
+            # TODO: this isn't great, because scores for each document
+            # for the same cluster can't really be compared. We
+            # need a better way of doing this.
             cluster.sort(key=lambda p: p[1], reverse=True)
-
             cluster_docs = [docs[p[0]] for p in cluster]
-            # top 20 of each cluster are used to characterize the cluster
-            best = cluster[0:20]
 
             topic = AnalysedTopic()
-            # score is the average score of the best docs in the cluster
-            topic.score = numpy.average([p[1] for p in best])
-            topic.documents = [docs[i] for i, _ in best]
+            topic.documents = cluster_docs
             topic.n_documents = len(cluster)
+
+            # top 8 features for this topic as (feature, weight) pairs
+            indexes = numpy.argsort(lda_model.components_[i])[:-8:-1]
+            topic.features = zip(features[indexes], lda_model.components_[i][indexes])
+
+            # top 20 of each cluster are used to characterize the cluster
+            best = cluster[0:20]
+            topic.score = numpy.average([p[1] for p in best])
 
             # media counts
             media = dict(collections.Counter([d.medium for d in cluster_docs]))
@@ -206,6 +214,12 @@ class TopicAnalyser(BaseAnalyser):
             topic.histogram = self.normalise_histogram(topic.histogram, day_counts)
 
             self.clustered_topics.append(topic)
+
+        # sort clusters by size
+        self.clustered_topics.sort(key=lambda t: topic.n_documents, reverse=True)
+
+        # keep only the clusters with a score >= 0.5
+        self.clustered_topics = [t for t in self.clustered_topics if t.score >= 0.5]
 
     def _run_lda(self, data, n_topics):
         """

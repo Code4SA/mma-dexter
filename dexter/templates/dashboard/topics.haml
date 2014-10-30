@@ -7,45 +7,79 @@
 - import itertools
 
 %section
-  %h3 Topics for ${topic_analyser.n_documents} articles
+  .pull-right
+    %label.control-label
+      Sort by:
+    .btn-group.sort-buttons(dataToggle='buttons')
+      %label.btn.btn-default.active
+        Size
+        %input(name="sort", type="radio", value="-size", checked=True)
+      %label.btn.btn-default
+        %i.fa.fa-star
+        %i.fa.fa-star
+        %i.fa.fa-star-o
+        %input(name="sort", type="radio", value="-score")
+      %label.btn.btn-default
+        Trending up
+        = trend_arrow(1)
+        %input(name="sort", type="radio", value="-trend")
+      %label.btn.btn-default
+        Trending down
+        = trend_arrow(-1)
+        %input(name="sort", type="radio", value="trend")
+
+  %h3 Best ${len(topic_analyser.clustered_topics)} topics for ${topic_analyser.n_documents} articles
 
 %section
-  .topic-list
+  %ul.topic-list
     -# process two at a time, so it fits in a row
-    - total = len(topic_analyser.clustered_topics)
-    - for t in xrange(0, total, 2):
-      .row
-        - for i, topic in enumerate(topic_analyser.clustered_topics[i] for i in (t, t+1) if i < total):
-          .col-sm-6
-            .panel.panel-default
-              .panel-heading
+    - for i, topic in enumerate(topic_analyser.clustered_topics):
+      %li.topic(dataScore=topic.score, dataSize=topic.n_documents, dataTrend=topic.trend)
+        .panel.panel-default
+          .panel-heading
+            .row
+              .col-sm-9
                 %h4
-                  .badge.badge-default.pull-right&= topic.n_documents
                   %a(href=url_for('show_article', id=topic.documents[0].id))&= topic.documents[0].title
+              .col-sm-3.text-right
+                .badge.badge-default&= topic.n_documents
+                .score.text-muted(title=topic.score)
+                  - pivot = int(round(3 * topic.score, 0))
+                  - for i in xrange(3):
+                    - if i < pivot:
+                      %i.fa.fa-star
+                    - else:
+                      %i.fa.fa-star-o
 
-              .panel-body
-                .trend
-                  .sparkline(dataSparkline=','.join(str(round(i*100.0, 1)) for i in topic.histogram), dataLabel='{point.y}%')
-                  = trend_arrow(topic.trend)
+          .panel-body
+            .trend
+              .sparkline(dataSparkline=','.join(str(round(i*100.0, 1)) for i in topic.histogram), dataLabel='{point.y}%')
+              = trend_arrow(topic.trend)
 
-                %ul.list-unstyled.articles
-                  - best = topic.documents[1:7]
-                  - rest = topic.documents[7:]
-                  - for doc in best:
+            %ul.list-unstyled.articles
+              - best = topic.documents[1:7]
+              - rest = topic.documents[7:]
+              - for doc in best:
+                %li
+                  %a(href=url_for('show_article', id=doc.id))&= doc.title
+              - if rest:
+                %li
+                  %a(href="#rest-%s" % (i), dataToggle='collapse') ... show ${len(rest)} more
+                .collapse(id='rest-%s' % (i))
+                  - for doc in rest:
                     %li
                       %a(href=url_for('show_article', id=doc.id))&= doc.title
-                  - if rest:
-                    %li
-                      %a(href="#rest-%s" % (i+t), dataToggle='collapse') ... show ${len(rest)} more
-                    .collapse(id='rest-%s' % (i+t))
-                      - for doc in rest:
-                        %li
-                          %a(href=url_for('show_article', id=doc.id))&= doc.title
 
-              .panel-footer
-                %ul.list-inline
-                  - for medium, count in topic.media_counts:
-                    %li
-                      .label.label-default
-                        &= medium.name
-                        &= count
+          .panel-footer
+            %ul.list-inline.features
+              - for feat in topic.features:
+                %li
+                  - group, name = feat[0].split('-', 1)
+                  %a(href=url_for('show_entity', group=group, name=name), title='%s, %s' % (group, str(round(feat[1], 2))))&= name
+            %p
+              %ul.list-inline.media
+                - for medium, count in topic.media_counts:
+                  %li
+                    .label.label-default
+                      &= medium.name
+                      &= count

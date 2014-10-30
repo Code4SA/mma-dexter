@@ -82,8 +82,18 @@
 }
 
 .topic-list {
+  padding-left: 0px;
+  list-style: none;
+
   h4 {
     margin: 0px;
+  }
+
+  li.topic {
+    display: inline-block;
+    width: 48%;
+    margin-right: 10px;
+    vertical-align: top;
   }
 }
 
