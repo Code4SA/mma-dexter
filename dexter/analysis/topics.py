@@ -28,7 +28,7 @@ class TopicAnalyser(BaseAnalyser):
         super(TopicAnalyser, self).__init__(doc_ids, start_date, end_date)
         self.top_people = None
         self.clustered_topics = None
-        self.topic_score_threshold = 0.5
+        self.topic_score_threshold = 0.6
 
     def find_top_people(self):
         self._load_people_mentions()

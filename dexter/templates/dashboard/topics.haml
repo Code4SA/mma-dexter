@@ -56,8 +56,8 @@
               = trend_arrow(topic.trend)
 
             %ul.list-unstyled.articles
-              - best = topic.documents[1:7]
-              - rest = topic.documents[7:]
+              - best = topic.documents[1:6]
+              - rest = topic.documents[6:]
               - for doc in best:
                 %li
                   %a(href=url_for('show_article', id=doc.id))&= doc.title
