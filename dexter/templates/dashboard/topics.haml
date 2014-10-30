@@ -43,7 +43,7 @@
                   %a(href=url_for('show_article', id=topic.documents[0].id))&= topic.documents[0].title
               .col-sm-3.text-right
                 .badge.badge-default&= topic.n_documents
-                .score.text-muted(title=topic.score)
+                .score.text-muted(title='quality: %s' % topic.score)
                   - pivot = int(round(3 * topic.score, 0))
                   - for i in xrange(3):
                     - if i < pivot:
