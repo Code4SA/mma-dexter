@@ -44,9 +44,8 @@
               .col-sm-3.text-right
                 .badge.badge-default&= topic.n_documents
                 .score.text-muted(title='quality: %s' % topic.score)
-                  - pivot = int(round(3 * topic.score, 0))
-                  - for i in xrange(3):
-                    - if i < pivot:
+                  - for star in xrange(3):
+                    - if star < topic.stars:
                       %i.fa.fa-star
                     - else:
                       %i.fa.fa-star-o
@@ -64,8 +63,8 @@
                   %a(href=url_for('show_article', id=doc.id))&= doc.title
               - if rest:
                 %li
-                  %a(href="#rest-%s" % (i), dataToggle='collapse') ... show ${len(rest)} more
-                .collapse(id='rest-%s' % (i))
+                  %a(href="#rest-%s" % i, dataToggle='collapse') ... show ${len(rest)} more
+                .collapse(id='rest-%s' % i)
                   - for doc in rest:
                     %li
                       %a(href=url_for('show_article', id=doc.id))&= doc.title

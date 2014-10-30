@@ -28,6 +28,7 @@ class TopicAnalyser(BaseAnalyser):
         super(TopicAnalyser, self).__init__(doc_ids, start_date, end_date)
         self.top_people = None
         self.clustered_topics = None
+        self.topic_score_threshold = 0.5
 
     def find_top_people(self):
         self._load_people_mentions()
@@ -203,6 +204,8 @@ class TopicAnalyser(BaseAnalyser):
             # top 20 of each cluster are used to characterize the cluster
             best = cluster[0:20]
             topic.score = numpy.average([p[1] for p in best])
+            # score for this topic as stars, from 0 to 3
+            topic.stars = int(round(3.0 * (topic.score - self.topic_score_threshold) / self.topic_score_threshold, 0))
 
             # media counts
             media = dict(collections.Counter([d.medium for d in cluster_docs]))
@@ -213,13 +216,14 @@ class TopicAnalyser(BaseAnalyser):
             topic.trend = moving_weighted_avg_zscore(topic.histogram)
             topic.histogram = self.normalise_histogram(topic.histogram, day_counts)
 
+
             self.clustered_topics.append(topic)
 
         # sort clusters by size
         self.clustered_topics.sort(key=lambda t: topic.n_documents, reverse=True)
 
-        # keep only the clusters with a score >= 0.5
-        self.clustered_topics = [t for t in self.clustered_topics if t.score >= 0.5]
+        # keep only the clusters with a score >= self.topic_score_threshold
+        self.clustered_topics = [t for t in self.clustered_topics if t.score >= self.topic_score_threshold]
 
     def _run_lda(self, data, n_topics):
         """
