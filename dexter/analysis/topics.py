@@ -219,11 +219,11 @@ class TopicAnalyser(BaseAnalyser):
 
             self.clustered_topics.append(topic)
 
-        # sort clusters by size
-        self.clustered_topics.sort(key=lambda t: topic.n_documents, reverse=True)
-
         # keep only the clusters with a score >= self.topic_score_threshold
         self.clustered_topics = [t for t in self.clustered_topics if t.score >= self.topic_score_threshold]
+
+        # sort clusters by size
+        self.clustered_topics.sort(key=lambda t: t.score, reverse=True)
 
     def _run_lda(self, data, n_topics):
         """

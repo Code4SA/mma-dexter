@@ -12,13 +12,13 @@
       Sort by:
     .btn-group.sort-buttons(dataToggle='buttons')
       %label.btn.btn-default.active
-        Size
-        %input(name="sort", type="radio", value="-size", checked=True)
-      %label.btn.btn-default
         %i.fa.fa-star
         %i.fa.fa-star
         %i.fa.fa-star-o
-        %input(name="sort", type="radio", value="-score")
+        %input(name="sort", type="radio", value="-score", checked=True)
+      %label.btn.btn-default
+        Size
+        %input(name="sort", type="radio", value="-size")
       %label.btn.btn-default
         Trending up
         = trend_arrow(1)
