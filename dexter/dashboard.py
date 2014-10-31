@@ -185,6 +185,18 @@ def activity_mentions():
 @app.route('/activity/topics')
 @login_required
 def activity_topics():
+    # topics take a while to build, so this
+    # just returns a shell view which calls back for
+    # the actual HTML via ajax, served by activity_topics_detail
+    form = ActivityForm(request.args)
+
+    return render_template('dashboard/topics.haml',
+                           form=form)
+
+
+@app.route('/activity/topics/detail')
+@login_required
+def activity_topics_detail():
     form = ActivityForm(request.args)
 
     ta = TopicAnalyser(doc_ids=form.document_ids())
@@ -192,8 +204,7 @@ def activity_topics():
     ta.save()
     db.session.commit()
 
-    return render_template('dashboard/topics.haml',
-                           form=form,
+    return render_template('dashboard/topics_detail.haml',
                            topic_analyser=ta)
 
 

@@ -4,81 +4,8 @@
 %%block(name='title')
   Topics
 
-- import itertools
+.topics-container
+  %h3 Crunching topics for ${len(form.document_ids())} articles, hang tight...
 
-%section
-  .pull-right
-    %label.control-label
-      Sort by:
-    .btn-group.sort-buttons(dataToggle='buttons')
-      %label.btn.btn-default.active
-        %i.fa.fa-star
-        %i.fa.fa-star
-        %i.fa.fa-star-o
-        %input(name="sort", type="radio", value="-score", checked=True)
-      %label.btn.btn-default
-        Size
-        %input(name="sort", type="radio", value="-size")
-      %label.btn.btn-default
-        Trending up
-        = trend_arrow(1)
-        %input(name="sort", type="radio", value="-trend")
-      %label.btn.btn-default
-        Trending down
-        = trend_arrow(-1)
-        %input(name="sort", type="radio", value="trend")
-
-  %h3 Best ${len(topic_analyser.clustered_topics)} topics for ${topic_analyser.n_documents} articles
-
-%section
-  %ul.topic-list
-    -# process two at a time, so it fits in a row
-    - for i, topic in enumerate(topic_analyser.clustered_topics):
-      %li.topic(dataScore=topic.score, dataSize=len(topic), dataTrend=topic.trend)
-        .panel.panel-default
-          .panel-heading
-            .row
-              .col-sm-9
-                %h4
-                  %a(href=url_for('activity', cluster_id=topic.id))&= topic.documents[0].title
-              .col-sm-3.text-right
-                .badge.badge-default&= len(topic)
-                .score.text-muted(title='quality: %s' % topic.score)
-                  - for star in xrange(3):
-                    - if star < topic.stars:
-                      %i.fa.fa-star
-                    - else:
-                      %i.fa.fa-star-o
-
-          .panel-body
-            .trend
-              .sparkline(dataSparkline=','.join(str(round(i*100.0, 1)) for i in topic.histogram), dataLabel='{point.y}%')
-              = trend_arrow(topic.trend)
-
-            %ul.list-unstyled.articles
-              - best = topic.documents[:6]
-              - rest = topic.documents[6:]
-              - for doc in best:
-                %li
-                  %a(href=url_for('show_article', id=doc.id))&= doc.title
-              - if rest:
-                %li
-                  %a(href="#rest-%s" % i, dataToggle='collapse') ... show ${len(rest)} more
-                .collapse(id='rest-%s' % i)
-                  - for doc in rest:
-                    %li
-                      %a(href=url_for('show_article', id=doc.id))&= doc.title
-
-          .panel-footer
-            %ul.list-inline.features
-              - for feat in topic.features:
-                %li
-                  - group, name = feat[0].split('-', 1)
-                  %a(href=url_for('show_entity', group=group, name=name), title='%s, %s' % (group, str(round(feat[1], 2))))&= name
-            %p
-              %ul.list-inline.media
-                - for medium, count in topic.media_counts:
-                  %li
-                    .label.label-default
-                      &= medium.name
-                      &= count
+  .loading-indicator
+    %i.fa.fa-spinner.fa-5x
