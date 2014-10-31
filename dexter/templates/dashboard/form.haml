@@ -9,7 +9,7 @@
         Refine
 
     .panel-body
-      .form-group
+      .form-group.analysis_nature(class_='hidden' if form.cluster_id.data else '')
         .btn-group(dataToggle='buttons')
           - for fld in form.analysis_nature_id:
             %label.btn.btn-default(class_='active' if fld.checked else '', title=fld.label.text)
@@ -25,7 +25,6 @@
               &= form.cluster().fingerprint[0:8]
               %a.remove-cluster(href='#')
                 %i.fa.fa-times
-
 
       = vertical_field(form.user_id)
       = vertical_field(form.country_id)

@@ -16,6 +16,7 @@
       e.preventDefault();
 
       self.$form.find('input[name=cluster_id]').val('');
+      self.$form.find('.analysis_nature').removeClass('hidden');
       self.$form.find('.cluster').remove();
     };
 

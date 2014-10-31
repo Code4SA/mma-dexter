@@ -199,7 +199,7 @@ def activity_topics():
 
 class ActivityForm(Form):
     cluster_id  = HiddenField('Cluster')
-    analysis_nature_id = RadioField('Analysis', default=default_analysis_nature_id)
+    analysis_nature_id = RadioField('Analysis', default=AnalysisNature.ANCHOR)
     user_id     = SelectField('User', [validators.Optional()], default='')
     medium_id   = SelectMultipleField('Medium', [validators.Optional()], default='') 
     country_id  = SelectField('Country', [validators.Optional()], default=default_country_id)
@@ -219,6 +219,10 @@ class ActivityForm(Form):
         self.medium_id.choices = [(str(m.id), m.name) for m in Medium.query.order_by(Medium.name).all()]
         self.analysis_nature_id.choices = [[str(n.id), n.name] for n in AnalysisNature.all()]
         self.country_id.choices = [['', '(any)']] + [[str(c.id), c.name] for c in Country.all()]
+
+        # override the analysis nature id if we have a cluster
+        if self.cluster_id.data:
+            self.analysis_nature_id.data = str(self.cluster().members[0].document.analysis_nature_id)
 
         # dynamic default
         if not self.created_at.data and not self.published_at.data\
