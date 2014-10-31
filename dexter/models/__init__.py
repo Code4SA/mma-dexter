@@ -18,3 +18,4 @@ from .children import SourceRole, SourceAge
 from .principle import Principle
 from .attachment import DocumentAttachment, AttachmentImage
 from .country import Country
+from .cluster import Cluster, ClusteredDocument

@@ -189,6 +189,8 @@ def activity_topics():
 
     ta = TopicAnalyser(doc_ids=form.document_ids())
     ta.find_topics()
+    ta.save()
+    db.session.commit()
 
     return render_template('dashboard/topics.haml',
                            form=form,

@@ -34,7 +34,7 @@
   %ul.topic-list
     -# process two at a time, so it fits in a row
     - for i, topic in enumerate(topic_analyser.clustered_topics):
-      %li.topic(dataScore=topic.score, dataSize=topic.n_documents, dataTrend=topic.trend)
+      %li.topic(dataScore=topic.score, dataSize=len(topic), dataTrend=topic.trend)
         .panel.panel-default
           .panel-heading
             .row
@@ -42,7 +42,7 @@
                 %h4
                   %a(href=url_for('show_article', id=topic.documents[0].id))&= topic.documents[0].title
               .col-sm-3.text-right
-                .badge.badge-default&= topic.n_documents
+                .badge.badge-default&= len(topic)
                 .score.text-muted(title='quality: %s' % topic.score)
                   - for star in xrange(3):
                     - if star < topic.stars:

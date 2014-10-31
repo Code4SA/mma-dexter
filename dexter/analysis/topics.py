@@ -1,15 +1,13 @@
-from math import sqrt
 import collections
-
 from itertools import groupby
-from datetime import datetime
 from dateutil.parser import parse
 
 from dexter.analysis.base import BaseAnalyser, moving_weighted_avg_zscore
-from dexter.models import db, Document, DocumentEntity, Person, Utterance, Entity
+from dexter.models import db, Document, DocumentEntity, Entity, Cluster, ClusteredDocument
 
-from sqlalchemy.sql import func, distinct, or_, desc
+from sqlalchemy.sql import func, distinct
 from sqlalchemy.orm import subqueryload
+
 
 class AnalysedMention(object):
     pass
@@ -34,6 +32,14 @@ class TopicAnalyser(BaseAnalyser):
         self._load_people_mentions()
         self._analyse_people_mentions()
 
+    def save(self):
+        """
+        Save analysis into the DB. This does NOT commit the transaction.
+        """
+        if self.clustered_topics:
+            for t in self.clustered_topics:
+                db.session.add(t)
+
     def _load_people_mentions(self):
         """
         Load all people mentions data for this period.
@@ -54,11 +60,11 @@ class TopicAnalyser(BaseAnalyser):
 
         self.analysed_people = {}
         for pid, person in self.people.iteritems():
-            topic = AnalysedMention()
-            topic.person = person
-            topic.mention_counts = mention_counts[pid]
-            topic.mention_counts_total = sum(topic.mention_counts)
-            self.analysed_people[pid] = topic
+            mention = AnalysedMention()
+            mention.person = person
+            mention.mention_counts = mention_counts[pid]
+            mention.mention_counts_total = sum(mention.mention_counts)
+            self.analysed_people[pid] = mention
 
         # normalize by total counts per day
         totals = [0] * (self.days+1)
@@ -183,41 +189,38 @@ class TopicAnalyser(BaseAnalyser):
         day_counts = self.date_histogram(d.published_at for d in docs)
 
         # generate topic info
-        for i, cluster in clusters.iteritems():
+        for i, clustering in clusters.iteritems():
             # cluster is a list of (doc-index, score) pairs
 
             # sort each cluster to put top-scoring docs first
             # TODO: this isn't great, because scores for each document
             # for the same cluster can't really be compared. We
             # need a better way of doing this.
-            cluster.sort(key=lambda p: p[1], reverse=True)
-            cluster_docs = [docs[p[0]] for p in cluster]
+            clustering.sort(key=lambda p: p[1], reverse=True)
+            cluster_docs = [docs[p[0]] for p in clustering]
 
-            topic = AnalysedTopic()
-            topic.documents = cluster_docs
-            topic.n_documents = len(cluster)
+            cluster = Cluster.find_or_create(docs=cluster_docs)
 
-            # top 8 features for this topic as (feature, weight) pairs
+            # top 8 features for this cluster as (feature, weight) pairs
             indexes = numpy.argsort(lda_model.components_[i])[:-8:-1]
-            topic.features = zip(features[indexes], lda_model.components_[i][indexes])
+            cluster.features = zip(features[indexes], lda_model.components_[i][indexes])
 
             # top 20 of each cluster are used to characterize the cluster
-            best = cluster[0:20]
-            topic.score = numpy.average([p[1] for p in best])
-            # score for this topic as stars, from 0 to 3
-            topic.stars = int(round(3.0 * (topic.score - self.topic_score_threshold) / self.topic_score_threshold, 0))
+            best = clustering[0:20]
+            cluster.score = numpy.average([p[1] for p in best])
+            # score for this cluster as stars, from 0 to 3
+            cluster.stars = int(round(3.0 * (cluster.score - self.topic_score_threshold) / self.topic_score_threshold, 0))
 
             # media counts
             media = dict(collections.Counter([d.medium for d in cluster_docs]))
-            topic.media_counts = sorted(media.items(), key=lambda p: p[1], reverse=True)
+            cluster.media_counts = sorted(media.items(), key=lambda p: p[1], reverse=True)
 
             # publication dates
-            topic.histogram = self.date_histogram((d.published_at for d in cluster_docs))
-            topic.trend = moving_weighted_avg_zscore(topic.histogram)
-            topic.histogram = self.normalise_histogram(topic.histogram, day_counts)
+            cluster.histogram = self.date_histogram((d.published_at for d in cluster_docs))
+            cluster.trend = moving_weighted_avg_zscore(cluster.histogram)
+            cluster.histogram = self.normalise_histogram(cluster.histogram, day_counts)
 
-
-            self.clustered_topics.append(topic)
+            self.clustered_topics.append(cluster)
 
         # keep only the clusters with a score >= self.topic_score_threshold
         self.clustered_topics = [t for t in self.clustered_topics if t.score >= self.topic_score_threshold]
