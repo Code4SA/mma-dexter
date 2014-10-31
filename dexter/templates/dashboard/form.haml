@@ -16,6 +16,17 @@
               = fld()
               %i.fa(class_=AnalysisNature.ICONS.get(int(fld.data)))
 
+      = form.cluster_id
+      - if form.cluster_id.data:
+        .form-group.cluster
+          %label.control-label
+            Cluster
+            %code
+              &= form.cluster().fingerprint[0:8]
+              %a.remove-cluster(href='#')
+                %i.fa.fa-times
+
+
       = vertical_field(form.user_id)
       = vertical_field(form.country_id)
       = vertical_field(form.medium_id, class_='select2')

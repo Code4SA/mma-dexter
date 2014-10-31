@@ -198,6 +198,7 @@ def activity_topics():
 
 
 class ActivityForm(Form):
+    cluster_id  = HiddenField('Cluster')
     analysis_nature_id = RadioField('Analysis', default=default_analysis_nature_id)
     user_id     = SelectField('User', [validators.Optional()], default='')
     medium_id   = SelectMultipleField('Medium', [validators.Optional()], default='') 
@@ -207,7 +208,7 @@ class ActivityForm(Form):
     problems       = MultiCheckboxField('Article problems', [validators.Optional()], choices=DocumentAnalysisProblem.for_select())
     flagged        = BooleanField('flagged')
     has_url        = RadioField('hasurl', [validators.Optional()], choices=[('1', 'with URL'), ('0', 'without URL')])
-    format         = HiddenField('format', default='html') 
+    format         = HiddenField('format', default='html')
 
     def __init__(self, *args, **kwargs):
         super(ActivityForm, self).__init__(*args, **kwargs)
@@ -220,7 +221,9 @@ class ActivityForm(Form):
         self.country_id.choices = [['', '(any)']] + [[str(c.id), c.name] for c in Country.all()]
 
         # dynamic default
-        if not self.created_at.data and not self.published_at.data and not self.user_id.data and not self.medium_id.data:
+        if not self.created_at.data and not self.published_at.data\
+            and not self.user_id.data and not self.medium_id.data\
+            and not self.cluster_id.data:
             self.published_at.data = ' - '.join(d.strftime("%Y/%m/%d") for d in [datetime.utcnow() - timedelta(days=14), datetime.utcnow()])
 
 
@@ -243,6 +246,11 @@ class ActivityForm(Form):
     def analysis_nature(self):
         if self.analysis_nature_id.data:
             return AnalysisNature.query.get(self.analysis_nature_id.data)
+        return None
+
+    def cluster(self):
+        if self.cluster_id.data:
+            return Cluster.query.get(self.cluster_id.data)
         return None
 
 
@@ -285,6 +293,10 @@ class ActivityForm(Form):
 
     def filter_query(self, query):
         query = query.filter(Document.analysis_nature_id == self.analysis_nature_id.data)
+
+        if self.cluster_id.data:
+            query = query.join(ClusteredDocument)\
+                         .filter(ClusteredDocument.cluster_id == self.cluster_id.data)
 
         if self.medium_id.data:
             query = query.filter(Document.medium_id.in_(self.medium_id.data))

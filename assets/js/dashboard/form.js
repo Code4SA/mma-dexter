@@ -7,19 +7,29 @@
     var self = this;
 
     self.init = function() {
-      $('form.activity-refine .btn.download').on('click', function(e) {
-        e.preventDefault();
+      self.$form = $('form.activity-refine');
+      self.$form.find('.btn.download').on('click', self.download);
+      self.$form.find('.remove-cluster').on('click', self.removeCluster);
+    };
 
-        var $form = $('form.activity-refine');
-        var old_action = $form.attr('action');
+    self.removeCluster = function(e) {
+      e.preventDefault();
 
-        $form.append('<input type="hidden" name="format" value="xlsx">');
-        $form.attr('action', '/activity');
-        $form.submit();
+      self.$form.find('input[name=cluster_id]').val('');
+      self.$form.find('.cluster').remove();
+    };
 
-        $form.attr('action', old_action);
-        $('input[name="format"]', $form).remove();
-      });
+    self.download = function(e) {
+      e.preventDefault();
+
+      var old_action = self.$form.attr('action');
+
+      self.$form.append('<input type="hidden" name="format" value="xlsx">');
+      self.$form.attr('action', '/activity');
+      self.$form.submit();
+
+      self.$form.attr('action', old_action);
+      $('input[name="format"]', self.$form).remove();
     };
   };
 })(jQuery, window);
