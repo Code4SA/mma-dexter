@@ -81,7 +81,7 @@ class ClusteredDocument(db.Model):
     doc_id     = Column(Integer, ForeignKey('documents.id', ondelete='CASCADE'), index=True, nullable=False)
 
     # associations
-    document   = relationship("Document", backref='clusters')
+    document   = relationship("Document", backref='clusters', lazy=False)
 
     def __repr__(self):
         return "<ClusteredDocument id=%s, cluster=%s, document=%s>" % (self.id, self.cluster, self.document,)
