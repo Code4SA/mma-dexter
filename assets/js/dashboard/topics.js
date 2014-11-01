@@ -15,6 +15,8 @@
         .load('/activity/topics/detail' + window.location.search, function(text, status, req) {
           if (status === 'error') {
             $('.topics-container .loading-indicator').html("<h3>Something went wrong :(</h3><h3>We can't yet find topics for more than about 2000 documents at a time.</h3>");
+          } else {
+            $('*[data-sparkline]').sparkline();
           }
         });
     };
