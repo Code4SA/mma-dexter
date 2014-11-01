@@ -97,19 +97,25 @@ $(function() {
     return new Highcharts.Chart(options, callback);
   };
 
-  $('*[data-sparkline]').each(function(i, e) {
-    var $e = $(e);
+  $.fn.sparkline = function(options) {
+    this.each(function(i, e) {
+      var $e = $(e);
 
-    var opts = {
-      series: [{
-        data: $.map($e.data('sparkline').split(','), parseFloat),
-      }]
-    };
+      var opts = {
+        series: [{
+          data: $.map($e.data('sparkline').split(','), parseFloat),
+        }]
+      };
 
-    if ($e.data('label')) {
-      opts.tooltip = {pointFormat: $e.data('label')};
-    }
+      if ($e.data('label')) {
+        opts.tooltip = {pointFormat: $e.data('label')};
+      }
 
-    $e.highcharts('SparkLine', opts);
-  });
+      opts = Highcharts.merge(opts, options);
+
+      $e.highcharts('SparkLine', opts);
+    });
+  };
+
+  $('*[data-sparkline]').sparkline();
 });
