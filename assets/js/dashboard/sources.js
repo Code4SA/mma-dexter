@@ -12,7 +12,7 @@
 
     self.toggleUtterances = function(e) {
       e.preventDefault();
-      $(this).parent().parent().next().toggleClass('hidden');
+      $(this).parent().parent().next('.utterances').toggleClass('hidden');
     };
   };
 })(jQuery, window);

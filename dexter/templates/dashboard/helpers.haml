@@ -20,9 +20,13 @@
     %td&= source.person.affiliation and source.person.affiliation.name or ''
     %td
       %a.show-utterances(href="#")&= source.utterance_count or ''
+
   - if utterances:
     %tr.utterances.hidden
       %td(colspan="7")
         %ul.unstyled-list
           - for u in utterances:
-            %li&= u.quote
+            %li
+              - if u.count > 1:
+                %span.badge.badge-default&= u.count
+              &= u.quote
