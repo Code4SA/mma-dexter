@@ -7,6 +7,12 @@
     var self = this;
 
     self.init = function() {
+      $('a.show-utterances').on('click', self.toggleUtterances);
+    };
+
+    self.toggleUtterances = function(e) {
+      e.preventDefault();
+      $(this).parent().parent().next('.utterances').toggleClass('hidden');
     };
   };
 })(jQuery, window);

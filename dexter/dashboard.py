@@ -158,6 +158,8 @@ def activity_sources():
 
     sa = SourceAnalyser(doc_ids=form.document_ids())
     sa.analyse()
+    sa.load_utterances()
+
 
     # problem sources
     problem_people = sa.find_problem_people()

@@ -1,5 +1,6 @@
 from math import sqrt
-from itertools import groupby
+from collections import defaultdict
+from itertools import groupby, chain
 from datetime import datetime
 from dateutil.parser import parse
 
@@ -14,6 +15,10 @@ class AnalysedSource(object):
     pass
 
 
+class AnalysedUtterance(object):
+    pass
+
+
 class SourceAnalyser(BaseAnalyser):
     """
     Helper that runs analyses on document sources.
@@ -24,10 +29,50 @@ class SourceAnalyser(BaseAnalyser):
         self.top_people = None
         self.people_trending_up = None
         self.people_trending_down = None
+        self.person_utterances = None
 
     def analyse(self):
         self._load_people_sources()
         self._analyse_people_sources()
+
+
+    def load_utterances(self):
+        """ Find utterances for the sources we've analysed.
+        Sets `person_utterances`, a map from person id to 
+        `AnalysedUtterance` instances.
+        """
+        ids = [src.person.id for src in chain(self.top_people, self.people_trending_up, self.people_trending_down)]
+
+        utterances = Utterance.query\
+                      .join(Entity)\
+                      .filter(Entity.person_id.in_(ids))\
+                      .filter(Utterance.doc_id.in_(self.doc_ids))\
+                      .order_by(Entity.person_id)\
+                      .all()
+
+        self.person_utterances = {}
+        for person_id, group in groupby(utterances, lambda u: u.entity.person_id):
+            for_person = []
+
+            for utterance in group:
+                # are any ones we already have similar?
+                dup = False
+                for au in for_person:
+                    # checking levenshtein similarity is too slow
+                    if au.quote == utterance.quote:
+                        # it's similar
+                        au.count += 1
+                        dup = True
+                        break
+
+                if not dup:
+                    au = AnalysedUtterance()
+                    au.quote = utterance.quote
+                    au.count = 1
+                    for_person.append(au)
+
+            for_person.sort(key=lambda au: au.count, reverse=True)
+            self.person_utterances[person_id] = for_person[0:10]
 
 
     def _load_people_sources(self):

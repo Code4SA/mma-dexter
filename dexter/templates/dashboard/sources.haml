@@ -1,4 +1,5 @@
 %%inherit(file="layout.haml")
+%%namespace(file="helpers.haml", **{'import': '*'})
 %%namespace(file="../helpers/trends.haml", **{'import': '*'})
 
 %%block(name='title')
@@ -22,24 +23,7 @@
         %i.fa.fa-comment(title='Quotations')
 
     - for i, source in enumerate(source_analyser.top_people):
-      %tr
-        %td.rank ${i+1}.
-        %td
-          %a(href=url_for('show_person', id=source.person.id))&= source.person.name
-          %span.text-muted
-            - if source.person.gender:
-              •
-              %span(title=source.person.gender.name)&= source.person.gender.abbr()
-            - if source.person.race:
-              •
-              %span(title=source.person.race.name)&= source.person.race.abbr()
-
-        %td&= source.source_counts_total
-        %td.sparkline(dataSparkline=','.join(str(round(i, 0)) for i in source.source_counts), dataLabel='{point.y}%')
-        %td.trend
-          = trend_arrow(source.source_counts_trend)
-        %td&= source.person.affiliation and source.person.affiliation.name or ''
-        %td&= source.utterance_count or ''
+      = show_source(i, source, source_analyser.person_utterances[source.person.id])
 
 %section
   %h3 Trending People
@@ -58,24 +42,7 @@
 
     - for group in [source_analyser.people_trending_up, source_analyser.people_trending_down]:
       - for i, source in enumerate(group):
-        %tr
-          %td.rank ${i+1}.
-          %td
-            %a(href=url_for('show_person', id=source.person.id))&= source.person.name
-            %span.text-muted
-              - if source.person.gender:
-                •
-                %span(title=source.person.gender.name)&= source.person.gender.abbr()
-              - if source.person.race:
-                •
-                %span(title=source.person.race.name)&= source.person.race.abbr()
-
-          %td&= source.source_counts_total
-          %td.sparkline(dataSparkline=','.join(str(round(i, 0)) for i in source.source_counts), dataLabel='{point.y}%')
-          %td.trend
-            = trend_arrow(source.source_counts_trend)
-          %td&= source.person.affiliation and source.person.affiliation.name or ''
-          %td&= source.utterance_count or ''
+        = show_source(i, source, source_analyser.person_utterances[source.person.id])
 
 
 %section

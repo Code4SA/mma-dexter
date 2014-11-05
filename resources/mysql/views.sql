@@ -34,6 +34,38 @@ from
   left join affiliations ap on ap.code = substring_index(a.code, '.', 1)
 ;
 
+-- person_utterances_view:
+--   aggregate all utterances from document source people
+create or replace view person_utterances_view as
+select
+  p.name as `person`,
+  r.name as `race`,
+  g.name as `gender`,
+  a.name as `affiliation`,
+  a.code as `affiliation_code`,
+  -- affiliation parent
+  ap.name as `affiliation_group`,
+  ap.code as `affiliation_group_code`,
+  sf.name as `function`,
+  sr.name as `role`,
+  u.quote,
+  p.id as `person_id`,
+  ds.doc_id as `document_id`,
+  ds.id as `document_source_id`
+from
+  document_sources ds
+  inner join people p on ds.person_id = p.id
+  inner join entities e on e.person_id = p.id
+  inner join utterances u on u.doc_id = ds.doc_id and u.entity_id = e.id
+  left join genders g on p.gender_id = g.id
+  left join races r on p.race_id = r.id
+  left join affiliations a on ds.affiliation_id = a.id
+  left join source_functions sf on ds.source_function_id = sf.id
+  left join source_roles sr on ds.source_role_id = sr.id
+  left join source_ages sa on ds.source_age_id = sa.id
+  left join affiliations ap on ap.code = substring_index(a.code, '.', 1)
+;
+
 -- documents_view:
 --   aggregate scalar information for all documents
 create or replace view documents_view as select 

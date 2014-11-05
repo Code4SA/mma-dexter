@@ -51,6 +51,7 @@ class XLSXBuilder:
 
         self.documents_worksheet(workbook)
         self.sources_worksheet(workbook)
+        self.utterances_worksheet(workbook)
         self.places_worksheet(workbook)
         self.keywords_worksheet(workbook)
         self.everything_worksheet(workbook)
@@ -131,6 +132,14 @@ class XLSXBuilder:
                     .join(Document)\
                     .join(DocumentSourcesView)).all()
         self.write_table(ws, 'Sources', rows)
+
+    def utterances_worksheet(self, wb):
+        from dexter.models.views import PersonUtterancesView
+
+        ws = wb.add_worksheet('quotations')
+
+        rows = self.filter(db.session.query(PersonUtterancesView).join(Document)).all()
+        self.write_table(ws, 'Quotations', rows)
 
     def keywords_worksheet(self, wb):
         from dexter.models.views import DocumentsView, DocumentKeywordsView
