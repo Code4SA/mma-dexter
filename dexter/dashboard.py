@@ -520,7 +520,7 @@ class ActivityChartHelper:
         n = float(db.session\
                 .query(func.avg(subq.c.count))\
                 .select_from(subq)\
-                .scalar())
+                .scalar() or 0)
         counts['average-sources-per-document'] = round(n, 2)
 
         return {

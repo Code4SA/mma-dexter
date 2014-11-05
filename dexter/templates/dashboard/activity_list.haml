@@ -13,6 +13,8 @@
           %th
           %th.title Title
           %th.published_at Published on
+          %th
+            %i(title='sources').fa.fa-user
           %th.medium Medium
 
         - for doc in group:
@@ -43,5 +45,8 @@
                 %i.article-flag.fa.fa-flag.flag-set(title=doc.notes or 'Article has been flagged')
             %td.published_at
               &=doc.published_at.strftime('%e %B %Y')
+            %td
+              - if len(doc.sources) > 0:
+                %span(title='sources')&=len(doc.sources)
             %td.medium
               %span.label.label-default&=doc.medium.name
