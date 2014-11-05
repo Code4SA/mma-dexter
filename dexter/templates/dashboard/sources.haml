@@ -12,6 +12,7 @@
 %section
   %table.table.table-striped.table-condensed.analysis
     %tr
+      %th
       %th Person
       %th
       %th.sparkline Source frequency
@@ -20,8 +21,9 @@
       %th
         %i.fa.fa-comment(title='Quotations')
 
-    - for source in source_analyser.top_people:
+    - for i, source in enumerate(source_analyser.top_people):
       %tr
+        %td.rank ${i+1}.
         %td
           %a(href=url_for('show_person', id=source.person.id))&= source.person.name
           %span.text-muted
@@ -45,6 +47,7 @@
 %section
   %table.table.table-striped.table-condensed.analysis
     %tr
+      %th
       %th Person
       %th
       %th.sparkline Source frequency
@@ -53,24 +56,26 @@
       %th
         %i.fa.fa-comment(title='Quotations')
 
-    - for source in itertools.chain(source_analyser.people_trending_up, source_analyser.people_trending_down):
-      %tr
-        %td
-          %a(href=url_for('show_person', id=source.person.id))&= source.person.name
-          %span.text-muted
-            - if source.person.gender:
-              •
-              %span(title=source.person.gender.name)&= source.person.gender.abbr()
-            - if source.person.race:
-              •
-              %span(title=source.person.race.name)&= source.person.race.abbr()
+    - for group in [source_analyser.people_trending_up, source_analyser.people_trending_down]:
+      - for i, source in enumerate(group):
+        %tr
+          %td.rank ${i+1}.
+          %td
+            %a(href=url_for('show_person', id=source.person.id))&= source.person.name
+            %span.text-muted
+              - if source.person.gender:
+                •
+                %span(title=source.person.gender.name)&= source.person.gender.abbr()
+              - if source.person.race:
+                •
+                %span(title=source.person.race.name)&= source.person.race.abbr()
 
-        %td&= source.source_counts_total
-        %td.sparkline(dataSparkline=','.join(str(round(i, 0)) for i in source.source_counts), dataLabel='{point.y}%')
-        %td.trend
-          = trend_arrow(source.source_counts_trend)
-        %td&= source.person.affiliation and source.person.affiliation.name or ''
-        %td&= source.utterance_count or ''
+          %td&= source.source_counts_total
+          %td.sparkline(dataSparkline=','.join(str(round(i, 0)) for i in source.source_counts), dataLabel='{point.y}%')
+          %td.trend
+            = trend_arrow(source.source_counts_trend)
+          %td&= source.person.affiliation and source.person.affiliation.name or ''
+          %td&= source.utterance_count or ''
 
 
 %section
@@ -84,17 +89,17 @@
   - else:
     %table.table.table-striped.table-condensed.analysis
       %tr
-        %th
         %th Person
+        %th
         %th Gender
         %th Race
         %th Affiliation
 
       - for person in problem_people:
         %tr
-          %td&= source_analyser.analysed_people[person.id].source_counts_total
           %td
             %a(href=url_for('show_person', id=person.id))&= person.name
+          %td&= source_analyser.analysed_people[person.id].source_counts_total
           %td&= person.gender and person.gender.name or ''
           %td&= person.race and person.race.name or ''
           %td&= person.affiliation and person.affiliation.name or ''
