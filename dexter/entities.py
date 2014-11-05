@@ -59,7 +59,7 @@ def show_person(id):
             [[str(e.id), '%s (%s, %d)' % (e.name, e.group, e.id)] for e in person.entities],
             key=lambda t: t[1])
 
-    if request.method == 'POST' and current_user.admin:
+    if request.method == 'POST':
         if form.validate():
             form.populate_obj(person)
 
@@ -70,7 +70,7 @@ def show_person(id):
             if person.affiliation_id == '':
                 person.affiliation_id = None
 
-            if form.reset_affiliation.data == True:
+            if current_user.admin and form.reset_affiliation.data == True:
                 # change affiliation in ALL documents
                 person.reset_all_affiliations()
 

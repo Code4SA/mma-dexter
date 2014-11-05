@@ -47,7 +47,8 @@
               .row
                 .col-sm-8
                   = vertical_field(form.affiliation_id, class_='select2')
-                  = field_input(form.reset_affiliation)
+                  - if current_user.admin:
+                    = field_input(form.reset_affiliation)
               .row
                 .col-sm-4
                   = vertical_field(form.gender_id)
@@ -69,10 +70,9 @@
                   &= person.race.name
                 - else:
                   &= "unknown race"
-              - if current_user.admin:
-                %span.edit-link
-                  \—
-                  %a.edit(href="#") Edit
+              %span.edit-link
+                \—
+                %a.edit(href="#") Edit
 
           .col-sm-6
             .aliases-controls
