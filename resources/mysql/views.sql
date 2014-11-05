@@ -39,6 +39,8 @@ from
 create or replace view person_utterances_view as
 select
   p.name as `person`,
+  r.name as `race`,
+  g.name as `gender`,
   a.name as `affiliation`,
   a.code as `affiliation_code`,
   -- affiliation parent
@@ -55,6 +57,8 @@ from
   inner join people p on ds.person_id = p.id
   inner join entities e on e.person_id = p.id
   inner join utterances u on u.doc_id = ds.doc_id and u.entity_id = e.id
+  left join genders g on p.gender_id = g.id
+  left join races r on p.race_id = r.id
   left join affiliations a on ds.affiliation_id = a.id
   left join source_functions sf on ds.source_function_id = sf.id
   left join source_roles sr on ds.source_role_id = sr.id
