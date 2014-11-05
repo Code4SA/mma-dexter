@@ -510,6 +510,19 @@ class ActivityChartHelper:
                 .filter(or_(Document.url == None, Document.url == '')))
         counts['without-url'] = query.scalar()
 
+        # average people sources per document
+        subq = self.filter(db.session\
+                .query(func.count(DocumentSource.doc_id).label('count'))\
+                .join(Document, DocumentSource.doc_id == Document.id)\
+                .group_by(DocumentSource.doc_id))\
+                .subquery('cnt')
+
+        n = float(db.session\
+                .query(func.avg(subq.c.count))\
+                .select_from(subq)\
+                .scalar())
+        counts['average-sources-per-document'] = round(n, 2)
+
         return {
             'values': counts
         }

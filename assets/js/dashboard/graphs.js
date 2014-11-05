@@ -185,6 +185,9 @@
         holder.empty();
         var html;
 
+        html = $('<div class="indicator"><h3>' + data['average-sources-per-document'] + '</h3><h4>sources per article</div>');
+        holder.append(html);
+
         if (data.flagged) {
           html = $('<div class="indicator"><h3>' + data.flagged + '</h3><h4><a href="#">flagged</a> <i class="fa fa-flag flag-set article-flag"></i></div>');
           holder.append(html);
