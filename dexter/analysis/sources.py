@@ -1,5 +1,6 @@
 from math import sqrt
-from itertools import groupby
+from collections import defaultdict
+from itertools import groupby, chain
 from datetime import datetime
 from dateutil.parser import parse
 
@@ -14,6 +15,10 @@ class AnalysedSource(object):
     pass
 
 
+class AnalysedUtterance(object):
+    pass
+
+
 class SourceAnalyser(BaseAnalyser):
     """
     Helper that runs analyses on document sources.
@@ -24,10 +29,31 @@ class SourceAnalyser(BaseAnalyser):
         self.top_people = None
         self.people_trending_up = None
         self.people_trending_down = None
+        self.person_utterances = None
 
     def analyse(self):
         self._load_people_sources()
         self._analyse_people_sources()
+
+
+    def load_utterances(self):
+        """ Find utterances for the sources we've analysed.
+        Sets `person_utterances`, a map from person id to 
+        `AnalysedUtterance` instances.
+        """
+        ids = [src.person.id for src in chain(self.top_people, self.people_trending_up, self.people_trending_down)]
+
+        utterances = Utterance.query\
+                      .join(Entity, Entity.id == Utterance.entity_id)\
+                      .filter(Entity.person_id.in_(ids))\
+                      .filter(Utterance.doc_id.in_(self.doc_ids))\
+                      .all()
+
+        self.person_utterances = defaultdict(list)
+        for utterance in utterances:
+            au = AnalysedUtterance()
+            au.quote = utterance.quote
+            self.person_utterances[utterance.entity.person_id].append(au)
 
 
     def _load_people_sources(self):
