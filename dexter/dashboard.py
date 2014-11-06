@@ -221,7 +221,7 @@ class ActivityForm(Form):
     problems        = MultiCheckboxField('Article problems', [validators.Optional()], choices=DocumentAnalysisProblem.for_select())
     flagged         = BooleanField('flagged')
     has_url         = RadioField('hasurl', [validators.Optional()], choices=[('1', 'with URL'), ('0', 'without URL')])
-    source_person_id = TextField('With Source', [validators.Optional()])
+    source_person_id = TextField('With source', [validators.Optional()])
     format          = HiddenField('format', default='html')
 
     def __init__(self, *args, **kwargs):
