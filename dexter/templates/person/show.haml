@@ -109,7 +109,9 @@
     %section
       .row
         .col-sm-6
-          %h3 Sourced by ${pagination.total} articles
+          %h3
+            Sourced by ${pagination.total} articles
+            %a(href=url_for('activity', source_person_id=person.id)) explore &rarr;
         .col-sm-2
           %h4 Last 14 days
         .col-sm-2
