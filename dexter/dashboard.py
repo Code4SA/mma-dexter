@@ -213,7 +213,7 @@ def activity_topics_detail():
 class ActivityForm(Form):
     cluster_id      = HiddenField('Cluster')
     analysis_nature_id = RadioField('Analysis', default=AnalysisNature.ANCHOR)
-    user_id         = SelectField('User', [validators.Optional()], default='')
+    user_id         = SelectField('Added by', [validators.Optional()], default='')
     medium_id       = SelectMultipleField('Medium', [validators.Optional()], default='')
     country_id      = SelectField('Country', [validators.Optional()], default=default_country_id)
     created_at      = TextField('Added', [validators.Optional()])

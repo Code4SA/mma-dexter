@@ -6,77 +6,95 @@
   .panel.panel-default
     .panel-heading
       %h3.panel-title
-        Refine
+        Explore articles
 
     .panel-body
-      .form-group.analysis_nature(class_='hidden' if form.cluster_id.data else '')
-        .btn-group(dataToggle='buttons')
-          - for fld in form.analysis_nature_id:
-            %label.btn.btn-default(class_='active' if fld.checked else '', title=fld.label.text)
-              = fld()
-              %i.fa(class_=AnalysisNature.ICONS.get(int(fld.data)))
+      .row
+        .col-sm-3
+          .form-group.analysis_nature(class_='hidden' if form.cluster_id.data else '')
+            = form.analysis_nature_id.label(class_='control-label')
+            .btn-group(dataToggle='buttons')
+              - for fld in form.analysis_nature_id:
+                %label.btn.btn-default(class_='active' if fld.checked else '', title=fld.label.text)
+                  = fld()
+                  %i.fa(class_=AnalysisNature.ICONS.get(int(fld.data)))
 
-      = form.cluster_id
-      - if form.cluster_id.data:
-        .form-group.cluster
-          %label.control-label
-            Topic
-            %code
-              &= form.cluster().fingerprint[0:8]
-              %a.remove-cluster(href='#')
-                %i.fa.fa-times
+          = form.cluster_id
+          - if form.cluster_id.data:
+            .form-group.cluster
+              %label.control-label
+                Topic
+              %div
+                %code
+                  &= form.cluster().fingerprint[0:8]
+                  %a.remove-cluster(href='#')
+                    %i.fa.fa-times
 
-      = vertical_field(form.user_id)
-      = vertical_field(form.country_id)
-      = vertical_field(form.medium_id, class_='select2')
-      .form-group
-        = form.published_at.label()
-        .input-group
-          = form.published_at(class_='form-control use-daterangepicker')
-          %span.input-group-btn
-            %button.btn.btn-default(dataClear='input-group')
-              %i.fa.fa-times
-      .form-group
-        = form.created_at.label()
-        .input-group
-          = form.created_at(class_='form-control use-daterangepicker')
-          %span.input-group-btn
-            %button.btn.btn-default(dataClear='input-group')
-              %i.fa.fa-times
+        .col-sm-3
+          .form-group
+            = form.published_at.label()
+            .input-group
+              = form.published_at(class_='form-control use-daterangepicker')
+              %span.input-group-btn
+                %button.btn.btn-default(dataClear='input-group')
+                  %i.fa.fa-times
 
-      -# need to inject the name of the person for the select2 field
-      -# to setup correctly
-      - person = form.source_person()
-      - kwargs = {'data-text': person and person.name or ''}
-      = vertical_field(form.source_person_id, **kwargs)
+        .col-sm-3
+          .form-group
+            = form.created_at.label()
+            .input-group
+              = form.created_at(class_='form-control use-daterangepicker')
+              %span.input-group-btn
+                %button.btn.btn-default(dataClear='input-group')
+                  %i.fa.fa-times
 
-      .form-group
-        = form.problems.label()
-        .input-group
-          - for fld in form.problems:
-            - args = {'data-problem': fld.label.text}
-            = field_input(fld, **args)
-      .form-group
-        .checkbox
-          - kwargs = {"for": 'flagged'}
-          %label(**kwargs)
-            - args = {'data-problem': form.flagged.label.text}
-            = form.flagged(**args)
-            %i.fa.fa-flag.flag-set.article-flag
-            = form.flagged.label.text
+        .col-sm-3
+          = vertical_field(form.medium_id, class_='select2')
 
-      .form-group.has-url
-        .btn-group(dataToggle='buttons', dataCanUntoggle='1')
-          - for fld in form.has_url:
-            %label.btn.btn-default(class_='active' if fld.checked else '')
-              = fld()
-              &= fld.label.text
-              - if fld.data == '1':
-                %i.fa.fa-link
+      .row
+        .col-sm-3
+          = vertical_field(form.country_id)
+          = vertical_field(form.user_id)
 
-    .panel-footer
-      .pull-right
-        %button.btn.btn-default.download
-          %i.fa.fa-download
-          Download XLSX
-      %input.btn.btn-success(type='Submit', value='Update')
+        .col-sm-3.problems
+          .form-group
+            = form.problems.label()
+            .input-group
+              - for fld in form.problems:
+                - args = {'data-problem': fld.label.text}
+                = field_input(fld, **args)
+
+        .col-sm-3
+          %label.control-label Markers
+
+          .form-group
+            .checkbox
+              - kwargs = {"for": 'flagged'}
+              %label(**kwargs)
+                - args = {'data-problem': form.flagged.label.text}
+                = form.flagged(**args)
+                %i.fa.fa-flag.flag-set.article-flag
+                = form.flagged.label.text
+
+          .form-group.has-url
+            .btn-group(dataToggle='buttons', dataCanUntoggle='1')
+              - for fld in form.has_url:
+                %label.btn.btn-default(class_='active' if fld.checked else '')
+                  = fld()
+                  &= fld.label.text
+                  - if fld.data == '1':
+                    %i.fa.fa-link
+
+        .col-sm-3
+          -# need to inject the name of the person for the select2 field
+          -# to setup correctly
+          - person = form.source_person()
+          - kwargs = {'data-text': person and person.name or ''}
+          = vertical_field(form.source_person_id, **kwargs)
+
+    .panel-footer.text-right
+      %button.btn.btn-default.download
+        %i.fa.fa-download
+        Download XLSX
+
+      %input.btn.btn-success(type='Submit', value='Explore articles', dataDisableWith='Working...')

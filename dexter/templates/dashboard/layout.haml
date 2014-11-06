@@ -5,26 +5,25 @@
     %script(src=url)
 
 %article#activity
-  .row
-    .col-sm-9
-      %ul.nav.nav-tabs
-        %li(class_=('active' if request.url_rule.endpoint == 'activity' else ''))
-          %a(href=url_for('activity', **request.args)) Graphs
+  %section
+    %%include(file='form.haml')
 
-        %li(class_=('active' if request.url_rule.endpoint == 'activity_sources' else ''))
-          %a(href=url_for('activity_sources', **request.args)) Sources
+  %section
+    %ul.nav.nav-tabs
+      %li(class_=('active' if request.url_rule.endpoint == 'activity' else ''))
+        %a(href=url_for('activity', **request.args)) Graphs
 
-        %li(class_=('active' if request.url_rule.endpoint == 'activity_mentions' else ''))
-          %a(href=url_for('activity_mentions', **request.args)) Mentions
+      %li(class_=('active' if request.url_rule.endpoint == 'activity_sources' else ''))
+        %a(href=url_for('activity_sources', **request.args)) Sources
 
-        %li(class_=('active' if request.url_rule.endpoint == 'activity_topics' else ''))
-          %a(href=url_for('activity_topics', **request.args)) Topics
+      %li(class_=('active' if request.url_rule.endpoint == 'activity_mentions' else ''))
+        %a(href=url_for('activity_mentions', **request.args)) Mentions
 
-        %li(class_=('active' if request.url_rule.endpoint == 'activity_map' else ''))
-          %a(href=url_for('activity_map', **request.args)) Map
+      %li(class_=('active' if request.url_rule.endpoint == 'activity_topics' else ''))
+        %a(href=url_for('activity_topics', **request.args)) Topics
 
-      %section.tab-content
-        ${next.body()}
+      %li(class_=('active' if request.url_rule.endpoint == 'activity_map' else ''))
+        %a(href=url_for('activity_map', **request.args)) Map
 
-    .col-sm-3
-      %%include(file='form.haml')
+  %section.tab-content
+    ${next.body()}
