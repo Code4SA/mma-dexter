@@ -92,9 +92,9 @@
           - kwargs = {'data-text': person and person.name or ''}
           = vertical_field(form.source_person_id, **kwargs)
 
-    .panel-footer.text-right
-      %button.btn.btn-default.download
-        %i.fa.fa-download
-        Download XLSX
+          .buttons
+            %button.btn.btn-default.download
+              %i.fa.fa-download
+              Download XLSX
 
-      %input.btn.btn-success(type='Submit', value='Explore articles', dataDisableWith='Working...')
+            %input.btn.btn-success(type='Submit', value='Explore', dataDisableWith='Working...')
