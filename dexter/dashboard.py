@@ -211,17 +211,18 @@ def activity_topics_detail():
 
 
 class ActivityForm(Form):
-    cluster_id  = HiddenField('Cluster')
+    cluster_id      = HiddenField('Cluster')
     analysis_nature_id = RadioField('Analysis', default=AnalysisNature.ANCHOR)
-    user_id     = SelectField('User', [validators.Optional()], default='')
-    medium_id   = SelectMultipleField('Medium', [validators.Optional()], default='') 
-    country_id  = SelectField('Country', [validators.Optional()], default=default_country_id)
-    created_at  = TextField('Added', [validators.Optional()])
-    published_at   = TextField('Published', [validators.Optional()])
-    problems       = MultiCheckboxField('Article problems', [validators.Optional()], choices=DocumentAnalysisProblem.for_select())
-    flagged        = BooleanField('flagged')
-    has_url        = RadioField('hasurl', [validators.Optional()], choices=[('1', 'with URL'), ('0', 'without URL')])
-    format         = HiddenField('format', default='html')
+    user_id         = SelectField('User', [validators.Optional()], default='')
+    medium_id       = SelectMultipleField('Medium', [validators.Optional()], default='')
+    country_id      = SelectField('Country', [validators.Optional()], default=default_country_id)
+    created_at      = TextField('Added', [validators.Optional()])
+    published_at    = TextField('Published', [validators.Optional()])
+    problems        = MultiCheckboxField('Article problems', [validators.Optional()], choices=DocumentAnalysisProblem.for_select())
+    flagged         = BooleanField('flagged')
+    has_url         = RadioField('hasurl', [validators.Optional()], choices=[('1', 'with URL'), ('0', 'without URL')])
+    source_person_id = TextField('With Source', [validators.Optional()])
+    format          = HiddenField('format', default='html')
 
     def __init__(self, *args, **kwargs):
         super(ActivityForm, self).__init__(*args, **kwargs)
@@ -269,6 +270,10 @@ class ActivityForm(Form):
             return Cluster.query.get(self.cluster_id.data)
         return None
 
+    def source_person(self):
+        if self.source_person_id.data:
+            return Person.query.get(self.source_person_id.data)
+        return None
 
     def get_problems(self):
         return [DocumentAnalysisProblem.lookup(code) for code in self.problems.data]
@@ -337,6 +342,11 @@ class ActivityForm(Form):
 
         if self.published_to:
             query = query.filter(Document.published_at <= self.published_to)
+
+        if self.source_person_id.data:
+            query = query\
+                .join(DocumentSource)\
+                .filter(DocumentSource.person_id == self.source_person_id.data)
 
         if self.problems.data:
             for code in self.problems.data:

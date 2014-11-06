@@ -20,7 +20,7 @@
       - if form.cluster_id.data:
         .form-group.cluster
           %label.control-label
-            Cluster
+            Topic
             %code
               &= form.cluster().fingerprint[0:8]
               %a.remove-cluster(href='#')
@@ -43,6 +43,13 @@
           %span.input-group-btn
             %button.btn.btn-default(dataClear='input-group')
               %i.fa.fa-times
+
+      -# need to inject the name of the person for the select2 field
+      -# to setup correctly
+      - person = form.source_person()
+      - kwargs = {'data-text': person and person.name or ''}
+      = vertical_field(form.source_person_id, **kwargs)
+
       .form-group
         = form.problems.label()
         .input-group
