@@ -237,10 +237,9 @@ class ActivityForm(Form):
         if self.cluster_id.data:
             self.analysis_nature_id.data = str(self.cluster().members[0].document.analysis_nature_id)
 
-        # dynamic default
-        if not self.created_at.data and not self.published_at.data\
-            and not self.user_id.data and not self.medium_id.data\
-            and not self.cluster_id.data:
+        # at least one of these must be set
+        oneof = [self.created_at, self.published_at, self.user_id, self.medium_id, self.cluster_id]
+        if not any(x.data for x in oneof):
             self.published_at.data = ' - '.join(d.strftime("%Y/%m/%d") for d in [datetime.utcnow() - timedelta(days=14), datetime.utcnow()])
 
 
