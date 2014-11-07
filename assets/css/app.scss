@@ -525,16 +525,6 @@ table.fairness {
   }
 }
 
-.tiny-logo{
-  float: right;
-  margin-left: 25px;
-  margin-right: 25px;
-}
-
-#copyright{
-  padding-top: 10px;
-}
-
 #index-overview{
   margin-top: 35px;
 }
@@ -588,9 +578,19 @@ table.fairness {
 }
 
 footer {
-  border-top: 1px solid #ddd;
-  margin-top: 40px;
+  border-top: 10px solid #ddd;
+  margin-top: 120px;
   padding: 20px 10px;
+  background-color: #eee;
+
+  .logo {
+    margin-left: 25px;
+  }
+
+  .partner {
+    height: 40px;
+    width: auto;
+  }
 }
 
 @media (min-width: 768px) {
