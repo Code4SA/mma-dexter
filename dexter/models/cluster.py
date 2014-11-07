@@ -7,9 +7,9 @@ from sqlalchemy import (
     String,
     DateTime,
     func,
-    event
+    event,
     )
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, backref
 
 from .support import db
 
@@ -31,7 +31,7 @@ class Cluster(db.Model):
 
     # associations
     # the members of this cluster, instances of ClusteredDocument
-    members      = relationship("ClusteredDocument", backref='cluster', cascade='all, delete-orphan', passive_deletes=True)
+    members      = relationship("ClusteredDocument", lazy=False, backref='cluster', cascade='all, delete-orphan', passive_deletes=True)
 
     @property
     def documents(self):
@@ -81,7 +81,7 @@ class ClusteredDocument(db.Model):
     doc_id     = Column(Integer, ForeignKey('documents.id', ondelete='CASCADE'), index=True, nullable=False)
 
     # associations
-    document   = relationship("Document", backref='clusters', lazy=False)
+    document   = relationship("Document", backref=backref('clusters', cascade='all, delete-orphan'), lazy=False)
 
     def __repr__(self):
         return "<ClusteredDocument id=%s, cluster=%s, document=%s>" % (self.id, self.cluster, self.document,)

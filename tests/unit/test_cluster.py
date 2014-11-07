@@ -36,3 +36,26 @@ class TestCluster(unittest.TestCase):
         cluster2 = Cluster.find_or_create(docs=docs)
         self.assertIsNotNone(cluster2.id)
         self.assertEqual(cluster.id, cluster2.id)
+
+    def test_delete_cascades(self):
+        docs = [Document(url='foo-%s' % i) for i in xrange(3)]
+        for d in docs:
+            d.published_at = datetime.datetime.now()
+
+        # get ids
+        db.session.add_all(docs)
+        db.session.flush()
+
+        cluster = Cluster.find_or_create(docs=docs)
+        db.session.add(cluster)
+        db.session.flush()
+
+        deleted = docs[0]
+        rest = docs[1:]
+
+        db.session.delete(deleted)
+        db.session.flush()
+        db.session.commit()
+
+        cluster = db.session.query(Cluster).filter(Cluster.id == cluster.id).one()
+        self.assertEqual(sorted(rest), sorted(cluster.documents))
