@@ -23,7 +23,7 @@
         %i.fa.fa-comment(title='Quotations')
 
     - for i, source in enumerate(source_analyser.top_people):
-      = show_source(i, source, source_analyser.person_utterances[source.person.id])
+      = show_source(i, source, source_analyser.person_utterances.get(source.person.id))
 
 %section
   %h3 Trending People
@@ -42,7 +42,7 @@
 
     - for group in [source_analyser.people_trending_up, source_analyser.people_trending_down]:
       - for i, source in enumerate(group):
-        = show_source(i, source, source_analyser.person_utterances[source.person.id])
+        = show_source(i, source, source_analyser.person_utterances.get(source.person.id))
 
 
 %section
