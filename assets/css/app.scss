@@ -222,6 +222,8 @@ form#edit-person {
   }
 
   .article-content {
+    z-index: 999;
+
     &.affix {
       top: 100px;
 
