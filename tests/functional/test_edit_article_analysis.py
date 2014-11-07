@@ -1,35 +1,20 @@
 from flask.ext.testing import TestCase
 from flask.ext.fillin import FormWrapper
 
-from dexter.core import app
+from . import UserSessionTestCase
 from dexter.models.support import db
 from dexter.models import Document
-from dexter.models.seeds import seed_db
 
-from tests.fixtures import dbfixture, DocumentData
+from tests.fixtures import dbfixture, DocumentData, UserData
 
-class TestEditArticleAnalysis(TestCase):
-    def create_app(self):
-        app.config['TESTING'] = True
-        return app
-
+class TestEditArticleAnalysis(UserSessionTestCase):
     def setUp(self):
-        self.db = db
-        self.db.session.remove()
-        self.db.drop_all()
-        self.db.create_all()
-        seed_db(db)
+        super(TestEditArticleAnalysis, self).setUp()
 
-        self.fx = dbfixture.data(DocumentData)
+        self.fx = dbfixture.data(DocumentData, UserData)
         self.fx.setup()
 
-        self.client.response_wrapper = FormWrapper
-
-    def tearDown(self):
-        self.fx.teardown()
-        self.db.session.rollback()
-        self.db.session.remove()
-        self.db.drop_all()
+        self.login()
   
     def test_edit_article_analysis(self):
         res = self.client.get('/articles/%s/analysis' % self.fx.DocumentData.simple.id)

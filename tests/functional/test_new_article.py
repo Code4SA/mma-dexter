@@ -1,43 +1,27 @@
-from flask.ext.testing import TestCase
-from flask.ext.fillin import FormWrapper
-
 from mock import patch, MagicMock
 
-from dexter.core import app
+from . import UserSessionTestCase
+
 from dexter.models.support import db
 from dexter.models import Author
-from dexter.models.seeds import seed_db
 from dexter.processing.crawlers import MGCrawler
 from dexter.processing.extractors import AlchemyExtractor, CalaisExtractor
 
-from tests.fixtures import dbfixture, PersonData, EntityData
+from tests.fixtures import dbfixture, PersonData, EntityData, UserData
 
-class TestNewArticle(TestCase):
-    def create_app(self):
-        app.config['TESTING'] = True
-        return app
 
+class TestNewArticle(UserSessionTestCase):
     def setUp(self):
-        self.db = db
-        self.db.session.remove()
-        self.db.drop_all()
-        self.db.create_all()
-        seed_db(db)
+        super(TestNewArticle, self).setUp()
 
-        self.fx = dbfixture.data(EntityData)
+        self.fx = dbfixture.data(UserData, EntityData)
         self.fx.setup()
 
-        self.client.response_wrapper = FormWrapper
+        self.login()
 
         AlchemyExtractor.fetch_entities = MagicMock(return_value=[])
         AlchemyExtractor.fetch_keywords = MagicMock(return_value=[])
         CalaisExtractor.fetch_data = MagicMock(return_value={})
-
-    def tearDown(self):
-        self.fx.teardown()
-        self.db.session.rollback()
-        self.db.session.remove()
-        self.db.drop_all()
   
     def test_new_article_path(self):
         res = self.client.get('/articles/new')

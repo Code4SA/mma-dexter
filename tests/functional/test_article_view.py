@@ -1,40 +1,23 @@
 import datetime
 
-from flask.ext.testing import TestCase
-from flask.ext.fillin import FormWrapper
-
 from mock import patch, MagicMock
 
+from . import UserSessionTestCase
 from dexter.core import app
 from dexter.models.support import db
 from dexter.models import Document, DocumentFairness
-from dexter.models.seeds import seed_db
 
-from tests.fixtures import dbfixture, PersonData, EntityData
+from tests.fixtures import dbfixture, PersonData, EntityData, UserData
 
-class TestArticleView(TestCase):
-    def create_app(self):
-        app.config['TESTING'] = True
-        return app
-
+class TestArticleView(UserSessionTestCase):
     def setUp(self):
-        self.db = db
-        self.db.session.remove()
-        self.db.drop_all()
-        self.db.create_all()
-        seed_db(db)
+        super(TestArticleView, self).setUp()
 
-        self.fx = dbfixture.data(EntityData)
+        self.fx = dbfixture.data(EntityData, UserData)
         self.fx.setup()
 
-        self.client.response_wrapper = FormWrapper
+        self.login()
 
-    def tearDown(self):
-        self.fx.teardown()
-        self.db.session.rollback()
-        self.db.session.remove()
-        self.db.drop_all()
-  
     def test_show_article_analysis(self):
         d = Document()
         d.text = "text"

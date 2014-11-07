@@ -1,39 +1,23 @@
-from flask.ext.testing import TestCase
-from flask.ext.fillin import FormWrapper
-
 from mock import patch, MagicMock
+
+from . import UserSessionTestCase
 
 from dexter.core import app
 from dexter.models.support import db
 from dexter.models import Author, Document
-from dexter.models.seeds import seed_db
 from dexter.authn import AnonymousUser
 
-from tests.fixtures import dbfixture, DocumentData
+from tests.fixtures import dbfixture, DocumentData, UserData
 
-class TestEditArticle(TestCase):
-    def create_app(self):
-        app.config['TESTING'] = True
-        return app
-
+class TestEditArticle(UserSessionTestCase):
     def setUp(self):
-        self.db = db
-        self.db.session.remove()
-        self.db.drop_all()
-        self.db.create_all()
-        seed_db(db)
+        super(TestEditArticle, self).setUp()
 
-        self.fx = dbfixture.data(DocumentData)
+        self.fx = dbfixture.data(DocumentData, UserData)
         self.fx.setup()
 
-        self.client.response_wrapper = FormWrapper
+        self.login()
 
-    def tearDown(self):
-        self.fx.teardown()
-        self.db.session.rollback()
-        self.db.session.remove()
-        self.db.drop_all()
-  
     def test_edit_article_new_author(self):
         res = self.client.get('/articles/%s/edit' % self.fx.DocumentData.simple.id)
         self.assert200(res)
@@ -62,6 +46,9 @@ class TestEditArticle(TestCase):
         self.assertIsNone(doc)
 
     def test_delete_article_no_perms(self):
+        self.logout()
+        self.login(email='joe@example.com')
+
         res = self.client.post('/articles/%s/delete' % self.fx.DocumentData.simple.id)
         self.assertRedirects(res, '/articles/%s' % self.fx.DocumentData.simple.id)
 
