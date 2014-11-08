@@ -26,7 +26,7 @@ $(function() {
 
   $('.use-daterangepicker').daterangepicker({
     format: 'YYYY/MM/DD',
-    opens: 'left',
+    opens: 'right',
     maxDate: now.clone().add(moment.duration(1, 'days')),
     ranges: {
       'Today': [now, now],
