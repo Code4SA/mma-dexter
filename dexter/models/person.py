@@ -142,7 +142,8 @@ class Person(db.Model):
 
         # exponential decay. An affiliation from today is worth
         # only half that tomorrow, a half again the day after, etc.
-        weight = lambda d: 1.0 / (2 ** (now - d).days)
+        # Cap the weight at 100 so that we don't get overflow.
+        weight = lambda d: 1.0 / (2 ** min(100.0, (now - d).days))
 
         # current affiliation
         if self.affiliation:
