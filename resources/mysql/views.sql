@@ -38,9 +38,11 @@ from
 --   aggregate all utterances from document source people
 create or replace view person_utterances_view as
 select
+  ds.source_type as `source_type`,
   p.name as `person`,
   r.name as `race`,
   g.name as `gender`,
+  sa.name as `source_age`,
   a.name as `affiliation`,
   a.code as `affiliation_code`,
   -- affiliation parent
