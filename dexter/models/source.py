@@ -115,7 +115,7 @@ class DocumentSource(db.Model, WithOffsets):
 
 
     def sort_key(self):
-        return [not self.manual, self.friendly_name()]
+        return [not self.manual, self.source_type, self.friendly_name()]
 
 
     def gender(self):
