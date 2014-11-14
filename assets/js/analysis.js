@@ -12,42 +12,19 @@
         return;
       }
 
-      $('button.submit').on('click', function(e) {
+      self.$form.on('submit', self.submitForm);
+      self.$submitButton = $('button.submit');
+      self.$submitButton.on('click', function(e) {
         self.$form.submit();
       });
 
       // flag functionality
-      $('label.article-flag input[type=checkbox]').on('change', function(e) {
-        var checked = $(this).prop("checked");
-
-        $('.article-flag i.fa').toggleClass('flag-set', checked);
-        self.$form.find('[name="notes"]')
-          .removeClass('hidden')
-          .toggle(checked);
-      });
-
+      $('label.article-flag input[type=checkbox]').on('change', self.toggleFlag);
+      
       self.$form
-        .on('ajax:success', function(e, data, status, xhr) {
-          // success, reload the page
-          $('input[data-disable-with]', self.$form).removeAttr('data-disable-with');
-          document.location = document.location;
-        })
-        .on('ajax:error', function(e, xhr, status, error) {
-          console.log(xhr.status);
-          if (xhr.status == 500) {
-            $('#error-box')
-              .text('Hmm, something went wrong, please try again. (' + xhr.status + ': ' + error + ')')
-              .show();
-            $('html, body').animate({
-              scrollTop: 0,
-            }, 300);
-          } else {
-            // problem, do a non-ajax submit
-            $('input[data-disable-with]', self.$form).removeAttr('data-disable-with');
-            self.$form.removeData('remote').removeAttr('data-remote').submit();
-          }
-        });
-
+        .on('ajax:success', self.formSubmitSuccess)
+        .on('ajax:error', self.formSubmitFail);
+        
       // source person name autocomplete
       self.personHound = new Bloodhound({
         name: 'people',
@@ -77,6 +54,53 @@
         on('click', '.btn.undo-delete', self.undoDeleteFairness);
 
       $('.suggested-sources .source').on('click', self.addSuggestedSource);
+    };
+
+    self.submitForm = function(e) {
+      // disable the button
+      self.$submitButton
+        .data('enable-with', self.$submitButton.html())
+        .prop('disabled', true)
+        .html(self.$submitButton.data('disable-with'));
+    };
+
+    self.formSubmitSuccess = function(e, data, status, xhr) {
+      // success, reload the page
+      $('input[data-disable-with]', self.$form).removeAttr('data-disable-with');
+      document.location = document.location;
+    };
+
+    self.formSubmitFail = function(e, xhr, status, error) {
+      console.log(xhr.status);
+
+      if (xhr.status == 500) {
+        $('#error-box')
+          .text('Hmm, something went wrong, please try again. (' + xhr.status + ': ' + error + ')')
+          .show();
+
+        $('html, body').animate({
+          scrollTop: 0,
+        }, 300);
+
+        // re-enable the button
+        self.$submitButton
+          .prop('disabled', false)
+          .html(self.$submitButton.data('enable-with'));
+
+      } else {
+        // problem, do a non-ajax submit
+        $('input[data-disable-with]', self.$form).removeAttr('data-disable-with');
+        self.$form.removeData('remote').removeAttr('data-remote').submit();
+      }
+    };
+
+    self.toggleFlag = function(e) {
+      var checked = $(this).prop("checked");
+
+      $('.article-flag i.fa').toggleClass('flag-set', checked);
+      self.$form.find('[name="notes"]')
+        .removeClass('hidden')
+        .toggle(checked);
     };
      
     self.addSuggestedSource = function(e) {
