@@ -336,8 +336,16 @@ class DocumentSourceForm(Form):
     def populate_obj(self, obj):
         super(DocumentSourceForm, self).populate_obj(obj)
         obj.unnamed = not self.named.data
-        if obj.unnamed:
+
+        if obj.unnamed or obj.person_id:
             obj.name = None
+
+        # if it's linked to a person, clear the other crap
+        # the form sets
+        if obj.named:
+            obj.unnamed = False
+            obj.unnamed_gender_id = None
+            obj.unnamed_race_id = None
 
 
     @property
@@ -354,7 +362,7 @@ class DocumentSourceForm(Form):
         if self.deleted.data == '1':
             document.sources.remove(self.source)
         elif self.is_new():
-            return self.create_source(document)
+            document.add_source(self.create_source(document))
         else:
             self.populate_obj(self.source)
 
@@ -365,7 +373,6 @@ class DocumentSourceForm(Form):
         from . import Person
 
         src = DocumentSource()
-        src.document = document
         src.manual = True
 
         self.populate_obj(src)
@@ -373,6 +380,8 @@ class DocumentSourceForm(Form):
         # link to person if they chose that option
         if self.source_type.data == 'person' and self.named.data:
             src.person = Person.get_or_create(self.name.data)
+            # HACK
+            src.person_id = src.person.id
             src.name = None
 
             # override the 'quoted' attribute if we know this person has
