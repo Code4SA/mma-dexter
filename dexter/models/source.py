@@ -345,6 +345,4 @@ class DocumentSourceForm(Form):
                 if not src.person.gender:
                     src.person.guess_gender_from_doc(document)
 
-        self.populate_obj(src)
-
         return src
