@@ -375,12 +375,9 @@ class DocumentSourceForm(Form):
             src.person = Person.get_or_create(self.name.data)
             src.name = None
 
-            # override the 'quoted' attribute if we know this entity has utterances in
-            # this document
+            # override the 'quoted' attribute if we know this person has
+            # utterances in this document
             if any(src.person == u.entity.person for u in document.utterances):
                 src.quoted = True
-                # re-guess the gender
-                if not src.person.gender:
-                    src.person.guess_gender_from_doc(document)
 
         return src

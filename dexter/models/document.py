@@ -183,6 +183,11 @@ class Document(db.Model):
                 return False
                 
         self.sources.append(source)
+
+        # guess gender
+        if source.person and not source.person.gender and source.quoted:
+            source.person.guess_gender_from_doc(self)
+
         return True
 
 
