@@ -144,7 +144,7 @@
     %ul.offsets
       - for src in suggestions:
         %li(dataOffsets=(src.offset_list if src.person else src.entity.offset_list) or '0:0')
-          %a.source(href="#", dataName=src.friendly_name(), dataRace=src.race().name if src.race() else '', dataGender=src.gender().name if src.gender() else '')
+          %a.source(href="#", dataName=src.friendly_name(), dataRace=src.race().name if src.race() else '', dataGender=src.gender().name if src.gender() else '', dataQuoted='1' if src.utterances() else '')
             &= src.friendly_name()
             - if src.utterances():
               %i.fa.fa-comment

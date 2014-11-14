@@ -87,6 +87,7 @@
         gender: $(this).data('gender'),
         race: $(this).data('race'),
         name: $(this).data('name'),
+        quoted: $(this).data('quoted') == '1',
         affiliation: '',
       };
 
@@ -175,6 +176,11 @@
       $select
         .val(affiliationId)
         .trigger('change');
+
+      // quoted?
+      if (person.quoted) {
+        $row.find('.quoted input').prop('checked', true);
+      }
 
       // choose the gender and race
       $.each(['race', 'gender'], function(i, attrib) {

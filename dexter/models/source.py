@@ -330,6 +330,8 @@ class DocumentSourceForm(Form):
         src = DocumentSource()
         src.document = document
         src.manual = True
+
+        self.populate_obj(src)
         
         # link to person if they chose that option
         if self.source_type.data == 'person' and self.named.data:
