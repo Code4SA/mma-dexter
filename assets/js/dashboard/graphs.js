@@ -185,7 +185,7 @@
         holder.empty();
         var html;
 
-        html = $('<div class="indicator"><h3>' + data['average-sources-per-document'] + '</h3><h4>sources per article</div>');
+        html = $('<div class="indicator"><h3>' + data['average-sources-per-document'] + '</h3><h4>quoted sources per article</div>');
         holder.append(html);
 
         if (data.flagged) {

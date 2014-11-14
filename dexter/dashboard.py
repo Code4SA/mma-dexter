@@ -523,6 +523,7 @@ class ActivityChartHelper:
         subq = self.filter(db.session\
                 .query(func.count(DocumentSource.doc_id).label('count'))\
                 .join(Document, DocumentSource.doc_id == Document.id)\
+                .filter(DocumentSource.quoted == 1)\
                 .group_by(DocumentSource.doc_id))\
                 .subquery('cnt')
 
