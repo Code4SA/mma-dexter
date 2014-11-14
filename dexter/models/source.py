@@ -20,8 +20,11 @@ class DocumentSource(db.Model, WithOffsets):
     A source can be one of:
 
      - a named person (linked via person_id)
-     - an unnamed person (in which case gender_id and race_id are meaningful)
+     - an unnamed person or child (in which case gender_id and race_id are meaningful)
      - a non-person secondary source (only name is applicable)
+
+    A document cannot have more than one of the same source. See `__cmp__()` for
+    a description of how sources are compared.
     """
     __tablename__ = "document_sources"
 
@@ -171,8 +174,40 @@ class DocumentSource(db.Model, WithOffsets):
         return ' '.join(offsets)
 
 
+    def __cmp__(self, other):
+        """ Two sources are the same if:
+  
+        - they are a named person sources and:
+          - the associated person is the same, and
+          - the function and affiliation are the same
+        - they are an unnamed person source and:
+          - the gender and race are the same, and
+          - the function and affiliation are the same
+        - they are child sources and:
+          - the name, race and gender are the same, and
+          - the age and role are the same
+        """
+        return cmp(self.cmp_tuple(), other.cmp_tuple())
+
+
+    def cmp_tuple(self):
+        """ Generate a tuple suitable for comparing with `__cmp__()` """
+        return (self.source_type,
+                self.unnamed,
+                self.name,
+                self.person_id,
+                self.unnamed_race_id,
+                self.unnamed_gender_id,
+                self.source_function_id,
+                self.source_role_id,
+                self.source_age_id,
+                self.affiliation_id,
+               )
+
+
     def __repr__(self):
-        return "<DocumentSource doc=%s, person=%s, unnamed=%s, name='%s'>" % (self.document, self.person, self.unnamed, self.name.encode('utf-8'))
+        return "<DocumentSource %s, person=%s, unnamed=%s, name=%s, doc=%s>" % \
+                (self.source_type, self.person, self.unnamed, self.name and self.name.encode('utf-8'), self.document)
 
 
 class SourceFunction(db.Model):
@@ -301,6 +336,8 @@ class DocumentSourceForm(Form):
     def populate_obj(self, obj):
         super(DocumentSourceForm, self).populate_obj(obj)
         obj.unnamed = not self.named.data
+        if obj.unnamed:
+            obj.name = None
 
 
     @property
@@ -336,6 +373,7 @@ class DocumentSourceForm(Form):
         # link to person if they chose that option
         if self.source_type.data == 'person' and self.named.data:
             src.person = Person.get_or_create(self.name.data)
+            src.name = None
 
             # override the 'quoted' attribute if we know this entity has utterances in
             # this document

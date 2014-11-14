@@ -178,7 +178,8 @@ class Document(db.Model):
     def add_source(self, source):
         """ Add a new source, but only if it's not already there. """
         for s in self.sources:
-            if s.person == source.person:
+            # this relies on DocumentSource.__cmp__
+            if source == s:
                 return False
                 
         self.sources.append(source)
