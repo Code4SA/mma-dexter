@@ -23,7 +23,7 @@ class DocumentSource(db.Model, WithOffsets):
      - an unnamed person or child (in which case gender_id and race_id are meaningful)
      - a non-person secondary source (only name is applicable)
 
-    A document cannot have more than one of the same source. See `__cmp__()` for
+    A document cannot have more than one of the same source. See `__eq__()` for
     a description of how sources are compared.
     """
     __tablename__ = "document_sources"
@@ -174,7 +174,7 @@ class DocumentSource(db.Model, WithOffsets):
         return ' '.join(offsets)
 
 
-    def __cmp__(self, other):
+    def __eq__(self, other):
         """ Two sources are the same if:
   
         - they are a named person sources and:
@@ -187,11 +187,11 @@ class DocumentSource(db.Model, WithOffsets):
           - the name, race and gender are the same, and
           - the age and role are the same
         """
-        return cmp(self.cmp_tuple(), other.cmp_tuple())
+        return type(self) is type(other) and self.tuple() == other.tuple()
 
 
-    def cmp_tuple(self):
-        """ Generate a tuple suitable for comparing with `__cmp__()` """
+    def tuple(self):
+        """ Generate a tuple suitable for comparing with `__eq__()` """
         return (self.source_type,
                 self.unnamed,
                 self.name,
