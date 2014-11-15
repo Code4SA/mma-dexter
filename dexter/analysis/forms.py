@@ -10,9 +10,11 @@ class DocumentSourceForm(ModelForm):
     """ Form for editing a document source. """
     class Meta:
         model = DocumentSource
-        only = ['id', 'name', 'quoted', 'photographed']
+        only = ['name', 'quoted', 'photographed']
 
+    id          = HiddenField('id', [validators.Optional()])
     deleted     = BooleanField('deleted')
+    person_id   = HiddenField('person_id')
 
     named       = BooleanField('The source is named', default=True)
     source_type = RadioField('Type', default='person', choices=[['person', 'Adult'], ['child', 'Child'], ['secondary', 'Secondary (not a person)']])
@@ -39,25 +41,35 @@ class DocumentSourceForm(ModelForm):
         return self.source is None
 
 
-    def validate(self):
-        # ignore some data, based on the source type
-        if not self.named.data:
-            # it's anonymous, so ignore the name field
-            self.name.data = ''
+    def is_empty(self):
+        return self.is_new() and self.named.data and not self.name.data
 
+
+    def validate(self):
         if self.source_type.data == 'person':
             self.role.data = None
             self.age.data = None
+            # link to a person
+            if self.named.data and self.name.data:
+                self.person_id.data = Person.get_or_create(self.name.data).id
 
         elif self.source_type.data == 'child':
+            self.person_id.data = None
             self.function.data = None
             self.affiliation.data = None
 
         elif self.source_type.data == 'secondary':
+            self.person_id.data = None
             self.gender.data = None
             self.race.data = None
             self.role.data = None
             self.age.data = None
+            self.named.data = True
+
+        # ignore some data, based on the source type
+        if not self.named.data:
+            # it's anonymous, so ignore the name field
+            self.name.data = None
 
         return super(DocumentSourceForm, self).validate()
 
@@ -65,27 +77,15 @@ class DocumentSourceForm(ModelForm):
     def populate_obj(self, obj):
         super(DocumentSourceForm, self).populate_obj(obj)
 
-        # TODO: move this into DocumentSource itself
-        if obj.unnamed or obj.person_id:
-            obj.name = None
-
-        # if it's linked to a person, clear the other crap
-        # the form sets
-        # TODO: is this being duped by above?
-        if obj.named:
-            obj.unnamed = False
-            obj.unnamed_gender_id = None
-            obj.unnamed_race_id = None
-
-        # TODO: do this correctly
-        if self.name.data:
-            obj.person = Person.get_or_create(self.name.data)
-
-        # TODO: handle person creation
-
-        if obj.id is None:
+        if self.is_new():
             # a newly created source
             obj.manual = True
+
+        # the form only deals with person_id to make life simpler,
+        # so if it's set, also set the person field
+        if obj.person_id:
+            obj.person = Person.query.get(obj.person_id)
+            obj.name = None
 
 
 class DocumentAnalysisForm(ModelForm):
