@@ -129,6 +129,13 @@ class DocumentSource(db.Model, WithOffsets):
             return self.person.race
         return self.unnamed_race
 
+    @property
+    def named(self):
+        return not self.unnamed
+
+    @named.setter
+    def named(self, val):
+        self.unnamed = not val
 
     @property
     def gender_id(self):
@@ -221,6 +228,11 @@ class SourceFunction(db.Model):
 
     def __repr__(self):
         return "<SourceFunction name='%s'>" % (self.name)
+
+  
+    @classmethod
+    def all(cls):
+        return cls.query.order_by(cls.name).all()
 
 
     @classmethod

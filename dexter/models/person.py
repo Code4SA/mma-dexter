@@ -298,6 +298,10 @@ class Gender(db.Model):
         return self.name[0:2].title()
 
     @classmethod
+    def all(cls):
+        return cls.query.order_by(cls.name).all()
+
+    @classmethod
     def male(cls):
         return Gender.query.filter(Gender.name == 'Male').one()
 
@@ -332,6 +336,10 @@ class Race(db.Model):
 
     def abbr(self):
         return self.name[0:2].title()
+
+    @classmethod
+    def all(cls):
+        return cls.query.order_by(cls.name).all()
 
     @classmethod
     def create_defaults(self):

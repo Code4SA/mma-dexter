@@ -99,6 +99,10 @@ class SourceAge(db.Model):
 
     def __repr__(self):
         return "<SourceAge name='%s'>" % (self.name.encode('utf-8'),)
+  
+    @classmethod
+    def all(cls):
+        return cls.query.order_by(cls.id).all()
 
     @classmethod
     def create_defaults(self):

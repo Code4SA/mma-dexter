@@ -147,6 +147,13 @@ class Affiliation(db.Model):
     def __repr__(self):
         return "<Affiliation code='%s', name='%s'>" % (self.code.encode('utf-8'), self.name.encode('utf-8'))
 
+    @classmethod
+    def organisations(cls, country):
+      # because this list is heirarchical, we class 'organisations' as
+      # those with only 0 or two dots
+      orgs = [i for i in cls.for_country(country) if i.code.count('.') <= 1]
+      orgs.sort(key=cls.sort_key)
+      return orgs
 
     @classmethod
     def for_country(cls, country):

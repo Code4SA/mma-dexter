@@ -1,8 +1,10 @@
 from flask_wtf import Form as BaseForm
-from wtforms import SelectMultipleField, widgets, SelectField as WTFSelectField, RadioField as WTFRadioField
+from wtforms import SelectMultipleField, widgets, SelectField as WTFSelectField, RadioField as WTFRadioField, FormField as WTFFormField
 from wtforms.fields.html5 import IntegerField as WTFIntegerField
 from wtforms.widgets import HTMLString, html_params
 from wtforms.widgets import Select as SelectWidget
+
+from wtforms_alchemy import model_form_factory
 
 class StripFilter():
     def __call__(self, value):
@@ -143,3 +145,35 @@ class YesNoField(RadioField):
                 setattr(obj, name, True)
             if val == 'False':
                 setattr(obj, name, False)
+
+
+class FormField(WTFFormField):
+    """
+    A FormField that allows for additional arguments
+    to be passed into the delegated Form object
+    when the form is created.
+
+    Pass `form_kwargs` into the constructor
+    to have those passed in turn to the form
+    when it's created.
+    """
+
+    def __init__(self, *args, **kwargs):
+        self.form_kwargs = kwargs.pop('form_kwargs', {})
+        super(FormField, self).__init__(*args, **kwargs)
+
+        self._form_class = self.form_class
+        self.form_class = self.get_form_instance
+
+    def get_form_instance(self, *args, **kwargs):
+        kwargs.update(self.form_kwargs)
+        return self._form_class(*args, **kwargs)
+
+
+# base class form wtf_alchemy-based ModelForms that tie
+# into the flask-sqlalchemy session
+BaseModelForm = model_form_factory(Form)
+class ModelForm(BaseModelForm):
+    @classmethod
+    def get_session(self):
+        return db.session
