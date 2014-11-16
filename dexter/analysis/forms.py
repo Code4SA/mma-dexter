@@ -88,6 +88,14 @@ class DocumentSourceForm(ModelForm):
 
 
     def populate_obj(self, obj):
+        # the form only deals with person_id to make life simpler,
+        # so if it's set, also set the person field. Do this
+        # before everything else so the race and gender
+        # get set on the person directly in the super() call.
+        if self.person_id.data:
+            obj.person = Person.query.get(self.person_id.data)
+            obj.name = None
+
         super(DocumentSourceForm, self).populate_obj(obj)
 
         if self.is_new():
@@ -97,14 +105,14 @@ class DocumentSourceForm(ModelForm):
 
         # the form only deals with person_id to make life simpler,
         # so if it's set, also set the person field
-        if obj.person_id:
-            obj.person = Person.query.get(obj.person_id)
-            obj.name = None
-
+        if obj.person:
             # override the 'quoted' attribute if we know this person has
             # utterances in this document
             if any(obj.person == u.entity.person for u in obj.document.utterances):
                 obj.quoted = True
+
+            if not obj.person.gender:
+                obj.person.guess_gender_from_doc(obj.document)
 
         # if it's linked to a person, clear the other crap
         # the form sets
