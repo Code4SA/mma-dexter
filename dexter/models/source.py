@@ -23,7 +23,7 @@ class DocumentSource(db.Model, WithOffsets):
      - an unnamed person or child (in which case gender_id and race_id are meaningful)
      - a non-person secondary source (only name is applicable)
 
-    A document cannot have more than one of the same source. See `__cmp__()` for
+    A document cannot have more than one of the same source. See `__eq__()` for
     a description of how sources are compared.
     """
     __tablename__ = "document_sources"
@@ -118,49 +118,43 @@ class DocumentSource(db.Model, WithOffsets):
         return [not self.manual, self.source_type, self.friendly_name()]
 
 
+    @property
     def gender(self):
         if self.person:
             return self.person.gender
         return self.unnamed_gender
 
+    @gender.setter
+    def gender(self, val):
+        """ Form helper for setting the gender of this source. """
+        if self.person:
+            self.person.gender = val
+            self.unnamed_gender = None
+        else:
+            self.unnamed_gender = val
 
+    @property
     def race(self):
         if self.person:
             return self.person.race
         return self.unnamed_race
 
-
-    @property
-    def gender_id(self):
-        g = self.gender()
-        return g and g.id or None
-
-
-    @gender_id.setter
-    def gender_id(self, val):
-        """ Form helper for setting the gender of this source. """
-        if self.person:
-            self.person.gender_id = val or None
-            self.unnamed_gender_id = None
-        else:
-            self.unnamed_gender_id = val or None
-
-
-    @property
-    def race_id(self):
-        r = self.race()
-        return r and r.id or None
-
-
-    @race_id.setter
-    def race_id(self, val):
+    @race.setter
+    def race(self, val):
         """ Form helper for setting the race of this source. """
         if self.person:
-            self.person.race_id = val or None
-            self.unnamed_race_id = None
+            self.person.race = val
+            self.unnamed_race = None
         else:
-            self.unnamed_race_id = val or None
+            self.unnamed_race = val
 
+    @property
+    def named(self):
+        return not self.unnamed
+
+    @named.setter
+    def named(self, val):
+        self.unnamed = not val
 
     @property
     def offset_list(self):
@@ -174,7 +168,7 @@ class DocumentSource(db.Model, WithOffsets):
         return ' '.join(offsets)
 
 
-    def __cmp__(self, other):
+    def __eq__(self, other):
         """ Two sources are the same if:
   
         - they are a named person sources and:
@@ -187,21 +181,21 @@ class DocumentSource(db.Model, WithOffsets):
           - the name, race and gender are the same, and
           - the age and role are the same
         """
-        return cmp(self.cmp_tuple(), other.cmp_tuple())
+        return type(self) is type(other) and self.tuple() == other.tuple()
 
 
-    def cmp_tuple(self):
-        """ Generate a tuple suitable for comparing with `__cmp__()` """
+    def tuple(self):
+        """ Generate a tuple suitable for comparing with `__eq__()` """
         return (self.source_type,
                 self.unnamed,
                 self.name,
-                self.person_id,
-                self.unnamed_race_id,
-                self.unnamed_gender_id,
-                self.source_function_id,
-                self.source_role_id,
-                self.source_age_id,
-                self.affiliation_id,
+                self.person,
+                self.race,
+                self.gender,
+                self.function,
+                self.role,
+                self.age,
+                self.affiliation,
                )
 
 
@@ -221,6 +215,11 @@ class SourceFunction(db.Model):
 
     def __repr__(self):
         return "<SourceFunction name='%s'>" % (self.name)
+
+  
+    @classmethod
+    def all(cls):
+        return cls.query.order_by(cls.name).all()
 
 
     @classmethod
@@ -244,149 +243,3 @@ class SourceFunction(db.Model):
             functions.append(g)
 
         return functions
-
-
-def none_coerce(v):
-    from wtforms.compat import text_type
-    return text_type('' if v is None else v)
-
-
-class DocumentSourceForm(Form):
-    name              = StringField('Name', [validators.Length(max=100)])
-    named             = BooleanField('The source is named', default=True)
-
-    gender_id         = RadioField('Gender', [validators.Optional()], default='', coerce=none_coerce)
-    race_id           = RadioField('Race', [validators.Optional()], default='', coerce=none_coerce)
-
-    source_type       = RadioField('Type', default='person', choices=[['person', 'Adult'], ['child', 'Child'], ['secondary', 'Secondary (not a person)']])
-
-    quoted            = BooleanField('Quoted', default=False)
-    photographed      = BooleanField('Photographed', default=False)
-
-    source_function_id  = SelectField('Function', default='')
-    source_role_id      = SelectField('Role', default='')
-    source_age_id       = SelectField('Age', default='')
-    affiliation_id      = SelectField('Affiliation', default='')
-
-    deleted           = HiddenField('deleted', default='0')
-
-    def __init__(self, *args, **kwargs):
-        super(DocumentSourceForm, self).__init__(*args, **kwargs)
-
-        country = None
-        nature = None
-        if self.source:
-            nature = self.source.document.analysis_nature
-            country = self.source.document.country
-
-        if 'nature' in kwargs:
-            nature = kwargs['nature']
-        if 'country' in kwargs:
-            country = kwargs['country']
-
-        if nature is None:
-            raise ValueError("Missing analysis nature. Either pass in obj or nature")
-        if country is None:
-            raise ValueError("Missing country. Either pass in obj or country")
-
-
-        from . import SourceAge
-        self.source_function_id.choices = [['', '(none)']] + [[str(s.id), s.name] for s in SourceFunction.query.order_by(SourceFunction.name).all()]
-        self.source_role_id.choices = [['', '(none)']] + [[str(s.id), s.name] for s in nature.roles]
-        self.source_age_id.choices = [['', '(none)']] + [[str(s.id), s.name] for s in SourceAge.query.order_by(SourceAge.id).all()]
-
-        from . import Gender, Race
-        self.gender_id.choices = [['', '? - unknown']] + [[str(g.id), g.name] for g in Gender.query.order_by(Gender.name).all()]
-        self.race_id.choices = [['', '? - unknown']] + [[str(r.id), r.name] for r in Race.query.order_by(Race.name).all()]
-
-        # because this list is heirarchical, we class 'organisations' as
-        # those with only 0 or two dots
-        from . import Affiliation
-        orgs = [i for i in Affiliation.for_country(country) if i.code.count('.') <= 1]
-        orgs.sort(key=Affiliation.sort_key)
-        self.affiliation_id.choices = [['', '(none)']] + [[str(s.id), s.full_name()] for s in orgs]
-
-        if self.source:
-            self.named.data = not self.source.unnamed
-
-
-    def validate(self):
-        # ignore some data, based on the source type
-        if not self.named.data:
-            # it's anonymous, so ignore the name field
-            self.name.data = ''
-
-        if self.source_type.data == 'person':
-            self.source_role_id.data = ''
-            self.source_age_id.data = ''
-
-        elif self.source_type.data == 'child':
-            self.source_function_id.data = ''
-            self.affiliation_id.data = ''
-
-        elif self.source_type.data == 'secondary':
-            self.gender_id.data = ''
-            self.race_id.data = ''
-            self.source_role_id.data = ''
-            self.source_age_id.data = ''
-
-        return super(DocumentSourceForm, self).validate()
-
-
-    def populate_obj(self, obj):
-        super(DocumentSourceForm, self).populate_obj(obj)
-        obj.unnamed = not self.named.data
-
-        if obj.unnamed or obj.person_id:
-            obj.name = None
-
-        # if it's linked to a person, clear the other crap
-        # the form sets
-        if obj.named:
-            obj.unnamed = False
-            obj.unnamed_gender_id = None
-            obj.unnamed_race_id = None
-
-
-    @property
-    def source(self):
-        """ the associated source object, if any """
-        return self._obj
-
-
-    def is_new(self):
-        return self.source is None
-
-
-    def create_or_update(self, document):
-        if self.deleted.data == '1':
-            document.sources.remove(self.source)
-        elif self.is_new():
-            document.add_source(self.create_source(document))
-        else:
-            self.populate_obj(self.source)
-
-        return None
-
-
-    def create_source(self, document):
-        from . import Person
-
-        src = DocumentSource()
-        src.manual = True
-
-        self.populate_obj(src)
-        
-        # link to person if they chose that option
-        if self.source_type.data == 'person' and self.named.data:
-            src.person = Person.get_or_create(self.name.data)
-            # HACK
-            src.person_id = src.person.id
-            src.name = None
-
-            # override the 'quoted' attribute if we know this person has
-            # utterances in this document
-            if any(src.person == u.entity.person for u in document.utterances):
-                src.quoted = True
-
-        return src

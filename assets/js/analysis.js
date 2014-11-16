@@ -38,8 +38,6 @@
       });
       self.personHound.initialize();
 
-      self.newSourceCount = $('.sources tr.new', self.$form).length;
-
       $('.btn.add-source').on('click', self.addSource);
       $('table.sources', self.$form).
         on('click', '.btn.delete', self.deleteSource).
@@ -112,7 +110,7 @@
         race: $(this).data('race'),
         name: $(this).data('name'),
         quoted: $(this).data('quoted') == '1',
-        affiliation: '',
+        affiliation: $(this).data('affiliation'),
       };
 
       var $name = $('input[name$="-name"]', $row);
@@ -130,14 +128,14 @@
 
       var $template = $('table.sources tr.template');
       var $row = $template.clone().insertBefore($template);
+      var index = $('table.sources tr.source').length;
 
       // this row is no longer a template
       $row.removeClass('template').addClass('new');
 
-      self.newSourceCount++;
       self.personTypeaheadEnabled = false;
 
-      // change form field name and 'for' prefixes to be new[ix]
+      // change form field name and 'for' prefixes to be sources-ix
       $('input, select, textarea, label', $row).each(function() {
         var attrs = ['name', 'id', 'for'];
 
@@ -145,7 +143,7 @@
           var attr = attrs[i];
           var val = $(this).attr(attr);
           if (val) {
-            $(this).attr(attr, val.replace('new-', 'new[' + self.newSourceCount + ']-'));
+            $(this).attr(attr, val.replace('-new-', '-' + index + '-'));
           }
         }
       });
@@ -188,7 +186,7 @@
     // a new person was chosen as a source from the typeahead box
     self.personSourceChosen = function(event, person, datasource) {
       var $row = $(this).closest('tr');
-      var $select = $('select[name$="affiliation_id"]', $row);
+      var $select = $('select[name$="affiliation"]', $row);
 
       // find the matching affiliation option
       var affiliationId = $('option', $select).
@@ -225,7 +223,7 @@
       });
 
       // clear the source function
-      $('select[name$="source_function_id"]', $row).val('');
+      $('select[name$="source_function"]', $row).val('');
     };
 
     // delete button was clicked

@@ -94,7 +94,7 @@ class DocumentFairnessForm(Form):
         # sort according to code
         affiliations = sorted(Affiliation.query.all(), key=Affiliation.sort_key)
   
-        self.bias_favour_affiliation_id.choices = [['', '(none)']] + [[str(s.id), s.full_name()] for s in affiliations]
+        self.bias_favour_affiliation_id.choices = [['', '(none)']] + [[str(s.id), s.full_name] for s in affiliations]
         self.bias_oppose_affiliation_id.choices = self.bias_favour_affiliation_id.choices
 
 
@@ -138,6 +138,7 @@ class Affiliation(db.Model):
     # associations
     country   = relationship("Country")
 
+    @property
     def full_name(self):
         return self.code + ' - ' + self.name
 
@@ -147,6 +148,13 @@ class Affiliation(db.Model):
     def __repr__(self):
         return "<Affiliation code='%s', name='%s'>" % (self.code.encode('utf-8'), self.name.encode('utf-8'))
 
+    @classmethod
+    def organisations(cls, country):
+      # because this list is heirarchical, we class 'organisations' as
+      # those with only 0 or two dots
+      orgs = [i for i in cls.for_country(country) if i.code.count('.') <= 1]
+      orgs.sort(key=cls.sort_key)
+      return orgs
 
     @classmethod
     def for_country(cls, country):
