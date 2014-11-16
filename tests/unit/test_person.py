@@ -104,3 +104,33 @@ class TestDocument(unittest.TestCase):
         # new entity should exist
         e = Entity.query.filter(Entity.group == 'person', Entity.name == self.fx.PersonData.joe_author.name).one()
         self.assertEqual(zuma, e.person)
+
+
+    def test_merge_dedup_sources(self):
+        # we're going to merge joe into zuma
+        joe = Person.query.get(self.fx.PersonData.joe_author.id)
+        zuma = Person.query.get(self.fx.PersonData.zuma.id)
+
+        doc1 = Document.query.get(self.fx.DocumentData.simple.id)
+        doc2 = Document.query.get(self.fx.DocumentData.simple2.id)
+
+        # doc1 already has Zuma and Joe as sources, so we should only
+        # wind up with Zuma at the end
+        doc1.add_source(DocumentSource(person=zuma, source_type='person'))
+        doc1.add_source(DocumentSource(person=joe, source_type='person'))
+
+        # doc2 only has joe
+        doc2.add_source(DocumentSource(person=joe, source_type='person'))
+
+        db.session.flush()
+        db.session.commit()
+
+        joe.merge_into(zuma)
+        db.session.flush()
+        db.session.commit()
+
+        doc1 = Document.query.get(self.fx.DocumentData.simple.id)
+        doc2 = Document.query.get(self.fx.DocumentData.simple2.id)
+
+        self.assertEqual([zuma], [ds.person for ds in doc1.sources])
+        self.assertEqual([zuma], [ds.person for ds in doc2.sources])

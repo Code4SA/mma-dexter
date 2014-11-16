@@ -174,10 +174,21 @@ class Person(db.Model):
         Merge this person into +dest+, and delete
         this person.
         """
-        from . import Author, DocumentSource, Entity
+        from . import Author, DocumentSource, Entity, Person, Document
 
         if self.id is None or dest.id is None:
             raise ArgumentError("Both id's must be valid")
+
+        # for all documents for which we're a source, if dest
+        # is also a source then delete us
+        for doc in Document.query\
+                .join(DocumentSource)\
+                .filter(DocumentSource.person == self)\
+                .all():
+            if any(ds.person == dest for ds in doc.sources):
+                for ds in doc.sources:
+                    if ds.person == self:
+                        db.session.delete(ds)
 
         for m in [Author, DocumentSource, Entity]:
             m.query.filter(m.person_id == self.id).update({'person_id': dest.id})
