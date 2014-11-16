@@ -17,10 +17,11 @@ class DocumentSourceForm(ModelForm):
     class Meta:
         model = DocumentSource
         only = ['name', 'quoted', 'photographed']
+        field_args = {'name': {'label': 'Name'}}
 
     id          = HiddenField('id', [validators.Optional()])
     deleted     = HiddenField('deleted', default='0')
-    person_id   = HiddenField('person_id')
+    person_id   = IntegerField('person_id', widget=widgets.HiddenInput())
 
     named       = BooleanField('The source is named', default=True)
     source_type = RadioField('Type', default='person', choices=[['person', 'Adult'], ['child', 'Child'], ['secondary', 'Secondary (not a person)']])
@@ -99,6 +100,18 @@ class DocumentSourceForm(ModelForm):
         if obj.person_id:
             obj.person = Person.query.get(obj.person_id)
             obj.name = None
+
+            # override the 'quoted' attribute if we know this person has
+            # utterances in this document
+            if any(obj.person == u.entity.person for u in obj.document.utterances):
+                obj.quoted = True
+
+        # if it's linked to a person, clear the other crap
+        # the form sets
+        if obj.named:
+            obj.unnamed = False
+            obj.unnamed_gender = None
+            obj.unnamed_race = None
 
 
 class DocumentAnalysisForm(ModelForm):

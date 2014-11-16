@@ -207,6 +207,7 @@ def edit_article_analysis(id):
 
             # update document
             form.populate_obj(document)
+            document.dedup_sources()
 
             # update and delete fairness
             for frm in fairness_forms:

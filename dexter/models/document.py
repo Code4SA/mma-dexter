@@ -191,6 +191,19 @@ class Document(db.Model):
         return True
 
 
+    def dedup_sources(self):
+        """ Remove duplicate sources """
+        new = []
+        for s in self.sources:
+            if s not in new:
+                new.append(s)
+
+        changed = len(new) != len(self.sources)
+        self.sources = new
+
+        return changed
+
+
     def add_place(self, doc_place):
         """ Add a new DocumentPlace to this document, but only
         if it doesn't already exist."""
