@@ -11,10 +11,11 @@ from wand.exceptions import WandError
 from .app import app
 from .models import db, Document, Issue, Person, DocumentPlace, DocumentAttachment
 from .models.document import DocumentForm
-from .models.source import DocumentSource, DocumentSourceForm
+from .models.source import DocumentSource
 from .models.fairness import DocumentFairness, DocumentFairnessForm
 from .models.analysis_nature import AnalysisNature
 from .models.author import AuthorForm
+from .analysis.forms import DocumentSourceForm
 
 from .processing import DocumentProcessor, ProcessingError
 
@@ -175,18 +176,7 @@ def edit_article_analysis(id):
     form = document.make_analysis_form()
     nature = document.analysis_nature
 
-    # forms for existing sources
-    source_forms = []
-    for source in document.sources:
-        f = DocumentSourceForm(prefix='source[%d]' % source.id, obj=source)
-        source_forms.append(f)
-    source_forms.sort(key=lambda f: f.source.sort_key())
-
-    # in the page, the fields for all new sources will be transformed into
-    # 'source-new[0]-name'. This form is used as a template for these
-    # new source forms.
-    new_sources = []
-    new_source_form = DocumentSourceForm(prefix='source-new', csrf_enabled=False, nature=nature, country=document.country)
+    new_source_form = DocumentSourceForm(prefix='sources-new', csrf_enabled=False, document=document)
 
     # fairness forms
     new_fairness_form = DocumentFairnessForm(prefix='fairness-new', csrf_enabled=False)
@@ -199,13 +189,8 @@ def edit_article_analysis(id):
         fairness_forms.append(f)
 
     if request.method == 'POST':
-        # find new sources and build forms for them.
-        # the field names are like: source-new[2]-name
-        for key in sorted(set('-'.join(key.split('-', 3)[0:2]) for key in request.form.keys() if key.startswith('source-new['))):
-            src_form = DocumentSourceForm(prefix=key, nature=nature, country=document.country)
-            # skip new sources that have an empty name but aren't anonymous
-            if not src_form.named.data or src_form.name.data:
-                new_sources.append(src_form)
+        form.sources.entries = [e for e in form.sources.entries
+                                if not e.form.is_deleted() and not e.form.is_empty()]
 
         # new fairness
         for key in sorted(set('-'.join(key.split('-', 3)[0:2]) for key in request.form.keys() if key.startswith('fairness-new['))):
@@ -214,7 +199,7 @@ def edit_article_analysis(id):
             if frm.fairness_id.data != '':
                 fairness_forms.append(frm)
 
-        forms = [form] + new_sources + source_forms + fairness_forms
+        forms = [form] + fairness_forms
         if all(f.validate() for f in forms):
             if nature != AnalysisNature.ANCHOR:
                 # convert issue id's to Issue objects
@@ -222,10 +207,6 @@ def edit_article_analysis(id):
 
             # update document
             form.populate_obj(document)
-
-            # update and delete sources
-            for f in source_forms + new_sources:
-                f.create_or_update(document)
 
             # update and delete fairness
             for frm in fairness_forms:
@@ -273,9 +254,7 @@ def edit_article_analysis(id):
     if not request.is_xhr:
         resp = make_response(render_template('articles/edit_analysis.haml',
             form=form,
-            source_forms=source_forms,
             new_source_form=new_source_form,
-            new_sources=new_sources,
             new_fairness_form=new_fairness_form,
             fairness_forms=fairness_forms,
             document=document,

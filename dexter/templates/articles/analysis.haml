@@ -76,12 +76,12 @@
                             %i.fa.fa-check-circle(title='Added manually by a monitor')
 
                           %span.text-muted
-                            - if ds.gender():
+                            - if ds.gender:
                               •
-                              %span(title=ds.gender().name)&= ds.gender().abbr()
-                            - if ds.race():
+                              %span(title=ds.gender.name)&= ds.gender.abbr()
+                            - if ds.race:
                               •
-                              %span(title=ds.race().name)&= ds.race().abbr()
+                              %span(title=ds.race.name)&= ds.race.abbr()
 
                         .col-sm-2
                           - if ds.quoted:
@@ -98,7 +98,7 @@
 
                         .col-sm-3.affiliation
                           - if ds.affiliation:
-                            &=ds.affiliation.full_name()
+                            &=ds.affiliation.full_name
 
                         .col-sm-3.age
                           &= ('%s years' % ds.age.name) if ds.age else ''

@@ -1,9 +1,15 @@
-from wtforms import StringField, TextAreaField, BooleanField, validators, DateTimeField, HiddenField
+from functools import partial
+
+from wtforms import StringField, TextAreaField, BooleanField, validators, DateTimeField, HiddenField, widgets
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
 from wtforms_alchemy import ModelFieldList
+from wtforms_alchemy.utils import null_or_int
 
 from dexter.forms import ModelForm, FormField, MultiCheckboxField, IntegerField, SelectField, RadioField, YesNoField
 from dexter.models import *
+
+
+QueryRadioField = partial(QuerySelectField, widget=widgets.ListWidget(prefix_label=False), option_widget=widgets.RadioInput())
 
 
 class DocumentSourceForm(ModelForm):
@@ -13,17 +19,19 @@ class DocumentSourceForm(ModelForm):
         only = ['name', 'quoted', 'photographed']
 
     id          = HiddenField('id', [validators.Optional()])
-    deleted     = BooleanField('deleted')
+    deleted     = HiddenField('deleted', default='0')
     person_id   = HiddenField('person_id')
 
     named       = BooleanField('The source is named', default=True)
     source_type = RadioField('Type', default='person', choices=[['person', 'Adult'], ['child', 'Child'], ['secondary', 'Secondary (not a person)']])
-    gender      = QuerySelectField('Gender', get_label='name', allow_blank=True, query_factory=Gender.all)
-    race        = QuerySelectField('Race', get_label='name', allow_blank=True, query_factory=Race.all)
-    function    = QuerySelectField('Function', get_label='name', allow_blank=True, query_factory=SourceFunction.all)
-    role        = QuerySelectField('Role', get_label='name', allow_blank=True)
-    age         = QuerySelectField('Age', get_label='name', allow_blank=True, query_factory=SourceAge.all)
-    affiliation = QuerySelectField('Affiliation', get_label='name', allow_blank=True)
+
+    gender      = QueryRadioField('Gender', get_label='name', allow_blank=True, blank_text='?', query_factory=Gender.all)
+    race        = QueryRadioField('Race', get_label='name', allow_blank=True, blank_text='?', query_factory=Race.all)
+
+    function    = QuerySelectField('Function', get_label='name', allow_blank=True, blank_text='(none)', query_factory=SourceFunction.all)
+    role        = QuerySelectField('Role', get_label='name', allow_blank=True, blank_text='(none)')
+    age         = QuerySelectField('Age', get_label='name', allow_blank=True, blank_text='(none)', query_factory=SourceAge.all)
+    affiliation = QuerySelectField('Affiliation', get_label='full_name', allow_blank=True, blank_text='(none)')
 
 
     def __init__(self, document, *args, **kwargs):
@@ -43,6 +51,10 @@ class DocumentSourceForm(ModelForm):
 
     def is_empty(self):
         return self.is_new() and self.named.data and not self.name.data
+
+
+    def is_deleted(self):
+        return self.deleted.data == '1'
 
 
     def validate(self):
@@ -80,6 +92,7 @@ class DocumentSourceForm(ModelForm):
         if self.is_new():
             # a newly created source
             obj.manual = True
+            obj.id = None
 
         # the form only deals with person_id to make life simpler,
         # so if it's set, also set the person field
@@ -100,6 +113,17 @@ class DocumentAnalysisForm(ModelForm):
         self.sources.args[0].kwargs['form_kwargs'] = {'document': kwargs.get('obj')}
 
         super(DocumentAnalysisForm, self).__init__(*args, **kwargs)
+
+    @property
+    def non_new_sources(self):
+        return [s.form for s in self.sources if not s.form.is_new()]
+
+    @property
+    def new_sources(self):
+        return [s.form for s in self.sources if s.form.is_new()]
+
+
+
 
 
 class AnchorAnalysisForm(DocumentAnalysisForm):

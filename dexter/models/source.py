@@ -118,16 +118,35 @@ class DocumentSource(db.Model, WithOffsets):
         return [not self.manual, self.source_type, self.friendly_name()]
 
 
+    @property
     def gender(self):
         if self.person:
             return self.person.gender
         return self.unnamed_gender
 
+    @gender.setter
+    def gender(self, val):
+        """ Form helper for setting the gender of this source. """
+        if self.person:
+            self.person.gender = val
+            self.unnamed_gender = None
+        else:
+            self.unnamed_gender = val
 
+    @property
     def race(self):
         if self.person:
             return self.person.race
         return self.unnamed_race
+
+    @race.setter
+    def race(self, val):
+        """ Form helper for setting the race of this source. """
+        if self.person:
+            self.person.race = val
+            self.unnamed_race = None
+        else:
+            self.unnamed_race = val
 
     @property
     def named(self):
@@ -136,38 +155,6 @@ class DocumentSource(db.Model, WithOffsets):
     @named.setter
     def named(self, val):
         self.unnamed = not val
-
-    @property
-    def gender_id(self):
-        g = self.gender()
-        return g and g.id or None
-
-
-    @gender_id.setter
-    def gender_id(self, val):
-        """ Form helper for setting the gender of this source. """
-        if self.person:
-            self.person.gender_id = val or None
-            self.unnamed_gender_id = None
-        else:
-            self.unnamed_gender_id = val or None
-
-
-    @property
-    def race_id(self):
-        r = self.race()
-        return r and r.id or None
-
-
-    @race_id.setter
-    def race_id(self, val):
-        """ Form helper for setting the race of this source. """
-        if self.person:
-            self.person.race_id = val or None
-            self.unnamed_race_id = None
-        else:
-            self.unnamed_race_id = val or None
-
 
     @property
     def offset_list(self):
@@ -316,7 +303,7 @@ class DocumentSourceForm(Form):
         from . import Affiliation
         orgs = [i for i in Affiliation.for_country(country) if i.code.count('.') <= 1]
         orgs.sort(key=Affiliation.sort_key)
-        self.affiliation_id.choices = [['', '(none)']] + [[str(s.id), s.full_name()] for s in orgs]
+        self.affiliation_id.choices = [['', '(none)']] + [[str(s.id), s.full_name] for s in orgs]
 
         if self.source:
             self.named.data = not self.source.unnamed

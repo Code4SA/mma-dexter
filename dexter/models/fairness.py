@@ -94,7 +94,7 @@ class DocumentFairnessForm(Form):
         # sort according to code
         affiliations = sorted(Affiliation.query.all(), key=Affiliation.sort_key)
   
-        self.bias_favour_affiliation_id.choices = [['', '(none)']] + [[str(s.id), s.full_name()] for s in affiliations]
+        self.bias_favour_affiliation_id.choices = [['', '(none)']] + [[str(s.id), s.full_name] for s in affiliations]
         self.bias_oppose_affiliation_id.choices = self.bias_favour_affiliation_id.choices
 
 
@@ -138,6 +138,7 @@ class Affiliation(db.Model):
     # associations
     country   = relationship("Country")
 
+    @property
     def full_name(self):
         return self.code + ' - ' + self.name
 

@@ -7,7 +7,9 @@
 
 -# helper template to show a source form
 %%def(name="show_source_form(f)")
+  = f.id
   = f.deleted
+  = f.person_id
 
   .pull-right
     - if not f.is_new() and f.source.manual:
@@ -33,12 +35,12 @@
         &= f.source.friendly_name()
 
       %span.text-muted
-        - if f.source.gender():
+        - if f.source.gender:
           •
-          %span(title=f.source.gender().name)&= f.source.gender().abbr()
-        - if f.source.race():
+          %span(title=f.source.gender.name)&= f.source.gender.abbr()
+        - if f.source.race:
           •
-          %span(title=f.source.race().name)&= f.source.race().abbr()
+          %span(title=f.source.race.name)&= f.source.race.abbr()
 
   - else:
     -# it's a new source
@@ -63,7 +65,7 @@
         .form-group
           %label.control-label Gender
           .btn-group(dataToggle='buttons')
-            - for fld in f.gender_id:
+            - for fld in f.gender:
               %label.btn.btn-default(class_='active' if fld.checked else '', title=fld.label.text)
                 = fld()
                 &= fld.label.text[0:2]
@@ -71,22 +73,22 @@
         .form-group
           %label.control-label Race
           .btn-group(dataToggle='buttons')
-            - for fld in f.race_id:
+            - for fld in f.race:
               %label.btn.btn-default(class_='active' if fld.checked else '', title=fld.label.text)
                 = fld()
                 &= fld.label.text[0:2]
 
     .row.affiliation.function
       .col-sm-5
-        = vertical_field(f.source_function_id, class_='select2')
+        = vertical_field(f.function, class_='select2')
       .col-sm-7
-        = vertical_field(f.affiliation_id, class_='select2')
+        = vertical_field(f.affiliation, class_='select2')
 
     .row.role.age
       .col-sm-5
-        = vertical_field(f.source_age_id, class_='select2')
+        = vertical_field(f.age, class_='select2')
       .col-sm-7
-        = vertical_field(f.source_role_id, class_='select2')
+        = vertical_field(f.role, class_='select2')
 
     .row
       .col-sm-5
@@ -107,12 +109,12 @@
 
 %table.table.table-striped.table-condensed.offsets.sources
   %tbody
-    - for source_form in source_forms:
+    - for source_form in form.non_new_sources:
       - ds = source_form.source
       - class_ = 'source-%s' % ds.source_type
       - class_ = class_ + (' deleted' if source_form.deleted.data == '1' else '')
 
-      %tr(dataOffsets=ds.offset_list, dataSourceId=ds.id, class_=class_)
+      %tr.source(dataOffsets=ds.offset_list, dataSourceId=ds.id, class_=class_)
         %td
           - show_source_form(source_form)
       - for q in ds.utterances():
@@ -121,13 +123,13 @@
 
 %table.table.table-condensed.sources.new-sources
   %tbody
-    - for f in new_sources:
-      %tr.new
+    - for f in form.new_sources:
+      %tr.source.new
         %td
           .source-owner
             - show_source_form(f)
 
-    %tr.template
+    %tr.source.template
       %td
         .source-owner
           - show_source_form(new_source_form)
@@ -144,7 +146,7 @@
     %ul.offsets
       - for src in suggestions:
         %li(dataOffsets=(src.offset_list if src.person else src.entity.offset_list) or '0:0')
-          %a.source(href="#", dataName=src.friendly_name(), dataRace=src.race().name if src.race() else '', dataGender=src.gender().name if src.gender() else '', dataQuoted='1' if src.utterances() else '')
+          %a.source(href="#", dataName=src.friendly_name(), dataRace=src.race.name if src.race else '', dataGender=src.gender.name if src.gender else '', dataQuoted='1' if src.utterances() else '')
             &= src.friendly_name()
             - if src.utterances():
               %i.fa.fa-comment

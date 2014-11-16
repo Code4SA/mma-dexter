@@ -38,8 +38,6 @@
       });
       self.personHound.initialize();
 
-      self.newSourceCount = $('.sources tr.new', self.$form).length;
-
       $('.btn.add-source').on('click', self.addSource);
       $('table.sources', self.$form).
         on('click', '.btn.delete', self.deleteSource).
@@ -130,14 +128,14 @@
 
       var $template = $('table.sources tr.template');
       var $row = $template.clone().insertBefore($template);
+      var index = $('table.sources tr.source').length;
 
       // this row is no longer a template
       $row.removeClass('template').addClass('new');
 
-      self.newSourceCount++;
       self.personTypeaheadEnabled = false;
 
-      // change form field name and 'for' prefixes to be new[ix]
+      // change form field name and 'for' prefixes to be sources-ix
       $('input, select, textarea, label', $row).each(function() {
         var attrs = ['name', 'id', 'for'];
 
@@ -145,7 +143,7 @@
           var attr = attrs[i];
           var val = $(this).attr(attr);
           if (val) {
-            $(this).attr(attr, val.replace('new-', 'new[' + self.newSourceCount + ']-'));
+            $(this).attr(attr, val.replace('-new-', '-' + index + '-'));
           }
         }
       });
