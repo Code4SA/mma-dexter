@@ -110,7 +110,7 @@
         race: $(this).data('race'),
         name: $(this).data('name'),
         quoted: $(this).data('quoted') == '1',
-        affiliation: '',
+        affiliation: $(this).data('affiliation'),
       };
 
       var $name = $('input[name$="-name"]', $row);
@@ -186,7 +186,7 @@
     // a new person was chosen as a source from the typeahead box
     self.personSourceChosen = function(event, person, datasource) {
       var $row = $(this).closest('tr');
-      var $select = $('select[name$="affiliation_id"]', $row);
+      var $select = $('select[name$="affiliation"]', $row);
 
       // find the matching affiliation option
       var affiliationId = $('option', $select).
@@ -223,7 +223,7 @@
       });
 
       // clear the source function
-      $('select[name$="source_function_id"]', $row).val('');
+      $('select[name$="source_function"]', $row).val('');
     };
 
     // delete button was clicked
