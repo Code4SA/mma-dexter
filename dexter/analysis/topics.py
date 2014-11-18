@@ -175,7 +175,7 @@ class TopicAnalyser(BaseAnalyser):
         # list of entity maps for each document, from entity name to occurrence count
         entities = [dict(('%s-%s' % (de.entity.group, de.entity.name), de.count or 1)
                          for de in d.entities) for d in docs]
-        vec = DictVectorizer(sparse=False)
+        vec = DictVectorizer(sparse=True)
 
         # TODO: we should ideally use sparse, but it causes the lda library to fail
         entity_vector = vec.fit_transform(entities)
