@@ -187,14 +187,13 @@ class DocumentProcessor:
                 db.session.add(doc)
             else:
                 self.log.info("Document has no sources or utterances, ignoring: %s" % url)
+
+            db.session.commit()
+            self.log.info("Successfully processed feed item: %s" % url)
+            return doc
         except:
             db.session.rollback()
             raise
-
-        db.session.commit()
-        self.log.info("Successfully processed feed item: %s" % url)
-
-        return doc
 
 
     def fetch_daily_feeds(self, day):
