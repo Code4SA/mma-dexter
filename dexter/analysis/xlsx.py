@@ -12,7 +12,7 @@ from sqlalchemy.types import Integer
 from ..analysis import BiasCalculator
 from ..models import Document, db, AnalysisNature
 
-class XLSXBuilder:
+class XLSXExportBuilder:
     def __init__(self, form):
         self.form = form
         self.formats = {}

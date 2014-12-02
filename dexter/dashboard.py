@@ -16,7 +16,7 @@ from dexter.models.user import default_analysis_nature_id, default_country_id
 from wtforms import validators, HiddenField, TextField, SelectMultipleField, BooleanField
 from wtforms.fields.html5 import DateField
 from .forms import Form, SelectField, MultiCheckboxField, RadioField
-from .analysis import SourceAnalyser, TopicAnalyser, XLSXBuilder
+from .analysis import SourceAnalyser, TopicAnalyser, XLSXExportBuilder
 
 from utils import paginate
 
@@ -94,7 +94,7 @@ def activity():
 
     elif form.format.data == 'xlsx':
         # excel spreadsheet
-        excel = XLSXBuilder(form).build()
+        excel = XLSXExportBuilder(form).build()
 
         response = make_response(excel)
         response.headers["Content-Disposition"] = "attachment; filename=%s" % form.filename()
