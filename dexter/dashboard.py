@@ -16,7 +16,7 @@ from dexter.models.user import default_analysis_nature_id, default_country_id
 from wtforms import validators, HiddenField, TextField, SelectMultipleField, BooleanField
 from wtforms.fields.html5 import DateField
 from .forms import Form, SelectField, MultiCheckboxField, RadioField
-from .analysis import SourceAnalyser, TopicAnalyser, XLSXExportBuilder
+from .analysis import SourceAnalyser, TopicAnalyser, XLSXExportBuilder, ChildrenRatingExport
 
 from utils import paginate
 
@@ -95,6 +95,15 @@ def activity():
     elif form.format.data == 'xlsx':
         # excel spreadsheet
         excel = XLSXExportBuilder(form).build()
+
+        response = make_response(excel)
+        response.headers["Content-Disposition"] = "attachment; filename=%s" % form.filename()
+        response.headers["Content-Type"] = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        return response
+
+    elif form.format.data == 'children-ratings.xlsx':
+        # excel spreadsheet
+        excel = ChildrenRatingExport(form.document_ids()).build()
 
         response = make_response(excel)
         response.headers["Content-Disposition"] = "attachment; filename=%s" % form.filename()

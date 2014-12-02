@@ -9,7 +9,7 @@
     self.init = function() {
       self.$form = $('form.activity-refine');
       self.$form.find('input[type=submit]').on('click', self.submitForm);
-      self.$form.find('.btn.download').on('click', self.download);
+      self.$form.find('.download').on('click', self.download);
       self.$form.find('.remove-cluster').on('click', self.removeCluster);
 
       // setup person search form
@@ -68,12 +68,12 @@
 
       var old_action = self.$form.attr('action');
 
-      self.$form.append('<input type="hidden" name="format" value="xlsx">');
+      self.$form.find('input[name=format]').val($(this).data('format'));
       self.$form.attr('action', '/activity');
       self.$form.submit();
 
       self.$form.attr('action', old_action);
-      $('input[name="format"]', self.$form).remove();
+      self.$form.find('input[name=format]').val('');
     };
   };
 })(jQuery, window);

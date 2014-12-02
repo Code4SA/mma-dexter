@@ -92,9 +92,23 @@
           - kwargs = {'data-text': person and person.name or ''}
           = vertical_field(form.source_person_id, **kwargs)
 
-          .buttons
-            %button.btn.btn-default.download
-              %i.fa.fa-download
-              Download XLSX
+          .row.buttons
+            .col-sm-7
+              %input(type="hidden", name="format")
+              .dropdown
+                %button.btn.btn-default.form-control.dropdown-toggle(type="button", dataToggle='dropdown')
+                  %i.fa.fa-download
+                  Download
+                  %span.caret
 
-            %input.btn.btn-success(type='submit', value='Explore')
+                %ul.dropdown-menu
+                  %li
+                    %a.download(href="#", dataFormat="xlsx") Raw data (.xlsx)
+
+                  %li(class_='disabled' if form.analysis_nature() != AnalysisNature.CHILDREN else '')
+                    %a.download(href="#", dataFormat="children-ratings.xlsx")
+                      %i.fa(class_=AnalysisNature.ICONS.get(AnalysisNature.CHILDREN))
+                      Children Ratings (.xlsx)
+
+            .col-sm-5
+              %input.btn.btn-success.form-control(type='submit', value='Explore')
