@@ -16,8 +16,7 @@ from dexter.models.user import default_analysis_nature_id, default_country_id
 from wtforms import validators, HiddenField, TextField, SelectMultipleField, BooleanField
 from wtforms.fields.html5 import DateField
 from .forms import Form, SelectField, MultiCheckboxField, RadioField
-from .processing.xlsx import XLSXBuilder
-from .analysis import SourceAnalyser, TopicAnalyser
+from .analysis import SourceAnalyser, TopicAnalyser, XLSXBuilder
 
 from utils import paginate
 
