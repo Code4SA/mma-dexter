@@ -62,13 +62,13 @@ class ChildrenRatingExport:
         self.ratings = [
             [0.500, 'Are Childrens Rights Respected', [
                 [0.101, 'Diversity of Roles'],
-                [0.267, 'Rights Respected'],
+                [0.267, 'Percent rights respected'],
                 [0.302, 'Access Codes', [
-                    [0.833, 'Abuse 1 True'],
-                    [0.167, 'Abuse 1 Not True']]],
+                    [0.833, 'Percent abuse'],
+                    [0.167, 'Percent non-abuse']]],
                 [0.148, 'Information Points', [
-                    [0.500, 'Self-help'],
-                    [0.500, 'Childs best interest']]]]],
+                    [0.500, 'Percent Self Help'],
+                    [0.500, 'Percent S. Child\'s best interest']]]]],
         ]
 
         # map from a score name to its row in the score sheet
@@ -130,6 +130,7 @@ class ChildrenRatingExport:
         row = self.totals(row) + 2
         row = self.roles_scores(row) + 2
         row = self.quality_scores(row) + 2
+        row = self.victim_scores(row) + 2
         row = self.principle_scores(row) + 2
 
 
@@ -173,10 +174,14 @@ class ChildrenRatingExport:
     def write_formula_score_row(self, name, formula, row):
         self.set_score_row(name, row)
 
+        if isinstance(formula, basestring):
+            f = formula
+            formula = lambda r, c: f.format(row=r, col=c)
+
         for i, medium in enumerate(self.media):
             medium_col = self.score_col(i)
             col_name = xl_col_to_name(medium_col)
-            self.scores_ws.write_formula(row, medium_col, formula.format(col=col_name))
+            self.scores_ws.write_formula(row, medium_col, formula(row+1, col_name))
 
 
     def roles_scores(self, row):
@@ -225,12 +230,14 @@ class ChildrenRatingExport:
         """ Counts of source roles per medium, and their entropy. """
         self.scores_ws.write(row, 0, 'Quality')
 
-        for attr in ['quality_self_help',
+        indicators = ['quality_self_help',
                      'quality_consequences',
                      'quality_solutions',
                      'quality_policies',
                      'quality_causes',
-                     'quality_basic_context']:
+                     'quality_basic_context']
+
+        for attr in indicators:
             # count documents with this quality
             name = attr.replace('quality_', '').replace('_', ' ').title()
 
@@ -243,9 +250,47 @@ class ChildrenRatingExport:
                     .group_by(Medium.name)
                     .order_by(Medium.name)
                 ).all()
+            data = {r[0]: r[1] for r in rows}
+            self.write_simple_score_row(name, data, row)
+
+            total_row = self.score_row['Total articles']
+            formula = '=IF({col}%s>0,{col}%s/{col}%s,0)' % (total_row+1, row+1, total_row+1)
+            self.write_formula_score_row('Percent ' + name, formula, row+len(indicators))
+
+            row += 1
+
+        return row + len(indicators)
+
+    def victim_scores(self, row):
+        """ Counts of secondary victimisation per medium """
+        self.scores_ws.write(row, 0, 'Secondary Victimisation')
+
+        for attr in ['abuse_source',
+                     'abuse_identified',
+                     'abuse_victim']:
+            # count documents with this abuse
+            name = attr.replace('abuse_', '').replace('_', ' ').title()
+
+            rows = self.filter(db.session
+                    .query(
+                        Medium.name,
+                        func.count(1).label('freq'))
+                    .join(Document)
+                    .filter(getattr(Document, attr) == True)
+                    .group_by(Medium.name)
+                    .order_by(Medium.name)
+                ).all()
 
             self.write_simple_score_row(name, {r[0]: r[1] for r in rows}, row)
-            row = row + 1
+            row += 1
+
+        total_row = self.score_row['Total articles']
+        formula = '=IF({col}%s>0,{col}%s/{col}%s,0)' % (total_row+1, row, total_row+1)
+        self.write_formula_score_row('Percent abuse', formula, row)
+        row += 1
+
+        formula = '=1-{col}%s' % row
+        self.write_formula_score_row('Percent non-abuse', formula, row)
 
         return row
 
@@ -268,16 +313,21 @@ class ChildrenRatingExport:
         row = self.write_score_table(names, rows, row) + 1
 
         # count of docs with any supported principle
-        formula = '=SUM({col}%s:{col}%s)' % (row-len(principles)+1, row)
-        self.write_formula_score_row('Rights supported', formula, row)
-        row = row + 1
+        formula = '=SUM({col}%s:{col}%s)' % (row-len(principles), row-1)
+        self.write_formula_score_row('Rights respected', formula, row)
+        row += 1
 
         # rights respected is the percent of stories that have a supported principle
         total_row = self.score_row['Total articles']
         formula = '=IF({col}%s>0,{col}%s/{col}%s,0)' % (total_row+1, row, total_row+1)
-        self.write_formula_score_row('Rights Respected', formula, row)
+        self.write_formula_score_row('Percent rights respected', formula, row)
 
         row = row + 2
+
+        # percent of documents with each right supported
+        formula = lambda r, c: '=IF({col}{tot}>0,{col}{row}/{col}{tot},0)'.format(tot=total_row+1, row=r-len(names)-4, col=c)
+        names = ['Percent ' + n for n in names]
+        row = self.write_formula_table(names, formula, row) + 1
 
         self.scores_ws.write(row, 0, 'Principles violated')
         rows = self.filter(db.session
@@ -305,13 +355,26 @@ class ChildrenRatingExport:
 
         Returns the number of the last row written.
         """
-
         data = defaultdict(dict)
         for col_name, row_name, val in rows:
             data[row_name][col_name] = val
 
         for name in row_names:
             self.write_simple_score_row(name, data.get(name, {}), row)
+            row = row+1
+
+        return row
+
+
+    def write_formula_table(self, row_names, formula, row):
+        """ Write a table of formulas, where the row names are in +row_names+
+        and the columns are each medium. The +formula+ will have
+        {col} and {row} formatted as appropriate.
+
+        Returns the number of the last row written.
+        """
+        for name in row_names:
+            self.write_formula_score_row(name, formula, row)
             row = row+1
 
         return row
@@ -336,12 +399,12 @@ class ChildrenRatingExport:
             weight, rating = info[0:2]
 
             self.add_rating(weight, rating, row, col)
-            row = row + 1
+            row += 1
 
             if len(info) > 2:
                 # sub-ratings
                 row = self.add_nested_ratings(info[2], row, col+1)
-                row = row + 1
+                row += 1
 
         return row
 
