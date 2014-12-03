@@ -11,8 +11,8 @@ from dateutil.parser import parse
 from sqlalchemy.sql import func
 from sqlalchemy.types import Integer
 
-from ..analysis import BiasCalculator
-from ..models import Document, Medium, db, AnalysisNature
+from .utils import calculate_entropy
+from ..models import *
 
 r2c = partial(xl_rowcol_to_cell, row_abs=True, col_abs=True)
 
@@ -123,9 +123,68 @@ class ChildrenRatingExport:
     def build_scores_worksheet(self):
         """ Build up the scores worksheet. """
         # TODO:
+        for i, medium in enumerate(self.media):
+            self.scores_ws.write(1, self.score_col(i), medium.name)
+
+        row = 4
+
+        self.roles_scores(row)
+
+
+    def roles_scores(self, row):
+        """ Counts of source roles per medium, and their entropy. """
+        self.scores_ws.write(row, 0, 'Roles')
+
+        rows = self.filter(db.session
+                .query(
+                    Medium.name,
+                    SourceRole.name,
+                    func.count(1).label('freq'))
+                .join(Document)
+                .join(DocumentSource)
+                .join(SourceRole)
+                .group_by(Medium.name, SourceRole.name)
+                .order_by(Medium.name)
+            ).all()
+
+        roles = list(set(r[1] for r in rows))
+        roles.sort()
+
+        # write role row headers
+        for i, role in enumerate(roles):
+            self.scores_ws.write(row+i, 1, role)
+
+        score_row = row+len(roles)+1
+        self.set_score_row('Diversity of roles', score_row)
+
+        # entropy for the mediums
+        data = defaultdict(dict)
+        for medium, role, count in rows:
+            data[medium][role] = count
+        entropy = calculate_entropy(data)
+
+        # write values per medium
+        for i, pair in enumerate(groupby(rows, lambda r: r[0])):
+            medium, group = pair
+            medium_col = self.score_col(i)
+
+            self.scores_ws.write(score_row, medium_col, entropy[medium])
+
+            # write values per role, for this medium
+            vals = {r[1]: r[2] for r in group}
+            for j, role in enumerate(roles):
+                self.scores_ws.write(row+j, medium_col, vals.get(role, 0))
+
+
+
+    def set_score_row(self, name, row):
+        self.score_row[name] = row
+        self.scores_ws.write(row, 1, name)
+
 
     def build_rating_worksheet(self):
         """ Build up the rating worksheet. """
+        # write medium headings
         for i, medium in enumerate(self.media):
             self.rating_ws.write(1, self.rating_col(i), medium.name)
 
