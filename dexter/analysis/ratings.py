@@ -127,8 +127,7 @@ class ChildrenRatingExport:
             self.scores_ws.write(1, self.score_col(i), medium.name)
 
         row = 4
-
-        self.roles_scores(row)
+        row = self.roles_scores(row) + 2
 
 
     def roles_scores(self, row):
@@ -150,12 +149,13 @@ class ChildrenRatingExport:
         roles = list(set(r[1] for r in rows))
         roles.sort()
 
+        # the row we place final scores at
+        score_row = row+len(roles)+1
+        self.set_score_row('Diversity of Roles', score_row)
+
         # write role row headers
         for i, role in enumerate(roles):
             self.scores_ws.write(row+i, 1, role)
-
-        score_row = row+len(roles)+1
-        self.set_score_row('Diversity of roles', score_row)
 
         # entropy for the mediums
         data = defaultdict(dict)
@@ -164,17 +164,16 @@ class ChildrenRatingExport:
         entropy = calculate_entropy(data)
 
         # write values per medium
-        for i, pair in enumerate(groupby(rows, lambda r: r[0])):
-            medium, group = pair
+        for i, medium in enumerate(self.media):
             medium_col = self.score_col(i)
-
-            self.scores_ws.write(score_row, medium_col, entropy[medium])
+            # entropy
+            self.scores_ws.write(score_row, medium_col, entropy[medium.name])
 
             # write values per role, for this medium
-            vals = {r[1]: r[2] for r in group}
             for j, role in enumerate(roles):
-                self.scores_ws.write(row+j, medium_col, vals.get(role, 0))
+                self.scores_ws.write(row+j, medium_col, data[medium.name].get(role, 0))
 
+        return score_row
 
 
     def set_score_row(self, name, row):
@@ -210,10 +209,11 @@ class ChildrenRatingExport:
         self.rating_ws.write(row, col+1, rating)
 
         # TODO: indicator for rating
-        score_row = self.score_row.get(rating, 5)
+        # TODO: ratings with children should calculate their values
+        score_row = self.score_row.get(rating, 99)
 
         for i in xrange(self.n_columns):
-            cell = xl_rowcol_to_cell(row, self.score_col(i), row_abs=True, col_abs=True)
+            cell = xl_rowcol_to_cell(score_row, self.score_col(i), row_abs=True, col_abs=True)
             self.rating_ws.write(row, self.rating_col(i), '=Scores!%s' % cell)
 
     def score_col(self, i):
