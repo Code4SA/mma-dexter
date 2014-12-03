@@ -59,7 +59,7 @@ class ChildrenRatingExport:
         self.formats = {}
 
         # TODO balance these weights
-        self.ratings = [
+        self.ratings = [[1.0, 'Final rating', [
             [0.500, 'Are Childrens Rights Respected', [
                 [0.101, 'Diversity of Roles'],
                 [0.267, 'Percent rights respected'],
@@ -69,7 +69,7 @@ class ChildrenRatingExport:
                 [0.148, 'Information Points', [
                     [0.500, 'Percent Self Help'],
                     [0.500, 'Percent S. Child\'s best interest']]]]],
-        ]
+        ]]]
 
         # map from a score name to its row in the score sheet
         self.score_row = {}
@@ -94,7 +94,7 @@ class ChildrenRatingExport:
                     yield max(depth(rating[2], deep+1))
 
         # the column at which the ratings for each medium starts
-        self.rating_col_start = max(depth(self.ratings)) * 2
+        self.rating_col_start = (max(depth(self.ratings))-1) * 2
 
 
     def build(self):
@@ -395,30 +395,38 @@ class ChildrenRatingExport:
 
     
     def add_nested_ratings(self, ratings, row, col):
+        rating_rows = []
+
         for info in ratings:
             weight, rating = info[0:2]
 
-            self.add_rating(weight, rating, row, col)
-            row += 1
+            rating_rows.append(row)
+            self.rating_ws.write(row, col  , weight)
+            self.rating_ws.write(row, col+1, rating)
 
             if len(info) > 2:
-                # sub-ratings
-                row = self.add_nested_ratings(info[2], row, col+1)
-                row += 1
+                # add sub-ratings
+                rows = self.add_nested_ratings(info[2], row+1, col+1)
 
-        return row
+                # now set this rating's score to the product of the children
+                col_name = xl_col_to_name(col+1)
+                for i in xrange(self.n_columns):
+                    rating_col_name = xl_col_to_name(self.rating_col(i))
+                    # weight * score
+                    formula = '+'.join('%s%s*%s%s' % (col_name, r+1, rating_col_name, r+1) for r in rows)
+                    self.rating_ws.write_formula(row, self.rating_col(i), formula)
 
-    def add_rating(self, weight, rating, row, col):
-        self.rating_ws.write(row, col  , weight)
-        self.rating_ws.write(row, col+1, rating)
+                row = rows[-1] + 1
+            else:
+                # actual rating
+                score_row = self.score_row[rating]
 
-        # TODO: indicator for rating
-        # TODO: ratings with children should calculate their values
-        score_row = self.score_row.get(rating, 99)
+                for i in xrange(self.n_columns):
+                    cell = xl_rowcol_to_cell(score_row, self.score_col(i), row_abs=True, col_abs=True)
+                    self.rating_ws.write(row, self.rating_col(i), '=Scores!%s' % cell)
+            row += 1
 
-        for i in xrange(self.n_columns):
-            cell = xl_rowcol_to_cell(score_row, self.score_col(i), row_abs=True, col_abs=True)
-            self.rating_ws.write(row, self.rating_col(i), '=Scores!%s' % cell)
+        return rating_rows
 
     def score_col(self, i):
         """ The index of the score for the i-th medium """
