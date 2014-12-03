@@ -3,7 +3,7 @@ from itertools import groupby
 from functools import partial
 
 import xlsxwriter
-from xlsxwriter.utility import xl_rowcol_to_cell
+from xlsxwriter.utility import xl_rowcol_to_cell, xl_col_to_name
 import StringIO
 from datetime import datetime
 from dateutil.parser import parse
@@ -127,7 +127,56 @@ class ChildrenRatingExport:
             self.scores_ws.write(1, self.score_col(i), medium.name)
 
         row = 4
+        row = self.totals(row) + 2
         row = self.roles_scores(row) + 2
+        row = self.quality_scores(row) + 2
+        row = self.principle_scores(row) + 2
+
+
+    def totals(self, row):
+        """ Counts of articles and sources """
+        self.scores_ws.write(row, 0, 'Articles')
+        rows = self.filter(db.session
+                .query(
+                    Medium.name,
+                    func.count(1).label('freq'))
+                .join(Document)
+                .group_by(Medium.name)
+                .order_by(Medium.name)
+            ).all()
+        self.write_simple_score_row('Total articles', {r[0]: r[1] for r in rows}, row)
+
+        row = row + 2
+
+        self.scores_ws.write(row, 0, 'Sources')
+        rows = self.filter(db.session
+                .query(
+                    Medium.name,
+                    func.count(1).label('freq'))
+                .join(Document)
+                .join(DocumentSource)
+                .group_by(Medium.name)
+                .order_by(Medium.name)
+            ).all()
+        self.write_simple_score_row('Total sources', {r[0]: r[1] for r in rows}, row)
+
+        return row
+
+
+    def write_simple_score_row(self, name, data, row):
+        self.set_score_row(name, row)
+
+        for i, medium in enumerate(self.media):
+            medium_col = self.score_col(i)
+            self.scores_ws.write(row, medium_col, data.get(medium.name, 0))
+
+    def write_formula_score_row(self, name, formula, row):
+        self.set_score_row(name, row)
+
+        for i, medium in enumerate(self.media):
+            medium_col = self.score_col(i)
+            col_name = xl_col_to_name(medium_col)
+            self.scores_ws.write_formula(row, medium_col, formula.format(col=col_name))
 
 
     def roles_scores(self, row):
@@ -149,10 +198,6 @@ class ChildrenRatingExport:
         roles = list(set(r[1] for r in rows))
         roles.sort()
 
-        # the row we place final scores at
-        score_row = row+len(roles)+1
-        self.set_score_row('Diversity of Roles', score_row)
-
         # write role row headers
         for i, role in enumerate(roles):
             self.scores_ws.write(row+i, 1, role)
@@ -163,17 +208,113 @@ class ChildrenRatingExport:
             data[medium][role] = count
         entropy = calculate_entropy(data)
 
+        score_row = row+len(roles)+1
+        self.write_simple_score_row('Diversity of Roles', entropy, score_row)
+
         # write values per medium
         for i, medium in enumerate(self.media):
             medium_col = self.score_col(i)
-            # entropy
-            self.scores_ws.write(score_row, medium_col, entropy[medium.name])
 
             # write values per role, for this medium
             for j, role in enumerate(roles):
                 self.scores_ws.write(row+j, medium_col, data[medium.name].get(role, 0))
 
         return score_row
+
+    def quality_scores(self, row):
+        """ Counts of source roles per medium, and their entropy. """
+        self.scores_ws.write(row, 0, 'Quality')
+
+        for attr in ['quality_self_help',
+                     'quality_consequences',
+                     'quality_solutions',
+                     'quality_policies',
+                     'quality_causes',
+                     'quality_basic_context']:
+            # count documents with this quality
+            name = attr.replace('quality_', '').replace('_', ' ').title()
+
+            rows = self.filter(db.session
+                    .query(
+                        Medium.name,
+                        func.count(1).label('freq'))
+                    .join(Document)
+                    .filter(getattr(Document, attr) == True)
+                    .group_by(Medium.name)
+                    .order_by(Medium.name)
+                ).all()
+
+            self.write_simple_score_row(name, {r[0]: r[1] for r in rows}, row)
+            row = row + 1
+
+        return row
+
+    def principle_scores(self, row):
+        """ Counts of documents by principle supported, violated """
+        principles = Principle.query.all()
+
+        self.scores_ws.write(row, 0, 'Principles supported')
+        rows = self.filter(db.session
+                .query(
+                    Medium.name,
+                    Principle.name,
+                    func.count(1).label('freq'))
+                .join(Document)
+                .join(Principle, Document.principle_supported_id == Principle.id)
+                .group_by(Medium.name, Principle.name)
+            ).all()
+        rows = [[r[0], 'S. ' + r[1], r[2]] for r in rows]
+        names = ['S. ' + p.name for p in principles]
+        row = self.write_score_table(names, rows, row) + 1
+
+        # count of docs with any supported principle
+        formula = '=SUM({col}%s:{col}%s)' % (row-len(principles)+1, row)
+        self.write_formula_score_row('Rights supported', formula, row)
+        row = row + 1
+
+        # rights respected is the percent of stories that have a supported principle
+        total_row = self.score_row['Total articles']
+        formula = '=IF({col}%s>0,{col}%s/{col}%s,0)' % (total_row+1, row, total_row+1)
+        self.write_formula_score_row('Rights Respected', formula, row)
+
+        row = row + 2
+
+        self.scores_ws.write(row, 0, 'Principles violated')
+        rows = self.filter(db.session
+                .query(
+                    Medium.name,
+                    Principle.name,
+                    func.count(1).label('freq'))
+                .join(Document)
+                .join(Principle, Document.principle_violated_id == Principle.id)
+                .group_by(Medium.name, Principle.name)
+            ).all()
+        rows = [[r[0], 'V. ' + r[1], r[2]] for r in rows]
+        names = ['V. ' + p.name for p in principles]
+        row = self.write_score_table(names, rows, row)
+
+        return row
+
+    def write_score_table(self, row_names, rows, row):
+        """ Convert all the rows in +rows+ into a table and write it as scores,
+        starting on row number +row+ in the db. +row_names+ is the full set
+        of expected row names.
+
+        The table is created by using the first column in +rows+ as the column
+        name, and the second as the row name.
+
+        Returns the number of the last row written.
+        """
+
+        data = defaultdict(dict)
+        for col_name, row_name, val in rows:
+            data[row_name][col_name] = val
+
+        for name in row_names:
+            self.write_simple_score_row(name, data.get(name, {}), row)
+            row = row+1
+
+        return row
 
 
     def set_score_row(self, name, row):
