@@ -107,12 +107,13 @@ class ChildrenRatingExport:
                     [0.500, 'Percent Positive Roles'],
                     [0.50, 'Percent Negative Roles']]],
                 [0.085, 'Diversity of Roles'],
-#                [0.187, 'Sex', [
-#                    [0.157, 'Diversity (entropy)'],
+                [0.187, 'Sex', [
+                    [0.157, 'Diversity of Gender'],
 #                    [0.249, 'Sex Ratio'],
 #                    [0.594, 'Role', [
 #                        [0.667, 'Positive'],
 #                        [0.333, 'Negative']]]]],
+]],
                 [0.080, 'Diversity of Ages'],
                 [0.080, 'Diversity of Races']
 ]],
@@ -258,6 +259,10 @@ class ChildrenRatingExport:
 
         formula = '=IF({col}%s>1,1/{col}%s,{col}%s)' % (row, row, row)
         self.write_formula_score_row('Gender Ratio', formula, row)
+
+        # male / female entropy
+        rows = [r for r in rows if r[1] in ['Male', 'Female']]
+        self.write_simple_score_row('Diversity of Gender', self.entropy(rows), row)
 
         return row
 
