@@ -77,7 +77,7 @@ class ChildrenRatingExport:
                     [0.200, 'Percent 3 Child Sources'],
                     [0.267, 'Percent 4 Child Sources'],
                     [0.333, 'Percent >4 Child Sources']]],
-#                [0.067, 'Origin AC1-6 (entropy)'],
+                [0.067, 'Diversity of Origins'],
 #                [0.169, 'Overall Child Sources']]],
             ]]
         ]]]
@@ -144,6 +144,7 @@ class ChildrenRatingExport:
         row = self.principle_scores(row) + 2
         row = self.child_gender_scores(row) + 2
         row = self.child_source_scores(row) + 2
+        row = self.origin_scores(row) + 2
 
 
     def totals(self, row):
@@ -297,16 +298,36 @@ class ChildrenRatingExport:
         roles.sort()
 
         row = self.write_score_table(roles, rows, row) + 1
-
-        # entropy for the mediums
-        data = defaultdict(dict)
-        for medium, role, count in rows:
-            data[medium][role] = count
-        entropy = calculate_entropy(data)
-
-        self.write_simple_score_row('Diversity of Roles', entropy, row)
+        self.write_simple_score_row('Diversity of Roles', self.entropy(rows), row)
 
         return row
+
+    def origin_scores(self, row):
+        """ Counts of document origins per medium, and their entropy. """
+        self.scores_ws.write(row, 0, 'Origins')
+
+        rows = self.filter(db.session
+                .query(
+                    Medium.name,
+                    Location.name,
+                    func.count(1).label('freq'))
+                .join(Document)
+                .join(Location)
+                .group_by(Medium.name, Location.name)
+            ).all()
+        roles = list(set(r[1] for r in rows))
+        roles.sort()
+
+        row = self.write_score_table(roles, rows, row) + 1
+        self.write_simple_score_row('Diversity of Origins', self.entropy(rows), row)
+
+        return row
+
+    def entropy(self, rows):
+        data = defaultdict(dict)
+        for medium, label, count in rows:
+            data[medium][label] = count
+        return calculate_entropy(data)
 
     def quality_scores(self, row):
         """ Counts of source roles per medium, and their entropy. """
