@@ -52,16 +52,13 @@
     };
 
     self.chartUrl = function() {
-      // TODO: update based on form
-      var url = document.location;
+      var $form = $('form.activity-refine');
 
-      if (document.location.search === "") {
-        url = url + "?";
-      } else {
-        url = url + "&";
-      }
+      $form.find('input[name=format]').val('chart-json');
+      var url = window.location.pathname + '?' + $('form.activity-refine').serialize();
+      $form.find('input[name=format]').val('');
 
-      return url + "format=chart-json";
+      return url;
     };
     
     self.updateCharts = function() {
