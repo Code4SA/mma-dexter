@@ -77,8 +77,7 @@ class ChildrenRatingExport:
                     [0.200, 'Percent 3 Child Sources'],
                     [0.267, 'Percent 4 Child Sources'],
                     [0.333, 'Percent >4 Child Sources']]],
-                # TODO: this must only be origins where children are actually quoted
-                [0.067, 'Diversity of Origins'],
+                [0.067, 'Diversity of Quoted Origins'],
                 [0.169, 'Percent Child sources']]],
             [0.125, 'Are Childrens Issued covered in Depth', [
                 [0.050, 'Diversity of Topics'],
@@ -301,7 +300,27 @@ class ChildrenRatingExport:
 
         starting_row = row
         row = self.write_score_table(buckets, rows, row) + 1
-        row = self.write_percent_table(buckets, self.score_row['Total articles'], starting_row, row)
+        row = self.write_percent_table(buckets, self.score_row['Total articles'], starting_row, row) + 1
+
+        # origin of documents with quoted children
+        self.scores_ws.write(row, 0, 'Origins of Quoted Children')
+        rows = self.filter(db.session
+                .query(
+                    Medium.name,
+                    Location.name,
+                    func.count(func.distinct(Document.id)).label('freq'))
+                .join(Document)
+                .join(DocumentSource)
+                .join(Location)
+                .filter(DocumentSource.source_type == 'child')
+                .filter(DocumentSource.quoted == True)
+                .group_by(Medium.name)
+            ).all()
+        origins = list(set(r[1] for r in rows))
+        row = self.write_score_table(origins, rows, row)
+        # entropy
+        self.write_simple_score_row('Diversity of Quoted Origins', self.entropy(rows), row)
+        row += 1
 
         return row
 
