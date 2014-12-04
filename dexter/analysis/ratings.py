@@ -100,7 +100,7 @@ class ChildrenRatingExport:
                     [0.200, 'Percent 3 Sources'],
                     [0.267, 'Percent 4 Sources'],
                     [0.333, 'Percent >4 Sources'],
-#                [0.050, 'Type'],
+                [0.050, 'Percent Focus types'],
                 ]]]],
             [0.125, 'Is there Diversity in the Media', [
                 [0.201, 'Roles', [
@@ -184,6 +184,7 @@ class ChildrenRatingExport:
         row = self.child_gender_scores(row) + 2
         row = self.origin_scores(row) + 2
         row = self.topic_scores(row) + 2
+        row = self.type_scores(row) + 2
 
 
     def totals(self, row):
@@ -474,6 +475,36 @@ class ChildrenRatingExport:
         self.write_simple_score_row('Child Abuse', rows, row)
         row += 1
         self.write_percent_row('Child Abuse', self.score_row['Total articles'], row-1, row)
+
+        return row
+
+
+    def type_scores(self, row):
+        """ Counts of document types per medium """
+        self.scores_ws.write(row, 0, 'Types')
+ 
+        # feature these types
+        types = ['News story', 'Editorial', 'Opinion piece', 'Feature/news analysis', 'Business', 'Sport']
+        types.sort()
+
+        rows = self.filter(db.session
+                .query(
+                    Medium.name,
+                    DocumentType.name,
+                    func.count(1).label('freq'))
+                .join(Document)
+                .join(DocumentType)
+                .filter(DocumentType.name.in_(types))
+                .group_by(Medium.name, DocumentType.name)
+            ).all()
+
+        starting_row = row
+        row = self.write_score_table(types, rows, row) + 1
+
+        formula = '=SUM({col}%s:{col}%s)' % (row-len(types), row-1)
+        self.write_formula_score_row('Focus types', formula, row)
+        row += 1
+        self.write_percent_row('Focus types', self.score_row['Total articles'], row-1, row)
 
         return row
 
