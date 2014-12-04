@@ -61,7 +61,7 @@ class ChildrenRatingExport:
         self.ratings = [[1.0, 'Final rating', [
             [0.500, 'Are Childrens Rights Respected', [
                 [0.101, 'Diversity of Roles'],
-                [0.267, 'Percent rights respected'],
+                [0.267, 'Percent Rights respected'],
                 [0.302, 'Access Codes', [
                     [0.833, 'Percent Abused sources'],
                     [0.167, 'Percent Non-abused sources']]],
@@ -84,18 +84,16 @@ class ChildrenRatingExport:
                 [0.150, 'Percent Child Abuse'],
                 [0.050, 'Diversity of Origins'],
                 [0.100, 'Percent Focus origins'],
-#                [0.250, 'Information Points', [
-#                    [0.063, 'CB'],
-#                    [0.125, 'CL'],
-#                    [0.125, 'Y'],
-#                    [0.125, 'O'],
-#                    [0.125, 'S'],
-#                    [0.125, 'L'],
-#                    [0.188, 'SH'],
-#                    [0.125, 'CBI']]],
-#                [0.250, 'Principles', [
-#                    [0.200, 'Supported'],
-#                    [0.800, 'Violated']]],
+                [0.250, 'Information Points', [
+                    [0.063, 'Percent Basic Context'],
+                    [0.125, 'Percent Causes'],
+                    [0.125, 'Percent Consequences'],
+                    [0.125, 'Percent Solutions'],
+                    [0.125, 'Percent Policies'],
+                    [0.188, 'Percent Self Help']]],
+                [0.250, 'Principles', [
+                    [0.200, 'Percent Rights respected'],
+                    [0.800, 'Inv. Percent Principles violated']]],
 #                [0.050, 'Sources', [
 #                    [0.067, '1 Source'],
 #                    [0.133, '2 Sources'],
@@ -526,12 +524,10 @@ class ChildrenRatingExport:
 
         # rights respected is the percent of stories that have a supported principle
         total_row = self.score_row['Total articles']
-        formula = '=IF({col}%s>0,{col}%s/{col}%s,0)' % (total_row+1, row, total_row+1)
-        self.write_formula_score_row('Percent rights respected', formula, row)
-
+        self.write_percent_row('Rights respected', total_row, row-1, row)
         row = row + 2
 
-        # percent of documents with each right supported
+        # percent of documents with each right violated
         formula = lambda r, c: '=IF({col}{tot}>0,{col}{row}/{col}{tot},0)'.format(tot=total_row+1, row=r-len(names)-4, col=c)
         names = ['Percent ' + n for n in names]
         row = self.write_formula_table(names, formula, row) + 1
@@ -549,6 +545,14 @@ class ChildrenRatingExport:
         rows = [[r[0], 'V. ' + r[1], r[2]] for r in rows]
         names = ['V. ' + p.name for p in principles]
         row = self.write_score_table(names, rows, row)
+
+        # count of docs with any violated principle
+        formula = '=SUM({col}%s:{col}%s)' % (row-len(principles)+1, row)
+        self.write_formula_score_row('Principles violated', formula, row)
+        row += 1
+        self.write_percent_row('Principles violated', total_row, row-1, row)
+        row += 1
+        self.write_formula_score_row('Inv. Percent Principles violated', '=1-{col}%s' % row, row)
 
         return row
 
