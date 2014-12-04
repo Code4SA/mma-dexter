@@ -113,13 +113,11 @@ class ChildrenRatingExport:
                 [0.187, 'Sex', [
                     [0.157, 'Diversity of Gender'],
                     [0.249, 'Gender Ratio'],
-#                    [0.594, 'Role', [
-#                        [0.667, 'Positive'],
-#                        [0.333, 'Negative']]]]],
-]],
+                    [0.594, 'Role', [
+                        [0.667, 'Gender score Positive Roles'],
+                        [0.333, 'Gender score Negative Roles']]]]],
                 [0.080, 'Diversity of Ages'],
-                [0.080, 'Diversity of Races']
-]],
+                [0.080, 'Diversity of Races']]],
         ]]]
 
         # map from a score name to its row in the score sheet
@@ -417,7 +415,6 @@ class ChildrenRatingExport:
                     .filter(SourceRole.indication == indication)
                     .filter(DocumentSource.source_type == 'child')
                     .group_by(Medium.name, SourceRole.name)
-                    .order_by(Medium.name)
                 ).all()
 
             row = self.write_score_table(roles, rows, row) + 1
@@ -426,6 +423,42 @@ class ChildrenRatingExport:
             row += 1
             # percent of all child sources
             self.write_percent_row(title, self.score_row['Total child sources'], row-1, row)
+            row += 2
+
+            # male vs female
+            score_rows = []
+            for gender in ['Male', 'Female']:
+                self.scores_ws.write(row, 0, gender + ' ' + title)
+
+                rows = self.filter(db.session
+                        .query(
+                            Medium.name,
+                            SourceRole.name,
+                            func.count(1).label('freq'))
+                        .join(Document)
+                        .join(DocumentSource)
+                        .join(SourceRole)
+                        .join(Gender)
+                        .filter(SourceRole.indication == indication)
+                        .filter(DocumentSource.source_type == 'child')
+                        .filter(Gender.name == gender)
+                        .group_by(Medium.name, SourceRole.name)
+                    ).all()
+
+                row = self.write_score_table(roles, rows, row) + 1
+                formula = '=SUM({col}%s:{col}%s)' % (row-len(roles), row-1)
+                self.write_formula_score_row('Total %s %s' % (gender, title), formula, row)
+                score_rows.append(row)
+                row += 2
+
+            # now do the ratio between the two
+            male, female = score_rows
+            formula = '=IF({col}%s>0,{col}%s/{col}%s,0)' % (male+1, female+1, male+1)
+            self.write_formula_score_row('Gender ratio %s' % title, formula, row)
+            row += 1
+            formula = '=IF({col}%s>1,1/{col}%s,{col}%s)' % (row, row, row)
+            self.write_formula_score_row('Gender score %s' % title, formula, row)
+            row += 1
 
         return row
 
