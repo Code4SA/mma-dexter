@@ -68,17 +68,19 @@ class ChildrenRatingExport:
                 [0.148, 'Information Points', [
                     [0.500, 'Percent Self Help'],
                     [0.500, 'Percent S. Child\'s best interest']]]]],
+
             [0.249, 'Are Childrens Voices Heard?', [
-                [0.061, 'Gender Ratio'],
+                [0.061, 'Quoted Gender Ratio'],
                 [0.308, 'Percent Quoted child sources'],
+                [0.067, 'Diversity of Quoted Origins'],
                 [0.131, 'No of Children Sources', [
                     [0.067, 'Percent 1 Child Sources'],
                     [0.133, 'Percent 2 Child Sources'],
                     [0.200, 'Percent 3 Child Sources'],
                     [0.267, 'Percent 4 Child Sources'],
                     [0.333, 'Percent >4 Child Sources']]],
-                [0.067, 'Diversity of Quoted Origins'],
                 [0.169, 'Percent Child sources']]],
+
             [0.125, 'Are Childrens Issued covered in Depth', [
                 [0.050, 'Diversity of Topics'],
                 [0.150, 'Percent Child Abuse'],
@@ -102,6 +104,7 @@ class ChildrenRatingExport:
                     [0.333, 'Percent >4 Sources'],
                 [0.050, 'Percent Focus types'],
                 ]]]],
+
             [0.125, 'Is there Diversity in the Media', [
                 [0.201, 'Roles', [
                     [0.500, 'Percent Positive Roles'],
@@ -109,7 +112,7 @@ class ChildrenRatingExport:
                 [0.085, 'Diversity of Roles'],
                 [0.187, 'Sex', [
                     [0.157, 'Diversity of Gender'],
-#                    [0.249, 'Sex Ratio'],
+                    [0.249, 'Gender Ratio'],
 #                    [0.594, 'Role', [
 #                        [0.667, 'Positive'],
 #                        [0.333, 'Negative']]]]],
@@ -230,7 +233,40 @@ class ChildrenRatingExport:
         """ Counts of genders of child sources """
         from dexter.models.views import DocumentSourcesView
 
-        self.scores_ws.write(row, 0, 'Child Genders')
+        # QUOTED child genders
+        self.scores_ws.write(row, 0, 'Quoted Child Genders')
+
+        rows = self.filter(db.session
+                .query(
+                    Medium.name,
+                    DocumentSourcesView.c.gender,
+                    func.count(1).label('freq'))
+                .select_from(DocumentSourcesView)
+                .join(Document, DocumentSourcesView.c.document_id == Document.id)
+                .join(Medium)
+                .filter(DocumentSourcesView.c.source_type == 'child')
+                .filter(DocumentSourcesView.c.quoted == 'quoted')
+                .group_by(Medium.name, DocumentSourcesView.c.gender)
+                .order_by(Medium.name)
+            ).all()
+
+        rows = [[m, g or 'Unknown', c] for m, g, c in rows]
+        genders = list(set(r[1] for r in rows))
+        genders.sort()
+
+        row = self.write_score_table(genders, rows, row) + 1
+
+        # male / female ratio
+        male, female = self.score_row['Male'], self.score_row['Female']
+        formula = '=IF({col}%s>0,{col}%s/{col}%s,0)' % (male+1, female+1, male+1)
+        self.write_formula_score_row('Quoted Boys to girls', formula, row)
+        row = row + 1
+        formula = '=IF({col}%s>1,1/{col}%s,{col}%s)' % (row, row, row)
+        self.write_formula_score_row('Quoted Gender Ratio', formula, row)
+        row = row + 2
+
+        # ALL child genders
+        self.scores_ws.write(row, 0, 'All Child Genders')
 
         rows = self.filter(db.session
                 .query(
@@ -256,9 +292,9 @@ class ChildrenRatingExport:
         formula = '=IF({col}%s>0,{col}%s/{col}%s,0)' % (male+1, female+1, male+1)
         self.write_formula_score_row('Boys to girls', formula, row)
         row = row + 1
-
         formula = '=IF({col}%s>1,1/{col}%s,{col}%s)' % (row, row, row)
         self.write_formula_score_row('Gender Ratio', formula, row)
+        row = row + 1
 
         # male / female entropy
         rows = [r for r in rows if r[1] in ['Male', 'Female']]
