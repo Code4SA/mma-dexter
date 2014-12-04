@@ -63,8 +63,8 @@ class ChildrenRatingExport:
                 [0.101, 'Diversity of Roles'],
                 [0.267, 'Percent rights respected'],
                 [0.302, 'Access Codes', [
-                    [0.833, 'Percent abuse'],
-                    [0.167, 'Percent non-abuse']]],
+                    [0.833, 'Percent Abused sources'],
+                    [0.167, 'Percent Non-abused sources']]],
                 [0.148, 'Information Points', [
                     [0.500, 'Percent Self Help'],
                     [0.500, 'Percent S. Child\'s best interest']]]]],
@@ -77,6 +77,7 @@ class ChildrenRatingExport:
                     [0.200, 'Percent 3 Child Sources'],
                     [0.267, 'Percent 4 Child Sources'],
                     [0.333, 'Percent >4 Child Sources']]],
+                # TODO: this must only be origins where children are actually quoted
                 [0.067, 'Diversity of Origins'],
                 [0.169, 'Percent Child sources']]],
             [0.125, 'Are Childrens Issued covered in Depth', [
@@ -164,10 +165,10 @@ class ChildrenRatingExport:
         row = self.totals(row) + 2
         row = self.roles_scores(row) + 2
         row = self.quality_scores(row) + 2
+        row = self.child_source_scores(row) + 2
         row = self.victim_scores(row) + 2
         row = self.principle_scores(row) + 2
         row = self.child_gender_scores(row) + 2
-        row = self.child_source_scores(row) + 2
         row = self.origin_scores(row) + 2
         row = self.topic_scores(row) + 2
 
@@ -455,32 +456,29 @@ class ChildrenRatingExport:
         """ Counts of secondary victimisation per medium """
         self.scores_ws.write(row, 0, 'Secondary Victimisation')
 
-        for attr in ['abuse_source',
-                     'abuse_identified',
-                     'abuse_victim']:
-            # count documents with this abuse
-            name = attr.replace('abuse_', '').replace('_', ' ').title()
+        # number of documents with both a child source, and an
+        # abuse victim (secondary victimisation)
+        rows = self.filter(db.session
+                .query(
+                    Medium.name,
+                    func.count(1).label('freq'))
+                .join(Document)
+                .filter(Document.abuse_victim == True)
+                .filter(Document.abuse_source == True)
+                .group_by(Medium.name)
+                .order_by(Medium.name)
+            ).all()
 
-            rows = self.filter(db.session
-                    .query(
-                        Medium.name,
-                        func.count(1).label('freq'))
-                    .join(Document)
-                    .filter(getattr(Document, attr) == True)
-                    .group_by(Medium.name)
-                    .order_by(Medium.name)
-                ).all()
+        self.write_simple_score_row('Abused sources', rows, row)
+        row += 1
 
-            self.write_simple_score_row(name, {r[0]: r[1] for r in rows}, row)
-            row += 1
-
-        total_row = self.score_row['Total articles']
+        total_row = self.score_row['Total child sources']
         formula = '=IF({col}%s>0,{col}%s/{col}%s,0)' % (total_row+1, row, total_row+1)
-        self.write_formula_score_row('Percent abuse', formula, row)
+        self.write_formula_score_row('Percent Abused sources', formula, row)
         row += 1
 
         formula = '=1-{col}%s' % row
-        self.write_formula_score_row('Percent non-abuse', formula, row)
+        self.write_formula_score_row('Percent Non-abused sources', formula, row)
 
         return row
 
