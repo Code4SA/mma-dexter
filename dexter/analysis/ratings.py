@@ -36,10 +36,10 @@ class ChildrenRatingExport:
     Ratings are weighted and can be composed of other ratings.
     For example, consider the rating
 
-        0,500: Are Childrens Rights Respected		
+        0,500: Are Childrens Rights Respected
             0,100: Diversity of Roles
             0,200: Rights Respected
-            0,700: Information Points	
+            0,700: Information Points
                 0,500: Self-help
                 0,500: Child's best interest
 
@@ -69,6 +69,18 @@ class ChildrenRatingExport:
                 [0.148, 'Information Points', [
                     [0.500, 'Percent Self Help'],
                     [0.500, 'Percent S. Child\'s best interest']]]]],
+            [0.249, 'Are Childrens Voices Heard?', [
+                [0.061, 'Gender Ratio'],
+#                [0.308, 'Children Speak'],
+#                [0.067, 'Origin AC1-6 (entropy)'],
+#                [0.131, 'No of Children Sources', [
+#                    [0.067, '1 Source'],
+#                    [0.133, '2 Sources'],
+#                    [0.200, '3 Sources'],
+#                    [0.267, '4 Sources'],
+#                    [0.333, '>4 Sources']]],
+#                [0.169, 'Overall Child Sources']]],
+            ]]
         ]]]
 
         # map from a score name to its row in the score sheet
@@ -122,7 +134,6 @@ class ChildrenRatingExport:
 
     def build_scores_worksheet(self):
         """ Build up the scores worksheet. """
-        # TODO:
         for i, medium in enumerate(self.media):
             self.scores_ws.write(1, self.score_col(i), medium.name)
 
@@ -132,6 +143,7 @@ class ChildrenRatingExport:
         row = self.quality_scores(row) + 2
         row = self.victim_scores(row) + 2
         row = self.principle_scores(row) + 2
+        row = self.child_gender_scores(row) + 2
 
 
     def totals(self, row):
@@ -164,24 +176,35 @@ class ChildrenRatingExport:
         return row
 
 
-    def write_simple_score_row(self, name, data, row):
-        self.set_score_row(name, row)
+    def child_gender_scores(self, row):
+        """ Counts of genders of child sources """
+        from dexter.models.views import DocumentSourcesView
 
-        for i, medium in enumerate(self.media):
-            medium_col = self.score_col(i)
-            self.scores_ws.write(row, medium_col, data.get(medium.name, 0))
+        self.scores_ws.write(row, 0, 'Child Genders')
 
-    def write_formula_score_row(self, name, formula, row):
-        self.set_score_row(name, row)
+        rows = self.filter(db.session
+                .query(
+                    Medium.name,
+                    DocumentSourcesView.c.gender,
+                    func.count(1).label('freq'))
+                .select_from(DocumentSourcesView)
+                .join(Document, DocumentSourcesView.c.document_id == Document.id)
+                .join(Medium)
+                .filter(DocumentSourcesView.c.source_type == 'child')
+                .group_by(Medium.name, DocumentSourcesView.c.gender)
+                .order_by(Medium.name)
+            ).all()
 
-        if isinstance(formula, basestring):
-            f = formula
-            formula = lambda r, c: f.format(row=r, col=c)
+        rows = [[m, g or 'Unknown', c] for m, g, c in rows]
+        genders = list(set(r[1] for r in rows))
+        genders.sort()
 
-        for i, medium in enumerate(self.media):
-            medium_col = self.score_col(i)
-            col_name = xl_col_to_name(medium_col)
-            self.scores_ws.write_formula(row, medium_col, formula(row+1, col_name))
+        row = self.write_score_table(genders, rows, row)
+
+        self.write_simple_score_row('Gender Ratio', {}, row)
+
+        return row
+
 
 
     def roles_scores(self, row):
@@ -203,9 +226,7 @@ class ChildrenRatingExport:
         roles = list(set(r[1] for r in rows))
         roles.sort()
 
-        # write role row headers
-        for i, role in enumerate(roles):
-            self.scores_ws.write(row+i, 1, role)
+        row = self.write_score_table(roles, rows, row) + 1
 
         # entropy for the mediums
         data = defaultdict(dict)
@@ -213,18 +234,9 @@ class ChildrenRatingExport:
             data[medium][role] = count
         entropy = calculate_entropy(data)
 
-        score_row = row+len(roles)+1
-        self.write_simple_score_row('Diversity of Roles', entropy, score_row)
+        self.write_simple_score_row('Diversity of Roles', entropy, row)
 
-        # write values per medium
-        for i, medium in enumerate(self.media):
-            medium_col = self.score_col(i)
-
-            # write values per role, for this medium
-            for j, role in enumerate(roles):
-                self.scores_ws.write(row+j, medium_col, data[medium.name].get(role, 0))
-
-        return score_row
+        return row
 
     def quality_scores(self, row):
         """ Counts of source roles per medium, and their entropy. """
@@ -345,6 +357,33 @@ class ChildrenRatingExport:
 
         return row
 
+
+    def write_simple_score_row(self, name, data, row):
+        """ Write a single value as a score row, where +data+ is a map from medium name to that value. """
+        self.set_score_row(name, row)
+
+        for i, medium in enumerate(self.media):
+            medium_col = self.score_col(i)
+            self.scores_ws.write(row, medium_col, data.get(medium.name, 0))
+
+
+    def write_formula_score_row(self, name, formula, row):
+        """ Write a single formula as a score row, where +formula+ is a string
+        or a lambda. If it's a tsring, it can contain {row} and {col} format strings.
+        If a lambda, it will be given row and column as arguments and must
+        return the formula string.
+        """
+        self.set_score_row(name, row)
+
+        if isinstance(formula, basestring):
+            f = formula
+            formula = lambda r, c: f.format(row=r, col=c)
+
+        for i, medium in enumerate(self.media):
+            medium_col = self.score_col(i)
+            col_name = xl_col_to_name(medium_col)
+            self.scores_ws.write_formula(row, medium_col, formula(row+1, col_name))
+
     def write_score_table(self, row_names, rows, row):
         """ Convert all the rows in +rows+ into a table and write it as scores,
         starting on row number +row+ in the db. +row_names+ is the full set
@@ -381,6 +420,7 @@ class ChildrenRatingExport:
 
 
     def set_score_row(self, name, row):
+        """ The row containing the score named +name+ is in +row+. """
         self.score_row[name] = row
         self.scores_ws.write(row, 1, name)
 
