@@ -79,6 +79,31 @@ class ChildrenRatingExport:
                     [0.333, 'Percent >4 Child Sources']]],
                 [0.067, 'Diversity of Origins'],
                 [0.169, 'Percent Child sources']]],
+            [0.125, 'Are Childrens Issued covered in Depth', [
+                [0.050, 'Diversity of Topics'],
+#                [0.150, 'Child Abuse'],
+                [0.050, 'Diversity of Origins'],
+#                [0.100, 'Origin (focus)'],
+#                [0.250, 'Information Points', [
+#                    [0.063, 'CB'],
+#                    [0.125, 'CL'],
+#                    [0.125, 'Y'],
+#                    [0.125, 'O'],
+#                    [0.125, 'S'],
+#                    [0.125, 'L'],
+#                    [0.188, 'SH'],
+#                    [0.125, 'CBI']]],
+#                [0.250, 'Principles', [
+#                    [0.200, 'Supported'],
+#                    [0.800, 'Violated']]],
+#                [0.050, 'Sources', [
+#                    [0.067, '1 Source'],
+#                    [0.133, '2 Sources'],
+#                    [0.200, '3 Sources'],
+#                    [0.267, '4 Sources'],
+#                    [0.333, '>4 Sources']]],
+#                [0.050, 'Type']]],
+]]
         ]]]
 
         # map from a score name to its row in the score sheet
@@ -144,6 +169,7 @@ class ChildrenRatingExport:
         row = self.child_gender_scores(row) + 2
         row = self.child_source_scores(row) + 2
         row = self.origin_scores(row) + 2
+        row = self.topic_scores(row) + 2
 
 
     def totals(self, row):
@@ -300,6 +326,27 @@ class ChildrenRatingExport:
 
         row = self.write_score_table(roles, rows, row) + 1
         self.write_simple_score_row('Diversity of Roles', self.entropy(rows), row)
+
+        return row
+
+    def topic_scores(self, row):
+        """ Counts of document topics per medium, and their entropy. """
+        self.scores_ws.write(row, 0, 'Topics')
+
+        rows = self.filter(db.session
+                .query(
+                    Medium.name,
+                    Topic.name,
+                    func.count(1).label('freq'))
+                .join(Document)
+                .join(Topic)
+                .group_by(Medium.name, Topic.name)
+            ).all()
+        roles = list(set(r[1] for r in rows))
+        roles.sort()
+
+        row = self.write_score_table(roles, rows, row) + 1
+        self.write_simple_score_row('Diversity of Topics', self.entropy(rows), row)
 
         return row
 
