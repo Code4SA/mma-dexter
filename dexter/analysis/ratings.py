@@ -78,8 +78,7 @@ class ChildrenRatingExport:
                     [0.267, 'Percent 4 Child Sources'],
                     [0.333, 'Percent >4 Child Sources']]],
                 [0.067, 'Diversity of Origins'],
-#                [0.169, 'Overall Child Sources']]],
-            ]]
+                [0.169, 'Percent Child sources']]],
         ]]]
 
         # map from a score name to its row in the score sheet
@@ -229,6 +228,8 @@ class ChildrenRatingExport:
                 .group_by(Medium.name)
             ).all()
         self.write_simple_score_row('Total child sources', rows, row)
+        row += 1
+        self.write_percent_row('Child sources', self.score_row['Total sources'], row-1, row)
         row += 1
 
         # quoted child sources
