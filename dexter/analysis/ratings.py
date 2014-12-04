@@ -70,7 +70,7 @@ class ChildrenRatingExport:
                     [0.500, 'Percent S. Child\'s best interest']]]]],
             [0.249, 'Are Childrens Voices Heard?', [
                 [0.061, 'Gender Ratio'],
-#                [0.308, 'Children Speak'],
+                [0.308, 'Quoted child sources'],
 #                [0.067, 'Origin AC1-6 (entropy)'],
 #                [0.131, 'No of Children Sources', [
 #                    [0.067, '1 Source'],
@@ -143,6 +143,7 @@ class ChildrenRatingExport:
         row = self.victim_scores(row) + 2
         row = self.principle_scores(row) + 2
         row = self.child_gender_scores(row) + 2
+        row = self.child_source_scores(row) + 2
 
 
     def totals(self, row):
@@ -169,20 +170,6 @@ class ChildrenRatingExport:
                 .group_by(Medium.name)
             ).all()
         self.write_simple_score_row('Total sources', {r[0]: r[1] for r in rows}, row)
-
-        row = row + 2
-
-        self.scores_ws.write(row, 0, 'Child Sources')
-        rows = self.filter(db.session
-                .query(
-                    Medium.name,
-                    func.count(1).label('freq'))
-                .join(Document)
-                .join(DocumentSource)
-                .filter(DocumentSource.source_type == 'child')
-                .group_by(Medium.name)
-            ).all()
-        self.write_simple_score_row('Total child sources', {r[0]: r[1] for r in rows}, row)
 
         return row
 
@@ -223,6 +210,44 @@ class ChildrenRatingExport:
 
         return row
 
+
+    def child_source_scores(self, row):
+        """ Counts of children sources, how many speak, etc. """
+        from dexter.models.views import DocumentSourcesView
+
+        self.scores_ws.write(row, 0, 'Child Sources')
+
+        # all child sources
+        rows = self.filter(db.session
+                .query(
+                    Medium.name,
+                    func.count(1).label('freq'))
+                .join(Document)
+                .join(DocumentSource)
+                .filter(DocumentSource.source_type == 'child')
+                .group_by(Medium.name)
+            ).all()
+        self.write_simple_score_row('Total child sources', rows, row)
+        row += 1
+
+        # quoted child sources
+        rows = self.filter(db.session
+                .query(
+                    Medium.name,
+                    func.count(1).label('freq'))
+                .join(Document)
+                .join(DocumentSource)
+                .filter(DocumentSource.source_type == 'child')
+                .filter(DocumentSource.quoted == True)
+                .group_by(Medium.name)
+            ).all()
+        self.write_simple_score_row('Quoted child sources', rows, row) 
+        row += 1
+
+        # percent of all sources
+        self.write_percent_row('Quoted child sources', self.score_row['Total sources'], row-1, row)
+
+        return row
 
 
     def roles_scores(self, row):
@@ -290,6 +315,10 @@ class ChildrenRatingExport:
         row = self.write_percent_table(names, self.score_row['Total articles'], starting_row, row)
 
         return row
+
+    def write_percent_row(self, name, denom_row, num_row, row):
+        """ Write a row of percentage calculations, using num_row/denom_row. """
+        self.write_percent_table([name], denom_row, num_row, row)
 
     def write_percent_table(self, names, denom_row, starting_row, row):
         """ Write a table of percentages. +denom_row+ is the row of
@@ -387,6 +416,9 @@ class ChildrenRatingExport:
     def write_simple_score_row(self, name, data, row):
         """ Write a single value as a score row, where +data+ is a map from medium name to that value. """
         self.set_score_row(name, row)
+
+        if isinstance(data, list):
+            data = {k: v for k, v in data}
 
         for i, medium in enumerate(self.media):
             medium_col = self.score_col(i)
