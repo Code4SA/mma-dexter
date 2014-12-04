@@ -94,12 +94,12 @@ class ChildrenRatingExport:
                 [0.250, 'Principles', [
                     [0.200, 'Percent Rights respected'],
                     [0.800, 'Inv. Percent Principles violated']]],
-#                [0.050, 'Sources', [
-#                    [0.067, '1 Source'],
-#                    [0.133, '2 Sources'],
-#                    [0.200, '3 Sources'],
-#                    [0.267, '4 Sources'],
-#                    [0.333, '>4 Sources']]],
+                [0.050, 'Sources', [
+                    [0.067, 'Percent 1 Sources'],
+                    [0.133, 'Percent 2 Sources'],
+                    [0.200, 'Percent 3 Sources'],
+                    [0.267, 'Percent 4 Sources'],
+                    [0.333, 'Percent >4 Sources']]],
 #                [0.050, 'Type']]],
 ]]
         ]]]
@@ -182,7 +182,7 @@ class ChildrenRatingExport:
             ).all()
         self.write_simple_score_row('Total articles', rows, row)
 
-        row = row + 2
+        row += 2
 
         self.scores_ws.write(row, 0, 'Sources')
         rows = self.filter(db.session
@@ -194,6 +194,16 @@ class ChildrenRatingExport:
                 .group_by(Medium.name)
             ).all()
         self.write_simple_score_row('Total sources', rows, row)
+
+        row += 2
+
+        # source counts per document
+        rows = self.source_counts(children=False, limit=4)
+        rows = [[m, c + ' Sources', v] for m, c, v in rows]
+        buckets = ['1 Sources', '2 Sources', '3 Sources', '4 Sources', '>4 Sources']
+        starting_row = row
+        row = self.write_score_table(buckets, rows, row) + 1
+        row = self.write_percent_table(buckets, self.score_row['Total articles'], starting_row, row)
 
         return row
 
@@ -275,24 +285,7 @@ class ChildrenRatingExport:
         row += 1
 
         # source counts per document
-        subq = self.filter(db.session
-                .query(
-                    Medium.name.label('medium'),
-                    func.count(1).label('n_sources'))
-                .join(Document)
-                .join(DocumentSource)
-                .filter(DocumentSource.source_type == 'child')
-                .group_by(Medium.name, DocumentSource.doc_id))\
-                .subquery()
-
-        rows = db.session\
-                .query(
-                    subq.c.medium,
-                    func.if_(subq.c.n_sources > 4, ">4", subq.c.n_sources).label('bucket'),
-                    func.count(1))\
-                .select_from(subq)\
-                .group_by(subq.c.medium, 'bucket')\
-                .all()
+        rows = self.source_counts(children=True, limit=4)
         rows = [[m, c + ' Child Sources', v] for m, c, v in rows]
         buckets = ['1 Child Sources', '2 Child Sources', '3 Child Sources', '4 Child Sources', '>4 Child Sources']
 
@@ -669,6 +662,30 @@ class ChildrenRatingExport:
             row += 1
 
         return rating_rows, row
+
+    def source_counts(self, children=False, limit=4):
+        # source counts per document
+        subq = db.session\
+                .query(
+                    Medium.name.label('medium'),
+                    func.count(1).label('n_sources'))\
+                .join(Document)\
+                .join(DocumentSource)\
+                .group_by(Medium.name, DocumentSource.doc_id)
+
+        if children:
+            subq = subq.filter(DocumentSource.source_type == 'child')
+
+        subq = self.filter(subq).subquery()
+
+        return db.session\
+                .query(
+                    subq.c.medium,
+                    func.if_(subq.c.n_sources > limit, ">%s"%limit, subq.c.n_sources).label('bucket'),
+                    func.count(1))\
+                .select_from(subq)\
+                .group_by(subq.c.medium, 'bucket')\
+                .all()
 
     def score_col(self, i):
         """ The index of the score for the i-th medium """
