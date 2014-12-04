@@ -14,7 +14,6 @@ from sqlalchemy.types import Integer
 from .utils import calculate_entropy
 from ..models import *
 
-r2c = partial(xl_rowcol_to_cell, row_abs=True, col_abs=True)
 
 class ChildrenRatingExport:
     """ This class generates an XLSX export of per-media ratings
@@ -155,7 +154,6 @@ class ChildrenRatingExport:
                     func.count(1).label('freq'))
                 .join(Document)
                 .group_by(Medium.name)
-                .order_by(Medium.name)
             ).all()
         self.write_simple_score_row('Total articles', {r[0]: r[1] for r in rows}, row)
 
@@ -169,9 +167,22 @@ class ChildrenRatingExport:
                 .join(Document)
                 .join(DocumentSource)
                 .group_by(Medium.name)
-                .order_by(Medium.name)
             ).all()
         self.write_simple_score_row('Total sources', {r[0]: r[1] for r in rows}, row)
+
+        row = row + 2
+
+        self.scores_ws.write(row, 0, 'Child Sources')
+        rows = self.filter(db.session
+                .query(
+                    Medium.name,
+                    func.count(1).label('freq'))
+                .join(Document)
+                .join(DocumentSource)
+                .filter(DocumentSource.source_type == 'child')
+                .group_by(Medium.name)
+            ).all()
+        self.write_simple_score_row('Total child sources', {r[0]: r[1] for r in rows}, row)
 
         return row
 
@@ -199,9 +210,16 @@ class ChildrenRatingExport:
         genders = list(set(r[1] for r in rows))
         genders.sort()
 
-        row = self.write_score_table(genders, rows, row)
+        row = self.write_score_table(genders, rows, row) + 1
 
-        self.write_simple_score_row('Gender Ratio', {}, row)
+        # male / female ratio
+        male, female = self.score_row['Male'], self.score_row['Female']
+        formula = '=IF({col}%s>0,{col}%s/{col}%s,0)' % (male+1, female+1, male+1)
+        self.write_formula_score_row('Boys to girls', formula, row)
+        row = row + 1
+
+        formula = '=IF({col}%s>1,1/{col}%s,{col}%s)' % (row, row, row)
+        self.write_formula_score_row('Gender Ratio', formula, row)
 
         return row
 
@@ -242,6 +260,8 @@ class ChildrenRatingExport:
         """ Counts of source roles per medium, and their entropy. """
         self.scores_ws.write(row, 0, 'Quality')
 
+        rows = []
+        names = []
         indicators = ['quality_self_help',
                      'quality_consequences',
                      'quality_solutions',
@@ -252,8 +272,8 @@ class ChildrenRatingExport:
         for attr in indicators:
             # count documents with this quality
             name = attr.replace('quality_', '').replace('_', ' ').title()
-
-            rows = self.filter(db.session
+            names.append(name)
+            for medium, count in self.filter(db.session
                     .query(
                         Medium.name,
                         func.count(1).label('freq'))
@@ -261,17 +281,23 @@ class ChildrenRatingExport:
                     .filter(getattr(Document, attr) == True)
                     .group_by(Medium.name)
                     .order_by(Medium.name)
-                ).all()
-            data = {r[0]: r[1] for r in rows}
-            self.write_simple_score_row(name, data, row)
+                    ).all():
 
-            total_row = self.score_row['Total articles']
-            formula = '=IF({col}%s>0,{col}%s/{col}%s,0)' % (total_row+1, row+1, total_row+1)
-            self.write_formula_score_row('Percent ' + name, formula, row+len(indicators))
+                rows.append([medium, name, count])
+  
+        starting_row = row
+        row = self.write_score_table(names, rows, row) + 1
+        row = self.write_percent_table(names, self.score_row['Total articles'], starting_row, row)
 
-            row += 1
+        return row
 
-        return row + len(indicators)
+    def write_percent_table(self, names, denom_row, starting_row, row):
+        """ Write a table of percentages. +denom_row+ is the row of
+        the denominator, +starting_row+ is the first row of numerators. """
+        formula = lambda r, c: '=IF({col}{denom}>0,{col}{row}/{col}{denom},0)'.format(denom=denom_row+1, row=r-row+starting_row, col=c)
+        names = ['Percent ' + n for n in names]
+        return self.write_formula_table(names, formula, row)
+
 
     def victim_scores(self, row):
         """ Counts of secondary victimisation per medium """
