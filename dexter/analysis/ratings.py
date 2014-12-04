@@ -57,67 +57,66 @@ class ChildrenRatingExport:
         self.doc_ids = doc_ids
         self.formats = {}
 
-        # TODO balance these weights
         self.ratings = [[1.0, 'Final rating', [
             [0.500, 'Are Childrens Rights Respected', [
-                [0.101, 'Diversity of Roles'],
-                [0.267, 'Percent Rights respected'],
-                [0.302, 'Access Codes', [
+                [0.123, 'Diversity of Roles'],
+                [0.326, 'Percent Rights respected'],
+                [0.369, 'Access Codes', [
                     [0.833, 'Percent Abused sources'],
                     [0.167, 'Percent Non-abused sources']]],
-                [0.148, 'Information Points', [
+                [0.181, 'Information Points', [
                     [0.500, 'Percent Self Help'],
                     [0.500, 'Percent S. Child\'s best interest']]]]],
 
             [0.249, 'Are Childrens Voices Heard?', [
-                [0.061, 'Quoted Gender Ratio'],
-                [0.308, 'Percent Quoted child sources'],
-                [0.067, 'Diversity of Quoted Origins'],
-                [0.131, 'No of Children Sources', [
+                [0.083, 'Quoted Gender Ratio'],
+                [0.418, 'Percent Quoted child sources'],
+                [0.091, 'Diversity of Quoted Origins'],
+                [0.178, 'No of Children Sources', [
                     [0.067, 'Percent 1 Child Sources'],
                     [0.133, 'Percent 2 Child Sources'],
                     [0.200, 'Percent 3 Child Sources'],
                     [0.267, 'Percent 4 Child Sources'],
                     [0.333, 'Percent >4 Child Sources']]],
-                [0.169, 'Percent Child sources']]],
+                [0.230, 'Percent Child sources']]],
 
             [0.125, 'Are Childrens Issued covered in Depth', [
-                [0.050, 'Diversity of Topics'],
-                [0.150, 'Percent Child Abuse'],
-                [0.050, 'Diversity of Origins'],
-                [0.100, 'Percent Focus origins'],
-                [0.250, 'Information Points', [
-                    [0.063, 'Percent Basic Context'],
-                    [0.125, 'Percent Causes'],
-                    [0.125, 'Percent Consequences'],
-                    [0.125, 'Percent Solutions'],
-                    [0.125, 'Percent Policies'],
-                    [0.188, 'Percent Self Help']]],
-                [0.250, 'Principles', [
+                [0.053, 'Diversity of Topics'],
+                [0.157, 'Percent Child Abuse'],
+                [0.053, 'Diversity of Origins'],
+                [0.105, 'Percent Focus origins'],
+                [0.263, 'Information Points', [
+                    [0.084, 'Percent Basic Context'],
+                    [0.166, 'Percent Causes'],
+                    [0.166, 'Percent Consequences'],
+                    [0.166, 'Percent Solutions'],
+                    [0.166, 'Percent Policies'],
+                    [0.252, 'Percent Self Help']]],
+                [0.263, 'Principles', [
                     [0.200, 'Percent Rights respected'],
                     [0.800, 'Inv. Percent Principles violated']]],
-                [0.050, 'Sources', [
+                [0.053, 'Sources', [
                     [0.067, 'Percent 1 Sources'],
                     [0.133, 'Percent 2 Sources'],
                     [0.200, 'Percent 3 Sources'],
                     [0.267, 'Percent 4 Sources'],
-                    [0.333, 'Percent >4 Sources'],
-                [0.050, 'Percent Focus types'],
-                ]]]],
+                    [0.333, 'Percent >4 Sources']]],
+                [0.053, 'Percent Focus types'],
+                ]],
 
             [0.125, 'Is there Diversity in the Media', [
-                [0.201, 'Roles', [
+                [0.318, 'Roles', [
                     [0.500, 'Percent Positive Roles'],
                     [0.50, 'Percent Negative Roles']]],
-                [0.085, 'Diversity of Roles'],
-                [0.187, 'Sex', [
+                [0.134, 'Diversity of Roles'],
+                [0.295, 'Sex', [
                     [0.157, 'Diversity of Gender'],
                     [0.249, 'Gender Ratio'],
                     [0.594, 'Role', [
                         [0.667, 'Gender score Positive Roles'],
                         [0.333, 'Gender score Negative Roles']]]]],
-                [0.080, 'Diversity of Ages'],
-                [0.080, 'Diversity of Races']]],
+                [0.126, 'Diversity of Ages'],
+                [0.126, 'Diversity of Races']]],
         ]]]
 
         # map from a score name to its row in the score sheet
