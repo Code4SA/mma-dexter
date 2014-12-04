@@ -515,6 +515,7 @@ class ChildrenRatingExport:
                     self.rating_ws.write_formula(row, self.rating_col(i), formula)
 
                 row = rows[-1] + 1
+                rating_rows.append(row-1)
             else:
                 # actual rating
                 score_row = self.score_row[rating]
