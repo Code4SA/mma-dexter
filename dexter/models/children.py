@@ -5,7 +5,8 @@ from sqlalchemy import (
     String,
     Float,
     Index,
-    Table
+    Table,
+    Enum
 )
 
 from .support import db
@@ -19,6 +20,7 @@ class SourceRole(db.Model):
 
     id          = Column(Integer, primary_key=True)
     name        = Column(String(100), index=True, nullable=False, unique=True)
+    indication  = Column(Enum('positive', 'negative', 'neutral', name='indication_enum'), server_default='neutral', nullable=False)
     analysis_nature_id = Column(Integer, ForeignKey("analysis_natures.id"))
 
     def __repr__(self):
