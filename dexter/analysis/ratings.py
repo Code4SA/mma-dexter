@@ -552,7 +552,7 @@ class ChildrenRatingExport:
 
             if len(info) > 2:
                 # add sub-ratings
-                rows = self.add_nested_ratings(info[2], row+1, col+1)
+                rows, last_row = self.add_nested_ratings(info[2], row+1, col+1)
 
                 # now set this rating's score to the product of the children
                 col_name = xl_col_to_name(col+1)
@@ -562,8 +562,7 @@ class ChildrenRatingExport:
                     formula = '+'.join('%s%s*%s%s' % (col_name, r+1, rating_col_name, r+1) for r in rows)
                     self.rating_ws.write_formula(row, self.rating_col(i), formula)
 
-                row = rows[-1] + 1
-                rating_rows.append(row-1)
+                row = last_row
             else:
                 # actual rating
                 score_row = self.score_row[rating]
@@ -573,7 +572,7 @@ class ChildrenRatingExport:
                     self.rating_ws.write(row, self.rating_col(i), '=Scores!%s' % cell)
             row += 1
 
-        return rating_rows
+        return rating_rows, row
 
     def score_col(self, i):
         """ The index of the score for the i-th medium """
