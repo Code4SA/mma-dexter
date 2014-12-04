@@ -70,14 +70,14 @@ class ChildrenRatingExport:
                     [0.500, 'Percent S. Child\'s best interest']]]]],
             [0.249, 'Are Childrens Voices Heard?', [
                 [0.061, 'Gender Ratio'],
-                [0.308, 'Quoted child sources'],
+                [0.308, 'Percent Quoted child sources'],
+                [0.131, 'No of Children Sources', [
+                    [0.067, 'Percent 1 Child Sources'],
+                    [0.133, 'Percent 2 Child Sources'],
+                    [0.200, 'Percent 3 Child Sources'],
+                    [0.267, 'Percent 4 Child Sources'],
+                    [0.333, 'Percent >4 Child Sources']]],
 #                [0.067, 'Origin AC1-6 (entropy)'],
-#                [0.131, 'No of Children Sources', [
-#                    [0.067, '1 Source'],
-#                    [0.133, '2 Sources'],
-#                    [0.200, '3 Sources'],
-#                    [0.267, '4 Sources'],
-#                    [0.333, '>4 Sources']]],
 #                [0.169, 'Overall Child Sources']]],
             ]]
         ]]]
@@ -246,6 +246,33 @@ class ChildrenRatingExport:
 
         # percent of all sources
         self.write_percent_row('Quoted child sources', self.score_row['Total sources'], row-1, row)
+        row += 1
+
+        # source counts per document
+        subq = self.filter(db.session
+                .query(
+                    Medium.name.label('medium'),
+                    func.count(1).label('n_sources'))
+                .join(Document)
+                .join(DocumentSource)
+                .filter(DocumentSource.source_type == 'child')
+                .group_by(Medium.name, DocumentSource.doc_id))\
+                .subquery()
+
+        rows = db.session\
+                .query(
+                    subq.c.medium,
+                    func.if_(subq.c.n_sources > 4, ">4", subq.c.n_sources).label('bucket'),
+                    func.count(1))\
+                .select_from(subq)\
+                .group_by(subq.c.medium, 'bucket')\
+                .all()
+        rows = [[m, c + ' Child Sources', v] for m, c, v in rows]
+        buckets = ['1 Child Sources', '2 Child Sources', '3 Child Sources', '4 Child Sources', '>4 Child Sources']
+
+        starting_row = row
+        row = self.write_score_table(buckets, rows, row) + 1
+        row = self.write_percent_table(buckets, self.score_row['Total articles'], starting_row, row)
 
         return row
 
