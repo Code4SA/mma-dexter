@@ -81,7 +81,7 @@ class ChildrenRatingExport:
                 [0.169, 'Percent Child sources']]],
             [0.125, 'Are Childrens Issued covered in Depth', [
                 [0.050, 'Diversity of Topics'],
-#                [0.150, 'Child Abuse'],
+                [0.150, 'Percent Child Abuse'],
                 [0.050, 'Diversity of Origins'],
 #                [0.100, 'Origin (focus)'],
 #                [0.250, 'Information Points', [
@@ -182,7 +182,7 @@ class ChildrenRatingExport:
                 .join(Document)
                 .group_by(Medium.name)
             ).all()
-        self.write_simple_score_row('Total articles', {r[0]: r[1] for r in rows}, row)
+        self.write_simple_score_row('Total articles', rows, row)
 
         row = row + 2
 
@@ -195,7 +195,7 @@ class ChildrenRatingExport:
                 .join(DocumentSource)
                 .group_by(Medium.name)
             ).all()
-        self.write_simple_score_row('Total sources', {r[0]: r[1] for r in rows}, row)
+        self.write_simple_score_row('Total sources', rows, row)
 
         return row
 
@@ -347,6 +347,22 @@ class ChildrenRatingExport:
 
         row = self.write_score_table(roles, rows, row) + 1
         self.write_simple_score_row('Diversity of Topics', self.entropy(rows), row)
+        row += 1
+
+        # 2. Child Abuse
+        rows = self.filter(db.session
+                .query(
+                    Medium.name,
+                    func.count(1).label('freq'))
+                .join(Document)
+                .join(Topic)
+                .filter(Topic.group == '2. Child Abuse')
+                .group_by(Medium.name, Topic.name)
+            ).all()
+
+        self.write_simple_score_row('Child Abuse', rows, row)
+        row += 1
+        self.write_percent_row('Child Abuse', self.score_row['Total articles'], row-1, row)
 
         return row
 
