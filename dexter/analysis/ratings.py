@@ -83,7 +83,7 @@ class ChildrenRatingExport:
                 [0.050, 'Diversity of Topics'],
                 [0.150, 'Percent Child Abuse'],
                 [0.050, 'Diversity of Origins'],
-#                [0.100, 'Origin (focus)'],
+                [0.100, 'Percent Focus origins'],
 #                [0.250, 'Information Points', [
 #                    [0.063, 'CB'],
 #                    [0.125, 'CL'],
@@ -379,11 +379,22 @@ class ChildrenRatingExport:
                 .join(Location)
                 .group_by(Medium.name, Location.name)
             ).all()
-        roles = list(set(r[1] for r in rows))
-        roles.sort()
+        origins = list(set(r[1] for r in rows))
+        origins.sort()
 
-        row = self.write_score_table(roles, rows, row) + 1
+        row = self.write_score_table(origins, rows, row) + 1
         self.write_simple_score_row('Diversity of Origins', self.entropy(rows), row)
+
+        # focus origins
+        self.scores_ws.write(row, 0, 'Focus origins')
+        origins = ['Eastern Cape', 'Limpopo', 'Free State', 'Mpumalanga', 'North West', 'Northern Cape']
+        row = self.write_score_table(origins, rows, row) + 1
+
+        starting_row = row
+        formula = '=SUM({col}%s:{col}%s)' % (row-len(origins), row-1)
+        self.write_formula_score_row('Focus origins', formula, row)
+        row += 1
+        self.write_percent_row('Focus origins', self.score_row['Total articles'], starting_row, row)
 
         return row
 
