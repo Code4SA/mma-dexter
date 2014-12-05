@@ -381,7 +381,13 @@ class ActivityForm(Form):
             filename.append('published')
             filename.append(self.published_at.data.replace(' ', ''))
 
-        return "%s.%s" % ('-'.join(filename), self.format.data)
+        if self.format.data == 'children-ratings.xlsx':
+            filename.insert(0, 'children-ratings')
+            ext = 'xlsx'
+        else:
+            ext = self.format.data
+
+        return "%s.%s" % ('-'.join(filename), ext)
 
 
 class ActivityChartHelper:
