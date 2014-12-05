@@ -158,7 +158,7 @@ class ChildrenRatingExport:
 
         # generate the sheets we'll use
         self.rating_ws = workbook.add_worksheet('Rating')
-        self.scores_ws = workbook.add_worksheet('Scores')
+        self.scores_ws = workbook.add_worksheet('Raw')
 
         self.build_scores_worksheet()
         self.build_rating_worksheet()
@@ -862,7 +862,7 @@ class ChildrenRatingExport:
 
                 for i in xrange(self.n_columns):
                     cell = xl_rowcol_to_cell(score_row, self.score_col(i), row_abs=True, col_abs=True)
-                    self.rating_ws.write(row, self.rating_col(i), '=Scores!%s' % cell)
+                    self.rating_ws.write(row, self.rating_col(i), '=Raw!%s' % cell)
             row += 1
 
         return rating_rows, row
