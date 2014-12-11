@@ -601,6 +601,7 @@ class ChildrenRatingExport:
         self.write_simple_score_row('Diversity of Origins', self.entropy(rows), row)
 
         # focus origins
+        row += 2
         self.scores_ws.write(row, 0, 'Focus origins')
         origins = ['Eastern Cape', 'Limpopo', 'Free State', 'Mpumalanga', 'North West', 'Northern Cape']
         row = self.write_score_table(origins, rows, row) + 1
