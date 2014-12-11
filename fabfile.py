@@ -28,7 +28,7 @@ def prod():
     env.deploy_type = 'prod'
     # this must be an absolute directory
     env.deploy_dir = '/home/mma/'
-    env.branch = 'master'
+    env.branch = 'zambia'
     env.hosts = PROD_HOSTS
     env.user = 'mma'
 
