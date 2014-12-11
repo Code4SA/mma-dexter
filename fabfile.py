@@ -6,7 +6,7 @@ from fabric.contrib.files import exists, upload_template
 
 VIRTUALENV_DIR = 'env'
 CODE_DIR = 'mma-dexter'
-PROD_HOSTS = ['mma-dexter.code4sa.org']
+PROD_HOSTS = ['mma-dexter-zambia.code4sa.org']
 
 PACKAGES = [
     'build-essential',
@@ -15,7 +15,7 @@ PACKAGES = [
     'libxslt1-dev',
     'git-core',
     'python-pip',
-    'mysql-server-5.6',
+    #'mysql-server-5.6',
     'libmysqlclient-dev',
     'libmagickwand-dev',
     'nginx',
@@ -74,14 +74,14 @@ def deploy():
 
     # link in upstart config
     sudo('ln -fs %s/resources/upstart/dexter.conf /etc/init/' % repo_dir)
-    sudo('ln -fs %s/resources/upstart/dexter-celery.conf /etc/init/' % repo_dir)
+    #sudo('ln -fs %s/resources/upstart/dexter-celery.conf /etc/init/' % repo_dir)
     sudo('initctl reload-configuration')
 
     # restart dexter
     # on first deploy these aren't running
     with warn_only():
         sudo('initctl stop dexter')
-        sudo('initctl stop dexter-celery')
+        #sudo('initctl stop dexter-celery')
 
     sudo('initctl start dexter')
-    sudo('initctl start dexter-celery')
+    #sudo('initctl start dexter-celery')
