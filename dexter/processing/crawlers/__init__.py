@@ -7,4 +7,4 @@ from .iol import IOLCrawler
 from .namibian import NamibianCrawler
 from .generic import GenericCrawler
 from .newstools import NewstoolsCrawler
-from .zambia import ZambiaDailyNationCrawler, LusakaTimesCrawler, ZambianWatchdogCrawler, ZambiaDailyMailCrawler
+from .zambia import ZambiaDailyNationCrawler, LusakaTimesCrawler, ZambianWatchdogCrawler, ZambiaDailyMailCrawler, PostZambiaCrawler

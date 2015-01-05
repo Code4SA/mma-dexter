@@ -135,6 +135,7 @@ Daily Nation|online|zambiadailynation.com||zm
 Lusaka Times|online|lusakatimes.com||zm
 Zambian Watchdog|online|zambianwatchdog.com||zm
 Zambia Daily Mail|online|daily-mail.co.zm||zm
+Post Zambia|online|postzambia.com||zm
             """
 
         mediums = []

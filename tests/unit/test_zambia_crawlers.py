@@ -3336,7 +3336,3011 @@ Object Caching 5351/5366 objects using disk
         self.assertEqual(doc.author, Author.unknown())
         self.assertEqual(doc.medium.name, 'Zambia Daily Mail')
 
-        print repr(doc.text)
-
         self.assertEqual(doc.text, u'DARLINGTON MWENDABAI & HOPE NYOKA, Chipata\nFORMER President Rupiah Banda has endorsed Patriotic Front presidential candidate Edgar Lungu for the January 20 presidential election.\nMr Banda described this year as a dawn of new hope where all Zambians should turn up in numbers to vote for Mr Lungu for continuity and stability.\nThe former head of state, who was in a jovial mood, delivered his endorsement speech dubbed \u201cPeace and Unity will deliver Zambia\u201d in Chipata yesterday.\nHe said the country needs stability and continuity, and not a revolution, hence Zambians should elect a leader who has shown the qualities of humility, commitment and unity.\n\u201cFor these reasons, I am appearing before you today to announce my endorsement of Minister of Justice and Defence Edgar Lungu of the PF for president on January 20, 2015,\u201d he said.\nMr Banda said after meeting Mr Lungu to understand his intentions and identify the problems which must be addressed, that he is confident that the PF candidate has qualities the Zambian people need.\nHe said unlike the United Party for National Development (UPND) which is only interested in buying MMD members and asking his son Andrew to insult him on political podiums, Mr Lungu has shown interest to allow peace and unity to prevail in the county.\n\u201cAfter much deliberation, I came to the conclusion that I could not support any candidate that would seek to eliminate or weaken the MMD.  I count many friends among those in the UPND, however, I cannot agree with the approach of poaching individual MMD members to defect to their camp instead of negotiating openly with the whole party,\u201d Mr Banda said.\nHe accused the UPND of trying to drag the country to a one party fiasco and not promoting peace and unity among Zambians.\nMr Banda said he had had many meetings with UPND leaders where they suggested that he should deputise Hakainde Hichilema who had no experience of being republican president.\nMr Banda  urged Mr Lungu if elected to ensure  the costs of basic goods such as mealie meal, fertilizer, fuel and cement are lowered and  the economy is stabilised while a genuine people driven constitution is delivered  and Zambians united.\nHe said the past year had its own challenges where the country witnessed delayed payments for farmers and social divisions but this year, Zambians should vote for Mr Lungu to guide the country for the next 18 months.\nIn accepting the endorsement, Mr Lungu said he was humbled by the gesture and promised the former head of state and Zambians that he will not let them down.\n\u201cOur Late President Sata taught us to embrace all Zambians and we as PF, we do just that. We will work with the MMD who are supporting us and we are going to win the forth coming presidential election because of your support,\u201d he said.\nMr Lungu said he will not sign any social contract with the clergy or anybody but Zambians adding that he delivered as Minister of Justice a final draft constitution without any signed social contracts.\nHe said it does not pay in a multiparty democracy to swallow opposition parties and the PF will instead co-exist with other political parties.\nMr Lungu said the media enjoy press freedom and if elected, he will study the Access to Information Bill.\nEarlier, PF national chairperson Inonge Wina thanked Mr Banda and MMD National Executive Committee members for endorsing Mr Lungu, a gesture she described as rare from a former head of state.\nFormer MMD national secretary Muhabi Lungu said all party structures will support Mr Lungu.')
+        
+
+class TestPostZambiaCrawler(unittest.TestCase):
+    def setUp(self):
+        self.crawler = PostZambiaCrawler()
+
+        self.db = db
+        self.db.drop_all()
+        self.db.create_all()
+        seed_db(db)
+
+    def tearDown(self):
+        self.db.session.remove()
+        self.db.drop_all()
+
+    def test_extract(self):
+        html = """
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252" />
+<title>The Post</title>
+<style type="text/css">
+<!--
+body {
+	margin-top: 0px;
+	margin-bottom: 0px;
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:12px;
+}
+.hdln
+{
+color:#CC0000;
+font-family:Arial, Helvetica, sans-serif;
+font-size:12px;
+font-weight:bold;
+}
+.blueln
+{
+color:#006699;
+}
+.subhead
+{
+font-family: Arial, Helvetica, sans-serif;
+font-size:14px;
+color:#000;
+}
+
+.subhead-head
+{
+font-family:Arial, Helvetica, sans-serif;
+font-size:14px;
+color: #666666;
+text-decoration:none;
+
+}
+.subhead-head:hover
+{
+text-decoration:underline;
+}
+
+.news-title
+{
+font-family: Georgia, "Times New Roman", Times, serif;
+font-size:16px;
+font-weight:500;
+color:#003366;
+text-decoration:none;
+ }
+.news-title:hover
+{
+text-decoration:underline;
+}
+
+.news-body
+{
+font-family: Verdana, Arial, Helvetica, sans-serif;
+font-size:11px;
+color:#333333
+
+text-decoration:none;
+}
+ .news-date
+{
+margin-top:10px;
+font-family: Verdana, Arial, Helvetica, sans-serif;
+font-size:10px;
+color: #999999;
+
+text-decoration:none;
+}
+
+.subhead-body
+{
+font-family:Arial, Helvetica, sans-serif;
+font-size:12px;
+color: #999999;
+}
+.inner
+{
+background: rgba(237,237,237,1);
+background: -moz-linear-gradient(top, rgba(237,237,237,1) 0%, rgba(246,246,246,1) 53%, rgba(255,255,255,1) 100%);
+background: -webkit-gradient(left top, left bottom, color-stop(0%, rgba(237,237,237,1)), color-stop(53%, rgba(246,246,246,1)), color-stop(100%, rgba(255,255,255,1)));
+background: -webkit-linear-gradient(top, rgba(237,237,237,1) 0%, rgba(246,246,246,1) 53%, rgba(255,255,255,1) 100%);
+background: -o-linear-gradient(top, rgba(237,237,237,1) 0%, rgba(246,246,246,1) 53%, rgba(255,255,255,1) 100%);
+background: -ms-linear-gradient(top, rgba(237,237,237,1) 0%, rgba(246,246,246,1) 53%, rgba(255,255,255,1) 100%);
+background: linear-gradient(to bottom, rgba(237,237,237,1) 0%, rgba(246,246,246,1) 53%, rgba(255,255,255,1) 100%);
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ededed', endColorstr='#ffffff', GradientType=0 );
+border:0px solid #999999;
+
+}
+
+.top-ticker
+{
+color:#000;
+text-decoration:none;
+}
+
+.tab-link
+{
+color:#000;
+text-decoration:none;
+}
+.tab-link:hover
+{
+text-decoration:underline;
+}
+
+.small
+{
+font-size:12px;}
+.normal
+{font-size:14px;}
+.large
+{font-size:16px;}
+.large1
+{font-size:18px;}
+.large2
+{font-size:22px;}
+
+.newsbody
+{
+font-size:15px; font-family: Geneva, Arial, Helvetica, sans-serif; font-weight:normal;
+}
+
+
+
+.listhead
+{
+font-family:arial;
+font-size:17px;
+font-weight:bold;
+color: #000000;
+text-decoration:none;
+}
+.list:hover
+{
+text-decoration:underline;
+}
+
+.listbody
+{
+font-size:14px;
+font-family: Geneva, Arial, Helvetica, sans-serif;
+font-weight:normal;
+text-align:justify;
+}
+
+
+.bclink
+{
+font-size:12px;
+font-family:Arial, Helvetica, sans-serif;
+font-weight:bold;
+text-decoration:none;
+color:#000000;
+}
+.bclink:hover
+{
+text-decoration:underline;
+}
+
+
+.tab2link
+{
+font-size:12px;
+font-family:Arial, Helvetica, sans-serif;
+
+text-decoration:none;
+color:#000000;
+}
+.tab2link:hover
+{
+text-decoration:underline;
+}
+
+.vtoplnk
+{
+font-family:Arial;
+font-size:12px;
+font-weight:bold;
+text-decoration:none;
+color:#333333;
+padding:2px 5px 2px 5px;
+}
+.vtoplnk:hover
+{
+text-decoration:underline;
+}
+.vftlnk
+{
+font-family:Arial;
+font-size:12px;
+font-weight:bold;
+text-decoration:none;
+color: #0099CC;
+padding:2px 5px 2px 5px;
+}
+.vftlnk:hover
+{
+color:#999999;
+text-decoration:underline;
+}
+.tdtop
+{
+border-top:1px solid #CCCCCC ;
+}
+
+.tdbt
+{
+border-bottom:1px solid #CCCCCC ;
+}
+.nbt
+{
+border-bottom:1px solid #CCCCCC;
+height:115px;
+vertical-align: top;
+}
+.ntp
+{
+border-top:1px solid #CCCCCC;
+height:115px;
+vertical-align: top;
+}
+.ebg
+{
+background-image:url(images/ebg.png);
+background-repeat:repeat-x;
+height:65px;
+ 
+}
+
+
+ div#left-sidebar{
+  position:absolute;
+  top:0px;
+  left:0px;
+  width:135px;
+   
+ 
+   
+ }
+ 
+  div#right-sidebar{
+  position:absolute;
+  top:0px;
+  right:0px;
+  width:135px;
+     
+   
+ }
+ div#footer{
+  position:absolute;
+  margin:0;
+   
+  bottom:0;
+  left:0;
+  width:100%;
+  height:40px;
+ }
+ @media screen{
+  body>div#left-sidebar
+  {
+   position:fixed;
+  }
+  body>div#right-sidebar{
+   position:fixed;
+  }
+  body>div#footer{
+   position: fixed;
+  }
+ 
+  }
+
+-->
+</style></head>
+ <script src="js/jquery.js" type="text/javascript"></script>
+  <link href="css/hdr.css" media="screen" rel="stylesheet" type="text/css" />
+
+<body>
+<table width="990" border="0" align="center" cellpadding="0" cellspacing="0">
+ 
+ <!-- <tr>
+    <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td></td>
+        <td>&nbsp;</td>
+      </tr>
+    </table></td>
+  </tr>-->
+  <tr>
+    <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td height="25" colspan="2" align="center" >
+        
+        
+                <a href="http://www.mtnzambia.com" target="_blank"><img src="mediamanager/files/990x135-01.jpg" width="990" style="border:1px solid #CCCCCC" height="110" /></a>
+        		
+        
+        
+        </td>
+      </tr>
+      <tr>
+        <td height="25" colspan="2" align="right" style="border-bottom:1px dotted #999999">
+        
+            
+      <a href="login.php"   class="vtoplnk">Login</a>
+      
+            
+      &nbsp;&nbsp;|&nbsp;&nbsp; <a href="archives.php" class="vtoplnk" >Archives</a> &nbsp;&nbsp;|&nbsp;&nbsp; <a href="cj.php" class="vtoplnk" >Citizen Journalism</a> &nbsp;&nbsp;|&nbsp;&nbsp; <a href="forum/" target="_blank" class="vtoplnk" >Discussion Forum</a> &nbsp;&nbsp;|&nbsp;&nbsp; <a href="msgboard.php" class="vtoplnk" >Message Board</a>
+      &nbsp;&nbsp;|&nbsp;&nbsp; <a href="downloads.php" class="vtoplnk" >Downloads</a>   
+      &nbsp;&nbsp;|&nbsp;&nbsp; <a href="feedback.php" class="vtoplnk" >Feedback</a>     </td>
+        </tr>
+      
+      
+      
+       
+      
+      
+      
+    </table></td>
+  </tr>
+  <tr>
+    <td style="background-image:url(images/hd-bar.png); background-repeat:repeat-x">
+    
+	
+		
+	
+    <table width="100%" border="0" cellpadding="0" cellspacing="0" bgcolor="#2E3192"  style="border-bottom:2px solid #FFFFFF" >
+      <tr>
+        <td width="48%" height="126" align="center" valign="middle"> 
+        
+       <div id="mlogo">
+        <a href="index.php"><img src='images/postlogo.png'  border='0'    /></a>
+                 </div>
+        
+        
+        </td>
+        <td width="52%" align="center">
+        
+                <a href="http://www.japantradecar.com/" target="_blank">
+        <img src="mediamanager/files/Cars_from_USD_80_Grey_475x100_V2.gif" width="475" style="border:1px solid #CCCCCC" height="100" />        </a>
+        
+
+         
+        
+                </td>
+      </tr>
+    </table>    </td>
+  </tr>
+  <tr>
+    <td>
+     
+<link href="css/ldropdown-menu.css" media="screen" rel="stylesheet" type="text/css" />
+ <script src="js/jquery.js" type="text/javascript"></script>
+
+
+ 
+
+
+<ul id="navigation" class="nav-main">
+	<li><a href="index.php">
+            <img  border="0" title="" alt="" src="images/home-icon.png"></a></li>
+    
+      
+   
+   
+    <li>
+    
+       <a href="search.php?cmd=category&catid=70" style="text-shadow:2px 1px 3px rgba(10, 10, 10, 1);">Home News</a>
+     	
+	    
+    </li>
+      
+   
+   
+    <li>
+    
+       <a href="search.php?cmd=category&catid=2" style="text-shadow:2px 1px 3px rgba(10, 10, 10, 1);">World</a>
+     	
+	    
+    </li>
+      
+   
+   
+    <li>
+    
+       <a href="search.php?cmd=category&catid=3" style="text-shadow:2px 1px 3px rgba(10, 10, 10, 1);">Business</a>
+     	
+		<div>
+     <div style="width:100px; float:left; border-right:1px solid #CCCCCC; margin-top:10px; margin-bottom:10px;">
+          
+    
+     
+    <a href="search.php?cmd=subcategory&subcatid=105" onmouseover="javascript:show_submenu('submenu105','container3');" style="color:#000000; border-bottom:1px solid #F3F3F3">Financial Times</a>
+ 
+ 
+ 
+ 
+ 
+ <!--Submenu Code Start-->
+     
+                      <div id="submenu105" style="display:none;">
+                      
+                      								                                    <div style="float:left; padding:5px;"><img src="" height="70" width="80" /></div>
+                                  <div style="float:right; width:240px; padding:5px;">
+                                  <a href="news.php?id=4434" style="font-size:15px; color:#000000">Anger and dismay as Russia scraps $50bn gas plan </a>
+                                  </div>
+                                   <p style="margin-top:10px; float:left">
+                                    
+                                  								  									 <div style="float:left; width:95%;"> <a href="news.php?id=3812" style="background-image:url(images/arrow.png); background-position:left; background-repeat:no-repeat; padding-left:20px; color:#000000" class="toplnk">Hedge funds pursue  alternative lending</a></div> <br />
+									  
+									
+									  								  									 <div style="float:left; width:95%;"> <a href="news.php?id=3811" style="background-image:url(images/arrow.png); background-position:left; background-repeat:no-repeat; padding-left:20px; color:#000000" class="toplnk">Strauss-Kahn investing firm collapses after apparent suicide of key partner</a></div> <br />
+									  
+									
+									  								  									 <div style="float:left; width:95%;"> <a href="news.php?id=3810" style="background-image:url(images/arrow.png); background-position:left; background-repeat:no-repeat; padding-left:20px; color:#000000" class="toplnk">Tech groups aiding  terror - UK spy chief</a></div> <br />
+									  
+									
+									  								  									 <div style="float:left; width:95%;"> <a href="news.php?id=3665" style="background-image:url(images/arrow.png); background-position:left; background-repeat:no-repeat; padding-left:20px; color:#000000" class="toplnk">Chinese renminbi’s place in the FX world</a></div> <br />
+									  
+									
+									                         
+                      </p>
+                      </div>
+                              
+    
+    
+    
+    
+    <!--Submenu Code End-->   
+      
+      
+          
+    
+     
+    <a href="search.php?cmd=subcategory&subcatid=21" onmouseover="javascript:show_submenu('submenu21','container3');" style="color:#000000; border-bottom:1px solid #F3F3F3">Tourism</a>
+ 
+ 
+ 
+ 
+ 
+ <!--Submenu Code Start-->
+     
+                      <div id="submenu21" style="display:none;">
+                      
+                      								                                    <div style="float:left; padding:5px;"><img src="mediamanager/files/ARTITSTS-6564.jpg" height="70" width="80" /></div>
+                                  <div style="float:right; width:240px; padding:5px;">
+                                  <a href="news.php?id=2609" style="font-size:15px; color:#000000">ZAM calls on musicians  to aid tourism in Luapula</a>
+                                  </div>
+                                   <p style="margin-top:10px; float:left">
+                                    
+                                  								  									 <div style="float:left; width:95%;"> <a href="news.php?id=868" style="background-image:url(images/arrow.png); background-position:left; background-repeat:no-repeat; padding-left:20px; color:#000000" class="toplnk">Kasama airport upgrade will attract tourism - Nkunika</a></div> <br />
+									  
+									
+									  								  									 <div style="float:left; width:95%;"> <a href="news.php?id=61" style="background-image:url(images/arrow.png); background-position:left; background-repeat:no-repeat; padding-left:20px; color:#000000" class="toplnk">GOVT SEEKS MORE LOCAL PARTICIPANTS IN TOURISM</a></div> <br />
+									  
+									
+									                         
+                      </p>
+                      </div>
+                              
+    
+    
+    
+    
+    <!--Submenu Code End-->   
+      
+      
+    	 </div>
+    
+    <div id="container3" style="width:340px; float:right; height:auto; background-color: #F5F5F5 ;border:0px solid #FFFFFF;">
+   
+  </div>
+	</div>
+	
+	    
+    </li>
+      
+   
+   
+    <li>
+    
+       <a href="sports.php">Sports</a>
+    	
+		<div>
+     <div style="width:100px; float:left; border-right:1px solid #CCCCCC; margin-top:10px; margin-bottom:10px;">
+          
+    
+     
+    <a href="search.php?cmd=subcategory&subcatid=18" onmouseover="javascript:show_submenu('submenu18','container4');" style="color:#000000; border-bottom:1px solid #F3F3F3">Athletics</a>
+ 
+ 
+ 
+ 
+ 
+ <!--Submenu Code Start-->
+     
+                      <div id="submenu18" style="display:none;">
+                      
+                      								                                    <div style="float:left; padding:5px;"><img src="mediamanager/files/Samuel Matete.jpg" height="70" width="80" /></div>
+                                  <div style="float:right; width:240px; padding:5px;">
+                                  <a href="news.php?id=5044" style="font-size:15px; color:#000000">Mpondela team asks court to throw out Matete injunction</a>
+                                  </div>
+                                   <p style="margin-top:10px; float:left">
+                                    
+                                  								  									 <div style="float:left; width:95%;"> <a href="news.php?id=4781" style="background-image:url(images/arrow.png); background-position:left; background-repeat:no-repeat; padding-left:20px; color:#000000" class="toplnk">Mpondela shouldn’t think ZAAA is his </a></div> <br />
+									  
+									
+									  								  									 <div style="float:left; width:95%;"> <a href="news.php?id=4519" style="background-image:url(images/arrow.png); background-position:left; background-repeat:no-repeat; padding-left:20px; color:#000000" class="toplnk">Zambian athletes  reach finals in Zim</a></div> <br />
+									  
+									
+									  								  									 <div style="float:left; width:95%;"> <a href="news.php?id=4382" style="background-image:url(images/arrow.png); background-position:left; background-repeat:no-repeat; padding-left:20px; color:#000000" class="toplnk">Kubombela opts not to  re-contest ZAAA position </a></div> <br />
+									  
+									
+									  								  									 <div style="float:left; width:95%;"> <a href="news.php?id=4374" style="background-image:url(images/arrow.png); background-position:left; background-repeat:no-repeat; padding-left:20px; color:#000000" class="toplnk">Mokola urges women to take  up leadership roles in sports</a></div> <br />
+									  
+									
+									                         
+                      </p>
+                      </div>
+                              
+    
+    
+    
+    
+    <!--Submenu Code End-->   
+      
+      
+          
+    
+     
+    <a href="search.php?cmd=subcategory&subcatid=97" onmouseover="javascript:show_submenu('submenu97','container4');" style="color:#000000; border-bottom:1px solid #F3F3F3">Badminton</a>
+ 
+ 
+ 
+ 
+ 
+ <!--Submenu Code Start-->
+     
+                      <div id="submenu97" style="display:none;">
+                      
+                      								                                    <div style="float:left; padding:5px;"><img src="mediamanager/files/badminton.jpg" height="70" width="80" /></div>
+                                  <div style="float:right; width:240px; padding:5px;">
+                                  <a href="news.php?id=1215" style="font-size:15px; color:#000000">Teen badminton  player reaps  gold, silver </a>
+                                  </div>
+                                   <p style="margin-top:10px; float:left">
+                                    
+                                                         
+                      </p>
+                      </div>
+                              
+    
+    
+    
+    
+    <!--Submenu Code End-->   
+      
+      
+          
+    
+     
+    <a href="search.php?cmd=subcategory&subcatid=88" onmouseover="javascript:show_submenu('submenu88','container4');" style="color:#000000; border-bottom:1px solid #F3F3F3">Basketball</a>
+ 
+ 
+ 
+ 
+ 
+ <!--Submenu Code Start-->
+     
+                      <div id="submenu88" style="display:none;">
+                      
+                      								                                    <div style="float:left; padding:5px;"><img src="mediamanager/files/basketball.jpg" height="70" width="80" /></div>
+                                  <div style="float:right; width:240px; padding:5px;">
+                                  <a href="news.php?id=4742" style="font-size:15px; color:#000000">Bullets keep dream of winning alive</a>
+                                  </div>
+                                   <p style="margin-top:10px; float:left">
+                                    
+                                  								  									 <div style="float:left; width:95%;"> <a href="news.php?id=3799" style="background-image:url(images/arrow.png); background-position:left; background-repeat:no-repeat; padding-left:20px; color:#000000" class="toplnk">Zambia  to miss  Zone Six  basketball games</a></div> <br />
+									  
+									
+									  								  									 <div style="float:left; width:95%;"> <a href="news.php?id=3421" style="background-image:url(images/arrow.png); background-position:left; background-repeat:no-repeat; padding-left:20px; color:#000000" class="toplnk">ZBA seeks K115,000 for Afrobasket qualifiers </a></div> <br />
+									  
+									
+									  								  									 <div style="float:left; width:95%;"> <a href="news.php?id=3205" style="background-image:url(images/arrow.png); background-position:left; background-repeat:no-repeat; padding-left:20px; color:#000000" class="toplnk">Kalipinde a doubt for Afrobasket qualifiers</a></div> <br />
+									  
+									
+									  								  									 <div style="float:left; width:95%;"> <a href="news.php?id=3130" style="background-image:url(images/arrow.png); background-position:left; background-repeat:no-repeat; padding-left:20px; color:#000000" class="toplnk">Spartans back in the hunt for top-four slot</a></div> <br />
+									  
+									
+									                         
+                      </p>
+                      </div>
+                              
+    
+    
+    
+    
+    <!--Submenu Code End-->   
+      
+      
+          
+    
+     
+    <a href="search.php?cmd=subcategory&subcatid=100" onmouseover="javascript:show_submenu('submenu100','container4');" style="color:#000000; border-bottom:1px solid #F3F3F3">Boxing</a>
+ 
+ 
+ 
+ 
+ 
+ <!--Submenu Code Start-->
+     
+                      <div id="submenu100" style="display:none;">
+                      
+                      								                                    <div style="float:left; padding:5px;"><img src="mediamanager/files/Esther Phiri relaxing.jpg" height="70" width="80" /></div>
+                                  <div style="float:right; width:240px; padding:5px;">
+                                  <a href="news.php?id=5130" style="font-size:15px; color:#000000">Give Esther more fights before going for a title - Chingangu</a>
+                                  </div>
+                                   <p style="margin-top:10px; float:left">
+                                    
+                                  								  									 <div style="float:left; width:95%;"> <a href="news.php?id=5058" style="background-image:url(images/arrow.png); background-position:left; background-repeat:no-repeat; padding-left:20px; color:#000000" class="toplnk">Esther returns to ring in April</a></div> <br />
+									  
+									
+									  								  									 <div style="float:left; width:95%;"> <a href="news.php?id=4518" style="background-image:url(images/arrow.png); background-position:left; background-repeat:no-repeat; padding-left:20px; color:#000000" class="toplnk">Esther thanks Mugabe for recognition</a></div> <br />
+									  
+									
+									  								  									 <div style="float:left; width:95%;"> <a href="news.php?id=4372" style="background-image:url(images/arrow.png); background-position:left; background-repeat:no-repeat; padding-left:20px; color:#000000" class="toplnk">ZPBWCB clears Mwamba</a></div> <br />
+									  
+									
+									  								  									 <div style="float:left; width:95%;"> <a href="news.php?id=4217" style="background-image:url(images/arrow.png); background-position:left; background-repeat:no-repeat; padding-left:20px; color:#000000" class="toplnk">Bring quality boxers - Chilambe</a></div> <br />
+									  
+									
+									                         
+                      </p>
+                      </div>
+                              
+    
+    
+    
+    
+    <!--Submenu Code End-->   
+      
+      
+          
+    
+     
+    <a href="search.php?cmd=subcategory&subcatid=91" onmouseover="javascript:show_submenu('submenu91','container4');" style="color:#000000; border-bottom:1px solid #F3F3F3">Chess</a>
+ 
+ 
+ 
+ 
+ 
+ <!--Submenu Code Start-->
+     
+                      <div id="submenu91" style="display:none;">
+                      
+                      								                                    <div style="float:left; padding:5px;"><img src="mediamanager/files/akayom.jpg" height="70" width="80" /></div>
+                                  <div style="float:right; width:240px; padding:5px;">
+                                  <a href="news.php?id=4914" style="font-size:15px; color:#000000">Chess players need more exposure - Kayonde </a>
+                                  </div>
+                                   <p style="margin-top:10px; float:left">
+                                    
+                                  								  									 <div style="float:left; width:95%;"> <a href="news.php?id=4849" style="background-image:url(images/arrow.png); background-position:left; background-repeat:no-repeat; padding-left:20px; color:#000000" class="toplnk">Chola takes on SA’s Keegan </a></div> <br />
+									  
+									
+									  								  									 <div style="float:left; width:95%;"> <a href="news.php?id=4784" style="background-image:url(images/arrow.png); background-position:left; background-repeat:no-repeat; padding-left:20px; color:#000000" class="toplnk">Epah gains WIM title</a></div> <br />
+									  
+									
+									  								  									 <div style="float:left; width:95%;"> <a href="news.php?id=4736" style="background-image:url(images/arrow.png); background-position:left; background-repeat:no-repeat; padding-left:20px; color:#000000" class="toplnk">Epah finishes second at Africa Individual Chess Championships </a></div> <br />
+									  
+									
+									  								  									 <div style="float:left; width:95%;"> <a href="news.php?id=4626" style="background-image:url(images/arrow.png); background-position:left; background-repeat:no-repeat; padding-left:20px; color:#000000" class="toplnk">Epah confident of \'conquering\' Africa</a></div> <br />
+									  
+									
+									                         
+                      </p>
+                      </div>
+                              
+    
+    
+    
+    
+    <!--Submenu Code End-->   
+      
+      
+          
+    
+     
+    <a href="search.php?cmd=subcategory&subcatid=13" onmouseover="javascript:show_submenu('submenu13','container4');" style="color:#000000; border-bottom:1px solid #F3F3F3">Cricket</a>
+ 
+ 
+ 
+ 
+ 
+ <!--Submenu Code Start-->
+     
+                      <div id="submenu13" style="display:none;">
+                      
+                      								                                    <div style="float:left; padding:5px;"><img src="" height="70" width="80" /></div>
+                                  <div style="float:right; width:240px; padding:5px;">
+                                  <a href="news.php?id=76" style="font-size:15px; color:#000000">world cup 2003</a>
+                                  </div>
+                                   <p style="margin-top:10px; float:left">
+                                    
+                                  								  									 <div style="float:left; width:95%;"> <a href="news.php?id=31" style="background-image:url(images/arrow.png); background-position:left; background-repeat:no-repeat; padding-left:20px; color:#000000" class="toplnk">Testing</a></div> <br />
+									  
+									
+									                         
+                      </p>
+                      </div>
+                              
+    
+    
+    
+    
+    <!--Submenu Code End-->   
+      
+      
+          
+    
+     
+    <a href="search.php?cmd=subcategory&subcatid=103" onmouseover="javascript:show_submenu('submenu103','container4');" style="color:#000000; border-bottom:1px solid #F3F3F3">Darts</a>
+ 
+ 
+ 
+ 
+ 
+ <!--Submenu Code Start-->
+     
+                      <div id="submenu103" style="display:none;">
+                      
+                      								                                    <div style="float:left; padding:5px;"><img src="mediamanager/files/darts-zambia.jpg" height="70" width="80" /></div>
+                                  <div style="float:right; width:240px; padding:5px;">
+                                  <a href="news.php?id=2369" style="font-size:15px; color:#000000">DAZ bemoans erratic payment of fees</a>
+                                  </div>
+                                   <p style="margin-top:10px; float:left">
+                                    
+                                                         
+                      </p>
+                      </div>
+                              
+    
+    
+    
+    
+    <!--Submenu Code End-->   
+      
+      
+          
+    
+     
+    <a href="search.php?cmd=subcategory&subcatid=39" onmouseover="javascript:show_submenu('submenu39','container4');" style="color:#000000; border-bottom:1px solid #F3F3F3">Football</a>
+ 
+ 
+ 
+ 
+ 
+ <!--Submenu Code Start-->
+     
+                      <div id="submenu39" style="display:none;">
+                      
+                      								                                    <div style="float:left; padding:5px;"><img src="mediamanager/files/Kalaba new chipolopolo captain.jpg" height="70" width="80" /></div>
+                                  <div style="float:right; width:240px; padding:5px;">
+                                  <a href="news.php?id=5176" style="font-size:15px; color:#000000">Kalaba deserves to be captain - Chambeshi</a>
+                                  </div>
+                                   <p style="margin-top:10px; float:left">
+                                    
+                                  								  									 <div style="float:left; width:95%;"> <a href="news.php?id=5171" style="background-image:url(images/arrow.png); background-position:left; background-repeat:no-repeat; padding-left:20px; color:#000000" class="toplnk">Criticising Sunzu’s China move petty - Kilambe </a></div> <br />
+									  
+									
+									  								  									 <div style="float:left; width:95%;"> <a href="news.php?id=5170" style="background-image:url(images/arrow.png); background-position:left; background-repeat:no-repeat; padding-left:20px; color:#000000" class="toplnk">Chipolopolo in Bafana Bafana test </a></div> <br />
+									  
+									
+									  								  									 <div style="float:left; width:95%;"> <a href="news.php?id=5132" style="background-image:url(images/arrow.png); background-position:left; background-repeat:no-repeat; padding-left:20px; color:#000000" class="toplnk">Mpika Utd win Miles Sampa Christmas tournament</a></div> <br />
+									  
+									
+									  								  									 <div style="float:left; width:95%;"> <a href="news.php?id=5109" style="background-image:url(images/arrow.png); background-position:left; background-repeat:no-repeat; padding-left:20px; color:#000000" class="toplnk">Mashaba names AfCON-bound team</a></div> <br />
+									  
+									
+									                         
+                      </p>
+                      </div>
+                              
+    
+    
+    
+    
+    <!--Submenu Code End-->   
+      
+      
+          
+    
+     
+    <a href="search.php?cmd=subcategory&subcatid=106" onmouseover="javascript:show_submenu('submenu106','container4');" style="color:#000000; border-bottom:1px solid #F3F3F3">General</a>
+ 
+ 
+ 
+ 
+ 
+ <!--Submenu Code Start-->
+     
+                      <div id="submenu106" style="display:none;">
+                      
+                      								                                    <div style="float:left; padding:5px;"><img src="" height="70" width="80" /></div>
+                                  <div style="float:right; width:240px; padding:5px;">
+                                  <a href="news.php?id=4376" style="font-size:15px; color:#000000">S/Africa to bid for 2024 Olympics</a>
+                                  </div>
+                                   <p style="margin-top:10px; float:left">
+                                    
+                                  								  									 <div style="float:left; width:95%;"> <a href="news.php?id=3752" style="background-image:url(images/arrow.png); background-position:left; background-repeat:no-repeat; padding-left:20px; color:#000000" class="toplnk">Paljk aims for gold </a></div> <br />
+									  
+									
+									  								  									 <div style="float:left; width:95%;"> <a href="news.php?id=3073" style="background-image:url(images/arrow.png); background-position:left; background-repeat:no-repeat; padding-left:20px; color:#000000" class="toplnk">NSCZ calls for  accountability</a></div> <br />
+									  
+									
+									                         
+                      </p>
+                      </div>
+                              
+    
+    
+    
+    
+    <!--Submenu Code End-->   
+      
+      
+          
+    
+     
+    <a href="search.php?cmd=subcategory&subcatid=99" onmouseover="javascript:show_submenu('submenu99','container4');" style="color:#000000; border-bottom:1px solid #F3F3F3">Golf</a>
+ 
+ 
+ 
+ 
+ 
+ <!--Submenu Code Start-->
+     
+                      <div id="submenu99" style="display:none;">
+                      
+                      								                                    <div style="float:left; padding:5px;"><img src="" height="70" width="80" /></div>
+                                  <div style="float:right; width:240px; padding:5px;">
+                                  <a href="news.php?id=4741" style="font-size:15px; color:#000000">Norman salutes Nagle on 94th birthday</a>
+                                  </div>
+                                   <p style="margin-top:10px; float:left">
+                                    
+                                  								  									 <div style="float:left; width:95%;"> <a href="news.php?id=3945" style="background-image:url(images/arrow.png); background-position:left; background-repeat:no-repeat; padding-left:20px; color:#000000" class="toplnk">Masisani seeks to lead ZLGU</a></div> <br />
+									  
+									
+									  								  									 <div style="float:left; width:95%;"> <a href="news.php?id=3301" style="background-image:url(images/arrow.png); background-position:left; background-repeat:no-repeat; padding-left:20px; color:#000000" class="toplnk">Barclays Life wins IAZ golf meet</a></div> <br />
+									  
+									
+									  								  									 <div style="float:left; width:95%;"> <a href="news.php?id=3016" style="background-image:url(images/arrow.png); background-position:left; background-repeat:no-repeat; padding-left:20px; color:#000000" class="toplnk">Zambia Open gets richer </a></div> <br />
+									  
+									
+									  								  									 <div style="float:left; width:95%;"> <a href="news.php?id=2877" style="background-image:url(images/arrow.png); background-position:left; background-repeat:no-repeat; padding-left:20px; color:#000000" class="toplnk">Teenager Walya  targets PGA tour </a></div> <br />
+									  
+									
+									                         
+                      </p>
+                      </div>
+                              
+    
+    
+    
+    
+    <!--Submenu Code End-->   
+      
+      
+          
+    
+     
+    <a href="search.php?cmd=subcategory&subcatid=93" onmouseover="javascript:show_submenu('submenu93','container4');" style="color:#000000; border-bottom:1px solid #F3F3F3">Handball</a>
+ 
+ 
+ 
+ 
+ 
+ <!--Submenu Code Start-->
+     
+                      <div id="submenu93" style="display:none;">
+                      
+                      								                                    <div style="float:left; padding:5px;"><img src="" height="70" width="80" /></div>
+                                  <div style="float:right; width:240px; padding:5px;">
+                                  <a href="news.php?id=3420" style="font-size:15px; color:#000000">AHC suspends qualifiers over Ebola</a>
+                                  </div>
+                                   <p style="margin-top:10px; float:left">
+                                    
+                                  								  									 <div style="float:left; width:95%;"> <a href="news.php?id=2969" style="background-image:url(images/arrow.png); background-position:left; background-repeat:no-repeat; padding-left:20px; color:#000000" class="toplnk">HAZ to  hold jubilee  championship </a></div> <br />
+									  
+									
+									  								  									 <div style="float:left; width:95%;"> <a href="news.php?id=1326" style="background-image:url(images/arrow.png); background-position:left; background-repeat:no-repeat; padding-left:20px; color:#000000" class="toplnk">Lack of exposure cost  Zambia - handball coach</a></div> <br />
+									  
+									
+									  								  									 <div style="float:left; width:95%;"> <a href="news.php?id=1164" style="background-image:url(images/arrow.png); background-position:left; background-repeat:no-repeat; padding-left:20px; color:#000000" class="toplnk">Handball Coach targets IHF finals</a></div> <br />
+									  
+									
+									  								  									 <div style="float:left; width:95%;"> <a href="news.php?id=1078" style="background-image:url(images/arrow.png); background-position:left; background-repeat:no-repeat; padding-left:20px; color:#000000" class="toplnk">Handball teams in Zambia for Africa Challenge Trophy</a></div> <br />
+									  
+									
+									                         
+                      </p>
+                      </div>
+                              
+    
+    
+    
+    
+    <!--Submenu Code End-->   
+      
+      
+          
+    
+     
+    <a href="search.php?cmd=subcategory&subcatid=92" onmouseover="javascript:show_submenu('submenu92','container4');" style="color:#000000; border-bottom:1px solid #F3F3F3">Hockey</a>
+ 
+ 
+ 
+ 
+ 
+ <!--Submenu Code Start-->
+     
+                      <div id="submenu92" style="display:none;">
+                      
+                      								                                    <div style="float:left; padding:5px;"><img src="" height="70" width="80" /></div>
+                                  <div style="float:right; width:240px; padding:5px;">
+                                  <a href="news.php?id=925" style="font-size:15px; color:#000000"></a>
+                                  </div>
+                                   <p style="margin-top:10px; float:left">
+                                    
+                                                         
+                      </p>
+                      </div>
+                              
+    
+    
+    
+    
+    <!--Submenu Code End-->   
+      
+      
+          
+    
+     
+    <a href="search.php?cmd=subcategory&subcatid=17" onmouseover="javascript:show_submenu('submenu17','container4');" style="color:#000000; border-bottom:1px solid #F3F3F3">Judokas</a>
+ 
+ 
+ 
+ 
+ 
+ <!--Submenu Code Start-->
+     
+                      <div id="submenu17" style="display:none;">
+                      
+                      								                                    <div style="float:left; padding:5px;"><img src="mediamanager/files/Judo-in-Zambia-51.jpg" height="70" width="80" /></div>
+                                  <div style="float:right; width:240px; padding:5px;">
+                                  <a href="news.php?id=3803" style="font-size:15px; color:#000000">Banda out of Region 5 judo games</a>
+                                  </div>
+                                   <p style="margin-top:10px; float:left">
+                                    
+                                  								  									 <div style="float:left; width:95%;"> <a href="news.php?id=3620" style="background-image:url(images/arrow.png); background-position:left; background-repeat:no-repeat; padding-left:20px; color:#000000" class="toplnk">Mangaba must step down to retain respect </a></div> <br />
+									  
+									
+									  								  									 <div style="float:left; width:95%;"> <a href="news.php?id=3013" style="background-image:url(images/arrow.png); background-position:left; background-repeat:no-repeat; padding-left:20px; color:#000000" class="toplnk">Police promote Punza, Olga </a></div> <br />
+									  
+									
+									  								  									 <div style="float:left; width:95%;"> <a href="news.php?id=2084" style="background-image:url(images/arrow.png); background-position:left; background-repeat:no-repeat; padding-left:20px; color:#000000" class="toplnk">‘Zambia will be judo powerhouse’</a></div> <br />
+									  
+									
+									  								  									 <div style="float:left; width:95%;"> <a href="news.php?id=1943" style="background-image:url(images/arrow.png); background-position:left; background-repeat:no-repeat; padding-left:20px; color:#000000" class="toplnk">ZaMAA to honour fallen  heroes </a></div> <br />
+									  
+									
+									                         
+                      </p>
+                      </div>
+                              
+    
+    
+    
+    
+    <!--Submenu Code End-->   
+      
+      
+          
+    
+     
+    <a href="search.php?cmd=subcategory&subcatid=95" onmouseover="javascript:show_submenu('submenu95','container4');" style="color:#000000; border-bottom:1px solid #F3F3F3">Motor Sports</a>
+ 
+ 
+ 
+ 
+ 
+ <!--Submenu Code Start-->
+     
+                      <div id="submenu95" style="display:none;">
+                      
+                      								                                    <div style="float:left; padding:5px;"><img src="mediamanager/files/Reeve David.jpg" height="70" width="80" /></div>
+                                  <div style="float:right; width:240px; padding:5px;">
+                                  <a href="news.php?id=5105" style="font-size:15px; color:#000000">Reeve ready for Dakar rally</a>
+                                  </div>
+                                   <p style="margin-top:10px; float:left">
+                                    
+                                  								  									 <div style="float:left; width:95%;"> <a href="news.php?id=4917" style="background-image:url(images/arrow.png); background-position:left; background-repeat:no-repeat; padding-left:20px; color:#000000" class="toplnk">Reeve to ‘navigate’ Dakar Rally with caution</a></div> <br />
+									  
+									
+									  								  									 <div style="float:left; width:95%;"> <a href="news.php?id=4223" style="background-image:url(images/arrow.png); background-position:left; background-repeat:no-repeat; padding-left:20px; color:#000000" class="toplnk">Jassy wins national rally </a></div> <br />
+									  
+									
+									  								  									 <div style="float:left; width:95%;"> <a href="news.php?id=3800" style="background-image:url(images/arrow.png); background-position:left; background-repeat:no-repeat; padding-left:20px; color:#000000" class="toplnk">Essa eyes Madagascar win</a></div> <br />
+									  
+									
+									  								  									 <div style="float:left; width:95%;"> <a href="news.php?id=3695" style="background-image:url(images/arrow.png); background-position:left; background-repeat:no-repeat; padding-left:20px; color:#000000" class="toplnk">Zambia is retaining  title - Essa</a></div> <br />
+									  
+									
+									                         
+                      </p>
+                      </div>
+                              
+    
+    
+    
+    
+    <!--Submenu Code End-->   
+      
+      
+          
+    
+     
+    <a href="search.php?cmd=subcategory&subcatid=98" onmouseover="javascript:show_submenu('submenu98','container4');" style="color:#000000; border-bottom:1px solid #F3F3F3">Netball</a>
+ 
+ 
+ 
+ 
+ 
+ <!--Submenu Code Start-->
+     
+                      <div id="submenu98" style="display:none;">
+                      
+                      								                                    <div style="float:left; padding:5px;"><img src="mediamanager/files/Netball National Team.jpg" height="70" width="80" /></div>
+                                  <div style="float:right; width:240px; padding:5px;">
+                                  <a href="news.php?id=5060" style="font-size:15px; color:#000000">NAZ names provisional World Cup team</a>
+                                  </div>
+                                   <p style="margin-top:10px; float:left">
+                                    
+                                  								  									 <div style="float:left; width:95%;"> <a href="news.php?id=3387" style="background-image:url(images/arrow.png); background-position:left; background-repeat:no-repeat; padding-left:20px; color:#000000" class="toplnk">Chilonga win Kapeya final</a></div> <br />
+									  
+									
+									  								  									 <div style="float:left; width:95%;"> <a href="news.php?id=3269" style="background-image:url(images/arrow.png); background-position:left; background-repeat:no-repeat; padding-left:20px; color:#000000" class="toplnk">Kapeya tournament finals set for today</a></div> <br />
+									  
+									
+									  								  									 <div style="float:left; width:95%;"> <a href="news.php?id=3075" style="background-image:url(images/arrow.png); background-position:left; background-repeat:no-repeat; padding-left:20px; color:#000000" class="toplnk">Pound Stretcher netball  crown goes to John Laing </a></div> <br />
+									  
+									
+									  								  									 <div style="float:left; width:95%;"> <a href="news.php?id=3012" style="background-image:url(images/arrow.png); background-position:left; background-repeat:no-repeat; padding-left:20px; color:#000000" class="toplnk">Netball team to have expatriate coach </a></div> <br />
+									  
+									
+									                         
+                      </p>
+                      </div>
+                              
+    
+    
+    
+    
+    <!--Submenu Code End-->   
+      
+      
+          
+    
+     
+    <a href="search.php?cmd=subcategory&subcatid=96" onmouseover="javascript:show_submenu('submenu96','container4');" style="color:#000000; border-bottom:1px solid #F3F3F3">Polo</a>
+ 
+ 
+ 
+ 
+ 
+ <!--Submenu Code Start-->
+     
+                      <div id="submenu96" style="display:none;">
+                      
+                      								                                    <div style="float:left; padding:5px;"><img src="" height="70" width="80" /></div>
+                                  <div style="float:right; width:240px; padding:5px;">
+                                  <a href="news.php?id=1134" style="font-size:15px; color:#000000">Polo ladies beat Kenya</a>
+                                  </div>
+                                   <p style="margin-top:10px; float:left">
+                                    
+                                                         
+                      </p>
+                      </div>
+                              
+    
+    
+    
+    
+    <!--Submenu Code End-->   
+      
+      
+          
+    
+     
+    <a href="search.php?cmd=subcategory&subcatid=94" onmouseover="javascript:show_submenu('submenu94','container4');" style="color:#000000; border-bottom:1px solid #F3F3F3">Pool</a>
+ 
+ 
+ 
+ 
+ 
+ <!--Submenu Code Start-->
+     
+                      <div id="submenu94" style="display:none;">
+                      
+                      								                                    <div style="float:left; padding:5px;"><img src="mediamanager/files/Pool-Game-Wallpapers6.jpg" height="70" width="80" /></div>
+                                  <div style="float:right; width:240px; padding:5px;">
+                                  <a href="news.php?id=3077" style="font-size:15px; color:#000000">Zambia’s pool team fails to  retain BlackBall championship</a>
+                                  </div>
+                                   <p style="margin-top:10px; float:left">
+                                    
+                                  								  									 <div style="float:left; width:95%;"> <a href="news.php?id=2915" style="background-image:url(images/arrow.png); background-position:left; background-repeat:no-repeat; padding-left:20px; color:#000000" class="toplnk">Pool team in Dar </a></div> <br />
+									  
+									
+									  								  									 <div style="float:left; width:95%;"> <a href="news.php?id=1212" style="background-image:url(images/arrow.png); background-position:left; background-repeat:no-repeat; padding-left:20px; color:#000000" class="toplnk">Pool body warns indisciplined players</a></div> <br />
+									  
+									
+									  								  									 <div style="float:left; width:95%;"> <a href="news.php?id=1131" style="background-image:url(images/arrow.png); background-position:left; background-repeat:no-repeat; padding-left:20px; color:#000000" class="toplnk">Great Mumana win national pool crown</a></div> <br />
+									  
+									
+									                         
+                      </p>
+                      </div>
+                              
+    
+    
+    
+    
+    <!--Submenu Code End-->   
+      
+      
+          
+    
+     
+    <a href="search.php?cmd=subcategory&subcatid=104" onmouseover="javascript:show_submenu('submenu104','container4');" style="color:#000000; border-bottom:1px solid #F3F3F3">Renault</a>
+ 
+ 
+ 
+ 
+ 
+ <!--Submenu Code Start-->
+     
+                      <div id="submenu104" style="display:none;">
+                      
+                                             
+                      </p>
+                      </div>
+                              
+    
+    
+    
+    
+    <!--Submenu Code End-->   
+      
+      
+          
+    
+     
+    <a href="search.php?cmd=subcategory&subcatid=101" onmouseover="javascript:show_submenu('submenu101','container4');" style="color:#000000; border-bottom:1px solid #F3F3F3">Rugby</a>
+ 
+ 
+ 
+ 
+ 
+ <!--Submenu Code Start-->
+     
+                      <div id="submenu101" style="display:none;">
+                      
+                      								                                    <div style="float:left; padding:5px;"><img src="mediamanager/files/Rugby Zambia.jpg" height="70" width="80" /></div>
+                                  <div style="float:right; width:240px; padding:5px;">
+                                  <a href="news.php?id=5011" style="font-size:15px; color:#000000">Diggers need to work hard next season - Mutale</a>
+                                  </div>
+                                   <p style="margin-top:10px; float:left">
+                                    
+                                  								  									 <div style="float:left; width:95%;"> <a href="news.php?id=3656" style="background-image:url(images/arrow.png); background-position:left; background-repeat:no-repeat; padding-left:20px; color:#000000" class="toplnk">Chanda free to appeal - ZRU</a></div> <br />
+									  
+									
+									  								  									 <div style="float:left; width:95%;"> <a href="news.php?id=3302" style="background-image:url(images/arrow.png); background-position:left; background-repeat:no-repeat; padding-left:20px; color:#000000" class="toplnk">Chanda insists ZRU nominations still valid </a></div> <br />
+									  
+									
+									  								  									 <div style="float:left; width:95%;"> <a href="news.php?id=3088" style="background-image:url(images/arrow.png); background-position:left; background-repeat:no-repeat; padding-left:20px; color:#000000" class="toplnk">Sinkamba, Mwale in race for ZRU top slot</a></div> <br />
+									  
+									
+									  								  									 <div style="float:left; width:95%;"> <a href="news.php?id=2965" style="background-image:url(images/arrow.png); background-position:left; background-repeat:no-repeat; padding-left:20px; color:#000000" class="toplnk">ZRU puts off Super Eight Cup </a></div> <br />
+									  
+									
+									                         
+                      </p>
+                      </div>
+                              
+    
+    
+    
+    
+    <!--Submenu Code End-->   
+      
+      
+          
+    
+     
+    <a href="search.php?cmd=subcategory&subcatid=89" onmouseover="javascript:show_submenu('submenu89','container4');" style="color:#000000; border-bottom:1px solid #F3F3F3">Tennis</a>
+ 
+ 
+ 
+ 
+ 
+ <!--Submenu Code Start-->
+     
+                      <div id="submenu89" style="display:none;">
+                      
+                      								                                    <div style="float:left; padding:5px;"><img src="mediamanager/files/EDGAR-Kazembe-.jpg" height="70" width="80" /></div>
+                                  <div style="float:right; width:240px; padding:5px;">
+                                  <a href="news.php?id=5131" style="font-size:15px; color:#000000">MiB Security sets aside K190,000 for Kazembe’s international games</a>
+                                  </div>
+                                   <p style="margin-top:10px; float:left">
+                                    
+                                  								  									 <div style="float:left; width:95%;"> <a href="news.php?id=5100" style="background-image:url(images/arrow.png); background-position:left; background-repeat:no-repeat; padding-left:20px; color:#000000" class="toplnk">Wrist injury rules  Del Potro out of  Brisbane event</a></div> <br />
+									  
+									
+									  								  									 <div style="float:left; width:95%;"> <a href="news.php?id=3692" style="background-image:url(images/arrow.png); background-position:left; background-repeat:no-repeat; padding-left:20px; color:#000000" class="toplnk">Manda, Kalengo ready to retain Malawi Open </a></div> <br />
+									  
+									
+									  								  									 <div style="float:left; width:95%;"> <a href="news.php?id=3621" style="background-image:url(images/arrow.png); background-position:left; background-repeat:no-repeat; padding-left:20px; color:#000000" class="toplnk">Golden Key donates  K2,000 for squash team’s Malawi trip</a></div> <br />
+									  
+									
+									  								  									 <div style="float:left; width:95%;"> <a href="news.php?id=3422" style="background-image:url(images/arrow.png); background-position:left; background-repeat:no-repeat; padding-left:20px; color:#000000" class="toplnk">Banda wins C/belt badminton title</a></div> <br />
+									  
+									
+									                         
+                      </p>
+                      </div>
+                              
+    
+    
+    
+    
+    <!--Submenu Code End-->   
+      
+      
+          
+    
+     
+    <a href="search.php?cmd=subcategory&subcatid=102" onmouseover="javascript:show_submenu('submenu102','container4');" style="color:#000000; border-bottom:1px solid #F3F3F3">Volleyball</a>
+ 
+ 
+ 
+ 
+ 
+ <!--Submenu Code Start-->
+     
+                      <div id="submenu102" style="display:none;">
+                      
+                      								                                    <div style="float:left; padding:5px;"><img src="mediamanager/files/Volleyball.jpg" height="70" width="80" /></div>
+                                  <div style="float:right; width:240px; padding:5px;">
+                                  <a href="news.php?id=5007" style="font-size:15px; color:#000000">ZAVA to establish excellence centres </a>
+                                  </div>
+                                   <p style="margin-top:10px; float:left">
+                                    
+                                  								  									 <div style="float:left; width:95%;"> <a href="news.php?id=1768" style="background-image:url(images/arrow.png); background-position:left; background-repeat:no-repeat; padding-left:20px; color:#000000" class="toplnk">ZAVA set for Zone 6 games</a></div> <br />
+									  
+									
+									                         
+                      </p>
+                      </div>
+                              
+    
+    
+    
+    
+    <!--Submenu Code End-->   
+      
+      
+    	 </div>
+    
+    <div id="container4" style="width:340px; float:right; height:auto; background-color: #F5F5F5 ;border:0px solid #FFFFFF;">
+   
+  </div>
+	</div>
+	
+	    
+    </li>
+      
+   
+   
+    <li>
+    
+       <a href="search.php?cmd=category&catid=10" style="text-shadow:2px 1px 3px rgba(10, 10, 10, 1);">Entertainment</a>
+     	
+	    
+    </li>
+      
+   
+   
+    <li>
+    
+       <a href="search.php?cmd=category&catid=29" style="text-shadow:2px 1px 3px rgba(10, 10, 10, 1);">Videos</a>
+     	
+		<div>
+     <div style="width:100px; float:left; border-right:1px solid #CCCCCC; margin-top:10px; margin-bottom:10px;">
+          
+    
+     
+    <a href="search.php?cmd=subcategory&subcatid=55" onmouseover="javascript:show_submenu('submenu55','container29');" style="color:#000000; border-bottom:1px solid #F3F3F3">Business</a>
+ 
+ 
+ 
+ 
+ 
+ <!--Submenu Code Start-->
+   	
+             <div id="submenu55" style="display:none;">
+                          
+            
+              <div style="width:130px; height:100px; margin-right:15px; margin-bottom:15px; float:left">
+               <a href="news.php?id=1012"> 
+               <img style="margin-right:10px;padding:5px 5px 5px 5px; border:1px solid #666;" src="http://i1.ytimg.com/vi/9w4MoDkm_f8/1.jpg"  /></a>
+              </div>
+              
+                          
+            
+              <div style="width:130px; height:100px; margin-right:15px; margin-bottom:15px; float:left">
+               <a href="news.php?id=1011"> 
+               <img style="margin-right:10px;padding:5px 5px 5px 5px; border:1px solid #666;" src="http://i1.ytimg.com/vi/_2VuFR9Qvn8/1.jpg"  /></a>
+              </div>
+              
+                          
+            
+              <div style="width:130px; height:100px; margin-right:15px; margin-bottom:15px; float:left">
+               <a href="news.php?id=1010"> 
+               <img style="margin-right:10px;padding:5px 5px 5px 5px; border:1px solid #666;" src="http://i1.ytimg.com/vi/R9_kv5dnQXU/1.jpg"  /></a>
+              </div>
+              
+                          
+            
+              <div style="width:130px; height:100px; margin-right:15px; margin-bottom:15px; float:left">
+               <a href="news.php?id=1009"> 
+               <img style="margin-right:10px;padding:5px 5px 5px 5px; border:1px solid #666;" src="http://i1.ytimg.com/vi/vKVJ5yvM1bY/1.jpg"  /></a>
+              </div>
+              
+                          
+            
+              <div style="width:130px; height:100px; margin-right:15px; margin-bottom:15px; float:left">
+               <a href="news.php?id=960"> 
+               <img style="margin-right:10px;padding:5px 5px 5px 5px; border:1px solid #666;" src="http://i1.ytimg.com/vi/JTaPV5LjqVk/1.jpg"  /></a>
+              </div>
+              
+                             
+  </p>
+  </div>
+	
+	    
+    
+    
+    
+    
+    <!--Submenu Code End-->   
+      
+      
+          
+    
+     
+    <a href="search.php?cmd=subcategory&subcatid=51" onmouseover="javascript:show_submenu('submenu51','container29');" style="color:#000000; border-bottom:1px solid #F3F3F3">Celebs</a>
+ 
+ 
+ 
+ 
+ 
+ <!--Submenu Code Start-->
+   	
+             <div id="submenu51" style="display:none;">
+                          
+            
+              <div style="width:130px; height:100px; margin-right:15px; margin-bottom:15px; float:left">
+               <a href="news.php?id=1016"> 
+               <img style="margin-right:10px;padding:5px 5px 5px 5px; border:1px solid #666;" src="http://i1.ytimg.com/vi/RL4UZXavJY4/1.jpg"  /></a>
+              </div>
+              
+                          
+            
+              <div style="width:130px; height:100px; margin-right:15px; margin-bottom:15px; float:left">
+               <a href="news.php?id=1015"> 
+               <img style="margin-right:10px;padding:5px 5px 5px 5px; border:1px solid #666;" src="http://i1.ytimg.com/vi/PLeeqLg22DFsTeB0mjoAzzVUJnd0lJmb4x/1.jpg"  /></a>
+              </div>
+              
+                          
+            
+              <div style="width:130px; height:100px; margin-right:15px; margin-bottom:15px; float:left">
+               <a href="news.php?id=1014"> 
+               <img style="margin-right:10px;padding:5px 5px 5px 5px; border:1px solid #666;" src="http://i1.ytimg.com/vi/juk9K9l7POw/1.jpg"  /></a>
+              </div>
+              
+                          
+            
+              <div style="width:130px; height:100px; margin-right:15px; margin-bottom:15px; float:left">
+               <a href="news.php?id=1013"> 
+               <img style="margin-right:10px;padding:5px 5px 5px 5px; border:1px solid #666;" src="http://i1.ytimg.com/vi/ItW8o8F0ogk/1.jpg"  /></a>
+              </div>
+              
+                             
+  </p>
+  </div>
+	
+	    
+    
+    
+    
+    
+    <!--Submenu Code End-->   
+      
+      
+          
+    
+     
+    <a href="search.php?cmd=subcategory&subcatid=44" onmouseover="javascript:show_submenu('submenu44','container29');" style="color:#000000; border-bottom:1px solid #F3F3F3">Entertainment</a>
+ 
+ 
+ 
+ 
+ 
+ <!--Submenu Code Start-->
+   	
+             <div id="submenu44" style="display:none;">
+                          
+            
+              <div style="width:130px; height:100px; margin-right:15px; margin-bottom:15px; float:left">
+               <a href="news.php?id=961"> 
+               <img style="margin-right:10px;padding:5px 5px 5px 5px; border:1px solid #666;" src="http://i1.ytimg.com/vi/JTaPV5LjqVk/1.jpg"  /></a>
+              </div>
+              
+                          
+            
+              <div style="width:130px; height:100px; margin-right:15px; margin-bottom:15px; float:left">
+               <a href="news.php?id=538"> 
+               <img style="margin-right:10px;padding:5px 5px 5px 5px; border:1px solid #666;" src="http://i1.ytimg.com/vi/LpZw0RsnhVM/1.jpg"  /></a>
+              </div>
+              
+                             
+  </p>
+  </div>
+	
+	    
+    
+    
+    
+    
+    <!--Submenu Code End-->   
+      
+      
+          
+    
+     
+    <a href="search.php?cmd=subcategory&subcatid=52" onmouseover="javascript:show_submenu('submenu52','container29');" style="color:#000000; border-bottom:1px solid #F3F3F3">Lifestyle</a>
+ 
+ 
+ 
+ 
+ 
+ <!--Submenu Code Start-->
+   	
+             <div id="submenu52" style="display:none;">
+                          
+            
+              <div style="width:130px; height:100px; margin-right:15px; margin-bottom:15px; float:left">
+               <a href="news.php?id=1019"> 
+               <img style="margin-right:10px;padding:5px 5px 5px 5px; border:1px solid #666;" src="http://i1.ytimg.com/vi/eeslO9hpejk/1.jpg"  /></a>
+              </div>
+              
+                          
+            
+              <div style="width:130px; height:100px; margin-right:15px; margin-bottom:15px; float:left">
+               <a href="news.php?id=1018"> 
+               <img style="margin-right:10px;padding:5px 5px 5px 5px; border:1px solid #666;" src="http://i1.ytimg.com/vi/Aj_5SGdx7Xk/1.jpg"  /></a>
+              </div>
+              
+                          
+            
+              <div style="width:130px; height:100px; margin-right:15px; margin-bottom:15px; float:left">
+               <a href="news.php?id=1017"> 
+               <img style="margin-right:10px;padding:5px 5px 5px 5px; border:1px solid #666;" src="http://i1.ytimg.com/vi/uysaeYjT0WE/1.jpg"  /></a>
+              </div>
+              
+                             
+  </p>
+  </div>
+	
+	    
+    
+    
+    
+    
+    <!--Submenu Code End-->   
+      
+      
+          
+    
+     
+    <a href="search.php?cmd=subcategory&subcatid=32" onmouseover="javascript:show_submenu('submenu32','container29');" style="color:#000000; border-bottom:1px solid #F3F3F3">SPORTS</a>
+ 
+ 
+ 
+ 
+ 
+ <!--Submenu Code Start-->
+   	
+             <div id="submenu32" style="display:none;">
+                          
+            
+              <div style="width:130px; height:100px; margin-right:15px; margin-bottom:15px; float:left">
+               <a href="news.php?id=1023"> 
+               <img style="margin-right:10px;padding:5px 5px 5px 5px; border:1px solid #666;" src="http://i1.ytimg.com/vi/CGD9xlXNlyc/1.jpg"  /></a>
+              </div>
+              
+                          
+            
+              <div style="width:130px; height:100px; margin-right:15px; margin-bottom:15px; float:left">
+               <a href="news.php?id=1022"> 
+               <img style="margin-right:10px;padding:5px 5px 5px 5px; border:1px solid #666;" src="http://i1.ytimg.com/vi/NRblN58rCPg/1.jpg"  /></a>
+              </div>
+              
+                          
+            
+              <div style="width:130px; height:100px; margin-right:15px; margin-bottom:15px; float:left">
+               <a href="news.php?id=1021"> 
+               <img style="margin-right:10px;padding:5px 5px 5px 5px; border:1px solid #666;" src="http://i1.ytimg.com/vi/B8JNfj2JuNc/1.jpg"  /></a>
+              </div>
+              
+                          
+            
+              <div style="width:130px; height:100px; margin-right:15px; margin-bottom:15px; float:left">
+               <a href="news.php?id=1020"> 
+               <img style="margin-right:10px;padding:5px 5px 5px 5px; border:1px solid #666;" src="http://i1.ytimg.com/vi/UcxYzgtGzYo/1.jpg"  /></a>
+              </div>
+              
+                             
+  </p>
+  </div>
+	
+	    
+    
+    
+    
+    
+    <!--Submenu Code End-->   
+      
+      
+          
+    
+     
+    <a href="search.php?cmd=subcategory&subcatid=54" onmouseover="javascript:show_submenu('submenu54','container29');" style="color:#000000; border-bottom:1px solid #F3F3F3">Technology</a>
+ 
+ 
+ 
+ 
+ 
+ <!--Submenu Code Start-->
+   	
+             <div id="submenu54" style="display:none;">
+                          
+            
+              <div style="width:130px; height:100px; margin-right:15px; margin-bottom:15px; float:left">
+               <a href="news.php?id=1026"> 
+               <img style="margin-right:10px;padding:5px 5px 5px 5px; border:1px solid #666;" src="http://i1.ytimg.com/vi/wfiaVoshS5A/1.jpg"  /></a>
+              </div>
+              
+                          
+            
+              <div style="width:130px; height:100px; margin-right:15px; margin-bottom:15px; float:left">
+               <a href="news.php?id=1025"> 
+               <img style="margin-right:10px;padding:5px 5px 5px 5px; border:1px solid #666;" src="http://i1.ytimg.com/vi/jH7Um0CD58/1.jpg"  /></a>
+              </div>
+              
+                          
+            
+              <div style="width:130px; height:100px; margin-right:15px; margin-bottom:15px; float:left">
+               <a href="news.php?id=1024"> 
+               <img style="margin-right:10px;padding:5px 5px 5px 5px; border:1px solid #666;" src="http://i1.ytimg.com/vi/gkIe6MGA8zs/1.jpg"  /></a>
+              </div>
+              
+                             
+  </p>
+  </div>
+	
+	    
+    
+    
+    
+    
+    <!--Submenu Code End-->   
+      
+      
+    	 </div>
+    
+    <div id="container29" style="width:340px; float:right; height:auto; background-color: #F5F5F5 ;border:0px solid #FFFFFF;">
+   
+  </div>
+	</div>
+	
+	    
+    </li>
+      
+   
+   
+    <li>
+    
+       <a href="search.php?cmd=category&catid=31" style="text-shadow:2px 1px 3px rgba(10, 10, 10, 1);">Photos</a>
+     	
+		<div>
+     <div style="width:100px; float:left; border-right:1px solid #CCCCCC; margin-top:10px; margin-bottom:10px;">
+          
+    
+     
+    <a href="search.php?cmd=subcategory&subcatid=60" onmouseover="javascript:show_submenu('submenu60','container31');" style="color:#000000; border-bottom:1px solid #F3F3F3">Awards</a>
+ 
+ 
+ 
+ 
+ 
+ <!--Submenu Code Start-->
+               
+            <!--Audio Code Start-->
+            
+            <div id="submenu60" style="display:none;">
+                      
+                      								  
+                                    <div style="width:130px; height:100px; margin-right:15px; margin-bottom:15px; float:left">
+   <a href="news.php?id=1034"> 
+   <img style="margin-right:10px;padding:5px 5px 5px 5px; border:1px solid #666;" src="mediamanager/files/slap-d-300x300.jpg" height="90" width="120"  /></a>
+  </div>
+                                    
+                                  								  
+                                    <div style="width:130px; height:100px; margin-right:15px; margin-bottom:15px; float:left">
+   <a href="news.php?id=1032"> 
+   <img style="margin-right:10px;padding:5px 5px 5px 5px; border:1px solid #666;" src="mediamanager/files/roberto78-300x300.jpg" height="90" width="120"  /></a>
+  </div>
+                                    
+                                  								  
+                                    <div style="width:130px; height:100px; margin-right:15px; margin-bottom:15px; float:left">
+   <a href="news.php?id=1031"> 
+   <img style="margin-right:10px;padding:5px 5px 5px 5px; border:1px solid #666;" src="mediamanager/files/mampi.png" height="90" width="120"  /></a>
+  </div>
+                                    
+                                  								  
+                                    <div style="width:130px; height:100px; margin-right:15px; margin-bottom:15px; float:left">
+   <a href="news.php?id=1030"> 
+   <img style="margin-right:10px;padding:5px 5px 5px 5px; border:1px solid #666;" src="mediamanager/files/macky2.png" height="90" width="120"  /></a>
+  </div>
+                                    
+                                  								  
+                                    <div style="width:130px; height:100px; margin-right:15px; margin-bottom:15px; float:left">
+   <a href="news.php?id=1029"> 
+   <img style="margin-right:10px;padding:5px 5px 5px 5px; border:1px solid #666;" src="mediamanager/files/lulu-hangala-and-tivo-300x300.png" height="90" width="120"  /></a>
+  </div>
+                                    
+                                                         
+                      </p>
+                      </div>
+            
+            <!--Audio Code End--->
+            
+            
+			
+			
+			
+			    
+    
+    
+    
+    
+    <!--Submenu Code End-->   
+      
+      
+          
+    
+     
+    <a href="search.php?cmd=subcategory&subcatid=58" onmouseover="javascript:show_submenu('submenu58','container31');" style="color:#000000; border-bottom:1px solid #F3F3F3">Beauty </a>
+ 
+ 
+ 
+ 
+ 
+ <!--Submenu Code Start-->
+               
+            <!--Audio Code Start-->
+            
+            <div id="submenu58" style="display:none;">
+                      
+                                             
+                      </p>
+                      </div>
+            
+            <!--Audio Code End--->
+            
+            
+			
+			
+			
+			    
+    
+    
+    
+    
+    <!--Submenu Code End-->   
+      
+      
+          
+    
+     
+    <a href="search.php?cmd=subcategory&subcatid=57" onmouseover="javascript:show_submenu('submenu57','container31');" style="color:#000000; border-bottom:1px solid #F3F3F3">Celebs</a>
+ 
+ 
+ 
+ 
+ 
+ <!--Submenu Code Start-->
+               
+            <!--Audio Code Start-->
+            
+            <div id="submenu57" style="display:none;">
+                      
+                      								  
+                                    <div style="width:130px; height:100px; margin-right:15px; margin-bottom:15px; float:left">
+   <a href="news.php?id=1033"> 
+   <img style="margin-right:10px;padding:5px 5px 5px 5px; border:1px solid #666;" src="mediamanager/files/salma90-300x300.jpg" height="90" width="120"  /></a>
+  </div>
+                                    
+                                                         
+                      </p>
+                      </div>
+            
+            <!--Audio Code End--->
+            
+            
+			
+			
+			
+			    
+    
+    
+    
+    
+    <!--Submenu Code End-->   
+      
+      
+          
+    
+     
+    <a href="search.php?cmd=subcategory&subcatid=64" onmouseover="javascript:show_submenu('submenu64','container31');" style="color:#000000; border-bottom:1px solid #F3F3F3">Events</a>
+ 
+ 
+ 
+ 
+ 
+ <!--Submenu Code Start-->
+               
+            <!--Audio Code Start-->
+            
+            <div id="submenu64" style="display:none;">
+                      
+                      								  
+                                    <div style="width:130px; height:100px; margin-right:15px; margin-bottom:15px; float:left">
+   <a href="news.php?id=477"> 
+   <img style="margin-right:10px;padding:5px 5px 5px 5px; border:1px solid #666;" src="mediamanager/files/mwata-k.jpg" height="90" width="120"  /></a>
+  </div>
+                                    
+                                                         
+                      </p>
+                      </div>
+            
+            <!--Audio Code End--->
+            
+            
+			
+			
+			
+			    
+    
+    
+    
+    
+    <!--Submenu Code End-->   
+      
+      
+          
+    
+     
+    <a href="search.php?cmd=subcategory&subcatid=56" onmouseover="javascript:show_submenu('submenu56','container31');" style="color:#000000; border-bottom:1px solid #F3F3F3">Fashion</a>
+ 
+ 
+ 
+ 
+ 
+ <!--Submenu Code Start-->
+               
+            <!--Audio Code Start-->
+            
+            <div id="submenu56" style="display:none;">
+                      
+                                             
+                      </p>
+                      </div>
+            
+            <!--Audio Code End--->
+            
+            
+			
+			
+			
+			    
+    
+    
+    
+    
+    <!--Submenu Code End-->   
+      
+      
+          
+    
+     
+    <a href="search.php?cmd=subcategory&subcatid=62" onmouseover="javascript:show_submenu('submenu62','container31');" style="color:#000000; border-bottom:1px solid #F3F3F3">News</a>
+ 
+ 
+ 
+ 
+ 
+ <!--Submenu Code Start-->
+               
+            <!--Audio Code Start-->
+            
+            <div id="submenu62" style="display:none;">
+                      
+                      								  
+                                    <div style="width:130px; height:100px; margin-right:15px; margin-bottom:15px; float:left">
+   <a href="news.php?id=964"> 
+   <img style="margin-right:10px;padding:5px 5px 5px 5px; border:1px solid #666;" src="mediamanager/files/734389_1549978451894664_1766045864_n.jpg" height="90" width="120"  /></a>
+  </div>
+                                    
+                                  								  
+                                    <div style="width:130px; height:100px; margin-right:15px; margin-bottom:15px; float:left">
+   <a href="news.php?id=963"> 
+   <img style="margin-right:10px;padding:5px 5px 5px 5px; border:1px solid #666;" src="mediamanager/files/carson_news.jpg" height="90" width="120"  /></a>
+  </div>
+                                    
+                                  								  
+                                    <div style="width:130px; height:100px; margin-right:15px; margin-bottom:15px; float:left">
+   <a href="news.php?id=962"> 
+   <img style="margin-right:10px;padding:5px 5px 5px 5px; border:1px solid #666;" src="mediamanager/files/2011.07.29-kalusha.jpg" height="90" width="120"  /></a>
+  </div>
+                                    
+                                                         
+                      </p>
+                      </div>
+            
+            <!--Audio Code End--->
+            
+            
+			
+			
+			
+			    
+    
+    
+    
+    
+    <!--Submenu Code End-->   
+      
+      
+          
+    
+     
+    <a href="search.php?cmd=subcategory&subcatid=59" onmouseover="javascript:show_submenu('submenu59','container31');" style="color:#000000; border-bottom:1px solid #F3F3F3">Parties</a>
+ 
+ 
+ 
+ 
+ 
+ <!--Submenu Code Start-->
+               
+            <!--Audio Code Start-->
+            
+            <div id="submenu59" style="display:none;">
+                      
+                                             
+                      </p>
+                      </div>
+            
+            <!--Audio Code End--->
+            
+            
+			
+			
+			
+			    
+    
+    
+    
+    
+    <!--Submenu Code End-->   
+      
+      
+          
+    
+     
+    <a href="search.php?cmd=subcategory&subcatid=61" onmouseover="javascript:show_submenu('submenu61','container31');" style="color:#000000; border-bottom:1px solid #F3F3F3">Sports</a>
+ 
+ 
+ 
+ 
+ 
+ <!--Submenu Code Start-->
+               
+            <!--Audio Code Start-->
+            
+            <div id="submenu61" style="display:none;">
+                      
+                                             
+                      </p>
+                      </div>
+            
+            <!--Audio Code End--->
+            
+            
+			
+			
+			
+			    
+    
+    
+    
+    
+    <!--Submenu Code End-->   
+      
+      
+          
+    
+     
+    <a href="search.php?cmd=subcategory&subcatid=63" onmouseover="javascript:show_submenu('submenu63','container31');" style="color:#000000; border-bottom:1px solid #F3F3F3">Technology</a>
+ 
+ 
+ 
+ 
+ 
+ <!--Submenu Code Start-->
+               
+            <!--Audio Code Start-->
+            
+            <div id="submenu63" style="display:none;">
+                      
+                                             
+                      </p>
+                      </div>
+            
+            <!--Audio Code End--->
+            
+            
+			
+			
+			
+			    
+    
+    
+    
+    
+    <!--Submenu Code End-->   
+      
+      
+    	 </div>
+    
+    <div id="container31" style="width:340px; float:right; height:auto; background-color: #F5F5F5 ;border:0px solid #FFFFFF;">
+   
+  </div>
+	</div>
+	
+	    
+    </li>
+      
+   
+   
+    <li>
+    
+       <a href="search.php?cmd=category&catid=33" style="text-shadow:2px 1px 3px rgba(10, 10, 10, 1);">Lifestyle</a>
+     	
+	    
+    </li>
+      
+   
+   
+    <li>
+    
+       <a href="search.php?cmd=category&catid=38" style="text-shadow:2px 1px 3px rgba(10, 10, 10, 1);">Columns</a>
+     	
+	    
+    </li>
+      
+   
+   
+    <li>
+    
+       <a href="search.php?cmd=category&catid=65" style="text-shadow:2px 1px 3px rgba(10, 10, 10, 1);">Court</a>
+     	
+	    
+    </li>
+      
+   
+   
+    <li>
+    
+       <a href="search.php?cmd=category&catid=67" style="text-shadow:2px 1px 3px rgba(10, 10, 10, 1);">Politics</a>
+     	
+	    
+    </li>
+      
+   
+   
+    <li>
+    
+       <a href="search.php?cmd=category&catid=69" style="text-shadow:2px 1px 3px rgba(10, 10, 10, 1);">Health</a>
+     	
+	    
+    </li>
+      
+   
+   
+    <li>
+    
+       <a href="search.php?cmd=category&catid=16" style="text-shadow:2px 1px 3px rgba(10, 10, 10, 1);">Editorial</a>
+     	
+	    
+    </li>
+      
+   
+   
+    <li>
+    
+       <a href="search.php?cmd=category&catid=90" style="text-shadow:2px 1px 3px rgba(10, 10, 10, 1);">Weekend</a>
+     	
+	    
+    </li>
+    
+     
+   
+    
+
+
+   <li><a href="#">Others</a>
+      <ul class="nav-sub">
+        
+    
+    <!--<li><a href="search.php?cmd=photos">PHOTOS</a></li>
+     <li><a href="search.php?cmd=audio">AUDIOS</a></li>
+      <li><a href="search.php?cmd=blogs">BLOGS</a></li>
+      -->
+             <li><a href="search.php?cmd=category&catid=68">Cartoons</a>
+       
+       
+       <!---subcategory-->
+       
+      <ul class="nav-sub2">     <li>
+         
+    <a href="search.php?cmd=subcategory&subcatid=85">Agony</a>
+    
+     </li>
+         <li>
+         
+    <a href="search.php?cmd=subcategory&subcatid=84">Choklet</a>
+    
+     </li>
+    </ul>       <!---subcate end--->
+       
+       
+       </li>
+             <li><a href="search.php?cmd=category&catid=71">Letters</a>
+       
+       
+       <!---subcategory-->
+       
+      <ul class="nav-sub2">     <li>
+         
+    <a href="search.php?cmd=subcategory&subcatid=82">Post Bag</a>
+    
+     </li>
+         <li>
+         
+    <a href="search.php?cmd=subcategory&subcatid=83">Post SMS</a>
+    
+     </li>
+    </ul>       <!---subcate end--->
+       
+       
+       </li>
+            </ul>
+   
+   
+   </li>
+
+</ul>
+
+ 
+<script language="javascript">
+
+function show_submenu(x,y)
+{
+var f = document.getElementById(x);
+      var s = document.getElementById(y);
+      s.innerHTML = f.innerHTML;
+//var $button = $('#'+x).clone();
+ // $('#'+y).html($button);
+//document.getElementById(y)="hello";
+}
+</script>    </td>
+  </tr>
+  
+        
+  <tr>
+    <td  ><table width="100%" border="0" cellspacing="0" cellpadding="0" style="border-bottom:1px solid #000000">
+      <tr>
+        <td width="20%"  >  <img src="images/breakingnews.jpg" width="199" height="38" />        </td>
+        <td width="57%"  ><script type="text/javascript">
+<!--
+var tickercontent=new Array();
+tickercontent[0]="<a class='top-ticker' href='news.php?id=4478'></a>";tickercontent[1]="<a class='top-ticker' href='news.php?id='></a>";tickercontent[2]="<a class='top-ticker' href='news.php?id='></a>";tickercontent[3]="<a class='top-ticker' href='news.php?id='></a>";tickercontent[4]="<a class='top-ticker' href='news.php?id='></a>";
+//-->
+</script>
+</head>
+
+ 
+ 
+<script type="text/javascript">
+<!--
+// Â© copyright 2009 - MRE Software / Author: Emery Wooten / www.mresoftware.com
+var pause = false; // Boolean to trigger pause on mouseover event
+var t1,t2,t3; // Timer ID variables.
+var icnt = 0; // Outside loop counter
+var currentChar=1; //Inside loop counter and pointer into characters of the lines.
+
+// Write the forward and back arrows that allow the user to jump ahead and back.
+//document.write('<img title="Previous" border="0" src="images/left.gif" onClick = "backup();" OnmouseOver="this.style.cursor=\'pointer\';">');
+//document.write('<img title="Next" border="0" src="images/right.gif" onClick = "forward();" OnmouseOver="this.style.cursor=\'pointer\';">');
+
+// The next code writes the div tag on the page complete with mouseover code.
+document.write("<span id=\'tick1\' OnMouseOver=\'pause=tru</spannMouseOut=\'pause=false; t3=setTimeout(\"type()\",2000);\'></span>");
+
+//
+function backup(){
+if (tickercontent.length > 1){
+	icnt = icnt-2;
+	if (icnt <  0){icnt = tickercontent.length + icnt;}
+	type();
+	}
+}
+function forward(){
+icnt = icnt++;
+if (icnt >= tickercontent.length){icnt = 0;}
+type();
+}
+
+function type(){
+clearTimeout(t1); //clear all timing
+clearTimeout(t2); //clear all timing
+clearTimeout(t3); //clear all timing
+
+// The next code checks for mouseover pause and completes the line instantly if true.
+if(pause && currentChar==1){return;}
+else if (pause){currentChar=tickercontent[icnt].length-1;}
+
+// The next code fast fills html tags by rapidly moving to the closing >.
+if(tickercontent[icnt].charAt(currentChar-1)=='<'){
+	while (tickercontent[icnt].charAt(currentChar-1)!='>'){
+		currentChar++;
+		if (currentChar>tickercontent[icnt].length){
+		tickercontent[icnt]=tickercontent[icnt]+'>'; // correct for missing > overflow condition
+		currentChar--;
+		}
+	}
+}
+// The next code types the textual part of the line and indexes to the next line
+      document.getElementById('tick1').innerHTML=tickercontent[icnt].substr(0, currentChar);
+      currentChar++
+      if (currentChar>tickercontent[icnt].length)  // Are we at the last character in the line?
+      {
+        icnt++;
+        if (icnt >= tickercontent.length){  // Are we at the last line in the array?
+        icnt=0;
+        }
+        currentChar=1;
+        t1=setTimeout("type()", 4400);  // This is the pause between lines in ms   
+      }
+      else
+      {
+     pause=false; 
+     t2=setTimeout("type()", 10);  // This is the pause between typed characters in ms
+      }
+}
+//
+type();  // This runs it!
+//-->
+</script>
+  </td>
+        <td width="23%"  ><table width="100%" border="0" cellspacing="0" cellpadding="0">
+          <tr>
+            <td>&nbsp;</td>
+            <form name="frmsrch" method="post" action="search.php?cmd=search">
+            <td align="right"><input type="text" name="sstr" style="border:2px solid #E5E5E5  ;border-radius:5px; padding:5px;" id="sstr" onclick="this.value='';" value="Search.." /></td>
+            <td><img src="images/srch.png" width="29" height="27" onclick="document.frmsrch.submit();" /></td>
+            </form>
+          </tr>
+        </table></td>
+      </tr>
+    </table></td>
+  </tr>
+  </table>
+
+<style type="text/css">
+
+.qttxt-left
+{
+border:2px solid #333333;
+padding:5px;
+width:200px;
+margin:2px 5px 2px 0px;
+font-size:16px;
+color:#333333;
+font-family: Georgia, "Times New Roman", Times, serif;
+text-align:justify;
+float:left;
+border-top:8px solid #666666;
+background-color:#F2F2F2;
+}
+
+
+.qttxt-right
+{
+border:2px solid #333333;
+padding:5px;
+width:200px;
+margin:2px 0px 2px 5px;
+font-size:16px;
+color:#333333;
+font-family: Georgia, "Times New Roman", Times, serif;
+text-align:justify;
+float:right;
+border-top:8px solid #666666;
+background-color:#F2F2F2;
+}
+
+</style>
+ <link rel="stylesheet" type="text/css" href="js/thickbox.css" />
+<script type='text/javascript' src="js/jquery.js"></script>
+<script type='text/javascript' src="js/thickbox.js"></script>
+<script language="javascript">
+	$(document).ready(function()
+	{
+		 
+		tb_init('a.thickbox, area.thickbox, input.thickbox');//pass where to apply thickbox
+
+	imgLoader = new Image();// preload image
+
+	imgLoader.src = tb_pathToImage;
+	
+	});
+</script><table width="990" border="0" align="center" cellpadding="0" cellspacing="0">
+  <tr>
+    <td><table width="100%" height="21" border="0" cellpadding="2" cellspacing="0">
+      <tr>
+        <td height="21" align="left"   valign="top"><table width="100%" border="0" cellspacing="0" cellpadding="7">
+          
+          <tr>
+            <td height="33"><table width="100%" border="0" cellspacing="0" cellpadding="4">
+              <tr>
+                <td width="58%">You are here: <strong>Home</strong>&nbsp;&nbsp;&gt;&nbsp;&nbsp;<strong>Politics</strong></td>
+                <td width="12%" align="center"> 
+<script language="javascript">
+
+var postid;
+postid=5177
+</script> 
+ 
+ <script src="rating/starrating.js" type="text/javascript"></script>
+<link href="rating/starrating.css" rel="stylesheet" type="text/css" media="screen" />
+ 
+<ul class='star-rating'>
+  <li class="current-rating" id="current-rating"><!-- will show current rating --></li>
+  <span id="ratelinks">
+  <li><a href="javascript:void(0)" title="1 star out of 5" class="one-star">1</a></li>
+  <li><a href="javascript:void(0)" title="2 stars out of 5" class="two-stars">2</a></li>
+  <li><a href="javascript:void(0)" title="3 stars out of 5" class="three-stars">3</a></li>
+  <li><a href="javascript:void(0)" title="4 stars out of 5" class="four-stars">4</a></li>
+  <li><a href="javascript:void(0)" title="5 stars out of 5" class="five-stars">5</a></li>
+  </span>
+</ul>
+ </td>
+                </tr>
+            </table></td>
+          </tr>
+          
+          <tr>
+            <td height="52"><span style="font-size:28px; font-family: Geneva, Arial, Helvetica, sans-serif; font-weight:bold;">
+            The race is tight - Simuusa            
+            </span></td>
+          </tr>
+          
+          <tr>
+            <td height="30" align="left" valign="bottom">
+             <span style="float:left">
+                    By <strong style="color:#006699">Tilyenji Mwanza</strong>
+             &nbsp;&nbsp;|&nbsp;&nbsp;
+             Updated: 05 Jan,2015 ,12:53:17              &nbsp;&nbsp;|&nbsp;&nbsp;
+              1262 Views
+             &nbsp;&nbsp;|&nbsp;&nbsp;
+              0 Comments             </span>
+            
+            
+            <span style="float:right">
+            <a class="top-ticker" href="javascript:fminus();">[ - ]</a> <a href="#" class="top-ticker" > </a> <a class="top-ticker"  href="javascript:fplus();">[ + ]</a>            </span>            </td>
+          </tr>
+          <tr>
+            <td height="30" align="left" valign="bottom"><table style="border-top:1px solid #999999;background-color:#F0F0F0" width="100%" border="0" cellspacing="0" cellpadding="4" >
+              <tr>
+                <td valign="bottom">
+                
+                <iframe src="http://www.facebook.com/plugins/like.php?href=http://postzambia.com/news.php?id=5177&layout=standard&amp;show_faces=false&amp;width=450&amp;action=like&amp;colorscheme=light" scrolling="no" frameborder="0" allowtransparency="true" style="border:none; overflow:hidden; width:300px; height:30px;"></iframe>
+                
+                
+                
+                </td>
+                <td width="4%" align="center"></td>
+                <td width="5%" align="right"><img src="images/mail.png" border="0" /></td>
+                <td width="6%" align="left">
+                
+                <a href="email.php?newsid=5177&TB_iframe=true&keepthis=true&width=230&height=170" title="Email this article" class="thickbox vtoplnk" target="_blank">Mail</a>
+                
+                
+                
+                </td>
+                <td width="4%" align="center">&nbsp;</td>
+                <td width="5%" align="right"><img src="images/printer.png" border="0" /></td>
+                <td width="6%" align="left"><a href="print.php?id=5177" class="vtoplnk" target="_blank">Print</a></td>
+                <td width="4%" align="right">&nbsp;</td>
+                <td width="5%" align="right"><img src="images/rss.png" border="0" /></td>
+                <td width="6%" align="left"><a href="rss.php?id=5177" class="vtoplnk" target="_blank">RSS</a></td>
+              </tr>
+              <tr>
+                <td colspan="10" bgcolor="#FFFFFF">
+                
+                <script type="text/javascript" src="http://w.sharethis.com/button/buttons.js"></script>
+<script type="text/javascript">stLight.options({publisher: "7697132a-81a9-4f2e-95fb-2e2df8984c84", doNotHash: false, doNotCopy: false, hashAddressBar: false});</script>
+
+<span class='st_facebook_hcount' displayText='Facebook'></span>
+<span class='st_twitter_hcount' displayText='Tweet'></span>
+<span class='st_linkedin_hcount' displayText='LinkedIn'></span>
+<span class='st_pinterest_hcount' displayText='Pinterest'></span>                
+                </td>
+                </tr>
+            </table></td>
+          </tr>
+          <tr>
+            <td align="right"></td>
+          </tr>
+          <tr>
+            <td>
+            
+                        
+                        <div>
+            
+                        <div style="width:220px; height:auto;border:1px solid #CCCCCC; float:left; margin-right:10px; color: #888; margin-bottom:10px;">
+             <a  href="mediamanager/files/Maureen Mwanawasa Rally.jpg" title="" class="thickbox"><img src="mediamanager/files/Maureen Mwanawasa Rally.jpg"   width="220" height="220" title="Click on Image Enlarge"    /></a> <div style="margin-top:5px;"></div></div>
+            			
+            
+            <div align="justify" id="newsbody" class="newsbody" >
+              <p>WYLBUR Simuusa says the January 20 presidential race is tight and the PF needs the input of every member to win the election.</p>
+
+<p>Reacting to Chishimba Kambwili’s remark that Geoffrey Mwamba was limited in thinking because of his low levels of education following the latter’s decision to support the UPND, Simuusa said the Patriotic Front cannot afford to lose its top leaders.</p>
+
+<p>He said it was wrong for anyone in the PF to issue disparaging remarks against Sylvia Masebo and Mwamba simply because they have resolved to support the UPND.</p>
+
+<p>“We need everybody, although I was very categorical on Guy Scott. And at one point, I said we need GBM and now I say we need Masebo too. We have a history with Sylvia and with GBM; we need those votes. And what we should be doing is not disparaging them. We should not disparage GBM and Masebo. We as PF may not agree, but insulting them and belittling them is not the way to go,” said Simuusa, who is agriculture minister and Nchanga PF member of parliament.</p>
+
+<p>He said it would be naïve and untrue to say Mwamba and Masebo are not political factors just because they have chosen a different path.</p>
+
+<p>“We need everyone. GBM has his following and it is a following that was developed with the PF. We as the PF need to work on reconciliation and realise that everybody matters, even Masebo. We worked with them before and they helped deliver PF, so it is unfair to say they do not matter, or begin to issue disparaging remarks,” Simuusa said.</p>
+
+<p>He said UPND and other parties were campaigning hard and it would be unwise for PF to keep losing its members.</p>
+
+<p>Simuusa called on PF leaders to instead find ways of recalling Mwamba and Masebo rather than pretend that the two are not a factor.</p>
+
+<p>“The approach should be to take the colleagues of ours and see how we can keep them in the spirit of reconciliation. Disparaging them, calling them opportunists is not right,” said Simuusa.</p>
+
+<p>Speaking in Matero on New Year’s Day, PF presidential candidate Edgar Lungu described Masebo as an opportunist who jumps at every opportunity she considers viable.</p>
+
+<p>He added that Masebo was not a political factor as she had no following in Lusaka or Zambia at large.</p>
+            </div>
+            </div>            </td>
+          </tr>
+          <tr>
+            <td><table width="100%" border="0" cellpadding="6">
+              <tr>
+                <td colspan="2" style="border-bottom:2px solid #666666;">Related Stories</td>
+                </tr>
+                
+
+
+              <tr>
+                <td width="88%">&nbsp;</td>
+                <td width="12%">&nbsp;</td>
+              </tr>
+            </table></td>
+          </tr>
+          <tr>
+            <td>&nbsp;</td>
+          </tr>
+          <tr>
+            <td>
+            
+            <form name="frmcom" id="frmcom"  action="news.php?id=5177&cmd=postcom" method="post"> 
+            
+            
+            <table width="100%" border="0" align="center" cellpadding="0" cellspacing="0" bordercolor="#CCCC99">
+  <tr>
+    <td colspan="2" style="border-bottom:3px solid #2B3A3F" valign="top"><img src="images/comments.jpg"  /></td>
+    </tr>
+  <tr>
+    <td width="131"   align="left" valign="middle">Name</td>
+    <td width="347" valign="middle"><label>
+      <input type="text" name="name" id="name" />
+    </label></td>
+  </tr>
+  <tr>
+    <td  align="left" valign="middle">Email</td>
+    <td valign="middle"><input type="text" name="email" id="email" /></td>
+  </tr>
+  <tr>
+    <td   align="left" valign="middle">Comments</td>
+    <td valign="middle"><textarea name="comments" id="comments" cols="45" rows="5"></textarea></td>
+  </tr>
+  <tr>
+    <td height="35" align="left" valign="middle">Enter Characters</td>
+    <td><span style="margin-left:120px;">
+      <script type="text/javascript" src="http://www.google.com/recaptcha/api/challenge?k=6Ldvje4SAAAAAAar8pgZ9Vm6sGHVvX4PmwgbHIYA"></script>
+
+	<noscript>
+  		<iframe src="http://www.google.com/recaptcha/api/noscript?k=6Ldvje4SAAAAAAar8pgZ9Vm6sGHVvX4PmwgbHIYA" height="300" width="500" frameborder="0"></iframe><br/>
+  		<textarea name="recaptcha_challenge_field" rows="3" cols="40"></textarea>
+  		<input type="hidden" name="recaptcha_response_field" value="manual_challenge"/>
+	</noscript>    </span></td>
+  </tr>
+  <tr>
+    <td>&nbsp;</td>
+    <td><input type="submit" name="button" id="button" class="button" value="Submit"   /></td>
+  </tr>
+</table>
+</form>            </td>
+          </tr>
+          <tr>
+            <td>&nbsp;</td>
+          </tr>
+          <tr>
+            <td><img src="images/combar.jpg" width="625" height="39" /></td>
+          </tr>
+          <tr>
+            <td>
+            
+            
+                        </td>
+          </tr>
+        </table></td>
+        <td width="212" valign="top"  ><table width="100%" border="0" cellspacing="0" cellpadding="4">
+          <tr>
+            <td>
+            
+			
+                        <a href="www.pressdisplay.com/pressdisplay/viewer.aspx" target="_blank"><img src="mediamanager/files/6653_backpage.jpg"  width="285" />
+            </a>
+         
+  
+ <br />
+ 
+             <br />
+<b>Warning</b>:  Invalid argument supplied for foreach() in <b>/home/newpost/public_html/news.php</b> on line <b>427</b><br />
+            <a href="" target="_blank"><img src=""  width="285" />
+            </a>
+         
+  
+ <br />
+ 
+                         <a href="http://www.pressdisplay.com/pressdisplay/viewer.aspx" target="_blank"><img src="mediamanager/files/6652 Sun Life pdf.jpg"  width="285" />
+            </a>
+         
+  
+ <br />
+ 
+                         <a href="" target="_blank"><img src="mediamanager/files/Agony 1.png"  width="285" />
+            </a>
+         
+  
+ <br />
+ 
+                         <a href="" target="_blank"><img src="mediamanager/files/6594agony.jpg"  width="285" />
+            </a>
+         
+  
+ <br />
+ 
+ 
+            
+            
+            
+            </td>
+          </tr>
+          
+          <tr>
+            <td>&nbsp;</td>
+          </tr>
+        </table></td>
+      </tr>
+    </table></td>
+  </tr>
+  <tr>
+    <td>&nbsp;</td>
+  </tr>
+  
+  
+
+  <!--block 2-->
+  
+  <!--block 2 ends-->
+  
+  
+  
+  
+  <!--block 3-->
+  
+  <!--block 3 ends-->
+  
+  
+  
+  
+   <!--block 4-->
+  
+  <!--block 4 ends-->
+  <tr>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td><style>
+
+.fthd
+{
+font-family:Georgia, "Times New Roman", Times, serif;
+font-size:14px;
+color:#ffffff;
+}
+
+</style>
+
+<table width="990" border="0" align="center" cellpadding="0" cellspacing="0">
+  <tr>
+    <td><table width="100%" border="0" cellpadding="0" cellspacing="0" bgcolor="#FFFFFF">
+      
+      <tr>
+        <td colspan="2" align="center" style="border-bottom:1px solid #CCCCCC"><table width="100%" height="215" border="0" cellpadding="4" cellspacing="15" bgcolor="#000000">
+          <tr>
+            <td width="25%" height="32" class="tdbt"><span class="fthd">RECENTS COMMENTS</span></td>
+            <td width="25%" class="tdbt"><span class="fthd">LATEST TWEETS</span></td>
+            <td width="25%" class="tdbt"><span class="fthd">GROUP</span></td>
+            <td width="25%" class="tdbt"><span class="fthd">RECENT PHOTOS</span></td>
+          </tr>
+          <tr>
+            <td align="left" valign="top">
+
+
+<table width="100%" border="0" cellpadding="4" cellspacing="0" bgcolor="#000000">
+  <tr>
+    <td width="4%"><img src="images/comment-icon.png"   /></td>
+    <td width="96%" align="left" valign="top">
+    
+    <a  href="news.php?id=3358&#com416" style="color:#CCCCCC; text-decoration:none" title="After 50 years of the jubilee, some people are  still frustrating Government project, how can a country progress. These are the same people complaining that PF Government is not doing anything and yet they are the ones frustrating projects that could have employed several hundreds of Zambians. Please the minister of Commerce and other Government officials look into this matter and such person must be invistaged." ><strong>Joe Mwamba</strong> : After 50 years of th    </a> <br />   </td>
+  </tr>
+</table>
+
+
+
+<table width="100%" border="0" cellpadding="4" cellspacing="0" bgcolor="#000000">
+  <tr>
+    <td width="4%"><img src="images/comment-icon.png"   /></td>
+    <td width="96%" align="left" valign="top">
+    
+    <a  href="news.php?id=616&#com86" style="color:#CCCCCC; text-decoration:none" title="HELLO BA MPOMBO YOU INSPIRE ME WITH YOUR ENGLISH WORDS BUT BEEN A PRESIDENT OF A POLITICAL PARTY YOUR A JOKE.FORGET ABOUT IT POLITIC AND TEACH ENGLISH ZAMBIANS NEW GENERATION LIKE ME ONLY 21YRS" ><strong>GIDEON( AGOGO) TEMBO</strong> : HELLO BA MPOMBO YOU     </a> <br />   </td>
+  </tr>
+</table>
+
+
+
+<table width="100%" border="0" cellpadding="4" cellspacing="0" bgcolor="#000000">
+  <tr>
+    <td width="4%"><img src="images/comment-icon.png"   /></td>
+    <td width="96%" align="left" valign="top">
+    
+    <a  href="news.php?id=669&#com85" style="color:#CCCCCC; text-decoration:none" title="GOVT SHOULD ENSURE THAT THE DEAD ARE IN  ANYWAY BE RESPECTED BY PROVIDING GOOD COOLLING SYSTEMS THAT WILL NOT DAMAGE BODIES BEFORE BEEN COLLECTE BY RELATIVES.GOOD JOB BA MWANGO C." ><strong>GIDEON( AGOGO) TEMBO</strong> : GOVT SHOULD ENSURE T    </a> <br />   </td>
+  </tr>
+</table>
+
+
+
+<table width="100%" border="0" cellpadding="4" cellspacing="0" bgcolor="#000000">
+  <tr>
+    <td width="4%"><img src="images/comment-icon.png"   /></td>
+    <td width="96%" align="left" valign="top">
+    
+    <a  href="news.php?id=996&#com84" style="color:#CCCCCC; text-decoration:none" title="H H needs anger management" ><strong>Fred</strong> : H H needs anger mana    </a> <br />   </td>
+  </tr>
+</table>
+
+
+
+<table width="100%" border="0" cellpadding="4" cellspacing="0" bgcolor="#000000">
+  <tr>
+    <td width="4%"><img src="images/comment-icon.png"   /></td>
+    <td width="96%" align="left" valign="top">
+    
+    <a  href="news.php?id=1008&#com83" style="color:#CCCCCC; text-decoration:none" title="This is incompetence Minister Edger lungu. You should have had meetings with the board either weekly, biweekly or monthly to guide them on what you expected. This is village politicking. That report is for the taxpayers and not you." ><strong>Zamule</strong> : This is incompetence    </a> <br />   </td>
+  </tr>
+</table>
+</td>
+            <td align="left" valign="top"><a class="twitter-timeline" href="https://twitter.com/PostNewsZambia" data-widget-id="483612938641489920">Tweets by @PostNewsZambia</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script></td>
+            <td align="left" valign="top"><img src="gpimg.png" width="235" height="357" border="0" usemap="#Map" /></td>
+            <td align="left" valign="top"><table width="100%" border="0" cellspacing="0" cellpadding="4">
+  
+  <tr>  
+  
+    <td>
+     
+    <a href="news.php?id=3833"   ><img src="mediamanager/files/Bobby East and Ruth.jpg" width="70" height="60" /></a>    
+    </td>
+    
+   
+   
+    
+  
+    <td>
+     
+    <a href="news.php?id=1080"   ><img src="mediamanager/files/kazonga.jpg" width="70" height="60" /></a>    
+    </td>
+    
+   
+   
+    
+  
+    <td>
+     
+    <a href="news.php?id=1049"   ><img src="mediamanager/files/MUGABE.jpg" width="70" height="60" /></a>    
+    </td>
+    
+   
+   
+  </tr><tr>  
+  
+    <td>
+     
+    <a href="news.php?id=1044"   ><img src="mediamanager/files/energy.jpg" width="70" height="60" /></a>    
+    </td>
+    
+   
+   
+    
+  
+    <td>
+     
+    <a href="news.php?id=1043"   ><img src="mediamanager/files/Kunda-H.jpg" width="70" height="60" /></a>    
+    </td>
+    
+   
+   
+    
+  
+    <td>
+     
+    <a href="news.php?id=1040"   ><img src="mediamanager/files/pande.jpg" width="70" height="60" /></a>    
+    </td>
+    
+   
+   
+  </tr><tr>  
+  
+    <td>
+     
+    <a href="news.php?id=1039"   ><img src="mediamanager/files/zanaco-building-570x270.jpg" width="70" height="60" /></a>    
+    </td>
+    
+   
+   
+    
+  
+    <td>
+     
+    <a href="news.php?id=1038"   ><img src="mediamanager/files/anamel.JPG" width="70" height="60" /></a>    
+    </td>
+    
+   
+   
+    
+  
+    <td>
+     
+    <a href="news.php?id=1037"   ><img src="mediamanager/files/chenda.jpg" width="70" height="60" /></a>    
+    </td>
+    
+   
+   
+  </tr><tr>  
+  
+    <td>
+     
+    <a href="news.php?id=936"   ><img src="mediamanager/files/Earthmoving-Equipment.jpg" width="70" height="60" /></a>    
+    </td>
+    
+   
+   
+    
+  
+    <td>
+     
+    <a href="news.php?id=900"   ><img src="mediamanager/files/afghan govt.jpg" width="70" height="60" /></a>    
+    </td>
+    
+   
+   
+    
+  
+    <td>
+     
+    <a href="news.php?id=897"   ><img src="mediamanager/files/Marina_Silva_2007.jpg" width="70" height="60" /></a>    
+    </td>
+    
+   
+   
+  </tr><tr>  
+  
+    <td>
+     
+    <a href="news.php?id=896"   ><img src="mediamanager/files/oldies9.jpg" width="70" height="60" /></a>    
+    </td>
+    
+   
+   
+    
+  
+    <td>
+     
+    <a href="news.php?id=895"   ><img src="mediamanager/files/malama.jpg" width="70" height="60" /></a>    
+    </td>
+    
+   
+   
+    
+  
+    <td>
+     
+    <a href="news.php?id=894"   ><img src="mediamanager/files/hippofeed-01.jpg" width="70" height="60" /></a>    
+    </td>
+    
+   
+   
+  </tr></table>
+</td>
+          </tr>
+        </table></td>
+        </tr>
+      
+      <tr>
+        <td height="59" colspan="2" align="center" valign="middle" bgcolor="#333333"><span style="color:#ffffff"> For advertising, queries and enquiries please contact <a href="mailto:webmaster@postzambia.com" style="color:#FFF">webmaster@postzambia.com</a> <br />&copy;1991 - 2014 Post Newspapers Ltd. All rights reserved. POST NEWSPAPERS is not responsible for the content of external sites. <a href="terms.php"  style="color:#CCCCCC">Read more</a><br />
+         <!-- Website designed &amp; maintained by <a href="http://uniaxialsoftware.com" style="color: #3399CC" target="_blank">Uniaxial Software.</a></span>
+         -->
+         
+         </td>
+        </tr>
+      
+    </table></td>
+  </tr>
+</table>
+
+<map name="Map" id="Map"><area shape="rect" coords="6,8,227,86" target="_blank" href="http://www.postsangwapo.com" />
+<area shape="rect" coords="5,90,227,175" target="_blank"  href="http://www.onlineshopping.co.zm" />
+<area shape="rect" coords="5,181,227,260" target="_blank"  href="http://www.postisp.zm" />
+<area shape="rect" coords="6,266,226,348" target="_blank"  href="http://www.postcourier.co.zm" />
+</map>
+</td>
+  </tr>
+</table>
+
+<script language="javascript">
+var fp=3;
+function fminus()
+{
+//alert(fp);
+if(fp>1)
+{
+fp--;
+fontsize();
+}
+}
+function fplus()
+{//alert(fp);
+if(fp<5)
+{
+fp++;
+fontsize();
+}
+}
+function fontsize()
+{
+identity=document.getElementById("newsbody");
+if(fp==1){identity.className="small";}
+if(fp==2){identity.className="normal";}
+if(fp==3){identity.className="large";}
+if(fp==4){identity.className="large1";}
+if(fp==5){identity.className="large2";}
+}
+
+function popemail(nid,tb)
+ {
+var n= window.open("email.php?nid="+nid + "&tbl="+tb,nid,"HEIGHT=500,WIDTH=580,top=150,left=150,scrollbars=yes,resizable=0,toolbar=no")
+ }
+
+ function popprint(nid,tb)
+ {
+var n2= window.open("news_print.php?nid="+nid+ "&tbl="+tb,nid,"HEIGHT=500,WIDTH=700,top=0,left=0,scrollbars=yes,resizable=1,toolbar=no")
+ }
+
+function openw(x)
+{
+var n3=window.open("watch_video.php?Id=" + x,"mywindow","toolbar=no,status=0,scrollbars=1,width=630,height=360");
+}
+
+  function reloadCaptcha(imageName)
+  {
+    var randomnumber=Math.floor(Math.random()*1001); // generate a random number to add to image url to prevent caching
+    document.images[imageName].src = document.images[imageName].src + '&amp;rand=' + randomnumber; // change image src to the same url but with the random number on the
+  }
+
+function valid()
+{
+if((document.frm.name.value=="")||(document.frm.location.value=="")||(document.frm.email.value=="")||(document.frm.msg.value=="")||(document.frm.captchacode.value==""))
+{
+alert("Please enter required fields");
+return false;
+}
+
+if(checkemail(document.frm.email.value)==false)
+{
+alert("Invalid E-mail Address! Please re-enter.")
+return false;
+}
+
+
+}
+
+function checkemail(x)
+{
+	if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(x))
+		{
+		return true;
+		}
+	else
+		{
+		return false;
+		}
+}
+
+//ajax
+ 	var xmlHttp;
+
+
+	function sendc()
+	{
+		var name="";
+		var email="";
+		var msg="";
+		var subject="";
+		var nid="";
+
+		nid=document.frmcom.nid.value;
+		name=document.frmcom.name.value;
+		email=document.frmcom.email.value;
+		subject=document.frmcom.subject.value;
+		msg=document.frmcom.msg.value;
+
+		if((name=="")||(email=="")||(subject=="")||(msg==""))
+		{
+			alert("Please fill the required fields");
+			return false;
+		}
+		if(!checkemail(email))
+		{
+			alert("Invalid Email Address");
+			//document.frm.email.focus();
+			return false;
+		}
+
+
+		xmlHttp=GetXmlHttpObject();
+		if (xmlHttp==null)
+		 {
+			alert ("Browser does not support HTTP Request");
+			return;
+		 }
+
+		//SJA Mods - must POST the data as need no length constraints - will need to URL decode the other side... encodeURIComponent() handles URL uncoding in JScript; decodeURIComponent() to decode
+		var params="nid=" +nid + "&name="+name+"&email="+email+"&subject="+subject+"&msg="+msg;
+
+		var url="postcomments.php?" + params + "&m"+ Math.random();
+
+		xmlHttp.onreadystatechange=stateChanged ;
+		xmlHttp.open("GET",url,true);
+		xmlHttp.send(null);
+			return false;
+
+	}
+
+	function stateChanged()
+	{
+		if (xmlHttp.readyState==4 || xmlHttp.readyState=="complete")
+		{
+			//alert(xmlHttp.responseText);
+			//alert("Thanks for the Comment!");
+			//document.frm.email.value="";
+			//document.frm.msg.value="";
+			//document.frm.name.value="";
+
+	        if (xmlHttp.status == 200) {
+				document.getElementById("frmcom").innerHTML='<span style="color:#000000;">Thanks for the Comment!</span>' ;
+				//document.getElementById("frmcom").className="msgc2";
+
+            } else {
+      	      alert('There was a problem sending your comment, please try again.');
+            }
+		}
+		else
+		{
+			///uest_book.style["visibility"]="visible";
+			document.getElementById("frmcom").innerHTML='<img src="images/loading.gif" border="0">' ;
+		}
+	}
+
+	//wishlist code
+
+	function GetXmlHttpObject()
+	{
+		var objXMLHttp=null;
+		if (window.XMLHttpRequest)
+		{
+			objXMLHttp=new XMLHttpRequest();
+		}
+		else if (window.ActiveXObject)
+		{
+			objXMLHttp=new ActiveXObject("Microsoft.XMLHTTP");
+		}
+		return objXMLHttp;
+	}
+
+
+//-->
+ </script>
+ 
+ <!--
+ <div   id="right-sidebar"> <a href="" target="_blank"><img src="" border="0"  width="125px"     /></a></div>
+<div   id="left-sidebar">  <a href="" target="_blank"><img src="" border="0"  width="125px"     /></a></div>
+-->
+"""
+        
+        doc = Document()
+        doc.url = 'http://postzambia.com/news.php?id=5177'
+        self.crawler.extract(doc, html)
+
+        self.assertEqual(doc.title, 'The race is tight - Simuusa')
+        self.assertIsNone(doc.summary)
+        self.assertEqual(doc.published_at.strftime('%d %m %Y'), '05 01 2015')
+        self.assertEqual(doc.author.name, 'Tilyenji Mwanza')
+        self.assertEqual(doc.medium.name, 'Post Zambia')
+
+        self.assertEqual(doc.text, u'WYLBUR Simuusa says the January 20 presidential race is tight and the PF needs the input of every member to win the election.\n\nReacting to Chishimba Kambwili\xe2\u20ac\u2122s remark that Geoffrey Mwamba was limited in thinking because of his low levels of education following the latter\xe2\u20ac\u2122s decision to support the UPND, Simuusa said the Patriotic Front cannot afford to lose its top leaders.\n\nHe said it was wrong for anyone in the PF to issue disparaging remarks against Sylvia Masebo and Mwamba simply because they have resolved to support the UPND.\n\n\xe2\u20ac\u0153We need everybody, although I was very categorical on Guy Scott. And at one point, I said we need GBM and now I say we need Masebo too. We have a history with Sylvia and with GBM; we need those votes. And what we should be doing is not disparaging them. We should not disparage GBM and Masebo. We as PF may not agree, but insulting them and belittling them is not the way to go,\xe2\u20ac\x9d said Simuusa, who is agriculture minister and Nchanga PF member of parliament.\n\nHe said it would be na\xc3\xafve and untrue to say Mwamba and Masebo are not political factors just because they have chosen a different path.\n\n\xe2\u20ac\u0153We need everyone. GBM has his following and it is a following that was developed with the PF. We as the PF need to work on reconciliation and realise that everybody matters, even Masebo. We worked with them before and they helped deliver PF, so it is unfair to say they do not matter, or begin to issue disparaging remarks,\xe2\u20ac\x9d Simuusa said.\n\nHe said UPND and other parties were campaigning hard and it would be unwise for PF to keep losing its members.\n\nSimuusa called on PF leaders to instead find ways of recalling Mwamba and Masebo rather than pretend that the two are not a factor.\n\n\xe2\u20ac\u0153The approach should be to take the colleagues of ours and see how we can keep them in the spirit of reconciliation. Disparaging them, calling them opportunists is not right,\xe2\u20ac\x9d said Simuusa.\n\nSpeaking in Matero on New Year\xe2\u20ac\u2122s Day, PF presidential candidate Edgar Lungu described Masebo as an opportunist who jumps at every opportunity she considers viable.\n\nHe added that Masebo was not a political factor as she had no following in Lusaka or Zambia at large.')
         

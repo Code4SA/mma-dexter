@@ -32,6 +32,7 @@ class DocumentProcessor:
                 LusakaTimesCrawler(),
                 ZambianWatchdogCrawler(),
                 ZambiaDailyMailCrawler(),
+                PostZambiaCrawler(),
                 # must come last
                 GenericCrawler()]
         self.extractors = [
