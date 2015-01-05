@@ -132,6 +132,8 @@ Weekend Dispatch|print - weekly|||za
 Weekend Post|print - daily|weekendpost.co.za||za
 Namibian|online|namibian.com.na||na
 Daily Nation|online|zambiadailynation.com||zm
+Times of Zambia|online|times.co.zm||zm
+Lusaka Times|online|lusakatimes.com||zm
             """
 
         mediums = []
