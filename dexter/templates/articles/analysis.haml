@@ -190,8 +190,8 @@
                     - for df in document.fairness:
                       %tr
                         %td&= df.fairness.name if df.fairness else ''
-                        %td&= df.bias_favour.full_name() if df.bias_favour else ''
-                        %td&= df.bias_oppose.full_name() if df.bias_oppose else ''
+                        %td&= df.bias_favour.full_name if df.bias_favour else ''
+                        %td&= df.bias_oppose.full_name if df.bias_oppose else ''
 
         %%include(file='analysis_tab_mentions.haml')
         %%include(file='analysis_tab_places.haml')
