@@ -18,6 +18,7 @@ class MyModelView(ModelView):
     def is_accessible(self):
         return current_user.is_authenticated() and current_user.admin
 
+
 class MyIndexView(AdminIndexView):
     @expose('/')
     def index(self):
@@ -92,7 +93,7 @@ class MediumView(MyModelView):
         'name',
         'domain',
         'medium_type',
-        'medium_gruop',
+        'medium_group',
         'parent_org',
         'country',
     )
@@ -106,7 +107,15 @@ class MediumView(MyModelView):
     column_default_sort = 'name'
     column_formatters = dict(
         medium_type=macro('render_medium_type'),
-        )
+    )
+    column_sortable_list = (
+        ('name', Medium.name),
+        'domain',
+        'medium_type',
+        'medium_group',
+        ('country', Country.name),
+    )
+
     choices = []
     for choice in ["online", "print - daily", "print - weekly", "radio", "television", "other"]:
         choices.append((choice, choice.title()))
@@ -134,6 +143,7 @@ class AffiliationView(MyModelView):
     column_sortable_list = (
         ('code', Affiliation.code),
         ('name', Affiliation.name),
+        ('country', Country.name),
     )
     column_default_sort = 'code'
     page_size = 100
@@ -153,9 +163,29 @@ class IssueView(MyModelView):
 
 class TopicView(MyModelView):
     column_searchable_list = ('name', 'group')
+    column_sortable_list = (
+        'name',
+        'group',
+        ('analysis_nature', AnalysisNature.name),
+        )
+
 
 class LocationView(MyModelView):
     column_list = ('name', 'group', 'country')
+    column_sortable_list = (
+        ('name', Location.name),
+        ('group', Location.group),
+        ('country', Country.name),
+    )
+
+
+class SourceRoleView(MyModelView):
+    column_sortable_list = (
+        ('name', SourceRole.name),
+        'indication',
+        ('analysis_nature', AnalysisNature.name),
+    )
+
 
 class CountryView(MyModelView):
     def scaffold_form(self):
@@ -202,4 +232,4 @@ admin_instance.add_view(MyModelView(SourceFunction, db.session, name="Functions"
 admin_instance.add_view(AffiliationView(Affiliation, db.session, name="Affiliations", endpoint="affiliations", category='Source Information'))
 admin_instance.add_view(MyModelView(AuthorType, db.session, name="Authors", endpoint="authortypes", category='Source Information'))
 admin_instance.add_view(MyModelView(SourceAge, db.session, name="Ages", endpoint="ages", category='Source Information'))
-admin_instance.add_view(MyModelView(SourceRole, db.session, name="Roles", endpoint="roles", category='Source Information'))
+admin_instance.add_view(SourceRoleView(SourceRole, db.session, name="Roles", endpoint="roles", category='Source Information'))
