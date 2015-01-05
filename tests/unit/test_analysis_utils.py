@@ -1,15 +1,12 @@
 import unittest
 
-from dexter.analysis.bias import BiasCalculator
+from dexter.analysis.utils import calculate_entropy
 
 class TestUser(unittest.TestCase):
-    def setUp(self):
-        self.c = BiasCalculator()
-
     def test_entropy_none(self):
         table = {}
         self.assertEqual(
-                self.c.calculate_entropy(table),
+                calculate_entropy(table),
                 {})
 
     def test_entropy_all_zeros(self):
@@ -24,7 +21,7 @@ class TestUser(unittest.TestCase):
             },
         }
 
-        entropies = self.c.calculate_entropy(table)
+        entropies = calculate_entropy(table)
 
         self.assertAlmostEqual(0, entropies['The Star'], 2)
         self.assertAlmostEqual(0, entropies['Beeld'], 2)
@@ -58,7 +55,7 @@ class TestUser(unittest.TestCase):
             },
         }
 
-        entropies = self.c.calculate_entropy(table)
+        entropies = calculate_entropy(table)
 
         self.assertAlmostEqual(0.74, entropies['The Star'], 2)
         self.assertAlmostEqual(0.0, entropies['Beeld'], 2)
