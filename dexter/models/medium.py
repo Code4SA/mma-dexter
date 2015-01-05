@@ -131,6 +131,7 @@ Weekend Argus|print - weekly|||za
 Weekend Dispatch|print - weekly|||za
 Weekend Post|print - daily|weekendpost.co.za||za
 Namibian|online|namibian.com.na||na
+Daily Nation|online|zambiadailynation.com||zm
             """
 
         mediums = []
