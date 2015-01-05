@@ -19,7 +19,7 @@ class BaseCrawler(object):
         netloc = parts.netloc.strip(':80')
 
         # force http, strip trailing slash, anchors etc.
-        return urlunparse(['http', netloc, parts.path.rstrip('/'), parts.params, parts.query, None])
+        return urlunparse(['http', netloc, parts.path.rstrip('/') or '/', parts.params, parts.query, None])
 
     def crawl(self, doc):
         """ Crawl this document. """
@@ -34,7 +34,7 @@ class BaseCrawler(object):
         """
         self.log.info("Fetching URL: " + url)
 
-        r = requests.get(url)
+        r = requests.get(url, timeout=10)
         # raise an HTTPError on badness
         r.raise_for_status()
 
