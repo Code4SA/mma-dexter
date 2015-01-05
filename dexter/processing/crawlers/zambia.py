@@ -98,3 +98,28 @@ class ZambianWatchdogCrawler(BaseCrawler):
         doc.published_at = self.parse_timestamp(soup.select('meta[property="article:published_time"]')[0]['content']).date()
 
         doc.author = Author.unknown()
+
+
+class ZambiaDailyMailCrawler(BaseCrawler):
+    TL_RE = re.compile('(www\.)?daily-mail.co.zm')
+
+    def offer(self, url):
+        """ Can this crawler process this URL? """
+        parts = urlparse(url)
+        return bool(self.TL_RE.match(parts.netloc))
+
+    def extract(self, doc, raw_html):
+        """ Extract text and other things from the raw_html for this document. """
+        super(ZambiaDailyMailCrawler, self).extract(doc, raw_html)
+
+        soup = BeautifulSoup(raw_html)
+
+        doc.title = soup.select('meta[property="og:title"]')[0]['content'].replace(' - Zambia Daily Mail', '')
+    
+        # there are multiple divs with this id
+        nodes = soup.select("article.post .entry-content p")
+        doc.text = "\n\n".join(p.text.strip() for p in nodes)
+
+        doc.published_at = self.parse_timestamp(soup.select('meta[property="article:published_time"]')[0]['content']).date()
+
+        doc.author = Author.unknown()

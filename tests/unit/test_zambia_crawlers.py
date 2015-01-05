@@ -2271,3 +2271,1072 @@ pagespeed.addInstrumentationInit('http://1-ps.googleusercontent.com/beacon?org=1
 
         self.assertEqual(doc.text, u'The United Party for National Development (UPND) have warned the PF that they are aware of attempts to rig the elections but have warned that they will soon be caught one by one.\nAnd the party has advised the Electoral Commission of Zambia (ECZ) to find out whether they have been infiltrated by other elements instead of accusing the party of making alarming statements.\nUPND Adviser to the president Douglas Siakalima said when he featured on UNZA Radio\u2019s Lusaka Star programme Monday morning that his party was on top of things and was closely monitoring PF attempts to fidget with the election results.\nSiakalima warned that those who are attempting to tamper with the election results will soon be ashamed when the UPND starts catching them one by one.\n\u2018There are various players in this election but we shall catch them one by one because we know exactly what they are trying to do, we will get them before elections and even on the actual day of voting and they will be ashamed,\u2019 Siakalima warned.\nAnd Siakalima has advised the Electoral Commission of Zambia (ECZ) to find out whether they have been infiltrated by other elements instead of accusing the party of making alarming statements.\nHe said the ECZ should make sure they avoid vote rigging in order to avoid the chaos that follows a rigged election.\nHe said tampering with results caused problems in Zimbabwe, Kenya and Ivory Coast because most African leaders did not want to lose power adding that the ECZ\u2019s biggest obligation was to provide fair elections to avoid the ugly face of chaos.\nSiakalima was however quick to mention that the UPND has great respect for the Electoral Commission of Zambia (ECZ) Chairperson Judge Ireen Mambilima and stressed that she may not be aware of what some people are trying to do.\nSiakalima said even the ECZ itself may not be directly involved in the alleged manoeuvres to rig the elections.\nSiakalima said late President Michael Sata continuously talked about rigging prior to the 2011 elections and demanded for Parallel Voter Tabulation (PVT) because they (PF) were on top of things and no one accused them of alarming the nation.')
         
+
+class TestZambiaDailyMailCrawler(unittest.TestCase):
+    def setUp(self):
+        self.crawler = ZambiaDailyMailCrawler()
+
+        self.db = db
+        self.db.drop_all()
+        self.db.create_all()
+        seed_db(db)
+
+    def tearDown(self):
+        self.db.session.remove()
+        self.db.drop_all()
+
+    def test_extract(self):
+        html = """
+
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"  lang="en-EN" prefix="og: http://ogp.me/ns#"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"  lang="en-EN" prefix="og: http://ogp.me/ns#"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"  lang="en-EN" prefix="og: http://ogp.me/ns#"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en-EN" prefix="og: http://ogp.me/ns#"> <!--<![endif]-->
+
+<head>
+    <link rel="profile" href="http://gmpg.org/xfn/11" />
+    <link rel="pingback" href="http://www.daily-mail.co.zm/xmlrpc.php" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>RB weighs in for Lungu - Zambia Daily MailZambia Daily Mail</title>
+    
+<!-- This site is optimized with the Yoast WordPress SEO plugin v1.6 - https://yoast.com/wordpress/plugins/seo/ -->
+<link rel="canonical" href="https://www.daily-mail.co.zm/?p=16082" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="RB weighs in for Lungu - Zambia Daily Mail" />
+<meta property="og:description" content="DARLINGTON MWENDABAI &amp; HOPE NYOKA, Chipata FORMER President Rupiah Banda has endorsed Patriotic Front presidential candidate Edgar Lungu for the January 20 presidential election. Mr Banda described this year as a dawn of new hope where all Zambians should turn up in numbers to vote for Mr Lungu for continuity and stability. The former head &hellip;" />
+<meta property="og:url" content="https://www.daily-mail.co.zm/?p=16082" />
+<meta property="og:site_name" content="Zambia Daily Mail" />
+<meta property="article:publisher" content="https://www.facebook.com/ZAMBIA.DAILY.MAIL" />
+<meta property="article:tag" content="Edgar Lungu" />
+<meta property="article:tag" content="presidential election" />
+<meta property="article:tag" content="Rupiah Banda" />
+<meta property="article:section" content="News" />
+<meta property="article:published_time" content="2015-01-05T00:10:03+00:00" />
+<meta property="article:modified_time" content="2015-01-05T03:49:22+00:00" />
+<meta property="og:updated_time" content="2015-01-05T03:49:22+00:00" />
+<meta property="og:image" content="http://www.daily-mail.co.zm/wp-content/uploads/2015/01/Rupiah-Banda-EDGAR-LUNGU.jpg" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:site" content="@zadama24"/>
+<meta name="twitter:domain" content="Zambia Daily Mail"/>
+<meta name="twitter:creator" content="@zadama24"/>
+<!-- / Yoast WordPress SEO plugin. -->
+
+<link rel="alternate" type="application/rss+xml" title="Zambia Daily Mail &raquo; RB weighs in for Lungu Comments Feed" href="https://www.daily-mail.co.zm/?feed=rss2&#038;p=16082" />
+<link rel='stylesheet' id='tcvn-recentpost-css-css'  href='https://www.daily-mail.co.zm/wp-content/plugins/tcvn-recentpost-widget/includes/css/style.css?ver=1.0' type='text/css' media='screen' />
+<link rel='stylesheet' id='tcvn-recentpost-admin-css-css'  href='https://www.daily-mail.co.zm/wp-content/plugins/tcvn-recentpost-widget/includes/admin/css/style.css?ver=1.0' type='text/css' media='screen' />
+<link rel='stylesheet' id='vina-breaking-admin-css-css'  href='https://www.daily-mail.co.zm/wp-content/plugins/vina-breaking-news/includes/admin/css/style.css?ver=1.0' type='text/css' media='screen' />
+<link rel='stylesheet' id='vina-breaking-stile-css-css'  href='https://www.daily-mail.co.zm/wp-content/plugins/vina-breaking-news/includes/css/style.css?ver=1.0' type='text/css' media='screen' />
+<link rel='stylesheet' id='vina-admin-css-css'  href='https://www.daily-mail.co.zm/wp-content/plugins/vina-cslider-widget/includes/admin/css/style.css?ver=1.0' type='text/css' media='screen' />
+<link rel='stylesheet' id='vina-cslider-css-css'  href='https://www.daily-mail.co.zm/wp-content/plugins/vina-cslider-widget/includes/css/style.css?ver=1.0' type='text/css' media='screen' />
+<link rel='stylesheet' id='vina_newstab-css-css'  href='https://www.daily-mail.co.zm/wp-content/plugins/vina_news_tab/includes/css/style.css?ver=1.0' type='text/css' media='screen' />
+<link rel='stylesheet' id='vina_newstab-admin-css-css'  href='https://www.daily-mail.co.zm/wp-content/plugins/vina_news_tab/includes/admin/css/style.css?ver=1.0' type='text/css' media='screen' />
+<link rel='stylesheet' id='vina-weather-css-css'  href='https://www.daily-mail.co.zm/wp-content/plugins/vina_weather_widget/includes/css/style.css?ver=1.0' type='text/css' media='screen' />
+<link rel='stylesheet' id='tcvn-weather-tabs-css-css'  href='https://www.daily-mail.co.zm/wp-content/plugins/vina_weather_widget/includes/css/style_tab.css?ver=1.0' type='text/css' media='screen' />
+<link rel='stylesheet' id='tcvn-weather-admin-css-css'  href='https://www.daily-mail.co.zm/wp-content/plugins/vina_weather_widget/includes/admin/css/style.css?ver=1.0' type='text/css' media='screen' />
+<link rel='stylesheet' id='bootstrap.min.css-css'  href='https://www.daily-mail.co.zm/wp-content/themes/vina_news/css/bootstrap.min.css?ver=3.6.1' type='text/css' media='all' />
+<link rel='stylesheet' id='font-awesome.css-css'  href='https://www.daily-mail.co.zm/wp-content/plugins/helix/css/font-awesome.css?ver=3.6.1' type='text/css' media='all' />
+<link rel='stylesheet' id='bootstrap-responsive.min.css-css'  href='https://www.daily-mail.co.zm/wp-content/themes/vina_news/css/bootstrap-responsive.min.css?ver=3.6.1' type='text/css' media='all' />
+<link rel='stylesheet' id='theme.css-css'  href='https://www.daily-mail.co.zm/wp-content/themes/vina_news/css/theme.css?ver=3.6.1' type='text/css' media='all' />
+<link rel='stylesheet' id='presets/preset3.css-css'  href='https://www.daily-mail.co.zm/wp-content/themes/vina_news/css/presets/preset3.css?ver=3.6.1' type='text/css' media='all' />
+<link rel='stylesheet' id='jqueri_ui-css'  href='https://www.daily-mail.co.zm/wp-content/plugins/player/js/jquery-ui.css?ver=3.6.1' type='text/css' media='all' />
+<link rel='stylesheet' id='wpic-css'  href='https://www.daily-mail.co.zm/wp-content/plugins/wp-image-carousel/css/style.css?ver=3.6.1' type='text/css' media='all' />
+<link rel='stylesheet' id='flowplayer-css-css'  href='https://www.daily-mail.co.zm/wp-content/plugins/easy-video-player/lib/minimalist.css?ver=3.6.1' type='text/css' media='all' />
+<link rel='stylesheet' id='bwg_frontend-css'  href='https://www.daily-mail.co.zm/wp-content/plugins/photo-gallery/css/bwg_frontend.css?ver=1.2.2' type='text/css' media='all' />
+<link rel='stylesheet' id='bwg_font-awesome-css'  href='https://www.daily-mail.co.zm/wp-content/plugins/photo-gallery/css/font-awesome-4.0.1/font-awesome.css?ver=4.0.1' type='text/css' media='all' />
+<link rel='stylesheet' id='bwg_mCustomScrollbar-css'  href='https://www.daily-mail.co.zm/wp-content/plugins/photo-gallery/css/jquery.mCustomScrollbar.css?ver=1.2.2' type='text/css' media='all' />
+<link rel='stylesheet' id='rsss_front_style-css'  href='https://www.daily-mail.co.zm/wp-content/plugins/responsive-social-sidebar-share/css/rsss_front.css?ver=3.6.1' type='text/css' media='all' />
+<link rel='stylesheet' id='chosen-css'  href='https://www.daily-mail.co.zm/wp-content/plugins/wp-job-manager/assets/css/chosen.css?ver=3.6.1' type='text/css' media='all' />
+<link rel='stylesheet' id='wp-job-manager-frontend-css'  href='https://www.daily-mail.co.zm/wp-content/plugins/wp-job-manager/assets/css/frontend.css?ver=3.6.1' type='text/css' media='all' />
+<script type='text/javascript' src='https://www.daily-mail.co.zm/wp-includes/js/jquery/jquery.js?ver=1.10.2'></script>
+<script type='text/javascript' src='https://www.daily-mail.co.zm/wp-includes/js/jquery/jquery-migrate.min.js?ver=1.2.1'></script>
+<script type='text/javascript' src='https://www.daily-mail.co.zm/wp-content/plugins/helix/js/bootstrap.min.js?ver=3.6.1'></script>
+<script type='text/javascript' src='https://www.daily-mail.co.zm/wp-content/themes/vina_news/js/helix.core.js?ver=3.6.1'></script>
+<script type='text/javascript' src='https://www.daily-mail.co.zm/wp-content/plugins/helix/js/modernizr-2.6.2.min.js?ver=3.6.1'></script>
+<script type='text/javascript' src='https://www.daily-mail.co.zm/wp-content/plugins/helix/js/menu.js?ver=3.6.1'></script>
+<script type='text/javascript' src='https://www.daily-mail.co.zm/wp-content/themes/vina_news/js/bootstrap-tab.js?ver=3.6.1'></script>
+<script type='text/javascript' src='https://www.daily-mail.co.zm/wp-includes/js/comment-reply.min.js?ver=3.6.1'></script>
+<script type='text/javascript' src='https://www.daily-mail.co.zm/wp-content/plugins/player/js/jquery-ui.min.js?ver=3.6.1'></script>
+<script type='text/javascript' src='https://www.daily-mail.co.zm/wp-content/plugins/player/js/jquery.transit.js?ver=3.6.1'></script>
+<script type='text/javascript' src='https://www.daily-mail.co.zm/wp-content/plugins/player/js/flash_detect.js?ver=3.6.1'></script>
+<script type='text/javascript' src='https://www.daily-mail.co.zm/wp-content/plugins/wp-image-carousel/js/jcarousellite_1.0.1.js?ver=3.6.1'></script>
+<script type='text/javascript' src='https://www.daily-mail.co.zm/wp-content/plugins/easy-video-player/lib/flowplayer.js?ver=3.6.1'></script>
+<script type='text/javascript' src='https://www.daily-mail.co.zm/wp-content/plugins/jquery-image-lazy-loading/js/jquery.lazyload.min.js?ver=1.7.1'></script>
+<script type='text/javascript' src='https://www.daily-mail.co.zm/wp-content/plugins/photo-gallery/js/bwg_frontend.js?ver=1.2.2'></script>
+<script type='text/javascript' src='https://www.daily-mail.co.zm/wp-content/plugins/photo-gallery/js/jquery.mobile.js?ver=1.2.2'></script>
+<script type='text/javascript' src='https://www.daily-mail.co.zm/wp-content/plugins/photo-gallery/js/jquery.mCustomScrollbar.concat.min.js?ver=1.2.2'></script>
+<script type='text/javascript' src='https://www.daily-mail.co.zm/wp-content/plugins/photo-gallery/js/jquery.fullscreen-0.4.1.js?ver=0.4.1'></script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var bwg_objectL10n = {"bwg_field_required":"field is required.","bwg_mail_validation":"This is not a valid email address.","bwg_search_result":"There are no images matching your search."};
+/* ]]> */
+</script>
+<script type='text/javascript' src='https://www.daily-mail.co.zm/wp-content/plugins/photo-gallery/js/bwg_gallery_box.js?ver=1.2.2'></script>
+<script type='text/javascript' src='https://www.daily-mail.co.zm/wp-content/plugins/responsive-social-sidebar-share/js/rsss_front.js?ver=3.6.1'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="https://www.daily-mail.co.zm/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="https://www.daily-mail.co.zm/wp-includes/wlwmanifest.xml" /> 
+
+			<style type='text/css'>
+				#wpadminbar .quicklinks li#wp-admin-bar-clickystats {
+					height: 28px
+				}
+
+				#wpadminbar .quicklinks li#wp-admin-bar-clickystats a {
+					height: 28px;
+					padding: 0
+				}
+
+				#wpadminbar .quicklinks li#wp-admin-bar-clickystats a img {
+					padding: 4px 5px;
+					height: 20px;
+					width: 99px;
+				}
+			</style>
+		
+<script type='text/javascript'>
+var g_hanaFlash = false;
+try {
+  var fo = new ActiveXObject('ShockwaveFlash.ShockwaveFlash');
+  if(fo) g_hanaFlash = true;
+}catch(e){
+  if(navigator.mimeTypes ['application/x-shockwave-flash'] != undefined) g_hanaFlash = true;
+}
+function hanaTrackEvents(arg1,arg2,arg3,arg4) { if ( typeof( pageTracker ) !=='undefined') { pageTracker._trackEvent(arg1, arg2, arg3, arg4);} else if ( typeof(_gaq) !=='undefined'){  _gaq.push(['_trackEvent', arg1, arg2, arg3, arg4]);}}
+function hana_check_mobile_device(){ if(navigator.userAgent.match(/iPhone/i) || navigator.userAgent.match(/iPod/i) || navigator.userAgent.match(/iPad/i)  || navigator.userAgent.match(/Android/i)) { return true; }else return false; }
+</script>
+<style type='text/css'>
+img.lazy { display: none; }
+</style>
+<style tyle="text/css">.container {max-width: 1170px;}</style></head>
+<body id="sp-wrapper" class="single single-post postid-16082 single-format-standard preset3 ltr responsive hfeed bg vina-news">
+
+<!-- Top Block -->
+	<section id="sp-top-wrapper">
+		<div class="container">
+
+<a href="http://www.zesco.co.zm" target="_blank"><img src="wp-content/uploads/top_1170x120.fw.png" /></a>
+
+			<div id="sp-top">
+				<div class="row-fluid">
+					<div id="sp-menu" class="span9">
+						
+<div class="mobile-menu pull-right btn hidden-desktop" id="sp-moble-menu">
+	<i class="icon-align-justify"></i>
+</div>
+
+<nav id="sp-main-menu" class="visible-desktop pull-left" role="navigation"><div class="main-navigation"><ul id="menu-main-menu" class="sp-menu level-0"><li id="menu-item-357" class="menu-item menu-item-type-post_type menu-item-object-page" ><a class="menu-item" href="https://www.daily-mail.co.zm/">Home</a></li>
+<li id="menu-item-1337" class="menu-item menu-item-type-custom menu-item-object-custom" ><a class="menu-item" href="https://mailhost.daily-mail.co.zm/owa">Staff Mail</a></li>
+<li id="menu-item-12562" class="menu-item menu-item-type-post_type menu-item-object-page" ><a class="menu-item" href="https://www.daily-mail.co.zm/?page_id=12560">Jobs @ Zambia Daily Mail</a></li>
+</ul></div></nav>
+
+<script type="text/javascript">
+	jQuery(function($){
+		mainmenu();
+		
+		$(window).on('resize',function(){
+			mainmenu();
+		});
+		
+		function mainmenu() {
+			$('.sp-menu').spmenu({
+				startLevel: 0,
+				direction:'ltr',
+				initOffset: {
+					x:0,
+					y:0				},
+				subOffset: {
+					x:0,
+					y:0				},
+				center:0			});
+		}
+		
+		//Mobile Menu
+		$('#sp-main-menu > > ul').mobileMenu({
+			defaultText:'--Select Menu--',
+			appendTo: '#sp-moble-menu'
+		});
+		
+	});
+	
+</script>					</div>
+					<div class="span3">
+						<div class="search-form pull-right">
+	<form method="get" id="searchform" class="form-inline" action="https://www.daily-mail.co.zm/">
+		<div class="input-append">
+		  <input type="text" name="s" class="input-medium" id="s" placeholder="Search" />
+		  <span class="border"></span>
+		  <button class="btn btn-primary" type="submit"><i class="icon-search"></i></button>
+		</div>
+	</form>
+</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+<!-- Header Block -->
+	<header id="sp-header-wrapper" role="banner">
+		<div class="container">
+			<div id="sp-header">
+				<div class="row-fluid">
+					<div class="span5">
+						
+	
+	<a id="logo" style="width:422px; height:100px" class="pull-left" href="https://www.daily-mail.co.zm/" title="Zambia Daily Mail" rel="home"></a>
+
+					</div>
+					<div class="span7">
+						                <div id="sp-position-top2">
+                    <div id="text-11" class=" sp-widget widget_text">			<div class="textwidget"><a href="http://www.henanguojizambia.com"  target="_blank"><img src="wp-content/uploads/top_banner.gif" /></a></div>
+		</div>                </div>
+                					</div>
+				</div>
+			</div>
+		</div>
+	</header>
+
+<!-- Category Block -->
+	<section id="sp-category-wrapper">
+		<div class="container">
+			<div id="sp-category-inner">
+				<div class="row-fluid">
+					<div id="sp-category">
+						
+<div class="mobile-menu pull-right btn hidden-desktop" id="sp-moble-categories">
+	Category Menu &nbsp;
+	<i class="icon-align-justify"></i>
+</div>
+
+<nav id="sp-main-categories" class="visible-desktop pull-left" role="navigation"><div class="main-navigation"><ul id="menu-menu-category" class="sp-menu level-0"><li id="menu-item-603" class="menu-item menu-item-type-taxonomy menu-item-object-category current-post-ancestor current-menu-parent current-post-parent" ><a class="menu-item" href="https://www.daily-mail.co.zm/?cat=91">News</a></li>
+<li id="menu-item-567" class="menu-item menu-item-type-taxonomy menu-item-object-category" ><a class="menu-item" href="https://www.daily-mail.co.zm/?cat=77">Business</a></li>
+<li id="menu-item-1309" class="menu-item menu-item-type-taxonomy menu-item-object-category" ><a class="menu-item" href="https://www.daily-mail.co.zm/?cat=112">Court News</a></li>
+<li id="menu-item-553" class="menu-item menu-item-type-taxonomy menu-item-object-category" ><a class="menu-item" href="https://www.daily-mail.co.zm/?cat=63">Features</a></li>
+<li id="menu-item-6623" class="menu-item menu-item-type-taxonomy menu-item-object-category" ><a class="menu-item" href="https://www.daily-mail.co.zm/?cat=75">Gender</a></li>
+<li id="menu-item-309" class="menu-item menu-item-type-taxonomy menu-item-object-category" ><a class="menu-item" href="https://www.daily-mail.co.zm/?cat=28">Sport</a></li>
+<li id="menu-item-560" class="menu-item menu-item-type-taxonomy menu-item-object-category" ><a class="menu-item" href="https://www.daily-mail.co.zm/?cat=84">Entertainment</a></li>
+<li id="menu-item-587" class="menu-item menu-item-type-taxonomy menu-item-object-category" ><a class="menu-item" href="https://www.daily-mail.co.zm/?cat=98">Technology</a></li>
+</ul></div></nav>
+
+<script type="text/javascript">
+	jQuery(function($){
+		
+		//Mobile Menu
+		$('#sp-main-categories > > ul').mobileMenu({
+			defaultText:'--Select Menu--',
+			appendTo: '#sp-moble-categories'
+		});
+		
+	});
+	
+</script>					</div>&nbsp;<a href="http://www.daily-mail.co.zm/classifieds" target="_blank"><img src="wp-content/uploads/buttons/b_classy.jpg"/></a>&nbsp;<a href="http://www.daily-mail.co.zm/tourism" target="_blank"><img src="wp-content/uploads/buttons/b_tourism.jpg"/></a>
+				</div>
+			</div>
+		</div>
+	</section>
+
+<!-- Breaknew Block -->
+	<section id="sp-breaknew-wrapper">
+		<div class="container">
+			<div id="sp-breaknew-inner">
+				                <div id="sp-position-breakingnews">
+                    <div id="breaking_widget-4" class=" sp-widget Breaking_Widget"><div class="vina-header-top-marquee" style="width:100%; height:auto">
+        <div class="vina-marquee-head" style="margin-top:0px;">BREAKING NEWS</div>
+        <div class="vina-marquee-wrapper">
+        <div id="vina-marquee-breaking_widget-4" class="vina-marquee">
+                        <div>
+                <a href="http://www.daily-mail.co.zm/?p=16082">RB weighs in for Lungu</a>
+                                            </div>
+                        <div>
+                <a href="http://www.daily-mail.co.zm/?p=16083">Vote for Lungu, Scott tells Luanshya</a>
+                                            </div>
+                        <div>
+                <a href="http://www.daily-mail.co.zm/?p=16102">Urban population explosion worries Chenda</a>
+                                            </div>
+                        <div>
+                <a href="http://www.daily-mail.co.zm/?p=16093">State warns illegal bus station ‘tax’ collectors</a>
+                                            </div>
+                        <div>
+                <a href="http://www.daily-mail.co.zm/?p=16097">Quality jobs coming, says HH </a>
+                                            </div>
+                        <div>
+                <a href="http://www.daily-mail.co.zm/?p=16087">Sondashi hails Sata formula</a>
+                                            </div>
+                        <div>
+                <a href="http://www.daily-mail.co.zm/?p=16098">Chongwe PF gives Masebo vote of no confidence</a>
+                                            </div>
+                        <div>
+                <a href="http://www.daily-mail.co.zm/?p=16090">Nawakwi pledges to cut presidential powers </a>
+                                            </div>
+                        <div>
+                <a href="http://www.daily-mail.co.zm/?p=15979">Campaign violence: 4 nabbed</a>
+                                            </div>
+                        <div>
+                <a href="http://www.daily-mail.co.zm/?p=15986">Campaign for Lungu, Scott prods PF members</a>
+                                            </div>
+                        <div>
+                <a href="http://www.daily-mail.co.zm/?p=15985">Man finds ex-wife at Cockpit, commits suicide </a>
+                                            </div>
+                        <div>
+                <a href="http://www.daily-mail.co.zm/?p=15998">Zesco ‘shuts’ 6 towns to improve power</a>
+                                            </div>
+                        <div>
+                <a href="http://www.daily-mail.co.zm/?p=16002">Agriculture needs mechanisation, says Nawakwi</a>
+                                            </div>
+                        <div>
+                <a href="http://www.daily-mail.co.zm/?p=16007">ECZ to summon UPND boss over rigging claim</a>
+                                            </div>
+                        <div>
+                <a href="http://www.daily-mail.co.zm/?p=16006">MMD only party without violence tag - Nakacinda</a>
+                                            </div>
+                        <div>
+                <a href="http://www.daily-mail.co.zm/?p=15989">PF condemns attacks on Lungu’s health</a>
+                                            </div>
+                        <div>
+                <a href="http://www.daily-mail.co.zm/?p=16001">Bad Chinsali, Isoka roads irk Sondashi</a>
+                                            </div>
+                        <div>
+                <a href="http://www.daily-mail.co.zm/?p=15996">Ballot printing completed</a>
+                                            </div>
+                        <div>
+                <a href="http://www.daily-mail.co.zm/?p=15992">50 South youths in K233,000</a>
+                                            </div>
+                        <div>
+                <a href="http://www.daily-mail.co.zm/?p=15928">Scott drums for Edgar Lungu </a>
+                                            </div>
+                    </div>
+    </div>
+    <div class="vina-clear"></div>
+</div>
+
+<script type="text/javascript">
+    jQuery(document).ready(function(){
+        var marquee = jQuery("#vina-marquee-breaking_widget-4"); 
+        var time_multiplier = 20;
+        var current;
+                marquee.hover(function(){
+           current.pause();
+        }, function(){
+           current.resume();
+        })
+        
+        var reset = function() {
+            current = jQuery(this);
+            var item_width = jQuery(this).outerWidth();
+
+            var time = time_multiplier * jQuery(this).outerWidth(); 
+            jQuery(this).animate({ 'margin-left': -item_width }, time, 'linear', function(){
+                var clone_item = jQuery(this).clone();
+                clone_item.css({ 'margin-left': '0' });
+                marquee.append(clone_item);
+                jQuery(this).remove();
+                reset.call(marquee.children().filter(':first'));
+            });	
+        };
+        reset.call(marquee.children().filter(':first'));
+    });
+</script>
+</div>                </div>
+                			</div>
+		</div>
+	</section>
+
+<!-- Feature Block -->
+
+<!-- Promotion Block -->
+
+
+<section id="sp-main" role="main">
+<div class="container">
+<div id="sp-main-body-wrapper">	
+	<div class="container" id="content">
+		
+		
+	
+		<div class="row-fluid">
+		
+						
+							<div class="span5 main-post">		
+					
+<ul class="breadcrumb">
+	<li>You are here:</li>
+  <li>
+	<a href="https://www.daily-mail.co.zm" class="breadcrumb_home">Home</a> <span class="divider">/</span>
+  </li>
+  <li class="active">
+  
+					<a href="https://www.daily-mail.co.zm/?cat=91">News</a> <span class="raquo">&raquo;</span> RB weighs in for Lungu		  
+  </li>
+</ul>
+	<article id="post-16082" class="post-16082 post type-post status-publish format-standard hentry category-news tag-edgar-lungu tag-presidential-election tag-rupiah-banda">
+		<header class="entry-header">
+			<h1 class="entry-title page-header">RB weighs in for Lungu<div id="rsss_sidebar"><div class="ss_sidebar_button">
+			<a href="http://twitter.com/share" class="twitter-share-button" data-count="vertical">Tweet</a>
+			<script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
+			</div>
+			<div class="clear"></div><div class="ss_sidebar_button facebook_ss_sidebar">
+			<a href="http://www.facebook.com/sharer.php?u=https%3A%2F%2Fwww.daily-mail.co.zm%2F%3Fp%3D16082&t=" target="blank"><img src="https://www.daily-mail.co.zm/wp-content/plugins/responsive-social-sidebar-share/images/fbshare.gif" /></a>
+			</div>
+			<div class="clear"></div><div class="ss_sidebar_button">
+			<iframe src="http://www.facebook.com/plugins/like.php?href=https%3A%2F%2Fwww.daily-mail.co.zm%2F%3Fp%3D16082&amp;layout=box_count&amp;show_faces=true&amp;width=52&amp;action=like&amp;font=segoe+ui&amp;colorscheme=light" scrolling="no" frameborder="0" style="border:none; overflow:hidden;width:52px;height:62px;" allowTransparency="true">
+			</iframe></div>
+			<div class="clear"></div><div class="ss_sidebar_button">
+			<script type="text/javascript">(function() { 
+			var s = document.createElement("SCRIPT"), s1 = document.getElementsByTagName("SCRIPT")[0]; 
+			s.type = "text/javascript"; 
+			s.async = true; 
+			s.src = "http://widgets.digg.com/buttons.js"; 
+			s1.parentNode.insertBefore(s, s1); })(); 
+			</script><a class="DiggThisButton DiggMedium"></a>
+			</div>
+			<div class="clear"></div><div class="ss_sidebar_button"><a target="_blank"><script src="http://www.stumbleupon.com/hostedbadge.php?s=5"></script></a></div>
+			<div class="clear"></div><div class="ss_sidebar_button ss_share_button"><a href="mailto:?subject=https://www.daily-mail.co.zm/?p=16082" >Email</a></div>
+			<div class="clear"></div><a style="display:block !important;" target="_blank" class="rsss_ficon" href="http://www.wpfruits.com/downloads/wp-plugins/wp-sidebar-social-share/?rsss_refs=www.daily-mail.co.zm">RSSS</a>
+		<div class="clear"></div></div><div id="rsss_sidebar_hid" style="display:none;"><span class="ss_sidebar_button ss_sidebar_twitter">
+		<a href="http://twitter.com/share" class="twitter-share-button" data-count="horizontal">Tweet</a>
+		<script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
+		</span><span class="ss_sidebar_button">
+		<a href="http://www.facebook.com/sharer.php?u=https%3A%2F%2Fwww.daily-mail.co.zm%2F%3Fp%3D16082&t=" target="blank"><img src="https://www.daily-mail.co.zm/wp-content/plugins/responsive-social-sidebar-share/images/fbshare.gif" /></a>
+		</span><span class="ss_sidebar_button ss_sidebar_facebooklike">
+		<iframe src="http://www.facebook.com/plugins/like.php?href=https%3A%2F%2Fwww.daily-mail.co.zm%2F%3Fp%3D16082&amp;layout=button_count&amp;show_faces=false&amp;width=60&amp;action=like&amp;font=segoe+ui&amp;colorscheme=light&amp;height=21" scrolling="no" frameborder="0" style="border:none; overflow:hidden;width:85px;height:21px;" allowTransparency="true">
+		</iframe></span><span class="ss_sidebar_button">
+		<script type="text/javascript">(function() {
+		var s = document.createElement("SCRIPT"), s1 = document.getElementsByTagName("SCRIPT")[0]; 
+		s.type = "text/javascript";
+		s.async = true;
+		s.src = "http://widgets.digg.com/buttons.js";
+		s1.parentNode.insertBefore(s, s1); })(); 
+		</script>
+		<a class="DiggThisButton DiggCompact"></a>
+		</span><span class="ss_sidebar_button">
+		<script src="http://www.stumbleupon.com/hostedbadge.php?s=1"></script>
+		</span><span class="ss_sidebar_button ss_share_button"><a href="mailto:?subject=https://www.daily-mail.co.zm/?p=16082" >Email</a></span><div class="clear"></div>
+	</div></h1>
+								</header>
+		<div class="entry-meta muted " role="contentinfo">Posted in <a href="https://www.daily-mail.co.zm/?cat=91" title="View all posts in News" rel="category">News</a> on <time datetime="2015-01-05T00:10:03+00:00">January 05, 2015</time> by <span class="author vcard"><a class="url fn n" href="https://www.daily-mail.co.zm/?author=2" title="View all posts by Online Editor" role="author">Online Editor</a></span></div>		
+				<div class="entry-content clearfix">
+		
+							<div class="post-thumbnail">
+					<img width="624" height="499" src="http://www.daily-mail.co.zm/wp-content/uploads/2015/01/Rupiah-Banda-EDGAR-LUNGU-624x499.jpg" class="attachment-post-thumbnail wp-post-image" alt="FORMER President Rupiah Banda with PF president Edgar Lungu(right) and PF National Chairperson Inonge Wina at Amalula Lodge before they held a meeting at Protea Hotel yesterday:PICTURE:COLLINS PHIRI." />				</div>
+						
+			<p>DARLINGTON MWENDABAI &amp; HOPE NYOKA, Chipata<br />
+FORMER President Rupiah Banda has endorsed Patriotic Front presidential candidate Edgar Lungu for the January 20 presidential election.<br />
+<span id="more-16082"></span>Mr Banda described this year as a dawn of new hope where all Zambians should turn up in numbers to vote for Mr Lungu for continuity and stability.<br />
+The former head of state, who was in a jovial mood, delivered his endorsement speech dubbed “Peace and Unity will deliver Zambia” in Chipata yesterday.<br />
+He said the country needs stability and continuity, and not a revolution, hence Zambians should elect a leader who has shown the qualities of humility, commitment and unity.<br />
+“For these reasons, I am appearing before you today to announce my endorsement of Minister of Justice and Defence Edgar Lungu of the PF for president on January 20, 2015,” he said.<br />
+Mr Banda said after meeting Mr Lungu to understand his intentions and identify the problems which must be addressed, that he is confident that the PF candidate has qualities the Zambian people need.<br />
+He said unlike the United Party for National Development (UPND) which is only interested in buying MMD members and asking his son Andrew to insult him on political podiums, Mr Lungu has shown interest to allow peace and unity to prevail in the county.<br />
+“After much deliberation, I came to the conclusion that I could not support any candidate that would seek to eliminate or weaken the MMD.  I count many friends among those in the UPND, however, I cannot agree with the approach of poaching individual MMD members to defect to their camp instead of negotiating openly with the whole party,” Mr Banda said.<br />
+He accused the UPND of trying to drag the country to a one party fiasco and not promoting peace and unity among Zambians.<br />
+Mr Banda said he had had many meetings with UPND leaders where they suggested that he should deputise Hakainde Hichilema who had no experience of being republican president.<br />
+Mr Banda  urged Mr Lungu if elected to ensure  the costs of basic goods such as mealie meal, fertilizer, fuel and cement are lowered and  the economy is stabilised while a genuine people driven constitution is delivered  and Zambians united.<br />
+He said the past year had its own challenges where the country witnessed delayed payments for farmers and social divisions but this year, Zambians should vote for Mr Lungu to guide the country for the next 18 months.<br />
+In accepting the endorsement, Mr Lungu said he was humbled by the gesture and promised the former head of state and Zambians that he will not let them down.<br />
+“Our Late President Sata taught us to embrace all Zambians and we as PF, we do just that. We will work with the MMD who are supporting us and we are going to win the forth coming presidential election because of your support,” he said.<br />
+Mr Lungu said he will not sign any social contract with the clergy or anybody but Zambians adding that he delivered as Minister of Justice a final draft constitution without any signed social contracts.<br />
+He said it does not pay in a multiparty democracy to swallow opposition parties and the PF will instead co-exist with other political parties.<br />
+Mr Lungu said the media enjoy press freedom and if elected, he will study the Access to Information Bill.<br />
+Earlier, PF national chairperson Inonge Wina thanked Mr Banda and MMD National Executive Committee members for endorsing Mr Lungu, a gesture she described as rare from a former head of state.<br />
+Former MMD national secretary Muhabi Lungu said all party structures will support Mr Lungu.</p>
+		</div>
+		
+						
+		
+		<nav class="nav-single clearfix">
+			<ul class="pager">
+				<li class="previous"><a href="https://www.daily-mail.co.zm/?p=16110" rel="prev"><span class="meta-nav">&larr;</span> Kenya defender to ‘light up’ Zesco</a></li>
+				<li class="next"><a href="https://www.daily-mail.co.zm/?p=16129" rel="next">Chinese firm ‘finds’ diamonds in Mbala <span class="meta-nav">&rarr;</span></a></li>
+			</ul>
+		</nav><!-- .nav-single -->		
+		
+		<footer>
+			<ul class="entry-tags"><li><a href="https://www.daily-mail.co.zm/?tag=edgar-lungu" rel="tag">Edgar Lungu</a></li><li><a href="https://www.daily-mail.co.zm/?tag=presidential-election" rel="tag">presidential election</a></li><li><a href="https://www.daily-mail.co.zm/?tag=rupiah-banda" rel="tag">Rupiah Banda</a></li></ul>					</footer>
+		
+		
+<div id="comments" class="comments-area">
+		
+	
+									<div id="respond" class="comment-respond">
+				<h3 id="reply-title" class="comment-reply-title">Leave a Reply <small><a rel="nofollow" id="cancel-comment-reply-link" href="/?p=16082#respond" style="display:none;">Cancel reply</a></small></h3>
+									<form action="https://www.daily-mail.co.zm/wp-comments-post.php" method="post" id="commentform" class="comment-form">
+																			<p class="comment-notes">Your email address will not be published. Required fields are marked <span class="required">*</span></p>							<p class="comment-form-author"><label for="author">Name <span class="required">*</span></label> <input id="author" name="author" type="text" value="" size="30" aria-required='true' /></p>
+<p class="comment-form-email"><label for="email">Email <span class="required">*</span></label> <input id="email" name="email" type="text" value="" size="30" aria-required='true' /></p>
+<p class="comment-form-url"><label for="url">Website</label> <input id="url" name="url" type="text" value="" size="30" /></p>
+												<p class="comment-form-comment"><label for="comment">Comment</label> <textarea id="comment" name="comment" cols="45" rows="8" aria-required="true"></textarea></p>						<p class="form-allowed-tags">You may use these <abbr title="HyperText Markup Language">HTML</abbr> tags and attributes:  <code>&lt;a href=&quot;&quot; title=&quot;&quot;&gt; &lt;abbr title=&quot;&quot;&gt; &lt;acronym title=&quot;&quot;&gt; &lt;b&gt; &lt;blockquote cite=&quot;&quot;&gt; &lt;cite&gt; &lt;code&gt; &lt;del datetime=&quot;&quot;&gt; &lt;em&gt; &lt;i&gt; &lt;q cite=&quot;&quot;&gt; &lt;strike&gt; &lt;strong&gt; </code></p>						<p class="form-submit">
+							<input name="submit" type="submit" id="submit" value="Post Comment" />
+							<input type='hidden' name='comment_post_ID' value='16082' id='comment_post_ID' />
+<input type='hidden' name='comment_parent' id='comment_parent' value='0' />
+						</p>
+						<p style="display: none;"><input type="hidden" id="akismet_comment_nonce" name="akismet_comment_nonce" value="70abd7f95b" /></p>					</form>
+							</div><!-- #respond -->
+						
+</div><!-- #comments -->					
+	</article>
+				
+				
+				
+				</div><!--End Main-->		
+				
+											<aside id="centersidebar" class="span4">
+							                <div id="sp-position-center">
+                    <div id="recentpost_widget-2" class="center-hotnews sp-widget recentpost_widget"><h3>Editor&#8217;s Comment</h3>
+<div id="tcvn-post-widget-recentpost_widget-2" class="tcvn-post-widget">
+<ul class="tcvn-menu">
+    <li class="event" style="width:100%;">   
+        <div class="vina-post-introtext">
+			            <div class="vina-post-image">
+                                <a class="img-box1" href="https://www.daily-mail.co.zm/?p=16079">
+                    <img src="https://www.daily-mail.co.zm/wp-content/plugins/tcvn-recentpost-widget/includes/timthumb.php?w=260&h=150&a=c&q=99&z=0&src=http://www.daily-mail.co.zm/wp-content/uploads/2015/01/Clever-Making-a-door-frame1.jpg" alt=""/>                </a>
+                				
+				
+				
+				<h3 class="vina-title">
+                    <a class="vina-title" href="https://www.daily-mail.co.zm/?p=16079"> 
+                       Youth fund set to reduce unemployment 
+                    </a>
+                </h3>
+				<!-- show date -->
+			   				<!-- show comment -->
+								<span class="comment">
+					0 <i class="icon-comment"></i>				</span>
+				            </div>
+			
+			 <!-- show introtext-->
+			         </div>
+        <div style="clear:both"></div>
+                <div class="vina-post-extra">
+            <!-- show readmore -->
+                    </div>
+            </li>
+    </ul>
+<div style="clear:both; width:100%; height:2px;"></div>
+<div class="tcvn-link-item-post">
+        <ul class="tcvn-menu-post" style="position: static">
+                <li class="tcvn-menu-item-post" style="width:100%;">
+			<a href="https://www.daily-mail.co.zm/?p=15980">Buseko market needs proper sanitation facilities</a>				
+					</li>
+                <li class="tcvn-menu-item-post" style="width:100%;">
+			<a href="https://www.daily-mail.co.zm/?p=15910">Farming critical to development</a>				
+					</li>
+                <li class="tcvn-menu-item-post" style="width:100%;">
+			<a href="https://www.daily-mail.co.zm/?p=15886">Wage Freeze, retirement age review important</a>				
+					</li>
+                <li class="tcvn-menu-item-post" style="width:100%;">
+			<a href="https://www.daily-mail.co.zm/?p=15861">Let’s maintain economic growth</a>				
+					</li>
+            </ul>
+</div>
+        <div style="clear:both"></div>
+</div>
+</div><div id="text-45" class=" sp-widget widget_text"><h3>Silverest Gardens</h3>			<div class="textwidget"><hana-ampersand><script type='text/javascript' src='https://www.daily-mail.co.zm/wp-content/plugins/hana-flv-player/flowplayer3/example/flowplayer-3.2.6.min.js'></script></hana-ampersand><hana-ampersand><div ><div id='hana_flv_flow3_1' style='display:block;width:360px;height:250px;background-color:#555555;color:#ffffff;padding:0' title="*Video:silverest gardens"></div></div>
+<script  type='text/javascript'>
+if (typeof g_hanaFlash !== 'undefined' && !g_hanaFlash){
+    jQuery('#hana_flv_flow3_1').css( 'padding', '5px' );
+	jQuery('#hana_flv_flow3_1').html("<span class='inactive_message' style='display:block'>Sorry, your browser does not support Flash Video Player</span> *Video:silverest gardens");
+}else{			
+		flowplayer('hana_flv_flow3_1', { src: 'https://www.daily-mail.co.zm/wp-content/plugins/hana-flv-player/flowplayer3/flowplayer-3.2.7.swf', wmode: 'transparent' }, { 
+		
+			canvas: { backgroundColor: '#000000', backgroundGradient: 'none',},
+    		clip:  { 
+    			url: 'https://www.daily-mail.co.zm/wp-content/uploads/videos/zdahenan.flv',
+        		scaling: 'scale', autoPlay: false, autoBuffering: true 
+				,linkUrl: 'http://www.henanguojizambia.com' ,linkWindow: '_blank'  , onFinish : function () { this.seek(0); }  
+
+				
+				
+			
+	        }
+	        
+	        
+		});
+}
+</script></hana-ampersand></div>
+		</div><div id="text-36" class="tab-post sp-widget widget_text">			<div class="textwidget"><ul class="nav nav-tabs" id="myTab">
+<li class="active"><a href="#home" data-toggle="tab">LATEST POST</a></li>
+<li><a href="#profile" data-toggle="tab">MOST READ</a></li>
+</ul>
+<div class="tab-content">
+<div class="tab-pane active" id="home">
+
+<div id="tcvn-post-widget-recentpost_widget-9" class="tcvn-post-widget">
+<ul class="tcvn-menu">
+    <li class="event" style="width:100%;">   
+        <div class="vina-post-introtext">
+			            <div class="vina-post-image">
+                                <a class="img-box1" href="https://www.daily-mail.co.zm/?p=16164">
+                    <img src="https://www.daily-mail.co.zm/wp-content/plugins/tcvn-recentpost-widget/includes/timthumb.php?w=80&h=50&a=c&q=99&z=0&src=http://www.daily-mail.co.zm/wp-content/uploads/2015/01/uth-heart.jpg" alt=""/>                </a>
+                				
+				
+				
+				<h3 class="vina-title">
+                    <a class="vina-title" href="https://www.daily-mail.co.zm/?p=16164"> 
+                       UTH gets to ‘heart’ of matter 
+                    </a>
+                </h3>
+				<!-- show date -->
+			   			   <i class="icon-calendar"></i> 
+			   <span class="vina-date">January 5, 2015</span>
+			   				<!-- show comment -->
+				            </div>
+			
+			 <!-- show introtext-->
+			         </div>
+        <div style="clear:both"></div>
+            </li>
+        <li class="odd" style="width:100%;">   
+        <div class="vina-post-introtext">
+			            <div class="vina-post-image">
+                                <a class="img-box1" href="https://www.daily-mail.co.zm/?p=16161">
+                    <img src="https://www.daily-mail.co.zm/wp-content/plugins/tcvn-recentpost-widget/includes/timthumb.php?w=80&h=50&a=c&q=99&z=0&src=http://www.daily-mail.co.zm/wp-content/uploads/2015/01/muwana-wamunyima.jpg" alt=""/>                </a>
+                				
+				
+				
+				<h3 class="vina-title">
+                    <a class="vina-title" href="https://www.daily-mail.co.zm/?p=16161"> 
+                       Rufunsa poised for speedy development 
+                    </a>
+                </h3>
+				<!-- show date -->
+			   			   <i class="icon-calendar"></i> 
+			   <span class="vina-date">January 5, 2015</span>
+			   				<!-- show comment -->
+				            </div>
+			
+			 <!-- show introtext-->
+			         </div>
+        <div style="clear:both"></div>
+            </li>
+        <li class="event" style="width:100%;">   
+        <div class="vina-post-introtext">
+			            <div class="vina-post-image">
+                                <a class="img-box1" href="https://www.daily-mail.co.zm/?p=16158">
+                    <img src="https://www.daily-mail.co.zm/wp-content/plugins/tcvn-recentpost-widget/includes/timthumb.php?w=80&h=50&a=c&q=99&z=0&src=http://www.daily-mail.co.zm/wp-content/uploads/2014/09/media-mic.jpg" alt=""/>                </a>
+                				
+				
+				
+				<h3 class="vina-title">
+                    <a class="vina-title" href="https://www.daily-mail.co.zm/?p=16158"> 
+                       Media can perpetuate stereotypes 
+                    </a>
+                </h3>
+				<!-- show date -->
+			   			   <i class="icon-calendar"></i> 
+			   <span class="vina-date">January 5, 2015</span>
+			   				<!-- show comment -->
+				            </div>
+			
+			 <!-- show introtext-->
+			         </div>
+        <div style="clear:both"></div>
+            </li>
+        <li class="odd" style="width:100%;">   
+        <div class="vina-post-introtext">
+			            <div class="vina-post-image">
+                                <a class="img-box1" href="https://www.daily-mail.co.zm/?p=16156">
+                    <img src="https://www.daily-mail.co.zm/wp-content/plugins/tcvn-recentpost-widget/includes/timthumb.php?w=80&h=50&a=c&q=99&z=0&src=http://www.daily-mail.co.zm/wp-content/uploads/2014/11/ANTHONY-MWENDA-WRITING.jpg" alt=""/>                </a>
+                				
+				
+				
+				<h3 class="vina-title">
+                    <a class="vina-title" href="https://www.daily-mail.co.zm/?p=16156"> 
+                       Connecting the dots, check your steps (Part 2) 
+                    </a>
+                </h3>
+				<!-- show date -->
+			   			   <i class="icon-calendar"></i> 
+			   <span class="vina-date">January 5, 2015</span>
+			   				<!-- show comment -->
+				            </div>
+			
+			 <!-- show introtext-->
+			         </div>
+        <div style="clear:both"></div>
+            </li>
+        <li class="event" style="width:100%;">   
+        <div class="vina-post-introtext">
+			            <div class="vina-post-image">
+                                <a class="img-box1" href="https://www.daily-mail.co.zm/?p=16154">
+                    <img src="https://www.daily-mail.co.zm/wp-content/plugins/tcvn-recentpost-widget/includes/timthumb.php?w=80&h=50&a=c&q=99&z=0&src=http://www.daily-mail.co.zm/wp-content/uploads/2014/10/Readers-Forum-Logo1-2.jpg" alt=""/>                </a>
+                				
+				
+				
+				<h3 class="vina-title">
+                    <a class="vina-title" href="https://www.daily-mail.co.zm/?p=16154"> 
+                       Challenges of developing agriculture 
+                    </a>
+                </h3>
+				<!-- show date -->
+			   			   <i class="icon-calendar"></i> 
+			   <span class="vina-date">January 5, 2015</span>
+			   				<!-- show comment -->
+				            </div>
+			
+			 <!-- show introtext-->
+			         </div>
+        <div style="clear:both"></div>
+            </li>
+    </ul>
+<div style="clear:both; width:100%; height:2px;"></div>
+    <div style="clear:both"></div>
+</div>
+
+</div>
+<div class="tab-pane" id="profile">
+
+<div id="tcvn-post-widget-recentpost_widget-2" class="tcvn-post-widget">
+<ul class="tcvn-menu">
+    <li class="event" style="width:100%;">   
+        <div class="vina-post-introtext">
+			            <div class="vina-post-image">
+                                <a class="img-box1" href="https://www.daily-mail.co.zm/?p=6193">
+                    <img src="https://www.daily-mail.co.zm/wp-content/plugins/tcvn-recentpost-widget/includes/timthumb.php?w=80&h=50&a=c&q=99&z=0&src=http://www.daily-mail.co.zm/wp-content/uploads/2014/10/HOT-SHOTS-MACKY-II-RESA.jpg" alt=""/>                </a>
+                				
+				
+				
+				<h3 class="vina-title">
+                    <a class="vina-title" href="https://www.daily-mail.co.zm/?p=6193"> 
+                       Big Brother Africa Hotshots: Macky II, Resa in house 
+                    </a>
+                </h3>
+				<!-- show date -->
+			   			   <i class="icon-calendar"></i> 
+			   <span class="vina-date">October 4, 2014</span>
+			   				<!-- show comment -->
+				            </div>
+			
+			 <!-- show introtext-->
+			         </div>
+        <div style="clear:both"></div>
+            </li>
+        <li class="odd" style="width:100%;">   
+        <div class="vina-post-introtext">
+			            <div class="vina-post-image">
+                                <a class="img-box1" href="https://www.daily-mail.co.zm/?p=9313">
+                    <img src="https://www.daily-mail.co.zm/wp-content/plugins/tcvn-recentpost-widget/includes/timthumb.php?w=80&h=50&a=c&q=99&z=0&src=http://www.daily-mail.co.zm/wp-content/uploads/2014/09/SATA-CABINET.jpg" alt=""/>                </a>
+                				
+				
+				
+				<h3 class="vina-title">
+                    <a class="vina-title" href="https://www.daily-mail.co.zm/?p=9313"> 
+                       President Sata dies 
+                    </a>
+                </h3>
+				<!-- show date -->
+			   			   <i class="icon-calendar"></i> 
+			   <span class="vina-date">October 29, 2014</span>
+			   				<!-- show comment -->
+				            </div>
+			
+			 <!-- show introtext-->
+			         </div>
+        <div style="clear:both"></div>
+            </li>
+        <li class="event" style="width:100%;">   
+        <div class="vina-post-introtext">
+			            <div class="vina-post-image">
+                                <a class="img-box1" href="https://www.daily-mail.co.zm/?p=15067">
+                    <img src="https://www.daily-mail.co.zm/wp-content/plugins/tcvn-recentpost-widget/includes/timthumb.php?w=80&h=50&a=c&q=99&z=0&src=http://www.daily-mail.co.zm/wp-content/uploads/2014/12/Pjay-Brian-Cheengwa.jpg" alt=""/>                </a>
+                				
+				
+				
+				<h3 class="vina-title">
+                    <a class="vina-title" href="https://www.daily-mail.co.zm/?p=15067"> 
+                       P-Jay dies 
+                    </a>
+                </h3>
+				<!-- show date -->
+			   			   <i class="icon-calendar"></i> 
+			   <span class="vina-date">December 22, 2014</span>
+			   				<!-- show comment -->
+				            </div>
+			
+			 <!-- show introtext-->
+			         </div>
+        <div style="clear:both"></div>
+            </li>
+        <li class="odd" style="width:100%;">   
+        <div class="vina-post-introtext">
+			            <div class="vina-post-image">
+                                <a class="img-box1" href="https://www.daily-mail.co.zm/?p=11001">
+                    <img src="https://www.daily-mail.co.zm/wp-content/plugins/tcvn-recentpost-widget/includes/timthumb.php?w=80&h=50&a=c&q=99&z=0&src=http://www.daily-mail.co.zm/wp-content/uploads/2014/11/INONGE-WINA-EDGAR-LUNGU-BRIDGET-ATANGA-GUY-SCOTT.jpg" alt=""/>                </a>
+                				
+				
+				
+				<h3 class="vina-title">
+                    <a class="vina-title" href="https://www.daily-mail.co.zm/?p=11001"> 
+                       Patriotic Front picks Edgar Lungu 
+                    </a>
+                </h3>
+				<!-- show date -->
+			   			   <i class="icon-calendar"></i> 
+			   <span class="vina-date">November 14, 2014</span>
+			   				<!-- show comment -->
+				            </div>
+			
+			 <!-- show introtext-->
+			         </div>
+        <div style="clear:both"></div>
+            </li>
+        <li class="event" style="width:100%;">   
+        <div class="vina-post-introtext">
+			            <div class="vina-post-image">
+                                <a class="img-box1" href="https://www.daily-mail.co.zm/?p=11780">
+                    <img src="https://www.daily-mail.co.zm/wp-content/plugins/tcvn-recentpost-widget/includes/timthumb.php?w=80&h=50&a=c&q=99&z=0&src=http://www.daily-mail.co.zm/wp-content/uploads/2014/11/PF-Central-Committee-Guy-Scott.jpg" alt=""/>                </a>
+                				
+				
+				
+				<h3 class="vina-title">
+                    <a class="vina-title" href="https://www.daily-mail.co.zm/?p=11780"> 
+                       PF goes to conference 
+                    </a>
+                </h3>
+				<!-- show date -->
+			   			   <i class="icon-calendar"></i> 
+			   <span class="vina-date">November 21, 2014</span>
+			   				<!-- show comment -->
+				            </div>
+			
+			 <!-- show introtext-->
+			         </div>
+        <div style="clear:both"></div>
+            </li>
+    </ul>
+<div style="clear:both; width:100%; height:2px;"></div>
+    <div style="clear:both"></div>
+</div>
+
+</div>
+</div></div>
+		</div><div id="youtube_responsive-2" class=" sp-widget widget_youtube_responsive"><h3>Zambia &#8211; The Road to Independence with ZAMTEL</h3><iframe id='1' class='StefanoAI-youtube-responsive ' width='160' height='90' src='//www.youtube.com/embed/JKuywBjBKCE?&amp;autohide=2&amp;color=red&amp;controls=1&amp;disablekb=0&amp;fs=1&amp;iv_load_policy=1&amp;loop=0&amp;modestbranding=1&amp;rel=0&amp;showinfo=0&amp;theme=dark&amp;vq=default' frameborder='0' allowfullscreen="true" style=''></iframe></div><div id="text-28" class="center-likebox sp-widget widget_text"><h3>Like box</h3>			<div class="textwidget"><iframe src="//www.facebook.com/plugins/likebox.php?href=https://www.facebook.com/ZAMBIA.DAILY.MAIL&amp;width=300&amp;height=258&amp;colorscheme=light&amp;show_faces=true&amp;header=false&amp;stream=false&amp;show_border=false" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:300px; height:258px;" allowTransparency="true"></iframe>
+
+</div>
+		</div><div id="text-44" class=" sp-widget widget_text"><h3>ePaper  App</h3>			<div class="textwidget"><center><img src="wp-content/uploads/jubileee.fw.png" /></center></div>
+		</div>                </div>
+                						</aside>
+											
+											<aside id="rightsidebar" class="span3">
+							                <div id="sp-position-right">
+                    <div id="text-33" class=" sp-widget widget_text">			<div class="textwidget"><br />
+<a href="http://www.sbtjapan.com" target="_blank" /><img src="wp-content/uploads/sbt.gif" /></a></div>
+		</div><div id="text-14" class=" sp-widget widget_text">			<div class="textwidget"><br />
+<a href="http://www.investrustbank.com/" target="_blank"><img src="wp-content/uploads/investrust.fw.png" /></a></div>
+		</div><div id="text-34" class="banner right-banner2 hidden-mobile sp-widget widget_text">			<div class="textwidget"><br />
+<a href="http://www.moh.gov.zm" target="_blank"/><img src="wp-content/uploads/ebola_270x312.fw.png" /></a></div>
+		</div><div id="text-42" class=" sp-widget widget_text">			<div class="textwidget"><br />
+<br />
+<img src="wp-content/uploads/football_corner.fw.png" /></div>
+		</div><div id="archives-2" class=" sp-widget widget_archive"><h3>Archives</h3>		<select name="archive-dropdown" onchange='document.location.href=this.options[this.selectedIndex].value;'> <option value="">Select Month</option> 	<option value='https://www.daily-mail.co.zm/?m=201501'> January 2015 &nbsp;(109)</option>
+	<option value='https://www.daily-mail.co.zm/?m=201412'> December 2014 &nbsp;(1224)</option>
+	<option value='https://www.daily-mail.co.zm/?m=201411'> November 2014 &nbsp;(1150)</option>
+	<option value='https://www.daily-mail.co.zm/?m=201410'> October 2014 &nbsp;(1206)</option>
+	<option value='https://www.daily-mail.co.zm/?m=201409'> September 2014 &nbsp;(1227)</option>
+	<option value='https://www.daily-mail.co.zm/?m=201408'> August 2014 &nbsp;(724)</option>
+	<option value='https://www.daily-mail.co.zm/?m=201407'> July 2014 &nbsp;(2)</option>
+	<option value='https://www.daily-mail.co.zm/?m=201406'> June 2014 &nbsp;(5)</option>
+	<option value='https://www.daily-mail.co.zm/?m=201405'> May 2014 &nbsp;(2)</option>
+	<option value='https://www.daily-mail.co.zm/?m=201403'> March 2014 &nbsp;(1)</option>
+	<option value='https://www.daily-mail.co.zm/?m=201309'> September 2013 &nbsp;(168)</option>
+	<option value='https://www.daily-mail.co.zm/?m=201308'> August 2013 &nbsp;(36)</option>
+	<option value='https://www.daily-mail.co.zm/?m=201306'> June 2013 &nbsp;(1)</option>
+	<option value='https://www.daily-mail.co.zm/?m=201302'> February 2013 &nbsp;(3)</option>
+ </select>
+</div><div id="text-32" class=" sp-widget widget_text">			<div class="textwidget"><br />
+<br />
+<table>
+<tr height="600px">
+<td>
+<a href="http://www.singaporeautos.net/" target="_blank"/><img src="wp-content/uploads/singapore_auto.fw.png" /></a></td>
+<td><img src="wp-content/uploads/side_strip.fw.png" height="600px" width="130px" /></td>
+</tr>
+</table></div>
+		</div>                </div>
+                						</aside>
+										
+				</div>
+		</div><!-- #content -->
+	</div>
+	<img src="wp-content/uploads/bottom_1170x120.fw.png" />
+	<!--banner-->
+			<section id="sp-banner-wrapper">
+			<div class="container">
+				<div class="row-fluid">
+					                <div id="sp-position-banner">
+                    <div id="nav_menu-3" class="menu-category-footer sp-widget widget_nav_menu"><div class="menu-menu-category-footer-container"><ul id="menu-menu-category-footer" class="menu"><li id="menu-item-512" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-512"><a href="https://www.daily-mail.co.zm/?cat=28">Sport</a>
+<ul class="sub-menu">
+	<li id="menu-item-513" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-513"><a href="https://www.daily-mail.co.zm/?cat=38">Football</a></li>
+	<li id="menu-item-514" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-514"><a href="https://www.daily-mail.co.zm/?cat=40">Basketball</a></li>
+	<li id="menu-item-515" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-515"><a href="https://www.daily-mail.co.zm/?cat=39">Boxing</a></li>
+	<li id="menu-item-516" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-516"><a href="https://www.daily-mail.co.zm/?cat=41">Golf</a></li>
+</ul>
+</li>
+<li id="menu-item-633" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-633"><a href="https://www.daily-mail.co.zm/?cat=63">Features</a>
+<ul class="sub-menu">
+	<li id="menu-item-634" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-634"><a href="https://www.daily-mail.co.zm/?cat=69">Development</a></li>
+	<li id="menu-item-635" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-635"><a href="https://www.daily-mail.co.zm/?cat=67">Columnists</a></li>
+	<li id="menu-item-636" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-636"><a href="https://www.daily-mail.co.zm/?cat=64">@50 Jubilee</a></li>
+	<li id="menu-item-637" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-637"><a href="https://www.daily-mail.co.zm/?cat=65">Health</a></li>
+	<li id="menu-item-638" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-638"><a href="https://www.daily-mail.co.zm/?cat=66">In focus</a></li>
+	<li id="menu-item-639" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-639"><a href="https://www.daily-mail.co.zm/?cat=68">Letter to the Editor</a></li>
+</ul>
+</li>
+<li id="menu-item-640" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-640"><a href="https://www.daily-mail.co.zm/?cat=84">Entertainment</a>
+<ul class="sub-menu">
+	<li id="menu-item-641" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-641"><a href="https://www.daily-mail.co.zm/?cat=89">Books</a></li>
+	<li id="menu-item-642" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-642"><a href="https://www.daily-mail.co.zm/?cat=87">Gender</a></li>
+	<li id="menu-item-643" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-643"><a href="https://www.daily-mail.co.zm/?cat=85">Movies</a></li>
+	<li id="menu-item-644" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-644"><a href="https://www.daily-mail.co.zm/?cat=86">Music</a></li>
+	<li id="menu-item-645" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-645"><a href="https://www.daily-mail.co.zm/?cat=90">Theatre</a></li>
+	<li id="menu-item-646" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-646"><a href="https://www.daily-mail.co.zm/?cat=88">TV</a></li>
+</ul>
+</li>
+<li id="menu-item-647" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-647"><a href="https://www.daily-mail.co.zm/?cat=77">Business</a>
+<ul class="sub-menu">
+	<li id="menu-item-648" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-648"><a href="https://www.daily-mail.co.zm/?cat=81">Headlines</a></li>
+	<li id="menu-item-650" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-650"><a href="https://www.daily-mail.co.zm/?cat=82">Agri-business</a></li>
+	<li id="menu-item-651" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-651"><a href="https://www.daily-mail.co.zm/?cat=83">Local Business</a></li>
+	<li id="menu-item-652" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-652"><a href="https://www.daily-mail.co.zm/?cat=78">Editor&#8217;s Choice</a></li>
+</ul>
+</li>
+<li id="menu-item-653" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-653"><a href="https://www.daily-mail.co.zm/?cat=70">Life and Style</a>
+<ul class="sub-menu">
+	<li id="menu-item-654" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-654"><a href="https://www.daily-mail.co.zm/?cat=71">Fashion and Beauty</a></li>
+	<li id="menu-item-655" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-655"><a href="https://www.daily-mail.co.zm/?cat=74">Men&#8217;s Fashion</a></li>
+	<li id="menu-item-657" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-657"><a href="https://www.daily-mail.co.zm/?cat=73">Couples</a></li>
+	<li id="menu-item-658" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-658"><a href="https://www.daily-mail.co.zm/?cat=75">Gender</a></li>
+	<li id="menu-item-659" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-659"><a href="https://www.daily-mail.co.zm/?cat=76">Kid&#8217;s Corner</a></li>
+</ul>
+</li>
+<li id="menu-item-667" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-667"><a href="https://www.daily-mail.co.zm/?cat=98">Technology</a>
+<ul class="sub-menu">
+	<li id="menu-item-668" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-668"><a href="https://www.daily-mail.co.zm/?cat=102">Business Tech</a></li>
+	<li id="menu-item-669" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-669"><a href="https://www.daily-mail.co.zm/?cat=101">Green Tech</a></li>
+	<li id="menu-item-670" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-670"><a href="https://www.daily-mail.co.zm/?cat=99">Personal Tech</a></li>
+	<li id="menu-item-671" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-671"><a href="https://www.daily-mail.co.zm/?cat=103">Science</a></li>
+	<li id="menu-item-672" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-672"><a href="https://www.daily-mail.co.zm/?cat=104">Security</a></li>
+	<li id="menu-item-673" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-673"><a href="https://www.daily-mail.co.zm/?cat=100">Space</a></li>
+</ul>
+</li>
+<li id="menu-item-677" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-677"><a href="https://www.daily-mail.co.zm/?cat=96">World</a>
+<ul class="sub-menu">
+	<li id="menu-item-678" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-678"><a href="https://www.daily-mail.co.zm/?cat=92">Europe</a></li>
+	<li id="menu-item-679" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-679"><a href="https://www.daily-mail.co.zm/?cat=93">Middle East</a></li>
+	<li id="menu-item-680" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-680"><a href="https://www.daily-mail.co.zm/?cat=97">Pacific</a></li>
+	<li id="menu-item-681" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-681"><a href="https://www.daily-mail.co.zm/?cat=94">Science</a></li>
+	<li id="menu-item-682" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-682"><a href="https://www.daily-mail.co.zm/?cat=95">U.S. Politics</a></li>
+	<li id="menu-item-684" class="menu-item menu-item-type-taxonomy menu-item-object-category current-post-ancestor current-menu-parent current-post-parent menu-item-684"><a href="https://www.daily-mail.co.zm/?cat=91">News</a></li>
+</ul>
+</li>
+</ul></div></div>                </div>
+                				</div>
+			</div>
+		</section>
+	
+	<!--bottom-->
+	</div>
+</section><!-- #sp-main -->
+
+<footer id="sp-footer-wrapper" role="contentinfo">
+	<div class="container">
+		<div id="sp-footer">
+			<div class="row-fluid">
+				<div class="span7">
+					
+
+<span class="copyright">© 2014 Zambia Daily Mail News . All Rights Reserved.</span>				</div>		
+				<div class="span5">
+					
+	<a class="sp-totop pull-right" href="#" rel="nofollow"><small>Goto top </small>
+		<i class="icon-caret-up"></i>
+	</a>
+					                <div id="sp-position-footer">
+                    <div id="nav_menu-2" class=" sp-widget widget_nav_menu"><div class="menu-footer-menu-container"><ul id="menu-footer-menu" class="menu"><li id="menu-item-196" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-196"><a href="#">Privacy Policy</a></li>
+<li id="menu-item-197" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-197"><a href="#">Advertise With Us</a></li>
+<li id="menu-item-198" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-198"><a href="#">Contact Us</a></li>
+</ul></div></div>                </div>
+                				</div>
+			</div>
+		</div>
+	</div>
+</footer>
+
+
+<script type='text/javascript' src='https://www.daily-mail.co.zm/wp-content/plugins/tcvn-recentpost-widget/includes/admin/js/jquery.simpletip-1.3.1.js?ver=1.0'></script>
+<script type='text/javascript' src='https://www.daily-mail.co.zm/wp-content/plugins/vina-breaking-news/includes/js/pause.jQuery.js?ver=1.0'></script>
+<script type='text/javascript' src='https://www.daily-mail.co.zm/wp-content/plugins/vina-cslider-widget/includes/admin/js/jquery.simpletip-1.3.1.js?ver=1.0'></script>
+<script type='text/javascript' src='https://www.daily-mail.co.zm/wp-includes/js/jquery/ui/jquery.ui.core.min.js?ver=1.10.3'></script>
+<script type='text/javascript' src='https://www.daily-mail.co.zm/wp-includes/js/jquery/ui/jquery.ui.widget.min.js?ver=1.10.3'></script>
+<script type='text/javascript' src='https://www.daily-mail.co.zm/wp-includes/js/jquery/ui/jquery.ui.tabs.min.js?ver=1.10.3'></script>
+<script type='text/javascript' src='https://www.daily-mail.co.zm/wp-content/plugins/vina-cslider-widget/includes/js/jquery-ui-tabs-rotate.js?ver=1.0'></script>
+<script type='text/javascript' src='http://code.jquery.com/ui/1.10.3/jquery-ui.js?ver=1.0'></script>
+	<!-- Clicky Web Analytics - http://clicky.com, WordPress Plugin by Yoast - https://yoast.com/wordpress/plugins/clicky/ -->
+			<script type='text/javascript'>
+			function clicky_gc(name) {
+				var ca = document.cookie.split(';');
+				for (var i in ca) {
+					if (ca[i].indexOf(name + '=') != -1) {
+						return decodeURIComponent(ca[i].split('=')[1]);
+					}
+				}
+				return '';
+			}
+			var username_check = clicky_gc('comment_author_3919c1c371de7de5a8aec7bdf9e99be3');
+			if (username_check) var clicky_custom_session = {username: username_check};
+		</script>
+		<script type="text/javascript">
+				var clicky = { log : function () { return true;	}, goal: function () { return true;	} };
+		var clicky_site_id = 100775605;
+		(function () {
+			var s = document.createElement('script');s.type = 'text/javascript';s.async = true;s.src = '//static.getclicky.com/js';
+			( document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0] ).appendChild(s);
+		})();
+	</script>
+	<noscript><p><img alt="Clicky" width="1" height="1" src="//in.getclicky.com/100775605ns.gif" /></p></noscript>
+	<script type="text/javascript">function AI_responsive_widget() {
+                        jQuery('iframe.StefanoAI-youtube-responsive').each(function() {
+                            var width = jQuery(this).parent().innerWidth();
+                            var maxwidth = jQuery(this).css('max-width').replace(/px/, '');
+                            var pl = parseInt(jQuery(this).parent().css('padding-left').replace(/px/, ''));
+                            var pr = parseInt(jQuery(this).parent().css('padding-right').replace(/px/, ''));
+                            width = width - pl - pr;
+                            if (maxwidth < width) {
+                                width = maxwidth;
+                            }
+                            jQuery(this).css('width', width + "px");
+                            jQuery(this).css('height', width / (16 / 9) + "px");
+                        });
+                    }
+                    if (typeof jQuery !== 'undefined') {
+                        jQuery(document).ready(function() {
+                            AI_responsive_widget();
+                        });
+                        jQuery(window).resize(function() {
+                            AI_responsive_widget();
+                        });
+                    }</script><p align="center"><a href="http://www.abc.org.za/" target="_blank"><img src="wp-content/uploads/member-abc.jpg" /></p></a>
+<script type="text/javascript">  var _gaq = _gaq || [];  _gaq.push(['_setAccount', 'UA-55210547-1']);  _gaq.push(['_trackPageview']);  (function() {	var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;	ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';	var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);  })();</script>
+</body>
+</html>
+<!-- Performance optimized by W3 Total Cache. Learn more: http://www.w3-edge.com/wordpress-plugins/
+
+Object Caching 5351/5366 objects using disk
+
+ Served from: www.daily-mail.co.zm @ 2015-01-05 16:02:06 by W3 Total Cache -->
+"""
+        
+        doc = Document()
+        doc.url = 'https://www.daily-mail.co.zm/?p=16082'
+        self.crawler.extract(doc, html)
+
+        self.assertEqual(doc.title, 'RB weighs in for Lungu')
+        self.assertIsNone(doc.summary)
+        self.assertEqual(doc.published_at.strftime('%d %m %Y'), '05 01 2015')
+        self.assertEqual(doc.author, Author.unknown())
+        self.assertEqual(doc.medium.name, 'Zambia Daily Mail')
+
+        print repr(doc.text)
+
+        self.assertEqual(doc.text, u'DARLINGTON MWENDABAI & HOPE NYOKA, Chipata\nFORMER President Rupiah Banda has endorsed Patriotic Front presidential candidate Edgar Lungu for the January 20 presidential election.\nMr Banda described this year as a dawn of new hope where all Zambians should turn up in numbers to vote for Mr Lungu for continuity and stability.\nThe former head of state, who was in a jovial mood, delivered his endorsement speech dubbed \u201cPeace and Unity will deliver Zambia\u201d in Chipata yesterday.\nHe said the country needs stability and continuity, and not a revolution, hence Zambians should elect a leader who has shown the qualities of humility, commitment and unity.\n\u201cFor these reasons, I am appearing before you today to announce my endorsement of Minister of Justice and Defence Edgar Lungu of the PF for president on January 20, 2015,\u201d he said.\nMr Banda said after meeting Mr Lungu to understand his intentions and identify the problems which must be addressed, that he is confident that the PF candidate has qualities the Zambian people need.\nHe said unlike the United Party for National Development (UPND) which is only interested in buying MMD members and asking his son Andrew to insult him on political podiums, Mr Lungu has shown interest to allow peace and unity to prevail in the county.\n\u201cAfter much deliberation, I came to the conclusion that I could not support any candidate that would seek to eliminate or weaken the MMD.  I count many friends among those in the UPND, however, I cannot agree with the approach of poaching individual MMD members to defect to their camp instead of negotiating openly with the whole party,\u201d Mr Banda said.\nHe accused the UPND of trying to drag the country to a one party fiasco and not promoting peace and unity among Zambians.\nMr Banda said he had had many meetings with UPND leaders where they suggested that he should deputise Hakainde Hichilema who had no experience of being republican president.\nMr Banda  urged Mr Lungu if elected to ensure  the costs of basic goods such as mealie meal, fertilizer, fuel and cement are lowered and  the economy is stabilised while a genuine people driven constitution is delivered  and Zambians united.\nHe said the past year had its own challenges where the country witnessed delayed payments for farmers and social divisions but this year, Zambians should vote for Mr Lungu to guide the country for the next 18 months.\nIn accepting the endorsement, Mr Lungu said he was humbled by the gesture and promised the former head of state and Zambians that he will not let them down.\n\u201cOur Late President Sata taught us to embrace all Zambians and we as PF, we do just that. We will work with the MMD who are supporting us and we are going to win the forth coming presidential election because of your support,\u201d he said.\nMr Lungu said he will not sign any social contract with the clergy or anybody but Zambians adding that he delivered as Minister of Justice a final draft constitution without any signed social contracts.\nHe said it does not pay in a multiparty democracy to swallow opposition parties and the PF will instead co-exist with other political parties.\nMr Lungu said the media enjoy press freedom and if elected, he will study the Access to Information Bill.\nEarlier, PF national chairperson Inonge Wina thanked Mr Banda and MMD National Executive Committee members for endorsing Mr Lungu, a gesture she described as rare from a former head of state.\nFormer MMD national secretary Muhabi Lungu said all party structures will support Mr Lungu.')
+        
