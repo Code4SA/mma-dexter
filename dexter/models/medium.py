@@ -131,6 +131,10 @@ Weekend Argus|print - weekly|||za
 Weekend Dispatch|print - weekly|||za
 Weekend Post|print - daily|weekendpost.co.za||za
 Namibian|online|namibian.com.na||na
+Daily Nation|online|zambiadailynation.com||zm
+Lusaka Times|online|lusakatimes.com||zm
+Zambian Watchdog|online|zambianwatchdog.com||zm
+Zambia Daily Mail|online|daily-mail.co.zm||zm
             """
 
         mediums = []
