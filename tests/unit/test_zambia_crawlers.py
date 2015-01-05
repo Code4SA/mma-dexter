@@ -1400,3 +1400,874 @@ jQuery(document).ready( function($) {
 
         self.assertEqual(doc.text, u'The United Party for National Development (UPND) has intensified its Presidential campaigns and its candidate, Hakainde Hichilema, is now in the Western Province for a series of rallies ahead of the elections slated for January 20, 2015.\n\nMr Hichilema arrived at Mongu Airport in Mongu district yesterday around 17:30 hours and proceeded to Mulambwa Basic School ground where he held a mammoth public rally.\n\nMr Hichilema promised the people of Western province to reduce the price of fertilizer for them to grow more maize resulting into reduced mealie meal prices once voted into power.\n\nHe also promised to improve the health, education, and livestock sectors among others and create decent and permanent jobs for the citizenry.\n\nThe UPND leader added that he would strike a balance when forming his cabinet rather than having it dominated by people from specific regions and thanked his entourage from various political parties for deciding to re-unite and campaign for him.\n\nMr Hichilema was accompanied by Alliance for Democracy and Development (ADD) President, Charles Milupi with his Luena Member of Parliament (MP), Getrude Imenda, Movement for Multi-party Democracy (MMD) MP for Nalikwanda, Geoffrey Lungwangwa, for Liuwa, Situmbeko Musokotwane, and Likando Mufalali, for Senanga.\n\nOthers were former MMD National Chairman and Mulobezi MP, Michael Mabenga, former Western province Minister and Mongu MMD MP, Joseph Mulyata, and former Communications and Transport Minister and MMD Senanga MP, William Harringtone.\n\nAt the same rally Kenneth Namutulo, who was Patriotic Front Provincial Chairman and his Vice Treasurer, Sitali Simushi, defected from the ruling party, the PF, to the UPND.\n\nMeanwhile, activities in Mongu Town came to a standstill yesterday afternoon as thousands of UPND supporters flocked to Mulambwa Primary School ground for UPND President Hakainde Hichilema\u2019s rally that took place late in the evening.\n\nRelated News:')
         
+
+class TestZambianWatchdogCrawler(unittest.TestCase):
+    def setUp(self):
+        self.crawler = ZambianWatchdogCrawler()
+
+        self.db = db
+        self.db.drop_all()
+        self.db.create_all()
+        seed_db(db)
+
+    def tearDown(self):
+        self.db.session.remove()
+        self.db.drop_all()
+
+    def test_extract(self):
+        html = """
+
+<!DOCTYPE html>
+<!--[if IE 7]>
+<html class="ie ie7" lang="en-US"
+ xmlns:og="http://opengraphprotocol.org/schema/"
+ xmlns:fb="http://www.facebook.com/2008/fbml">
+<![endif]-->
+<!--[if IE 8]>
+<html class="ie ie8" lang="en-US"
+ xmlns:og="http://opengraphprotocol.org/schema/"
+ xmlns:fb="http://www.facebook.com/2008/fbml">
+<![endif]-->
+<!--[if !(IE 7) | !(IE 8) ]><!-->
+<html lang="en-US" xmlns:og="http://opengraphprotocol.org/schema/" xmlns:fb="http://www.facebook.com/2008/fbml">
+<!--<![endif]-->
+<head><link rel="dns-prefetch" href="//ajax.googleapis.com"><link rel="dns-prefetch" href="//adscaspion.appspot.com"><link rel="dns-prefetch" href="//www.facebook.com"><link rel="dns-prefetch" href="//connect.facebook.net"><link rel="dns-prefetch" href="//platform.twitter.com"><link rel="dns-prefetch" href="//apis.google.com"><link rel="dns-prefetch" href="//s0.wp.com"><link rel="dns-prefetch" href="//stats.wp.com"><link rel="stylesheet" href="http://www.zambianwatchdog.com/wp-content/plugins/adsight/articlead.css"/>
+<script type="text/javascript">var links = document.getElementsByTagName('link');for (var i = 0; i < links.length; ++i) {  if (links[i].getAttribute('rel') == 'stylesheet') {    links[i].disabled=true;  }}</script><script type='text/javascript'>window.mod_pagespeed_prefetch_start = Number(new Date());window.mod_pagespeed_num_resources_prefetched = 1</script>
+
+
+
+
+	<meta charset="UTF-8"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+	<title>UPND warns PF against attempts to rig polls &raquo; Zambian Watchdog</title>
+	<script type='text/javascript'>window.mod_pagespeed_start = Number(new Date());</script><link rel="profile" href="http://gmpg.org/xfn/11">
+	<link rel="pingback" href="http://www.zambianwatchdog.com/xmlrpc.php">
+	<link rel="alternate" type="application/rss+xml" title="RSS 2.0" href="http://www.zambianwatchdog.com/feed/"/>	
+	<link rel="pingback" href="http://www.zambianwatchdog.com/xmlrpc.php"/>	
+	
+
+
+
+
+
+	<link rel="alternate" type="application/rss+xml" title="Zambian Watchdog &raquo; Feed" href="http://www.zambianwatchdog.com/feed/"/>
+<link rel="alternate" type="application/rss+xml" title="Zambian Watchdog &raquo; Comments Feed" href="http://www.zambianwatchdog.com/comments/feed/"/>
+<link rel="alternate" type="application/rss+xml" title="Zambian Watchdog &raquo; UPND warns PF against attempts to rig polls Comments Feed" href="http://www.zambianwatchdog.com/upnd-warns-pf-against-attempts-to-rig-polls/feed/"/>
+<link rel='stylesheet' id='fb-like-responsive-css' href='http://www.zambianwatchdog.com/wp-content/plugins/facebook-like-box-responsive/facebook-like-responsive.css?ver=4.0.1' type='text/css' media='all'/>
+<link rel='stylesheet' id='tfg_style-css' href='http://www.zambianwatchdog.com/wp-content/plugins/twitter-facebook-google-plusone-share/tfg_style.css?ver=4.0.1' type='text/css' media='all'/>
+<link rel='stylesheet' id='wp-polls-css' href='http://www.zambianwatchdog.com/wp-content/plugins/wp-polls/polls-css.css?ver=2.67' type='text/css' media='all'/>
+<link rel='stylesheet' id='wp-post-navigation-style-css' href='http://www.zambianwatchdog.com/wp-content/plugins/wp-post-navigation/style.css?ver=4.0.1' type='text/css' media='all'/>
+<link rel='stylesheet' id='bootstrap-css' href='http://www.zambianwatchdog.com/wp-content/themes/sharp/framework/bootstrap/css/bootstrap.min.css?ver=4.0.1' type='text/css' media='all'/>
+<link rel='stylesheet' id='font-awesome-css' href='http://www.zambianwatchdog.com/wp-content/themes/sharp/framework/font-awesome/css/font-awesome.min.css?ver=4.0.1' type='text/css' media='all'/>
+<link rel='stylesheet' id='gabfire-style-css' href='http://www.zambianwatchdog.com/wp-content/themes/sharp-child/style.css?ver=4.0.1' type='text/css' media='all'/>
+<link rel='stylesheet' id='jetpack_css-css' href='http://www.zambianwatchdog.com/wp-content/plugins/jetpack/css/jetpack.css?ver=3.2' type='text/css' media='all'/>
+<script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js?ver=4.0.1'></script>
+<script type='text/javascript' src='http://www.zambianwatchdog.com/wp-content/plugins/jetpack/modules/related-posts/related-posts.js?ver=20140611'></script>
+<script type='text/javascript' src='http://www.zambianwatchdog.com/wp-content/themes/sharp/inc/js/jquery.cycle2.min.js?ver=4.0.1'></script>
+<script type='text/javascript' src='http://www.zambianwatchdog.com/wp-content/themes/sharp/inc/js/jquery.easing.min.js?ver=4.0.1'></script>
+<script type='text/javascript' src='http://www.zambianwatchdog.com/wp-content/themes/sharp/framework/bootstrap/js/bootstrap.min.js?ver=4.0.1'></script>
+<script type='text/javascript' src='http://www.zambianwatchdog.com/wp-content/themes/sharp/inc/js/flowplayer/flowplayer.min.js?ver=4.0.1'></script>
+<script type='text/javascript' src='http://www.zambianwatchdog.com/wp-content/themes/sharp/inc/js/jquery.tools.min.js?ver=4.0.1'></script>
+<script type='text/javascript' src='http://www.zambianwatchdog.com/wp-content/themes/sharp/inc/js/responsive-menu.js?ver=4.0.1'></script>
+<script type='text/javascript' src='http://www.zambianwatchdog.com/wp-content/themes/sharp/inc/js/slides.min.jquery.js?ver=4.0.1'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://www.zambianwatchdog.com/xmlrpc.php?rsd"/>
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://www.zambianwatchdog.com/wp-includes/wlwmanifest.xml"/> 
+<link rel='prev' title='PF members feel betrayed by Lungu&#8217;s auctioning of the party to RB' href='http://www.zambianwatchdog.com/pf-members-feel-betrayed-by-lungus-auctioning-of-the-party-to-rb/'/>
+<link rel='next' title='GBM says campaigns going well' href='http://www.zambianwatchdog.com/gbm-says-campains-going-well/'/>
+<meta name="generator" content="WordPress 4.0.1"/>
+<link rel='canonical' href='http://www.zambianwatchdog.com/upnd-warns-pf-against-attempts-to-rig-polls/'/>
+<link rel='shortlink' href='http://wp.me/p3hKsL-kFh'/>
+<script type="text/javascript" src="http://www.zambianwatchdog.com/wp-content/plugins/audio-player/assets/audio-player.js?ver=2.0.4.6"></script>
+<script type="text/javascript">AudioPlayer.setup("http://www.zambianwatchdog.com/wp-content/plugins/audio-player/assets/player.swf?ver=2.0.4.6", {width:"290",animation:"yes",encode:"yes",initialvolume:"60",remaining:"no",noinfo:"no",buffer:"5",checkpolicy:"no",rtl:"no",bg:"6299c5",text:"333333",leftbg:"CCCCCC",lefticon:"333333",volslider:"666666",voltrack:"FFFFFF",rightbg:"B4B4B4",rightbghover:"999999",righticon:"333333",righticonhover:"FFFFFF",track:"FFFFFF",loader:"009900",border:"CCCCCC",tracker:"DDDDDD",skip:"666666",pagebg:"FFFFFF",transparentpagebg:"yes"});</script>
+<meta property="og:site_name" content="Zambian Watchdog"/>
+<meta property="og:title" content="UPND warns PF against attempts to rig polls"/>
+<meta property="og:url" content="http://www.zambianwatchdog.com/upnd-warns-pf-against-attempts-to-rig-polls/"/>
+<meta property="og:description" content="PF members feel betrayed by Lungu's auctioning of the party to RB GBM says campaigns going well Related"/>
+<meta property="og:type" content="article"/>
+<style type="text/css">
+.wp-polls .pollbar {
+	margin: 1px;
+	font-size: 6px;
+	line-height: 8px;
+	height: 8px;
+	background-image: url('http://www.zambianwatchdog.com/wp-content/plugins/wp-polls/images/default/pollbg.gif');
+	border: 1px solid #c8c8c8;
+}
+</style>
+<style type="text/css">
+					.wp-post-navigation a{
+					text-decoration: none;
+font:normal 12px arial;
+					}
+				 </style><style type='text/css'>img#wpstats{display:none}</style><link rel="shortcut icon" href="/wp-content/uploads/favicon.ico"/>
+		
+			<script type='text/javascript'>
+			<!--	
+			(function($) {
+				$.noConflict();
+				$(document).ready(function() {
+					$(".children").parent("li").addClass("has-child-menu");
+					$(".sub-menu").parent("li").addClass("has-child-menu");
+					$(".drop").parent("li").addClass("has-child-menu");
+					
+					$('.fadeimage').hover(
+						function() {$(this).stop().animate({ opacity: 0.5 }, 800);},
+						function() {$(this).stop().animate({ opacity: 1.0 }, 800);}
+					);
+					
+					$('.mastheadnav li ul').hide().removeClass('fallback');
+					$('.mastheadnav > li').hover(
+						function () {
+							$('ul', this).stop().slideDown(250);
+						},
+						function () {
+							$('ul', this).stop().slideUp(250);
+						}
+					);			
+					
+					$('.mainnav li ul').hide().removeClass('fallback');
+					$('.mainnav > li').hover(
+						function () {
+							$('ul', this).stop().slideDown(250);
+						},
+						function () {
+							$('ul', this).stop().slideUp(250);
+						}
+					);
+
+					$('.secondnav li ul').hide().removeClass('fallback');
+					$('.secondnav > li').hover(
+						function () {
+							$('ul', this).stop().slideDown(250);
+						},
+						function () {
+							$('ul', this).stop().slideUp(250);
+						}
+					);	
+					
+					$('#tabs-left').tab();
+					$('#tabs > li > a').hover( function(){$(this).tab('show');});
+				
+					$('a[href=#top]').click(function(){	$('html, body').animate({scrollTop:0}, 'slow');	return false; });		
+					// Responsive Menu (TinyNav)
+					$(".responsive_menu").tinyNav({
+						active: 'current_page_item', // Set the "active" class for default menu
+						label: ''
+					});
+					$(".tinynav").selectbox();
+					$("ul.tabs").tabs("div.panes > div");
+					$("ul.sc_tabs").tabs("div.sc_tabs-content > div");
+					$('.tooltip-link').tooltip({ placement: 'top'});
+
+					//portfolio - show link
+					$('.gallery-background').hover(
+						function () {
+							$(this).animate({opacity:'1'});
+						},
+						function () {
+							$(this).animate({opacity:'0'});
+						}
+					);
+					
+				});
+			})(jQuery);
+			// -->
+			</script>
+			
+				<style type="text/css">.recentcomments a{display:inline !important;padding:0 !important;margin:0 !important;}</style>
+
+<!-- Jetpack Open Graph Tags -->
+<meta property="og:type" content="article"/>
+<meta property="og:title" content="UPND warns PF against attempts to rig polls"/>
+<meta property="og:url" content="http://www.zambianwatchdog.com/upnd-warns-pf-against-attempts-to-rig-polls/"/>
+<meta property="og:description" content="The United Party for National Development (UPND) have warned the PF that they are aware of attempts to rig the elections but have warned that they will soon be caught one by one. And the party has ..."/>
+<meta property="article:published_time" content="2015-01-05T12:13:22+00:00"/>
+<meta property="article:modified_time" content="2015-01-05T12:21:34+00:00"/>
+<meta property="article:author" content="http://www.zambianwatchdog.com/author/jabulani/"/>
+<meta property="og:site_name" content="Zambian Watchdog"/>
+<meta property="og:image" content="https://s0.wp.com/i/blank.jpg"/>
+<meta name="twitter:site" content="@jetpack"/>
+<meta name="twitter:card" content="summary"/>
+
+	
+
+
+<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+<!--[if lt IE 9]>
+
+	<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	<script src="http://www.zambianwatchdog.com/wp-content/themes/sharp/framework/bootstrap/assets/js/respond.min.js"></script>
+<![endif]-->
+
+
+
+
+
+
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-8423487-1', 'auto');
+  ga('require', 'displayfeatures');
+  ga('send', 'pageview');
+
+</script>
+<!-- Start taboola -->
+<script type="text/javascript">
+  window._taboola = window._taboola || [];
+  _taboola.push({article:'auto'});
+  !function (e, f, u) {
+    e.async = 1;
+    e.src = u;
+    f.parentNode.insertBefore(e, f);
+  }(document.createElement('script'),
+  document.getElementsByTagName('script')[0],
+  'https://cdn.taboola.com/libtrc/diversityad-zambianwatchdog/loader.js');
+</script>
+
+
+
+
+
+
+<script type='text/javascript'>
+var googletag = googletag || {};
+googletag.cmd = googletag.cmd || [];
+(function() {
+var gads = document.createElement('script');
+gads.async = true;
+gads.type = 'text/javascript';
+var useSSL = 'https:' == document.location.protocol;
+gads.src = (useSSL ? 'https:' : 'http:') + 
+'//www.googletagservices.com/tag/js/gpt.js';
+var node = document.getElementsByTagName('script')[0];
+node.parentNode.insertBefore(gads, node);
+})();
+</script>
+
+
+
+<script type='text/javascript'>
+
+
+
+var gptAdSlots = [];
+
+
+googletag.cmd.push(function() {
+
+	var mappingHeaderAd = googletag.sizeMapping().
+	
+	addSize([200, 200], [320, 50]).
+	addSize([539, 200], [468, 60]).
+	addSize([767, 200], [728, 90]).
+	addSize([992, 200], [[728, 90], [970, 90]]). 
+	addSize([1201, 200],[728, 90]).build();
+
+
+	var mappingRightHandFSatf = googletag.sizeMapping().
+	
+	addSize([0, 0], [88, 88]).
+	addSize([992, 200],[300, 250]).
+	addSize([1201, 200], [[336, 28], [300, 250]]).build(); 
+
+
+	var mappingRightHandFSbtf = googletag.sizeMapping().
+	
+	addSize([200, 50], [300, 250]).
+	addSize([539, 200],[[336, 280], [300, 250]]).
+	addSize([992, 200], [88, 88]).build(); 
+
+
+	var mappingHompageBottomLeft = googletag.sizeMapping().
+	
+	addSize([200, 50], [300, 250]).
+	addSize([539, 200],[[336, 280], [300, 250]]).
+	addSize([767, 200], [728, 90]).build(); 
+
+
+	var mappingSidebar2 = googletag.sizeMapping().
+	
+	addSize([0, 0],[88, 88]).
+	addSize([992, 200], [300, 600]).build(); 
+
+
+	var mappingBelowFeaturedSlider = googletag.sizeMapping().
+	addSize([200, 200],[[300, 250],[336, 280]]).
+	addSize([539, 200],[[300, 250],[336, 280]]).
+	addSize([767, 200], [336, 280]).build(); 
+
+
+	var mappingCategoryInLoop = googletag.sizeMapping().
+	addSize([200, 200],[[336, 280],[300, 250]]).
+	addSize([767, 200],[728, 90]).
+	addSize([992, 200],[[336, 280],[300, 250]]).
+	addSize([1201, 200], [728, 90]).build(); 
+	
+
+	var mappingArticleThirdP = googletag.sizeMapping().
+	addSize([50, 50], [[336, 280], [300, 250]]).build(); 
+
+
+
+
+
+/*ADS START*/	
+
+
+	gptAdSlots[0] = googletag.defineSlot('/6379308/da-zwd-a', [728, 90], 'zwd001').addService(googletag.pubads())
+		.defineSizeMapping(mappingHeaderAd)
+		.setTargeting("url", "zambianwatchdog.com")
+		.setTargeting("fold", "atf")
+		.setTargeting("lang", "english")
+		.setTargeting("page", "ros");
+
+	gptAdSlots[1] = googletag.defineSlot('/6379308/da-zwd-a', [336, 280], 'zwd002').addService(googletag.pubads())
+		.defineSizeMapping(mappingRightHandFSatf)
+		.setTargeting("url", "zambianwatchdog.com")
+		.setTargeting("fold", "atf")
+		.setTargeting("lang", "english")
+		.setTargeting("page", "ros");
+
+
+	gptAdSlots[4] = googletag.defineSlot('/6379308/da-zwd-b', [300, 600], 'zwd003').addService(googletag.pubads())
+		.defineSizeMapping(mappingSidebar2)
+		.setTargeting("url", "zambianwatchdog.com")
+		.setTargeting("fold", "btf")
+		.setTargeting("lang", "english")
+		.setTargeting("page", "ros");
+
+
+	gptAdSlots[2] = googletag.defineSlot('/6379308/da-zwd-b', [300, 250], 'zwd004').addService(googletag.pubads())
+		.defineSizeMapping(mappingRightHandFSbtf)
+		.setTargeting("url", "zambianwatchdog.com")
+		.setTargeting("fold", "btf")
+		.setTargeting("lang", "english")
+		.setTargeting("page", "ros");
+
+
+	gptAdSlots[5] = googletag.defineSlot('/6379308/da-zwd-b', [[336, 280],[300, 250]], 'zwd005').addService(googletag.pubads())
+		.defineSizeMapping(mappingBelowFeaturedSlider)
+		.setTargeting("url", "zambianwatchdog.com")
+		.setTargeting("fold", "btf")
+		.setTargeting("lang", "english")
+		.setTargeting("page", "home");
+
+
+	gptAdSlots[3] = googletag.defineSlot('/6379308/da-zwd-b', [728, 90], 'zwd006').addService(googletag.pubads())
+		.defineSizeMapping(mappingHompageBottomLeft)
+		.setTargeting("url", "zambianwatchdog.com")
+		.setTargeting("fold", "btf")
+		.setTargeting("lang", "english")
+		.setTargeting("page", "ros");
+
+
+	gptAdSlots[7] =googletag.defineSlot('/6379308/da-zwd-b', [336, 280], 'zwd007').addService(googletag.pubads())
+	.defineSizeMapping(mappingArticleThirdP)
+	.setTargeting("url", "zambianwatchdog.com")
+	.setTargeting("fold", "btf")
+	.setTargeting("lang", "english")
+	.setTargeting("page", "article");
+
+
+gptAdSlots[6] = googletag.defineSlot('/6379308/da-zwd-b', [336, 280], 'zwd008').addService(googletag.pubads())
+	.defineSizeMapping(mappingCategoryInLoop)
+	.setTargeting("url", "zambianwatchdog.com")
+	.setTargeting("fold", "btf")
+	.setTargeting("lang", "english")
+	.setTargeting("page", "section");
+
+
+
+
+
+/*ADS END*/
+
+googletag.pubads().enableSingleRequest();
+googletag.enableServices();
+
+
+
+/*
+window.onresize = adResize;
+
+function adResize(){
+	googletag.pubads().refresh( [gptAdSlots[0], gptAdSlots[1], gptAdSlots[2], gptAdSlots[3], gptAdSlots[4], gptAdSlots[5], gptAdSlots[6], gptAdSlots[7]]);
+};
+	
+*/
+
+
+	
+}); 
+
+
+
+
+</script>
+
+
+
+
+
+
+
+
+
+<link rel='stylesheet' href='/wp-content/uploads/custom-style.css' type='text/css' media='all'/>
+
+<link rel="stylesheet" type="text/css" href="/wp-content/plugins/adsight/articlead.css"></head>
+
+
+<body class="single single-post postid-79439 single-format-standard"><noscript><meta HTTP-EQUIV="refresh" content="0;url='http://www.zambianwatchdog.com/upnd-warns-pf-against-attempts-to-rig-polls/?PageSpeed=noscript'" /><style><!--table,div,span,font,p{display:none} --></style><div style="display:block">Please click <a href="http://www.zambianwatchdog.com/upnd-warns-pf-against-attempts-to-rig-polls/?PageSpeed=noscript">here</a> if you are not redirected within a few seconds.</div></noscript>
+<div class="container">
+<script type="text/javascript"> Caspion = { 'cfg': { 'id': 'zambianwatchdogcom', 'url': '//adscaspion.appspot.com/r/' } };</script>
+<script type="text/javascript" src="//adscaspion.appspot.com/cas.js"></script>
+	<header class="row">
+		<div class="col-sm-12 col-md-12 col-lg-4">
+			<div class="sitelogo" style="padding:15px 0px 10px 0px;">		
+									<h1>
+						<a href="http://www.zambianwatchdog.com/" title="Breaking and investigative news on Zambia">
+							<img src="data:image/png;base64,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" alt="Zambian Watchdog" title="Zambian Watchdog"/>
+						</a>
+					</h1>
+								<div class="clearfix"></div>
+			</div><!-- .logo -->
+		</div>
+		
+		<div class="headerbanner col-sm-12 col-md-12 col-lg-8 pull-right hidden-xs" style="padding-top:0px"><div class="innerad"><div id='zwd001'>
+<script type='text/javascript'>
+googletag.cmd.push(function() { googletag.display('zwd001'); });
+</script>
+</div></div></div>	</header>
+	
+	<section class="row site-nav">
+		<div class="col-md-12">
+			<nav class="main-navigation">
+				<ul class="mainnav responsive_menu">
+					<li id="menu-item-29731" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-29731"><a href="https://www.zambianwatchdog.com/">Home</a></li>
+<li id="menu-item-29739" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-29739"><a href="http://www.zambianwatchdog.com/category/main/">Main News</a></li>
+<li id="menu-item-29733" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-29733"><a href="http://www.zambianwatchdog.com/category/editors-choice/">Editor&#8217;s Choice</a></li>
+<li id="menu-item-29732" class="menu-item menu-item-type-taxonomy menu-item-object-category current-post-ancestor current-menu-parent current-post-parent menu-item-29732"><a href="http://www.zambianwatchdog.com/category/latestnews/">Latest</a></li>
+<li id="menu-item-29734" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-29734"><a href="http://www.zambianwatchdog.com/category/more-news/">More News</a></li>
+<li id="menu-item-29738" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-29738"><a href="http://www.zambianwatchdog.com/category/verbatim-statements/">Statements</a></li>
+<li id="menu-item-77176" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-77176"><a href="http://www.zambianwatchdog.com/category/football/">Football</a></li>
+				</ul>
+			</nav>
+		</div>
+	</section>		
+		<section class="row">
+		<div class="col-md-12">
+			<div class="post-lead">
+				<p class="post-category"><a href="http://www.zambianwatchdog.com/category/latestnews/" rel="category tag">Latest</a></p>
+				<h1 class="post-title">UPND warns PF against attempts to rig polls</h1>
+				<p class="post-datecomment">
+					January 5, 2015					
+					<span class="commentnr">4 Comments</span>				</p>
+				
+							</div>
+		</div>
+	</section>
+	
+	<section class="row">
+	<div class="col-xs-12 col-md-8">		
+				
+		<article class="post-79439 post type-post status-publish format-standard hentry category-latestnews entry last_archivepost">		
+				<div class="bottomcontainerBox" style="background-color:#FFFFFF;">
+			<div style="float:left; width:85px;padding-right:10px; margin:4px 4px 4px 4px;height:30px;">
+			<iframe src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.zambianwatchdog.com%2Fupnd-warns-pf-against-attempts-to-rig-polls%2F&amp;layout=button_count&amp;show_faces=false&amp;width=85&amp;action=like&amp;font=verdana&amp;colorscheme=light&amp;height=21" scrolling="no" frameborder="0" allowTransparency="true" style="border:none; overflow:hidden; width:85px; height:21px;"></iframe></div>
+			<div style="float:left; width:85px;padding-right:10px; margin:4px 4px 4px 4px;height:30px;">
+			<g:plusone size="medium" href="http://www.zambianwatchdog.com/upnd-warns-pf-against-attempts-to-rig-polls/"></g:plusone>
+			</div>
+			<div style="float:left; width:85px;padding-right:10px; margin:4px 4px 4px 4px;height:30px;">
+			<a href="http://twitter.com/share" class="twitter-share-button" data-url="http://www.zambianwatchdog.com/upnd-warns-pf-against-attempts-to-rig-polls/" data-text="UPND warns PF against attempts to rig polls" data-count="horizontal"></a>
+			</div>			
+			</div><div style="clear:both"></div><div style="padding-bottom:4px;"></div>
+<!-- Facebook Like Button v1.9.6 BEGIN [http://blog.bottomlessinc.com] -->
+<iframe src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.zambianwatchdog.com%2Fupnd-warns-pf-against-attempts-to-rig-polls%2F&amp;layout=standard&amp;show_faces=false&amp;width=450&amp;action=like&amp;colorscheme=light" scrolling="no" frameborder="0" allowTransparency="true" style="border:none; overflow:hidden; width:450px; height: 30px; align: left; margin: 2px 0px 2px 0px"></iframe>
+<!-- Facebook Like Button END -->
+<p>The United Party for National Development (UPND) have warned the PF that they are aware of attempts to rig the elections but have warned that they will soon be caught one by one.<br/>
+And the party has advised the Electoral Commission of Zambia (ECZ) to find out whether they have been infiltrated by other elements instead of accusing the party of making alarming statements.<br/>
+UPND Adviser to the president Douglas Siakalima said when he featured on UNZA Radio’s Lusaka Star programme Monday morning that his party was on top of things and was closely monitoring PF attempts to fidget with the election results.<br/>
+Siakalima warned that those who are attempting to tamper with the election results will soon be ashamed when the UPND starts catching them one by one.<br/>
+‘There are various players in this election but we shall catch them one by one because we know exactly what they are trying to do, we will get them before elections and even on the actual day of voting and they will be ashamed,’ Siakalima warned.<br/>
+And Siakalima has advised the Electoral Commission of Zambia (ECZ) to find out whether they have been infiltrated by other elements instead of accusing the party of making alarming statements.<br/>
+He said the ECZ should make sure they avoid vote rigging in order to avoid the chaos that follows a rigged election.<br/>
+He said tampering with results caused problems in Zimbabwe, Kenya and Ivory Coast because most African leaders did not want to lose power adding that the ECZ’s biggest obligation was to provide fair elections to avoid the ugly face of chaos.<br/>
+Siakalima was however quick to mention that the UPND has great respect for the Electoral Commission of Zambia (ECZ) Chairperson Judge Ireen Mambilima and stressed that she may not be aware of what some people are trying to do.<br/>
+Siakalima said even the ECZ itself may not be directly involved in the alleged manoeuvres to rig the elections.<br/>
+Siakalima said late President Michael Sata continuously talked about rigging prior to the 2011 elections and demanded for Parallel Voter Tabulation (PVT) because they (PF) were on top of things and no one accused them of alarming the nation.</p>
+
+<!-- Facebook Like Button v1.9.6 BEGIN [http://blog.bottomlessinc.com] -->
+<iframe src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.zambianwatchdog.com%2Fupnd-warns-pf-against-attempts-to-rig-polls%2F&amp;layout=standard&amp;show_faces=false&amp;width=450&amp;action=like&amp;colorscheme=light" scrolling="no" frameborder="0" allowTransparency="true" style="border:none; overflow:hidden; width:450px; height: 30px; align: left; margin: 2px 0px 2px 0px"></iframe>
+<!-- Facebook Like Button END -->
+<div class="wp-post-navigation">
+									   <div class="wp-post-navigation-pre">
+									   <a href="http://www.zambianwatchdog.com/pf-members-feel-betrayed-by-lungus-auctioning-of-the-party-to-rb/">PF members feel betrayed by Lungu's auctioning of the party to RB</a>
+									   </div>
+									   <div class="wp-post-navigation-next">
+									   <a href="http://www.zambianwatchdog.com/gbm-says-campains-going-well/">GBM says campaigns going well</a>
+									   </div>
+									</div>
+<div id='jp-relatedposts' class='jp-relatedposts'>
+	<h3 class="jp-relatedposts-headline"><em>Related</em></h3>
+</div><section id="text-10" class="widget widget_text"><div class="widgetinner">			<div class="textwidget"><div id="taboola-below-article-thumbnails"></div>
+<script type="text/javascript">
+  window._taboola = window._taboola || [];
+  _taboola.push({
+    mode: 'thumbnails-a',
+    container: 'taboola-below-article-thumbnails',
+    placement: 'Below Article Thumbnails',
+    target_type: 'mix'
+  });
+</script></div>
+		</div></section>
+				
+				
+<div id="comments">
+	
+			<h3 id="comments-title">
+			4 Responses to &#34;<span>UPND warns PF against attempts to rig polls</span>&#34;		</h3>
+
+	
+	<ol class="commentlist">
+					<li class="comment even thread-even depth-1" id="li-comment-1227193">
+
+				<div class="comment-inner" id="comment-1227193">
+				
+					<div class="comment-top">
+						<div class="comment-avatar">
+													</div> 
+						<span class="comment-author">
+							<i class="icon-user"></i> 
+							<cite class="fn"><a href='http://www.missionpress.org' rel='external nofollow' class='url'>Mich</a></cite> 						</span>
+						<span class="comment-date-link">
+							<i class="icon-calendar-empty"></i>&nbsp;January 5, 2015 at 13:44						</span>
+					</div>				
+					
+										
+					<p>Mwasokwa bamambala!!!!!!!</p>
+					
+					<a class='comment-reply-link' href='/upnd-warns-pf-against-attempts-to-rig-polls/?replytocom=1227193#respond' onclick='return addComment.moveForm("comment-1227193", "1227193", "respond", "79439")'>Reply</a>					
+				</div><!-- comment-inner  -->
+
+			</li><!-- #comment-## -->
+			<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-1227188">
+
+				<div class="comment-inner" id="comment-1227188">
+				
+					<div class="comment-top">
+						<div class="comment-avatar">
+													</div> 
+						<span class="comment-author">
+							<i class="icon-user"></i> 
+							<cite class="fn">VAMPIRO</cite> 						</span>
+						<span class="comment-date-link">
+							<i class="icon-calendar-empty"></i>&nbsp;January 5, 2015 at 13:33						</span>
+					</div>				
+					
+										
+					<p>Whether pf riggs or not its winning and no amount of violence will be tolerated by minions like upnd.</p>
+					
+					<a class='comment-reply-link' href='/upnd-warns-pf-against-attempts-to-rig-polls/?replytocom=1227188#respond' onclick='return addComment.moveForm("comment-1227188", "1227188", "respond", "79439")'>Reply</a>					
+				</div><!-- comment-inner  -->
+
+			</li><!-- #comment-## -->
+			<li class="comment even thread-even depth-1" id="li-comment-1227185">
+
+				<div class="comment-inner" id="comment-1227185">
+				
+					<div class="comment-top">
+						<div class="comment-avatar">
+													</div> 
+						<span class="comment-author">
+							<i class="icon-user"></i> 
+							<cite class="fn">Red Square</cite> 						</span>
+						<span class="comment-date-link">
+							<i class="icon-calendar-empty"></i>&nbsp;January 5, 2015 at 13:29						</span>
+					</div>				
+					
+										
+					<p>UPND,MY ADVICE IS THAT LET THEM PROVIDE YOU WITH ALL POLLING STATIONS THAT BALLOT BOXES WILL BE PICKED USING ZAF HELICOPTERS.LET THE BALLOT BOXES VERIFIED,SEALED AND  BE ACCOMPANIED BY SADC ELECTIONS OBSERVERS BECAUSE THE LOCAL ONES WILL SCCUMB TO TEMPTATION FROM BOKO HARAM DOLLARS.</p>
+					
+					<a class='comment-reply-link' href='/upnd-warns-pf-against-attempts-to-rig-polls/?replytocom=1227185#respond' onclick='return addComment.moveForm("comment-1227185", "1227185", "respond", "79439")'>Reply</a>					
+				</div><!-- comment-inner  -->
+
+			</li><!-- #comment-## -->
+			<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-1227176">
+
+				<div class="comment-inner" id="comment-1227176">
+				
+					<div class="comment-top">
+						<div class="comment-avatar">
+													</div> 
+						<span class="comment-author">
+							<i class="icon-user"></i> 
+							<cite class="fn">scorpion</cite> 						</span>
+						<span class="comment-date-link">
+							<i class="icon-calendar-empty"></i>&nbsp;January 5, 2015 at 13:18						</span>
+					</div>				
+					
+										
+					<p>FEELING THE HEAT AND ALREADY WORKING ON LOSS STRATEGIES.</p>
+					
+					<a class='comment-reply-link' href='/upnd-warns-pf-against-attempts-to-rig-polls/?replytocom=1227176#respond' onclick='return addComment.moveForm("comment-1227176", "1227176", "respond", "79439")'>Reply</a>					
+				</div><!-- comment-inner  -->
+
+			</li><!-- #comment-## -->
+	</ol>
+
+
+<div class="wp-post-navigation">
+<div class="wp-post-navigation-next wp-post-navigation-next-custom">
+<a href="http://www.zambianwatchdog.com/gbm-says-campains-going-well/" rel="next">GBM says campaigns going well</a> 
+</div>
+<div class="wp-post-navigation-pre wp-post-navigation-pre-custom">
+<a href="http://www.zambianwatchdog.com/pf-members-feel-betrayed-by-lungus-auctioning-of-the-party-to-rb/" rel="prev">PF members feel betrayed by Lungu&#8217;s auctioning of the party to RB</a> 
+</div>
+<div class="clear"></div>
+
+</div>
+
+
+
+	
+	
+	
+		
+	
+									<div id="respond" class="comment-respond">
+				<h3 id="reply-title" class="comment-reply-title">Leave a Reply <small><a rel="nofollow" id="cancel-comment-reply-link" href="/upnd-warns-pf-against-attempts-to-rig-polls/#respond" style="display:none;">Cancel Reply</a></small></h3>
+									<form action="http://www.zambianwatchdog.com/wp-comments-post.php" method="post" id="commentform" class="comment-form">
+																			<p class="comment-notes">Your email address will not be published.</p>							<div class="form-field-wrapper"><div class="input-group"><span class="input-group-addon"><i class="fa fa-user"></i></span><input class="form-control" id="author" name="author" type="text" placeholder="Name" value=""/></div></div>
+<div class="form-field-wrapper mid-input-item"><div class="input-group"><span class="input-group-addon"><i class="fa fa-envelope"></i></span><input class="form-control" id="email" name="email" type="text" placeholder="Email" value=""/></div></div>
+<div class="form-field-wrapper"><div class="input-group"><span class="input-group-addon"><i class="fa fa-home"></i></span><input class="form-control" placeholder="Website" id="url" name="url" type="text" value="" size="30"/></div></div>
+												<p class="comment-form-comment"><textarea id="comment" placeholder="Add your comment" name="comment" cols="45" rows="8" aria-required="true"></textarea></p>												<p class="form-submit">
+							<input name="submit" type="submit" id="submit" value="Post Comment"/>
+							<input type='hidden' name='comment_post_ID' value='79439' id='comment_post_ID'/>
+<input type='hidden' name='comment_parent' id='comment_parent' value='0'/>
+						</p>
+						<p style="display: none;"><input type="hidden" id="akismet_comment_nonce" name="akismet_comment_nonce" value="b9bac4312f"/></p><p class="comment-subscription-form"><input type="checkbox" name="subscribe_comments" id="subscribe_comments" value="subscribe" style="width: auto; -moz-appearance: checkbox; -webkit-appearance: checkbox;"/> <label class="subscribe-label" id="subscribe-label" for="subscribe_comments">Notify me of follow-up comments by email.</label></p><p class="comment-subscription-form"><input type="checkbox" name="subscribe_blog" id="subscribe_blog" value="subscribe" style="width: auto; -moz-appearance: checkbox; -webkit-appearance: checkbox;"/> <label class="subscribe-label" id="subscribe-blog-label" for="subscribe_blog">Notify me of new posts by email.</label></p><p style="display: none;"><input type="hidden" id="ak_js" name="ak_js" value="57"/></p>					</form>
+							</div><!-- #respond -->
+			
+	
+</div><!-- #comments -->		</article>					
+	</div><!-- col-md-8 --><div class="clearfix hidden-lg hidden-md"></div>
+
+			<aside class="col-md-4 sidebar">
+			<section id="facebooklikebox-4" class="widget widget_FacebookLikeBox"><div class="widgetinner"><script src="https://connect.facebook.net/en_US/all.js#xfbml=1"></script><fb:like-box href="https://www.facebook.com/ZambianWatchdog" width="292" show_faces="true" border_color="dddddd" stream="false" header="false"></fb:like-box></div></section>
+		
+			<div class="widget sidebarad">
+	<div id='zwd002'>
+<script type='text/javascript'>
+googletag.cmd.push(function() { googletag.display('zwd002'); });
+</script>
+</div>
+
+
+<div id='zwd004'>
+<script type='text/javascript'>
+googletag.cmd.push(function() { googletag.display('zwd004'); });
+</script>
+</div>
+
+<div class="intrestedInAdvertising">
+<a style="text-align:center" href="/advertise/">Interested in advertising?</a>
+</div></div>			
+			
+			<div class="search-wrapper">
+	<div class="search-inner">
+		<form class="form-wrapper cf" action="http://www.zambianwatchdog.com/">
+			<input type="text" name="s" placeholder="Search in site..." required>
+			<button type="submit">Search</button>
+		</form>
+	</div>
+</div>
+
+<div class="clearfix visible-sm"></div>			
+			<section id="recent-comments-5" class="widget widget_recent_comments"><div class="widgetinner"><h3 class="widgettitle">Latest Comments</h3>
+<ul id="recentcomments"><li class="recentcomments"><span class="comment-author-link">Pastor leyad</span> on <a href="http://www.zambianwatchdog.com/gbm-says-campains-going-well/comment-page-1/#comment-1227211">GBM says campaigns going well</a></li><li class="recentcomments"><span class="comment-author-link"><a href='http://yahoo' rel='external nofollow' class='url'>chick</a></span> on <a href="http://www.zambianwatchdog.com/upnd-should-get-clearance-from-me-before-they-go-back-to-shiwangandu-kampyongo/comment-page-1/#comment-1227210">UPND should get clearance from me before they go back to Shiwang’andu-Kampyongo</a></li><li class="recentcomments"><span class="comment-author-link">Pastor Leyad</span> on <a href="http://www.zambianwatchdog.com/photos-of-the-day-pf-ferrying-villagers-to-boost-numbers-at-nakonde-rally/comment-page-1/#comment-1227208">Photos of the day: PF ferrying villagers to boost numbers at Nakonde rally</a></li><li class="recentcomments"><span class="comment-author-link">Precious</span> on <a href="http://www.zambianwatchdog.com/gbm-says-campains-going-well/comment-page-1/#comment-1227198">GBM says campaigns going well</a></li><li class="recentcomments"><span class="comment-author-link">Sara</span> on <a href="http://www.zambianwatchdog.com/pf-members-feel-betrayed-by-lungus-auctioning-of-the-party-to-rb/comment-page-1/#comment-1227196">PF members feel betrayed by Lungu&#8217;s auctioning of the party to RB</a></li><li class="recentcomments"><span class="comment-author-link">Blago</span> on <a href="http://www.zambianwatchdog.com/pf-hypocrisy-on-muvi-tv-exposed/comment-page-1/#comment-1227194">PF hypocrisy on Muvi TV exposed</a></li><li class="recentcomments"><span class="comment-author-link"><a href='http://www.missionpress.org' rel='external nofollow' class='url'>Mich</a></span> on <a href="http://www.zambianwatchdog.com/upnd-warns-pf-against-attempts-to-rig-polls/comment-page-1/#comment-1227193">UPND warns PF against attempts to rig polls</a></li><li class="recentcomments"><span class="comment-author-link">VAMPIRO</span> on <a href="http://www.zambianwatchdog.com/upnd-warns-pf-against-attempts-to-rig-polls/comment-page-1/#comment-1227188">UPND warns PF against attempts to rig polls</a></li><li class="recentcomments"><span class="comment-author-link">Red Square</span> on <a href="http://www.zambianwatchdog.com/upnd-warns-pf-against-attempts-to-rig-polls/comment-page-1/#comment-1227185">UPND warns PF against attempts to rig polls</a></li><li class="recentcomments"><span class="comment-author-link">shambala</span> on <a href="http://www.zambianwatchdog.com/pf-hypocrisy-on-muvi-tv-exposed/comment-page-1/#comment-1227183">PF hypocrisy on Muvi TV exposed</a></li><li class="recentcomments"><span class="comment-author-link">Mule</span> on <a href="http://www.zambianwatchdog.com/pf-members-feel-betrayed-by-lungus-auctioning-of-the-party-to-rb/comment-page-1/#comment-1227181">PF members feel betrayed by Lungu&#8217;s auctioning of the party to RB</a></li><li class="recentcomments"><span class="comment-author-link"><a href='http://www.missionpress.org' rel='external nofollow' class='url'>Mich</a></span> on <a href="http://www.zambianwatchdog.com/pf-members-feel-betrayed-by-lungus-auctioning-of-the-party-to-rb/comment-page-1/#comment-1227179">PF members feel betrayed by Lungu&#8217;s auctioning of the party to RB</a></li><li class="recentcomments"><span class="comment-author-link">scorpion</span> on <a href="http://www.zambianwatchdog.com/upnd-warns-pf-against-attempts-to-rig-polls/comment-page-1/#comment-1227176">UPND warns PF against attempts to rig polls</a></li><li class="recentcomments"><span class="comment-author-link">Frank</span> on <a href="http://www.zambianwatchdog.com/pf-members-feel-betrayed-by-lungus-auctioning-of-the-party-to-rb/comment-page-1/#comment-1227174">PF members feel betrayed by Lungu&#8217;s auctioning of the party to RB</a></li></ul></div></section>
+<section id="text-8" class="widget widget_text"><div class="widgetinner">			<div class="textwidget"><div id='zwd003'>
+<script type='text/javascript'>
+googletag.cmd.push(function() { googletag.display('zwd003'); });
+</script>
+</div></div>
+		</div></section>
+<section id="text-9" class="widget widget_text"><div class="widgetinner"><h3 class="widgettitle">About Us</h3>
+			<div class="textwidget"><p><strong>Who we are</strong><br/>
+The Zambian Watchdog is owned by private Zambian journalists.</p>
+<p><strong>What we do</strong><br/>
+We publish breaking news on Zambia and about Zambia on a 24 hour basis. We also publish investigative special reports. At times we aggregate news carried by local media.</p>
+<p><strong>Our guiding principle</strong><br/>
+We write news regardless of who or what the subject is. We fear no one. We favour no one.</p>
+</div>
+		</div></section>
+<section id="text-11" class="widget widget_text"><div class="widgetinner"><h3 class="widgettitle">Sponsored Posts</h3>
+			<div class="textwidget"><a href="http://www.zambianwatchdog.com/things-to-know-before-importing-used-cars-from-japan/">Things to know before importing used cars from Japan</a></div>
+		</div></section>
+						
+						
+					</aside>
+</section>	
+		
+		<section class="row bottomads">
+		<div class="col-md-12">
+			<div class="bottomads-innerdiv">
+									<div class="col pull-left">
+						<div id='zwd006'>
+<script type='text/javascript'>
+googletag.cmd.push(function() { googletag.display('zwd006'); });
+</script>
+</div>					</div>
+								
+									<div class="col pull-right">
+						<div id="HPBottom">
+</div>					</div>
+							</div>
+		</div>
+	</section>	
+		
+	<section class="row footer-nav hidden-xs">
+		<div class="col-md-12">	
+			<div class="footernav-innerdiv">
+			
+								
+				<nav>		
+									</nav>
+				<div class="clearfix"></div>
+			</div>
+		</div>
+	</section>
+	
+	<footer>
+		<div class="row">
+			<div class="col-xs-12 col-sm-7 col-md-4">
+							</div>
+			
+			<div class="col-xs-12 col-sm-5 col-md-3">
+							</div>
+			
+			<div class="clearfix visible-sm"></div>
+			
+			<div class="col-xs-12 col-sm-3 col-md-2">
+							</div>
+			
+			<div class="col-xs-12 col-sm-9 col-md-3 footerlast">
+							</div>
+		</div>
+		
+		<div class="row">
+			<div class="col-md-12">
+				
+			</div>
+		</div>
+		
+		<div class="row">
+			<div class="col-md-12">
+
+<div class="menu-footermenu-container"><ul id="menu-footermenu" class="menu"><li id="menu-item-77177" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-77177"><a>Home</a></li>
+<li id="menu-item-77179" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-77179"><a href="http://www.zambianwatchdog.com/contact-us/">Contact us</a></li>
+<li id="menu-item-77178" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-77178"><a href="http://www.zambianwatchdog.com/advertise/">Advertise</a></li>
+<li id="menu-item-77180" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-77180"><a href="https://www.zambianwatchdog.com/feed/">RSS</a></li>
+</ul></div>
+
+				<div class="footer-meta">
+				
+					<p class="footer-metaleft pull-left">
+						Copyright © 2003 - 2014 Zambian Watchdog.<br/>All rights reserved.					</p><!-- #site-info -->
+								
+					<p class="footer-metaleft pull-right">
+						Zambia's Leading Investigative, 24-hour Breaking News Newspaper.
+
+
+
+						
+							<div style="display:none">
+	</div>
+					<div id="fb-root"></div>
+					<script type='text/javascript'>
+					<!--
+					(function(d, s, id) {
+					  var js, fjs = d.getElementsByTagName(s)[0];
+					  if (d.getElementById(id)) return;
+					  js = d.createElement(s); js.id = id;
+					  js.src = "//connect.facebook.net/en_US/all.js#xfbml=1";
+					  fjs.parentNode.insertBefore(js, fjs);
+					}(document, 'script', 'facebook-jssdk'));
+					// -->
+					</script>
+				<script type='text/javascript' src='http://www.zambianwatchdog.com/wp-content/plugins/akismet/_inc/form.js?ver=3.0.2'></script>
+<script type='text/javascript' src='http://platform.twitter.com/widgets.js?ver=4.0.1'></script>
+<script type='text/javascript' src='http://apis.google.com/js/plusone.js?ver=4.0.1'></script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var pollsL10n = {"ajax_url":"http:\/\/www.zambianwatchdog.com\/wp-admin\/admin-ajax.php","text_wait":"Your last request is still being processed. Please wait a while ...","text_valid":"Please choose a valid poll answer.","text_multiple":"Maximum number of choices allowed: ","show_loading":"1","show_fading":"1"};
+/* ]]> */
+</script>
+<script type='text/javascript' src='http://www.zambianwatchdog.com/wp-content/plugins/wp-polls/polls-js.js?ver=2.67'></script>
+<script type='text/javascript' src='http://s0.wp.com/wp-content/js/devicepx-jetpack.js?ver=201502'></script>
+<script type='text/javascript' src='http://www.zambianwatchdog.com/wp-includes/js/comment-reply.min.js?ver=4.0.1'></script>
+
+	<script src="http://stats.wp.com/e-201502.js" type="text/javascript"></script>
+	<script type="text/javascript">
+	st_go({v:'ext',j:'1:3.2',blog:'48559191',post:'79439',tz:'1'});
+	var load_cmc = function(){linktracker_init(48559191,79439,2);};
+	if ( typeof addLoadEvent != 'undefined' ) addLoadEvent(load_cmc);
+	else load_cmc();
+	</script>
+
+					</p> <!-- #footer-right-side -->
+				</div>
+			</div>
+		</div>
+	</footer>
+</div>
+
+
+
+
+
+
+
+<!-- container -->
+
+<!-- Start taboola -->
+<script type="text/javascript">
+  window._taboola = window._taboola || [];
+  _taboola.push({flush: true});
+</script>
+<!-- End taboola -->
+
+
+
+<script pagespeed_no_defer="">(function(){window.pagespeed=window.pagespeed||{};var l=window.pagespeed;
+l.getResourceTimingData=function(){if(window.performance&&(window.performance.getEntries||window.performance.webkitGetEntries)){for(var m=0,n=0,e=0,p=0,f=0,q=0,g=0,r=0,h=0,t=0,k=0,c={},d=window.performance.getEntries?window.performance.getEntries():window.performance.webkitGetEntries(),b=0;b<d.length;b++){var a=d[b].duration;0<a&&(m+=a,++e,n=Math.max(n,a));a=d[b].connectEnd-d[b].connectStart;0<a&&(q+=a,++g);a=d[b].domainLookupEnd-d[b].domainLookupStart;0<a&&(p+=a,++f);a=d[b].initiatorType;c[a]?++c[a]:
+c[a]=1;a=d[b].requestStart-d[b].fetchStart;0<a&&(t+=a,++k);a=d[b].responseStart-d[b].requestStart;0<a&&(r+=a,++h)}return"&afd="+(e?Math.round(m/e):0)+"&nfd="+e+"&mfd="+Math.round(n)+"&act="+(g?Math.round(q/g):0)+"&nct="+g+"&adt="+(f?Math.round(p/f):0)+"&ndt="+f+"&abt="+(k?Math.round(t/k):0)+"&nbt="+k+"&attfb="+(h?Math.round(r/h):0)+"&nttfb="+h+(c.css?"&rit_css="+c.css:"")+(c.link?"&rit_link="+c.link:"")+(c.script?"&rit_script="+c.script:"")+(c.img?"&rit_img="+c.img:"")}return""};
+l.getResourceTimingData=l.getResourceTimingData;})();
+(function(){window.pagespeed=window.pagespeed||{};var e=window.pagespeed;function g(a,c,b,d){this.c=a;this.a=c;this.b=b;this.d=d}e.beaconUrl="";
+g.prototype.sendBeacon=function(){var a=this.c,c=window.mod_pagespeed_start,b=Number(new Date)-c,a=a+(-1==a.indexOf("?")?"?":"&"),a=a+"ets="+("load"==this.a?"load:":"unload:"),a=a+b;if("beforeunload"!=this.a||!window.mod_pagespeed_loaded){a+="&r"+this.a+"=";if(window.performance){var b=window.performance.timing,d=b.navigationStart,f=b.requestStart,a=a+(b[this.a+"EventStart"]-d),a=a+("&nav="+(b.fetchStart-d)),a=a+("&dns="+(b.domainLookupEnd-b.domainLookupStart)),a=a+("&connect="+(b.connectEnd-b.connectStart)),
+a=a+("&req_start="+(f-d)),a=a+("&ttfb="+(b.responseStart-f)),a=a+("&dwld="+(b.responseEnd-b.responseStart)),a=a+("&dom_c="+(b.domContentLoadedEventStart-d));window.performance.navigation&&(a+="&nt="+window.performance.navigation.type);d=-1;b.msFirstPaint?d=b.msFirstPaint:window.chrome&&window.chrome.loadTimes&&(d=Math.floor(1E3*window.chrome.loadTimes().firstPaintTime));d-=f;0<=d&&(a+="&fp="+d)}else a+=b;e.getResourceTimingData&&window.parent==window&&(a+=e.getResourceTimingData());a+=window.parent!=
+window?"&ifr=1":"&ifr=0";"load"==this.a&&(window.mod_pagespeed_loaded=!0,(b=window.mod_pagespeed_num_resources_prefetched)&&(a+="&nrp="+b),(b=window.mod_pagespeed_prefetch_start)&&(a+="&htmlAt="+(c-b)));e.panelLoader&&(c=e.panelLoader.getCsiTimingsString(),""!=c&&(a+="&b_csi="+c));e.criticalCss&&(c=e.criticalCss,a+="&ccis="+c.total_critical_inlined_size+"&cces="+c.total_original_external_size+"&ccos="+c.total_overhead_size+"&ccrl="+c.num_replaced_links+"&ccul="+c.num_unreplaced_links);""!=this.b&&
+(a+=this.b);document.referrer&&(a+="&ref="+encodeURIComponent(document.referrer));a+="&url="+encodeURIComponent(this.d);e.beaconUrl=a;(new Image).src=a}};e.e=function(a,c,b,d){var f=new g(a,c,b,d);window.addEventListener?window.addEventListener(c,function(){f.sendBeacon()},!1):window.attachEvent("on"+c,function(){f.sendBeacon()})};e.addInstrumentationInit=e.e;})();
+
+pagespeed.addInstrumentationInit('http://1-ps.googleusercontent.com/beacon?org=125_1_jt', 'load', '&s_ttfb=5&id=1420465143377952', 'http://www.zambianwatchdog.com/upnd-warns-pf-against-attempts-to-rig-polls/');</script></body>
+</html>
+"""
+        
+        doc = Document()
+        doc.url = 'http://www.zambianwatchdog.com/upnd-warns-pf-against-attempts-to-rig-polls/'
+        self.crawler.extract(doc, html)
+
+        self.assertEqual(doc.title, 'UPND warns PF against attempts to rig polls')
+        self.assertIsNone(doc.summary)
+        self.assertEqual(doc.published_at.strftime('%d %m %Y'), '05 01 2015')
+        self.assertEqual(doc.author, Author.unknown())
+        self.assertEqual(doc.medium.name, 'Zambian Watchdog')
+
+        self.assertEqual(doc.text, u'The United Party for National Development (UPND) have warned the PF that they are aware of attempts to rig the elections but have warned that they will soon be caught one by one.\nAnd the party has advised the Electoral Commission of Zambia (ECZ) to find out whether they have been infiltrated by other elements instead of accusing the party of making alarming statements.\nUPND Adviser to the president Douglas Siakalima said when he featured on UNZA Radio\u2019s Lusaka Star programme Monday morning that his party was on top of things and was closely monitoring PF attempts to fidget with the election results.\nSiakalima warned that those who are attempting to tamper with the election results will soon be ashamed when the UPND starts catching them one by one.\n\u2018There are various players in this election but we shall catch them one by one because we know exactly what they are trying to do, we will get them before elections and even on the actual day of voting and they will be ashamed,\u2019 Siakalima warned.\nAnd Siakalima has advised the Electoral Commission of Zambia (ECZ) to find out whether they have been infiltrated by other elements instead of accusing the party of making alarming statements.\nHe said the ECZ should make sure they avoid vote rigging in order to avoid the chaos that follows a rigged election.\nHe said tampering with results caused problems in Zimbabwe, Kenya and Ivory Coast because most African leaders did not want to lose power adding that the ECZ\u2019s biggest obligation was to provide fair elections to avoid the ugly face of chaos.\nSiakalima was however quick to mention that the UPND has great respect for the Electoral Commission of Zambia (ECZ) Chairperson Judge Ireen Mambilima and stressed that she may not be aware of what some people are trying to do.\nSiakalima said even the ECZ itself may not be directly involved in the alleged manoeuvres to rig the elections.\nSiakalima said late President Michael Sata continuously talked about rigging prior to the 2011 elections and demanded for Parallel Voter Tabulation (PVT) because they (PF) were on top of things and no one accused them of alarming the nation.')
+        
