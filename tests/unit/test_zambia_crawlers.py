@@ -6344,3 +6344,499 @@ function checkemail(x)
 
         self.assertEqual(doc.text, u'WYLBUR Simuusa says the January 20 presidential race is tight and the PF needs the input of every member to win the election.\n\nReacting to Chishimba Kambwili\xe2\u20ac\u2122s remark that Geoffrey Mwamba was limited in thinking because of his low levels of education following the latter\xe2\u20ac\u2122s decision to support the UPND, Simuusa said the Patriotic Front cannot afford to lose its top leaders.\n\nHe said it was wrong for anyone in the PF to issue disparaging remarks against Sylvia Masebo and Mwamba simply because they have resolved to support the UPND.\n\n\xe2\u20ac\u0153We need everybody, although I was very categorical on Guy Scott. And at one point, I said we need GBM and now I say we need Masebo too. We have a history with Sylvia and with GBM; we need those votes. And what we should be doing is not disparaging them. We should not disparage GBM and Masebo. We as PF may not agree, but insulting them and belittling them is not the way to go,\xe2\u20ac\x9d said Simuusa, who is agriculture minister and Nchanga PF member of parliament.\n\nHe said it would be na\xc3\xafve and untrue to say Mwamba and Masebo are not political factors just because they have chosen a different path.\n\n\xe2\u20ac\u0153We need everyone. GBM has his following and it is a following that was developed with the PF. We as the PF need to work on reconciliation and realise that everybody matters, even Masebo. We worked with them before and they helped deliver PF, so it is unfair to say they do not matter, or begin to issue disparaging remarks,\xe2\u20ac\x9d Simuusa said.\n\nHe said UPND and other parties were campaigning hard and it would be unwise for PF to keep losing its members.\n\nSimuusa called on PF leaders to instead find ways of recalling Mwamba and Masebo rather than pretend that the two are not a factor.\n\n\xe2\u20ac\u0153The approach should be to take the colleagues of ours and see how we can keep them in the spirit of reconciliation. Disparaging them, calling them opportunists is not right,\xe2\u20ac\x9d said Simuusa.\n\nSpeaking in Matero on New Year\xe2\u20ac\u2122s Day, PF presidential candidate Edgar Lungu described Masebo as an opportunist who jumps at every opportunity she considers viable.\n\nHe added that Masebo was not a political factor as she had no following in Lusaka or Zambia at large.')
         
+
+class TestTimesZambiaCrawler(unittest.TestCase):
+    def setUp(self):
+        self.crawler = TimesZambiaCrawler()
+
+        self.db = db
+        self.db.drop_all()
+        self.db.create_all()
+        seed_db(db)
+
+    def tearDown(self):
+        self.db.session.remove()
+        self.db.drop_all()
+
+    def test_extract(self):
+        html = """
+
+<!DOCTYPE html>
+<!--[if lt IE 7]> <html class="no-js ie6 oldie" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js ie7 oldie" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js ie8 oldie" lang="en"> <![endif]-->
+<html lang="en-US">
+<head>
+	<!-- AMBRO HEADER -->
+	<meta charset="utf-8" />
+	<title>Times of Zambia   |  Scott’s case fails to take off</title>
+			<link rel="alternate" type="application/rss+xml" title="Times of Zambia RSS Feed" href="http://feedburner.google.com/fb/a/mailverify?uri=TimesOfZambia&loc=en_US" /> 
+			<meta name="description" content="">
+	<meta name="author" content="">
+	<!-- AMBRO FOR MOBILE -->
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" /> 
+	<script type="text/javascript" src="http://www.times.co.zm/wp-content/themes/ambro/js/jquery.js"></script>
+	<script type="text/javascript" src="http://www.times.co.zm/wp-content/themes/ambro/js/jcarousellite.js"></script>
+		<link rel="alternate" type="application/rss+xml" title="Times of Zambia &raquo; Feed" href="http://www.times.co.zm/?feed=rss2" />
+<link rel="alternate" type="application/rss+xml" title="Times of Zambia &raquo; Comments Feed" href="http://www.times.co.zm/?feed=comments-rss2" />
+<link rel='stylesheet' id='scroller_css-css'  href='http://www.times.co.zm/wp-content/plugins/fp-news-scroller/css/scroller.css?ver=3.5.1' type='text/css' media='all' />
+<link rel='stylesheet' id='reset-css'  href='http://www.times.co.zm/wp-content/themes/ambro/css/reset.css?ver=3.5.1' type='text/css' media='all' />
+<link rel='stylesheet' id='format-css'  href='http://www.times.co.zm/wp-content/themes/ambro/css/format.css?ver=3.5.1' type='text/css' media='all' />
+<link rel='stylesheet' id='refindeslide-css'  href='http://www.times.co.zm/wp-content/themes/ambro/css/refineslide.css?ver=3.5.1' type='text/css' media='all' />
+<link rel='stylesheet' id='style-css'  href='http://www.times.co.zm/wp-content/themes/ambro/style.css?ver=3.5.1' type='text/css' media='all' />
+<link rel='stylesheet' id='superfishbase-css'  href='http://www.times.co.zm/wp-content/themes/ambro/css/superfish.css?ver=3.5.1' type='text/css' media='all' />
+<link rel='stylesheet' id='prettyPhoto-css'  href='http://www.times.co.zm/wp-content/themes/ambro/css/prettyPhoto.css?ver=3.5.1' type='text/css' media='all' />
+<link rel='stylesheet' id='responsive-css'  href='http://www.times.co.zm/wp-content/themes/ambro/css/responsive.css?ver=3.5.1' type='text/css' media='all' />
+<link rel='stylesheet' id='socialbox-css'  href='http://www.times.co.zm/wp-content/themes/ambro/includes/plugins/socialbox/css/socialbox.css?ver=1.3.2' type='text/css' media='screen' />
+<link rel='stylesheet' id='notifications-css'  href='http://www.times.co.zm/wp-content/themes/ambro/includes/annoucements/css/notifications.css?ver=3.5.1' type='text/css' media='all' />
+<link rel='stylesheet' id='wpdreams-pslider-css'  href='http://www.times.co.zm/wp-content/plugins/polaroid-slider//css/pslider.css?ver=3.5.1' type='text/css' media='all' />
+<script type='text/javascript' src='http://www.times.co.zm/wp-includes/js/jquery/jquery.js?ver=1.8.3'></script>
+<script type='text/javascript' src='http://www.times.co.zm/wp-content/plugins/fp-news-scroller/js/jquery.webticker.js?ver=3.5.1'></script>
+<script type='text/javascript' src='http://www.times.co.zm/wp-includes/js/swfobject.js?ver=2.2-20120417'></script>
+<script type='text/javascript' src='http://www.times.co.zm/wp-content/plugins/banner-manager/load.min.js?ver=3.5.1'></script>
+<script type='text/javascript' src='http://www.times.co.zm/wp-content/themes/ambro/js/hoverIntent.js?ver=3.5.1'></script>
+<script type='text/javascript' src='http://www.times.co.zm/wp-content/themes/ambro/js/superfish.js?ver=3.5.1'></script>
+<script type='text/javascript' src='http://www.times.co.zm/wp-content/themes/ambro/js/supersubs.js?ver=3.5.1'></script>
+<script type='text/javascript' src='http://www.times.co.zm/wp-content/themes/ambro/js/jquery-ui.js?ver=1'></script>
+<script type='text/javascript' src='http://www.times.co.zm/wp-content/themes/ambro/js/jquery.refineslide.min.js?ver=1'></script>
+<script type='text/javascript' src='http://www.times.co.zm/wp-content/themes/ambro/js/jquery.prettyPhoto.js?ver=1'></script>
+<script type='text/javascript' src='http://www.times.co.zm/wp-content/themes/ambro/js/scrolltopcontrol.js?ver=1'></script>
+<script type='text/javascript' src='http://www.times.co.zm/wp-content/themes/ambro/js/custom.js?ver=1'></script>
+<script type='text/javascript' src='http://www.times.co.zm/wp-includes/js/comment-reply.min.js?ver=3.5.1'></script>
+<script type='text/javascript' src='http://www.times.co.zm/wp-content/plugins/polaroid-slider/js/pslider.min.js?ver=3.5.1'></script>
+<script type='text/javascript' src='http://www.times.co.zm/wp-content/themes/ambro/includes/annoucements/js/jquery.cookie.js?ver=3.5.1'></script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var notices_ajax_script = {"ajaxurl":"http:\/\/www.times.co.zm\/wp-admin\/admin-ajax.php","logged_in":"no"};
+/* ]]> */
+</script>
+<script type='text/javascript' src='http://www.times.co.zm/wp-content/themes/ambro/includes/annoucements/js/notifications.js?ver=3.5.1'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://www.times.co.zm/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://www.times.co.zm/wp-includes/wlwmanifest.xml" /> 
+<link rel='prev' title='13 Mkushi families left in the cold' href='http://www.times.co.zm/?p=47692' />
+<link rel='next' title='Wife’s nude photos attract divorce' href='http://www.times.co.zm/?p=47699' />
+<meta name="generator" content="WordPress 3.5.1" />
+<link rel='canonical' href='http://www.times.co.zm/?p=47694' />
+	<!-- AMBRO COLOR OPTIONS-->
+	<style type="text/css" media="screen">
+		body { background:#262525 
+		url('http://www.times.co.zm/wp-content/uploads/2013/10/pattern-15.png') ;
+		background-position: top;
+		background-repeat:repeat;
+		background-attachment:fixed;}
+		.navigation { border-bottom:2px solid #fc0d0d;}  
+		.sideg, .mgtopmenu li  > ul  {background-color: #403636;}
+		.sidetw {background-color: #403636;}
+		.votsignup {background-color:#fc0d0d;}
+		.sidesub {background-color: #403636;}
+		.search-block .search-button {  background: #fc0d0d url(http://www.times.co.zm/wp-content/themes/ambro/images/search.png) no-repeat center; } 
+		.sf-menu li a:hover { color: #fc0d0d;} 
+ .widget-magmag-title {
+  background: -moz-linear-gradient(-45deg,  #fc0d0d 0%, #fc0d0d 50%, rgba(0,0,0,0) 51%, rgba(0,0,0,0) 100%);
+  background: -webkit-gradient(linear, left top, right bottom, color-stop(0%,#fc0d0d), color-stop(50%,#fc0d0d), 
+  color-stop(51%,rgba(0,0,0,0)), color-stop(100%,rgba(0,0,0,0)));				
+  background: -webkit-linear-gradient(-45deg,  #fc0d0d 0%,#fc0d0d 50%,rgba(0,0,0,0) 51%,rgba(0,0,0,0) 100%);				
+  background: -o-linear-gradient(-45deg,  #fc0d0d 0%,#fc0d0d 50%,rgba(0,0,0,0) 51%,rgba(0,0,0,0) 100%); 				
+  background: -ms-linear-gradient(-45deg,  #fc0d0d 0%,#fc0d0d 50%,rgba(0,0,0,0) 51%,rgba(0,0,0,0) 100%); 				
+  background: linear-gradient(135deg,  #fc0d0d 0%,#fc0d0d 50%,rgba(0,0,0,0) 51%,rgba(0,0,0,0) 100%);	
+ 
+ }
+.widget-magazine-line,.widget-lbg { background: #e3e3e3;}
+.widget-box {
+   background: -moz-linear-gradient(-45deg,  #383232 0%, #383232 50%, rgba(0,0,0,0) 51%, rgba(0,0,0,0) 100%);
+  background: -webkit-gradient(linear, left top, right bottom, color-stop(0%,#383232), color-stop(50%,#383232), color-stop(51%,rgba(0,0,0,0)), color-stop(100%,rgba(0,0,0,0)));				
+  background: -webkit-linear-gradient(-45deg,  #383232 0%,#383232 50%,rgba(0,0,0,0) 51%,rgba(0,0,0,0) 100%);				
+  background: -o-linear-gradient(-45deg,  #383232 0%,#383232 50%,rgba(0,0,0,0) 51%,rgba(0,0,0,0) 100%); 				
+  background: -ms-linear-gradient(-45deg,  #383232 0%,#383232 50%,rgba(0,0,0,0) 51%,rgba(0,0,0,0) 100%); 				
+  background: linear-gradient(135deg,  #383232 0%,#383232 50%,rgba(0,0,0,0) 51%,rgba(0,0,0,0) 100%);	
+ 
+}
+.readmorebox {
+  background-color:#383232;
+}
+.header-date-right p.date span {
+ background:#383232;	
+}
+.widget-title {
+
+  background: -moz-linear-gradient(-45deg,  #e61c1c 0%, #e61c1c 50%, rgba(0,0,0,0) 51%, rgba(0,0,0,0) 100%);
+  background: -webkit-gradient(linear, left top, right bottom, color-stop(0%,#e61c1c), color-stop(50%,#e61c1c), color-stop(51%,rgba(0,0,0,0)), color-stop(100%,rgba(0,0,0,0)));				
+  background: -webkit-linear-gradient(-45deg,  #e61c1c 0%,#e61c1c 50%,rgba(0,0,0,0) 51%,rgba(0,0,0,0) 100%);				
+  background: -o-linear-gradient(-45deg,  #e61c1c 0%,#e61c1c 50%,rgba(0,0,0,0) 51%,rgba(0,0,0,0) 100%); 				
+  background: -ms-linear-gradient(-45deg,  #e61c1c 0%,#e61c1c 50%,rgba(0,0,0,0) 51%,rgba(0,0,0,0) 100%); 				
+  background: linear-gradient(135deg,  #e61c1c 0%,#e61c1c 50%,rgba(0,0,0,0) 51%,rgba(0,0,0,0) 100%);	
+ }
+
+		.top-wrap, .ticker, .top,.ticker-content,.ticker-swipe,.ticker-swipe span{}
+		.flickr-widget .flickr_badge_image a:hover img{opacity:0.8; background:#fc0d0d;}
+		.single-content blockquote, li.comment > div { border-left-color:#fc0d0d;}
+	
+		.sf-menu li.current-menu-item a { color:#fc0d0d;}
+		.mag-box-small .small-desc .desc-title a:hover,.mag-box-small-noimage .desc-title a:hover {color:#f1f1f1;}
+		.mag-box-small .small-desc .desc-title a:hover,.mag-box-small-noimage .desc-title a:hover, a:hover { color:#d92727;}
+		.header-logo img, .mag-super-title h3, .readmore, h5.toggle, .single-content ul.tabs li:hover, .single-content ul.tabs li.active {  background: #fc0d0d;}
+		.scrolltop:hover { background : url(http://www.times.co.zm/wp-content/themes/ambro/images/up.png) center center no-repeat #fc0d0d; }
+		.navigation, .footer , .navigation-wrap,.footer-wrap, .top { background:#403636 url(http://www.times.co.zm/wp-content/themes/ambro/images/pattern.png);}
+		.sf-menu li a:hover{ border-bottom:1px solid #403636;}
+		.sf-menu .sub-menu { background:#3b3131;}
+		.widget_calendar thead>tr>th {  background-color:#fc0d0d;}
+		.rs-caption h1 a {  background-color:#fc0d0d;}
+		.tagcloud ul li a:hover, .mag-super-title h3, .single-tags a:hover, .footer-widget .tagcloud a:hover,
+		.related-post-title a:hover,.description-author span a:hover,.author-social, .single-nav a, #comments .navigation a:hover,
+		.comment-post-title, .reply a, .pagination span,.pagination a:hover, .ambro_calendar thead>tr>th { background-color:#fc0d0d; }
+		.footer-widget a:hover, .credits a:hover, .footer-widget.ambro_calendar tfoot>tr>td#prev a,
+		.ambro_calendar tfoot>tr>td#next a { color:#fc0d0d; }
+				</style>	<script type="text/javascript">
+jQuery(document).ready(function(){
+jQuery(".vote a").click(
+function() {
+var some = jQuery(this);
+var thepost = jQuery(this).attr("post");
+var theuser = jQuery(this).attr("user");
+jQuery.post("http://www.times.co.zm/wp-content/themes/ambro/vote.php", {user: theuser, post: thepost}, 
+function(data) {
+var votebox = ".vote"+thepost+" span";
+jQuery(votebox).text(data);
+jQuery(some).replaceWith('<span class="voted">Voted</span>');
+});
+});
+});	
+</script>
+	</head>
+<body class="single single-post postid-47694 single-format-standard">
+	<div class="top row">
+	<!-- AMBRO SEARCH BLOCK -->
+					<div class="search-block">
+						<form method="get" id="searchform" action="http://www.times.co.zm/">
+							<input class="search-button" type="submit" value="" />	
+							<input type="text" id="s" name="s" value="Search..." onfocus="if (this.value == 'Search...') {this.value = '';}" onblur="if (this.value == '') {this.value = 'Search...';}"  />
+						</form>
+					</div>		
+				<div class="ambrogrid_6 top-nav-wrapper">
+				<ul id="menu-top-menu" class="mgtopmenu"><li id="menu-item-170" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-170"><a href="http://www.times.co.zm/?page_id=45">About us</a>
+<ul class="sub-menu">
+	<li id="menu-item-208" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-208"><a href="http://www.times.co.zm/?page_id=199">Org Structure</a></li>
+	<li id="menu-item-207" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-207"><a href="http://www.times.co.zm/?page_id=201">History</a></li>
+	<li id="menu-item-169" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-169"><a href="http://www.times.co.zm/?page_id=46">Contact us</a></li>
+</ul>
+</li>
+<li id="menu-item-168" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-168"><a href="http://www.times.co.zm/?page_id=47">Rate Cards</a></li>
+<li id="menu-item-206" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-206"><a href="http://www.times.co.zm/?page_id=204">Products &#038; Services</a>
+<ul class="sub-menu">
+	<li id="menu-item-236" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-236"><a href="http://www.times.co.zm/?page_id=233">Online Subscriptions</a></li>
+</ul>
+</li>
+</ul>				</div>
+		<div class="mgambrogrid_12 mobile-nav-wrapper">
+			<div class="menu-top-menu-container"><select id="menu-top-menu-1" class="menu dropdown-menu"><option value="" class="blank">Select a Page</option><option class="menu-item menu-item-type-post_type menu-item-object-page menu-item-170 menu-item-depth-0" value="http://www.times.co.zm/?page_id=45">About us</option>	<option class="menu-item menu-item-type-post_type menu-item-object-page menu-item-208 menu-item-depth-1" value="http://www.times.co.zm/?page_id=199">- Org Structure</option>
+	<option class="menu-item menu-item-type-post_type menu-item-object-page menu-item-207 menu-item-depth-1" value="http://www.times.co.zm/?page_id=201">- History</option>
+	<option class="menu-item menu-item-type-post_type menu-item-object-page menu-item-169 menu-item-depth-1" value="http://www.times.co.zm/?page_id=46">- Contact us</option>
+
+<option class="menu-item menu-item-type-post_type menu-item-object-page menu-item-168 menu-item-depth-0" value="http://www.times.co.zm/?page_id=47">Rate Cards</option>
+<option class="menu-item menu-item-type-post_type menu-item-object-page menu-item-206 menu-item-depth-0" value="http://www.times.co.zm/?page_id=204">Products &#038; Services</option>	<option class="menu-item menu-item-type-post_type menu-item-object-page menu-item-236 menu-item-depth-1" value="http://www.times.co.zm/?page_id=233">- Online Subscriptions</option>
+
+</select></div>	
+		</div>
+		</div>
+	<!-- AMBRO HEADER -->
+	<div class="header row">
+		<!-- AMBRO LOGO -->
+		<div class="header-logo">
+						<a href='http://www.times.co.zm'><img src="http://www.times.co.zm/wp-content/themes/weekly/images/logo3.gif" alt="Times of Zambia" /></a>
+		</div>
+			<!-- AMBRO ADD -->
+			<div class="header-pub">
+				<a href="http://www.timesepaper.com">
+<img src="http://www.times.co.zm/wp-content/uploads/2014/09/Timesad.jpg" />
+</a>			</div>
+			</div>
+	<div class="navigation row">
+				<!-- AMBRO MAIN MENU -->
+					<div class="mgambrogrid_12 main-nav-wrapper">
+			<ul id="menu-main-menu" class="sf-menu"><li id="menu-item-160" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-160"><a href="index.php">Home</a></li>
+<li id="menu-item-163" class="menu-item menu-item-type-taxonomy menu-item-object-category current-post-ancestor current-menu-parent current-post-parent menu-item-163"><a href="http://www.times.co.zm/?cat=1">Latest News</a>
+<ul class="sub-menu">
+	<li id="menu-item-210" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-210"><a href="http://www.times.co.zm/?cat=16">Stories</a></li>
+	<li id="menu-item-209" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-209"><a href="http://www.times.co.zm/?cat=15">Court News</a></li>
+</ul>
+</li>
+<li id="menu-item-161" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-161"><a href="http://www.times.co.zm/?cat=2">Business</a>
+<ul class="sub-menu">
+	<li id="menu-item-213" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-213"><a href="http://www.times.co.zm/?cat=17">Stories</a></li>
+	<li id="menu-item-212" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-212"><a href="http://www.times.co.zm/?cat=19">Money/Stock Exchange</a></li>
+	<li id="menu-item-211" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-211"><a href="http://www.times.co.zm/?cat=18">Columns</a></li>
+</ul>
+</li>
+<li id="menu-item-166" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-166"><a href="http://www.times.co.zm/?cat=4">Letters to the Editor</a></li>
+<li id="menu-item-165" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-165"><a href="http://www.times.co.zm/?cat=5">Entertainment</a>
+<ul class="sub-menu">
+	<li id="menu-item-216" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-216"><a href="http://www.times.co.zm/?cat=20">Music</a></li>
+	<li id="menu-item-218" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-218"><a href="http://www.times.co.zm/?cat=21">Theatre</a></li>
+	<li id="menu-item-215" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-215"><a href="http://www.times.co.zm/?cat=22">Films</a></li>
+	<li id="menu-item-217" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-217"><a href="http://www.times.co.zm/?cat=23">Others</a></li>
+	<li id="menu-item-214" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-214"><a href="http://www.times.co.zm/?cat=24">Columns</a></li>
+</ul>
+</li>
+<li id="menu-item-162" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-162"><a href="http://www.times.co.zm/?cat=6">Features</a></li>
+<li id="menu-item-167" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-167"><a href="http://www.times.co.zm/?cat=7">Opinion</a></li>
+<li id="menu-item-164" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-164"><a href="http://www.times.co.zm/?cat=8">Sports</a>
+<ul class="sub-menu">
+	<li id="menu-item-224" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-224"><a href="http://www.times.co.zm/?cat=25">Stories</a></li>
+	<li id="menu-item-221" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-221"><a href="http://www.times.co.zm/?cat=26">Football</a></li>
+	<li id="menu-item-223" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-223"><a href="http://www.times.co.zm/?cat=29">Rugby</a></li>
+	<li id="menu-item-219" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-219"><a href="http://www.times.co.zm/?cat=27">Boxing</a></li>
+	<li id="menu-item-225" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-225"><a href="http://www.times.co.zm/?cat=28">Volleyball</a></li>
+	<li id="menu-item-220" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-220"><a href="http://www.times.co.zm/?cat=31">Columns</a></li>
+	<li id="menu-item-222" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-222"><a href="http://www.times.co.zm/?cat=30">Others</a></li>
+</ul>
+</li>
+</ul><div class="header-date-right"><p class="date"><span>Last post on :</span> January 5, 2015&nbsp;&nbsp;</p></div>
+</div>
+		<div class="mgambrogrid_12 mobile-nav-wrapper">
+			<div class="menu-main-menu-container"><select id="menu-main-menu-1" class="menu dropdown-menu"><option value="" class="blank">Select a Page</option><option class="menu-item menu-item-type-custom menu-item-object-custom menu-item-160 menu-item-depth-0" value="index.php">Home</option>
+<option class="menu-item menu-item-type-taxonomy menu-item-object-category current-post-ancestor current-menu-parent current-post-parent menu-item-163 menu-item-depth-0" value="http://www.times.co.zm/?cat=1">Latest News</option>	<option class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-210 menu-item-depth-1" value="http://www.times.co.zm/?cat=16">- Stories</option>
+	<option class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-209 menu-item-depth-1" value="http://www.times.co.zm/?cat=15">- Court News</option>
+
+<option class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-161 menu-item-depth-0" value="http://www.times.co.zm/?cat=2">Business</option>	<option class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-213 menu-item-depth-1" value="http://www.times.co.zm/?cat=17">- Stories</option>
+	<option class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-212 menu-item-depth-1" value="http://www.times.co.zm/?cat=19">- Money/Stock Exchange</option>
+	<option class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-211 menu-item-depth-1" value="http://www.times.co.zm/?cat=18">- Columns</option>
+
+<option class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-166 menu-item-depth-0" value="http://www.times.co.zm/?cat=4">Letters to the Editor</option>
+<option class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-165 menu-item-depth-0" value="http://www.times.co.zm/?cat=5">Entertainment</option>	<option class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-216 menu-item-depth-1" value="http://www.times.co.zm/?cat=20">- Music</option>
+	<option class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-218 menu-item-depth-1" value="http://www.times.co.zm/?cat=21">- Theatre</option>
+	<option class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-215 menu-item-depth-1" value="http://www.times.co.zm/?cat=22">- Films</option>
+	<option class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-217 menu-item-depth-1" value="http://www.times.co.zm/?cat=23">- Others</option>
+	<option class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-214 menu-item-depth-1" value="http://www.times.co.zm/?cat=24">- Columns</option>
+
+<option class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-162 menu-item-depth-0" value="http://www.times.co.zm/?cat=6">Features</option>
+<option class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-167 menu-item-depth-0" value="http://www.times.co.zm/?cat=7">Opinion</option>
+<option class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-164 menu-item-depth-0" value="http://www.times.co.zm/?cat=8">Sports</option>	<option class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-224 menu-item-depth-1" value="http://www.times.co.zm/?cat=25">- Stories</option>
+	<option class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-221 menu-item-depth-1" value="http://www.times.co.zm/?cat=26">- Football</option>
+	<option class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-223 menu-item-depth-1" value="http://www.times.co.zm/?cat=29">- Rugby</option>
+	<option class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-219 menu-item-depth-1" value="http://www.times.co.zm/?cat=27">- Boxing</option>
+	<option class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-225 menu-item-depth-1" value="http://www.times.co.zm/?cat=28">- Volleyball</option>
+	<option class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-220 menu-item-depth-1" value="http://www.times.co.zm/?cat=31">- Columns</option>
+	<option class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-222 menu-item-depth-1" value="http://www.times.co.zm/?cat=30">- Others</option>
+
+</select></div>	
+		</div>
+	</div>
+<!-- AMBRO CONTENT -->
+<div class="content row">		<div class="ambrogrid_81 single-post">
+				<!-- AMBRO SINGLE TITLE -->
+	<div class="single-title">
+	<div class="widget-magazine-line"><div class="widget-magmag-title">Scott’s case fails to take off </div></div>	
+				<div class="clear"></div>
+	<div class="single-info">
+		<span class="single-date"><strong>Published On </strong>January 5, 2015 &raquo; 33 Views&raquo; </span>	
+		<span class="single-author">By Davies M.M Chanda &raquo; </span> 	
+		<span class="single-category"><strong><a href="http://www.times.co.zm/?cat=1" title="View all posts in Latest News" rel="category">Latest News</a></strong></span>	
+	</div>	
+	<div class="clear"></div>
+			</div>
+<!-- AMBRO CONTENT -->
+<div class="votpost"><div class="vote vote47694"><div class="star"></div>&nbsp;<span>0 stars</span></div><div class="votsignup"><a href="http://www.times.co.zm/wp-login.php?action=register">Register</a> to vote!</div></div>	<div class="single-content">
+		<p><script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle ga_headr"data-ad-client="ca-pub-6635048705194597"data-ad-slot="7449933923"></ins><script>(adsbygoogle=window.adsbygoogle||[]).push({});</script><div id="attachment_47695" class="wp-caption alignleft" style="width: 310px"><a href="http://www.times.co.zm/wp-content/uploads/2015/01/Scott.jpg"><img class="size-full wp-image-47695" alt="• ACTING President Guy Scott (with hands in pockets) views part of the youth resource centre under construction in Luanshya at a cost of K9.3 million. Looking on is Patriotic Front secretary general Davis Chama (right). Picture By JAMES KUNDA" src="http://www.times.co.zm/wp-content/uploads/2015/01/Scott.jpg" width="300" height="174" /></a><p class="wp-caption-text">• ACTING President Guy Scott (with hands in pockets) views part of the youth resource centre under construction in Luanshya at a cost of K9.3 million. Looking on is Patriotic Front secretary general Davis Chama (right). Picture By JAMES KUNDA</p></div></p>
+<p>By JAMES KUNDA -<br />
+THE case in which Acting President Guy Scott is challenging his demotion as vice-president in the Patriotic Front (PF) failed to take off in the Ndola High Court yesterday.<br />
+Dr Scott obtained an injunction in the Ndola High Court, restraining the party from removing him from his position as vice-president.<br />
+The Acting President also sought to restrain the defendant, either by himself, servants or agents or any superior or member of the PF from suspending or expelling or taking any action adverse to his position as party vice-president until the matter was determined.<br />
+The matter was adjourned to yesterday but could not take off in Chambers as presiding Judge Anesi Banda Bobo was out of office attending a Judges Seminar that had commenced in Chisamba.<br />
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle ga_content"data-ad-client="ca-pub-6635048705194597"data-ad-slot="3278917434"></ins><script>(adsbygoogle=window.adsbygoogle||[]).push({});</script>The Court will now have to set a new date for the case to be heard as both parties pursue the probability of entering an ex-curia or case settlement outside Court.<br />
+Dr Scott is being represented by Iven Mulenga of Iven Mulenga and Company, while the PF is being represented by Billingtone Mosha of Messers Mosha and Company.</p>
+</div>
+		<!-- AMBRO NAVIGATION -->
+	<div class="single-nav">
+	<div class="nav-left" ><a href="http://www.times.co.zm/?p=47692" rel="prev"><< Previous post</a> </div>
+	<div class="nav-right" ><a href="http://www.times.co.zm/?p=47699" rel="next">Next post >></a></div>
+	</div>
+		<div class="widget-magazine-line"><div class="widget-magmag-title">Share this post</div> </div>
+<div class="post-share-box">
+
+<ul>
+	 
+<li class="facebook">
+	<a title="Facebook" class="tooltip" href="http://www.facebook.com/sharer.php?u=http%3A%2F%2Fwww.times.co.zm%2F%3Fp%3D47694&amp;t=Scott%E2%80%99s+case+fails+to+take+off"></a>
+</li>
+
+<li class="twitter">
+<a title="Twitter" class="tooltip" href="http://twitthis.com/twit?url=http://www.times.co.zm/?p=47694"></a>
+</li>
+
+<li class="google">
+<a title="Google +1" class="tooltip" href="http://google.com/bookmarks/mark?op=edit&amp;bkmk=http%3A%2F%2Fwww.times.co.zm%2F%3Fp%3D47694&amp;title=Scott%E2%80%99s+case+fails+to+take+off"></a>
+</li>
+
+<li class="tumblr">
+<a title="Tumblr" class="tooltip" href="http://www.tumblr.com/share/link?url=http%3A%2F%2Fwww.times.co.zm%2F%3Fp%3D47694&amp;name=Scott%E2%80%99s+case+fails+to+take+off&amp;description=By+JAMES+KUNDA+-+THE+case+in+which+Acting+President+Guy+Scott+is+challenging+his+demotion+as+vice-president+in+the+Patriotic+Front+%28PF%29+failed+to+take+off+in+the+Ndola+High+Court+yesterday.+Dr+Scott+obtained+an+injunction+in+the+Ndola+High+Court%2C+restraining+the+party+from+removing+him+from+his+position+as+vice-president.+The+%5B...%5D"></a>
+</li>
+
+<li class="linkedin">
+<a title="Linkedin" class="tooltip" href="http://linkedin.com/shareArticle?mini=true&amp;url=http%3A%2F%2Fwww.times.co.zm%2F%3Fp%3D47694&amp;title=Scott%E2%80%99s+case+fails+to+take+off"></a>
+</li>
+
+<li class="reddit">
+<a title="Reddit" class="tooltip" href="http://reddit.com/submit?url=http%3A%2F%2Fwww.times.co.zm%2F%3Fp%3D47694&amp;title=Scott%E2%80%99s+case+fails+to+take+off"></a>
+</li>
+
+<li class="email">
+<a title="Email" class="tooltip" href="mailto:?subject=Scott%E2%80%99s+case+fails+to+take+off&amp;body=http%3A%2F%2Fwww.times.co.zm%2F%3Fp%3D47694"></a>
+</li>
+
+	
+
+</ul>
+</div>		<div class="widget-magazine-line">
+<div class="widget-magmag-title">Tags</div> </div>
+	<p class="single-tags"></p>
+	 		
+		<!-- AMBRO RELATED -->
+								<!-- AMBRO AUTHOR -->
+	<div class="box-author">
+	<div class="widget-magazine-line"><div class="widget-magmag-title">About The Author</div></div>
+	<div class="author-description">
+	<div class="author-base">
+	<div class="author-pic"><a href="http://www.times.co.zm/?author=2"><img alt='' src='http://1.gravatar.com/avatar/376bfaf10b9921494e3ad3d8d6ba700e?s=109&amp;d=http%3A%2F%2F1.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D109&amp;r=G' class='avatar avatar-109 photo' height='109' width='109' /></a></div>
+			</div>
+	<div class="description-author">
+		<span><a href="http://www.times.co.zm/?author=2" title="Posts by Davies M.M Chanda" rel="author">Davies M.M Chanda</a></span><br/>
+		<span></span>
+	</div>
+	</div>
+	</div>
+		<!-- COMMENTS -->
+	<div class="single-comments">
+		<div id="comments">
+<p class="nocomments">Comments are closed.</p>
+								</div>	</div>
+			</div>
+		<!-- AMBRO RIGHT SIDEBAR -->
+	<div class="ambrogrid_4 sidebar">
+		<div id="text-7" class="widget widget_text">			<div class="textwidget"><div align='center'><a href='http://www.hit-counts.com'><img src='http://www.hit-counts.com/counter.php?t=MTI4NjE4OA==' border='0' alt='Visitor Counter'></a><BR><a href='http://www.hit-counts.com'>Visits so far</a></div></div>
+		</div><div id="ambro_popular_widget-2" class="widget ambro_popular_widget">		<!-- AMBRO BEGIN WIDGET -->
+		<div class="widget-lbg"><div class="widget-title">Popular Posts</div></div>		
+		
+				<div class="mag-box-small no-margin">
+								<div class="magmg-image small">
+					<a class="link-format-icon" href='http://www.times.co.zm/?p=736' title='Govt unveils RDA Board'><img src="http://www.times.co.zm/wp-content/themes/ambro/images/thumbnails/image-small-mag.png" alt="no image" class="overlay"/></a>
+					
+				</div>
+								<div class="small-desc">
+					<h3 class="desc-title"><a href='http://www.times.co.zm/?p=736' title='Govt unveils RDA Board'>Govt unveils RDA Board</a></h3>
+					<div class="magz-meta">December 27, 2013  |  127207 Views</div>
+					By NAKUBIANA SHABONGO - GOVERNMENT has unveiled the...				</div>
+		</div>
+				<div class="mag-box-small ">
+								<div class="magmg-image small">
+					<a class="link-format-icon" href='http://www.times.co.zm/?p=2949' title='Preach Constitution, Oasis Forum urges churches'><img src="http://www.times.co.zm/wp-content/themes/ambro/images/thumbnails/image-small-mag.png" alt="no image" class="overlay"/></a>
+					
+				</div>
+								<div class="small-desc">
+					<h3 class="desc-title"><a href='http://www.times.co.zm/?p=2949' title='Preach Constitution, Oasis Forum urges churches'>Preach Constitution,...</a></h3>
+					<div class="magz-meta">January 8, 2014  |  73567 Views</div>
+					By FLAVIOR CHISHALA - THE Oasis Forum says...				</div>
+		</div>
+				<div class="mag-box-small ">
+								<div class="magmg-image small">
+					<a class="link-format-icon" href='http://www.times.co.zm/?p=7948' title='‘General’ Kanene convicted, locked up'><img width="80" height="80" src="http://www.times.co.zm/wp-content/uploads/2014/02/General-Kanene-prison-truck-80x80.jpg" class="overlay wp-post-image" alt="•CONTROVERSIAL singer Clifford Dimba popularly known as ‘General’ Kanene gets on a prison truck (Kasalanga) after he was found guilty of defilement by the Lusaka Magistrate’s Court yesterday. (Insert Above) Kanene before his conviction while his wife (below) carrying their child breaks down. Pictures by CLEVER ZULU" /></a>
+					By PERPETUAL SICHIKWENKWE - LUSAKA-based musician Clifford Dimba,...				</div>
+								<div class="small-desc">
+					<h3 class="desc-title"><a href='http://www.times.co.zm/?p=7948' title='‘General’ Kanene convicted, locked up'>‘General’ Kanene...</a></h3>
+					<div class="magz-meta">February 4, 2014  |  59491 Views</div>
+					By PERPETUAL SICHIKWENKWE - LUSAKA-based musician Clifford Dimba,...				</div>
+		</div>
+				</div><div id="newsscrollerwidget-2" class="widget NewsscrollerWidget"><script type="text/javascript">
+jQuery(document).ready(function($){
+	$("#news_scroller").webTicker({
+		duplicate:true,
+		moving: true,  
+		speed: 40, 
+		direction: 'left', 
+		startEmpty:false,		
+		hoverpause:true		});
+});
+</script>
+
+<ul id='news_scroller'><li class='scroll_item'><a href='http://www.times.co.zm/?p=47699'>Wife’s nude photos attract divorce</a></li><li class='scroll_item'><a href='http://www.times.co.zm/?p=47694'>Scott’s case fails to take off</a></li><li class='scroll_item'><a href='http://www.times.co.zm/?p=47692'>13 Mkushi families left in the cold</a></li><li class='scroll_item'><a href='http://www.times.co.zm/?p=47685'>Lupando urges  East to vote for Edgar</a></li><li class='scroll_item'><a href='http://www.times.co.zm/?p=47682'>Masaiti gets K50m boarding school</a></li></ul></div><div id="ambro_add300_widget-2" class="widget ambro_add300_widget">					<div class="adds300x250"><a href="http://www.timesepaper.com">
+<img src="eTimes.jpeg" />
+</a></div>
+		</div><div id="text-3" class="widget widget_text"><div class="widget-lbg"><div class="widget-title">Twitter</div></div>			<div class="textwidget"><a class="twitter-timeline"  href="https://twitter.com/timesofzambia"  data-widget-id="391194578486697984">Tweets by @timesofzambia</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+</div>
+		</div>	</div>
+				</div></div>
+	
+<!-- AMBRO FOOTER WIDGET -->
+	
+<div class="footer-widget-block row">
+<div id="wrapper-footer-on" style="margin-top: 0px;">
+ 
+				<!-- AMBRO WIDGET 1 -->
+				<div class="ambrogrid_3">
+									</div>
+				<!-- AMBRO WIDGET 2 -->
+				<div class="ambrogrid_3">
+									</div>
+				<!-- AMBRO WIDGET 3 -->
+				<div class="ambrogrid_3">
+									</div>
+				<!-- AMBRO WIDGET 4 -->
+				<div class="ambrogrid_3">
+									</div>
+	</div> 
+		
+	<div class="footer footrow">	
+						<!-- AMBRO CREDITS TEXT -->
+		<div class="credits">
+			© 2013 Times of Zambia.		</div>
+								<!-- AMBRO SOCIAL ICONS -->
+		<div class="social-footer-wrap">
+			<div class="social-footer">
+									<ul>
+													<li class="social facebook"><a target="new" href="http://www.facebook.com/timesofzambia"></a></li>
+																			<li class="social twitter"><a target="new" href="http://twitter.com/timesofzambia"></a></li>
+																													
+														
+					</ul>			</div>
+		</div>
+			</div></div>
+	
+	
+							
+					<div id="notification-area" class=" hidden">
+								<a class="remove-notice" href="#" id="remove-notice" rel="37363">X</a>
+						<div class="cont"><img src="http://www.times.co.zm/wp-content/themes/ambro/images/not.png"></div>	
+						<div class="texty"><p>By JUDITH NAMUTOWE  -<br />
+THE Zambezi River Authority (ZRA) has said the feasibility study on the Batoka Hydropower Station has been reviewed.<br />
+ZRA chief executive officer Munyaradzi Munodawafa said in an interview yesterday that the review on the demo structure, power house and capacity output on the project had been completed.<br />
+Mr Munodawafa said the authority was currently waiting for the second phase of the Environmental Impact Assessment (EIA).<br />
+‘‘We have reviewed the Batoka Hydropower Station feasibility study. The study on the demo structure, power house structure and the capacity output on the project has been completed,’’ Mr Munodawafa said.<br />
+He said the finalisation of the study and the EIA was expected to be completed in the first quarter of 2015.<br />
+Mr Munodawfa said consultants were currently working on other processes and thereafter the project committee which include senior Government officials , utilities and ZRA would visit the project this month.<br />
+He said once all these processes were completed, ZRA would then be able to select the developer for the project, after which the authority would be able to come up with the actual value of the project.<br />
+Zambia and Zimbabwe signed a Memorandum of Understanding (MoU) to team up and start the Batoka hydropower project which is estimated to cost about US$4 billion.<br />
+The agreement was signed during the council of ministers held at Kariba in Siavonga recently.</p>
+</div>
+					</div>	
+					<script>
+		var getElementsByClassName=function(a,b,c){if(document.getElementsByClassName){getElementsByClassName=function(a,b,c){c=c||document;var d=c.getElementsByClassName(a),e=b?new RegExp("\\b"+b+"\\b","i"):null,f=[],g;for(var h=0,i=d.length;h<i;h+=1){g=d[h];if(!e||e.test(g.nodeName)){f.push(g)}}return f}}else if(document.evaluate){getElementsByClassName=function(a,b,c){b=b||"*";c=c||document;var d=a.split(" "),e="",f="http://www.w3.org/1999/xhtml",g=document.documentElement.namespaceURI===f?f:null,h=[],i,j;for(var k=0,l=d.length;k<l;k+=1){e+="[contains(concat(' ', @class, ' '), ' "+d[k]+" ')]"}try{i=document.evaluate(".//"+b+e,c,g,0,null)}catch(m){i=document.evaluate(".//"+b+e,c,null,0,null)}while(j=i.iterateNext()){h.push(j)}return h}}else{getElementsByClassName=function(a,b,c){b=b||"*";c=c||document;var d=a.split(" "),e=[],f=b==="*"&&c.all?c.all:c.getElementsByTagName(b),g,h=[],i;for(var j=0,k=d.length;j<k;j+=1){e.push(new RegExp("(^|\\s)"+d[j]+"(\\s|$)"))}for(var l=0,m=f.length;l<m;l+=1){g=f[l];i=false;for(var n=0,o=e.length;n<o;n+=1){i=e[n].test(g.className);if(!i){break}}if(i){h.push(g)}}return h}}return getElementsByClassName(a,b,c)},
+			dropdowns = document.getElementsByTagName( 'select' );
+		for ( i=0; i<dropdowns.length; i++ )
+			if ( dropdowns[i].className.match( 'dropdown-menu' ) ) dropdowns[i].onchange = function(){ if ( this.value != '' ) window.location.href = this.value; }
+	</script>
+		</body>
+</html>
+"""
+        
+        doc = Document()
+        doc.url = 'http://www.times.co.zm/?p=47694'
+        self.crawler.extract(doc, html)
+
+        self.assertEqual(doc.title, u'Scott\u2019s case fails to take off')
+        self.assertIsNone(doc.summary)
+        self.assertEqual(doc.published_at.strftime('%d %m %Y'), '05 01 2015')
+        self.assertEqual(doc.author.name, 'JAMES KUNDA')
+        self.assertEqual(doc.medium.name, 'Times of Zambia')
+
+        self.assertEqual(doc.text, u'By JAMES KUNDA -\nTHE case in which Acting President Guy Scott is challenging his demotion as vice-president in the Patriotic Front (PF) failed to take off in the Ndola High Court yesterday.\nDr Scott obtained an injunction in the Ndola High Court, restraining the party from removing him from his position as vice-president.\nThe Acting President also sought to restrain the defendant, either by himself, servants or agents or any superior or member of the PF from suspending or expelling or taking any action adverse to his position as party vice-president until the matter was determined.\nThe matter was adjourned to yesterday but could not take off in Chambers as presiding Judge Anesi Banda Bobo was out of office attending a Judges Seminar that had commenced in Chisamba.\nThe Court will now have to set a new date for the case to be heard as both parties pursue the probability of entering an ex-curia or case settlement outside Court.\nDr Scott is being represented by Iven Mulenga of Iven Mulenga and Company, while the PF is being represented by Billingtone Mosha of Messers Mosha and Company.')
+        
