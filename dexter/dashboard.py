@@ -223,7 +223,7 @@ class ActivityForm(Form):
     analysis_nature_id = RadioField('Analysis', default=AnalysisNature.ANCHOR)
     user_id         = SelectField('Added by', [validators.Optional()], default='')
     medium_id       = SelectMultipleField('Medium', [validators.Optional()], default='')
-    country_id      = SelectField('Country', [validators.Optional()], default=default_country_id)
+    country_id      = SelectField('Country', default=default_country_id)
     created_at      = TextField('Added', [validators.Optional()])
     published_at    = TextField('Published', [validators.Optional()])
     problems        = MultiCheckboxField('Article problems', [validators.Optional()], choices=DocumentAnalysisProblem.for_select())
@@ -240,7 +240,15 @@ class ActivityForm(Form):
 
         self.medium_id.choices = [(str(m.id), m.name) for m in Medium.query.order_by(Medium.name).all()]
         self.analysis_nature_id.choices = [[str(n.id), n.name] for n in AnalysisNature.all()]
-        self.country_id.choices = [['', '(any)']] + [[str(c.id), c.name] for c in Country.all()]
+
+        # only admins can see all countries
+        if current_user.admin:
+            self.country_id.choices = [['', '(any)']]
+            countries = Country.all()
+        else:
+            self.country_id.choices = []
+            countries = [current_user.country]
+        self.country_id.choices.extend([str(c.id), c.name] for c in countries)
 
         # override the analysis nature id if we have a cluster
         if self.cluster_id.data:
