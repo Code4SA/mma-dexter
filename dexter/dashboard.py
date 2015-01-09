@@ -92,7 +92,7 @@ def activity():
 
         return jsonify(DocumentPlace.summary_for_docs(query.all()))
 
-    elif form.format.data == 'xlsx':
+    elif form.format.data == 'xlsx' and current_user.admin:
         # excel spreadsheet
         excel = XLSXExportBuilder(form).build()
 
@@ -101,7 +101,7 @@ def activity():
         response.headers["Content-Type"] = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
         return response
 
-    elif form.format.data == 'children-ratings.xlsx':
+    elif form.format.data == 'children-ratings.xlsx' and current_user.admin:
         # excel spreadsheet
         excel = ChildrenRatingExport(form.document_ids()).build()
 
