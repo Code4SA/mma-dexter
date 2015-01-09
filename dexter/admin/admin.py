@@ -1,4 +1,3 @@
-from dexter.models import *
 from flask.ext.admin import Admin, expose, AdminIndexView
 from flask.ext.admin.contrib.sqla import ModelView
 from flask.ext.admin.model.template import macro
@@ -6,6 +5,9 @@ from wtforms.fields import SelectField, TextAreaField, TextField, HiddenField
 import flask_wtf
 from flask.ext.login import current_user
 
+from sqlalchemy import desc, func
+
+from dexter.models import *
 from ..forms import Form
 
 class MyModelView(ModelView):
@@ -147,8 +149,37 @@ class AffiliationView(MyModelView):
         ('country', Country.name),
     )
     column_filters = ['country.name']
-    column_default_sort = 'code'
+    column_default_sort = ('code', False)
     page_size = 100
+
+    def _order_by(self, query, joins, sort_field, sort_desc):
+        query, joins = super(AffiliationView, self)._order_by(query, joins, sort_field, sort_desc)
+
+        if sort_field.name == 'code':
+            # sort by the code field, which has entries like:
+            # 1
+            # 1.1
+            # 1.2
+            # 1.10
+            # 1.11
+            # 10.1
+            #
+            # these are hard to sort, because they don't sort correctly
+            # numerically or lexicographically. Instead, we treat them
+            # as parts of dotted-quad IP addresses and use mysql's inet_aton
+            # to sort them.
+
+            sort_field = func.inet_aton(
+                    func.if_(func.instr(sort_field, '.') > 0,
+                        func.concat(sort_field, '.0.0'),     # eg. 10.2
+                        func.concat(sort_field, '.0.0.0')))  # eg. 10
+
+            if sort_desc:
+                sort_field = desc(sort_field)
+            query = query.order_by(None).order_by(sort_field)
+
+        return query, joins
+
 
 class IssueView(MyModelView):
     list_template = 'admin/custom_list_template.html'
