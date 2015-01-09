@@ -115,6 +115,7 @@ class MediumView(MyModelView):
         'medium_group',
         ('country', Country.name),
     )
+    column_filters = ['country.name']
 
     choices = []
     for choice in ["online", "print - daily", "print - weekly", "radio", "television", "other"]:
@@ -145,6 +146,7 @@ class AffiliationView(MyModelView):
         ('name', Affiliation.name),
         ('country', Country.name),
     )
+    column_filters = ['country.name']
     column_default_sort = 'code'
     page_size = 100
 
@@ -168,6 +170,7 @@ class TopicView(MyModelView):
         'group',
         ('analysis_nature', AnalysisNature.name),
         )
+    column_filters = ['analysis_nature.name']
 
 
 class LocationView(MyModelView):
@@ -177,6 +180,7 @@ class LocationView(MyModelView):
         ('group', Location.group),
         ('country', Country.name),
     )
+    column_filters = ['country.name']
 
 
 class SourceRoleView(MyModelView):
@@ -185,6 +189,7 @@ class SourceRoleView(MyModelView):
         'indication',
         ('analysis_nature', AnalysisNature.name),
     )
+    column_filters = ['analysis_nature.name']
 
 
 class CountryView(MyModelView):
@@ -204,6 +209,7 @@ class UserView(MyModelView):
         'admin',
     )
     column_searchable_list = ('first_name', 'last_name', 'email')
+    column_filters = ['country.name']
 
     def scaffold_form(self):
         form_class = super(UserView, self).scaffold_form()
