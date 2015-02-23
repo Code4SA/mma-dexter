@@ -19,6 +19,8 @@ PACKAGES = [
     'libmagickwand-dev',
     'nginx',
     'rabbitmq-server',
+    'python-numpy',
+    'python-scipy',
     ]
 
 @task
@@ -38,6 +40,7 @@ def prod():
 def provision():
     sudo('apt-get update')
     sudo('apt-get install --yes --no-upgrade %s' % ' '.join(PACKAGES))
+    sudo('apt-get build-dep --yes --no-upgrade python-scipy')
     sudo('pip install virtualenv')
 
     with prefix('. %s/bin/activate' % env.ve_dir):
