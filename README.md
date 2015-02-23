@@ -87,26 +87,6 @@ export NEWSTOOLS_FEED_PASSWORD=password
 
 **Note:** DO NOT commit `production-settings.sh` into source control!
 
-### Database backups
-
-* Install s3cmd: `sudo apt-get install s3cmd`
-* Setup the s3 creds: `s3cmd --configure`
-* Install the crontab: `crontab -i resources/cron/backups.crontab`
-
-#### Restoring from backups
-
-* download the latest backup:
-
-```
-s3cmd get `s3cmd ls --recursive s3://mma-dexter-backups/mysql- | tail -1 | awk '{print $4}'`
-```
-
-* extract and restore
-
-```
-gunzip -c BACKUP-FILE | mysql -u mma -p mma
-```
-
 ### Logging
 
 nginx's production logs are in ``~mma/log/access.log``

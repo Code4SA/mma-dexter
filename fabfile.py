@@ -20,7 +20,6 @@ PACKAGES = [
     'libmagickwand-dev',
     'nginx',
     'rabbitmq-server',
-    's3cmd',
     ]
 
 @task
