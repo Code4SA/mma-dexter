@@ -19,6 +19,8 @@ PACKAGES = [
     'libmagickwand-dev',
     'nginx',
     'rabbitmq-server',
+    'python-numpy',
+    'python-scipy',
     ]
 
 @task
