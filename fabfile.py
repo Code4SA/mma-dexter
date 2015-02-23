@@ -15,7 +15,6 @@ PACKAGES = [
     'libxslt1-dev',
     'git-core',
     'python-pip',
-    'mysql-server-5.6',
     'libmysqlclient-dev',
     'libmagickwand-dev',
     'nginx',
