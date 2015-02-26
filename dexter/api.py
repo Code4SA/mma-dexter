@@ -94,66 +94,28 @@ def api_group_entities(group):
 
     return jsonify({'entities': [e.json() for e in entities]})
 
+# THIS IS A PUBLIC API!
+@app.route('/api/feeds/sources/people')
+def api_feed_people():
+    start_date, end_date = api_date_range(request)
+
+    # since it's public, keep the list of permitted keys limited
+    keys = ['source_name', 'gender', 'race', 'affiliation', 'affiliation_group']
+
+    results = get_sources_feed(start_date, end_date, keys)
+    return jsonify(results)
 
 @app.route('/api/feeds/sources')
 @app.route('/api/feeds/sources/<string:group>')
 @htauth.authenticated
-def api_feed_parties(group=None):
-    from dexter.models.views import DocumentSourcesView, DocumentsView, DocumentPlacesView
-
-    if group and not group in ['political-parties', 'groups']:
-        abort(404)
-
+def api_feed_sources(group=None):
     start_date, end_date = api_date_range(request)
+    keys = request.args.get('keys', '').strip()
+    if keys:
+        keys = keys.split(',')
 
-    cols = [
-            DocumentSourcesView.c.affiliation_group.label("affiliation_group"),
-            DocumentSourcesView.c.source_name.label("source_name"),
-            DocumentSourcesView.c.gender.label("gender"),
-            DocumentSourcesView.c.race.label("race"),
-            DocumentsView.c.medium_group.label("medium_group"),
-            DocumentsView.c.medium_type.label("medium_type"),
-            DocumentPlacesView.c.province_code,
-            DocumentPlacesView.c.province_name,
-            DocumentPlacesView.c.municipality_code,
-            DocumentPlacesView.c.municipality_name,
-            ]
-
-    if group != 'groups':
-        cols.insert(0, DocumentSourcesView.c.affiliation.label("affiliation"))
-
-    query = db.session.query(
-                func.count(DocumentSourcesView.c.document_id).label("record_count"),
-                *cols
-            )\
-            .join(DocumentsView, DocumentSourcesView.c.document_id == DocumentsView.c.document_id)\
-            .outerjoin(DocumentPlacesView, DocumentPlacesView.c.document_id == DocumentsView.c.document_id)\
-            .group_by(*cols)\
-            .filter(DocumentsView.c.published_at >= start_date)\
-            .filter(DocumentsView.c.published_at <= end_date)
-
-    if group == 'political-parties':
-        query = query.filter(DocumentSourcesView.c.affiliation_code.like('4.%'))
-
-
-    # {
-    #   "date-start":"2014-04-03",
-    #   "date-end":"2014-04-05",
-    #   "cells": [
-    #     {
-    #       "affiliation": null,
-    #       "record_count": 1,
-    #       "source_name": "Narend Singh",
-    #       "medium_group": "Beeld"
-    #     },
-    results = {
-        "date-start": start_date,
-        "date-end": end_date,
-        "cells": [r._asdict() for r in query.all()]
-    }
-
+    results = get_sources_feed(start_date, end_date, keys, group)
     return jsonify(results)
-
 
 @app.route('/api/feeds/topics')
 @htauth.authenticated
@@ -305,3 +267,70 @@ def api_date_range(request):
     end_date = end_date.strftime("%Y/%m/%d") + ' 23:59:59'
 
     return (start_date, end_date)
+
+def get_sources_feed(start_date, end_date, keys=None, group=None):
+    """
+    Get a rollup of sources over a period, where 'keys' is a list
+    of keys to group them by.
+    """
+    from dexter.models.views import DocumentSourcesView, DocumentsView, DocumentPlacesView
+
+    if group and group not in ['political-parties', 'groups']:
+        abort(404)
+
+    # map from the column alias to the column object
+    FIELDS = {str(c.name): c for c in [
+            DocumentSourcesView.c.affiliation.label("affiliation"),
+            DocumentSourcesView.c.affiliation_group.label("affiliation_group"),
+            DocumentSourcesView.c.source_name.label("source_name"),
+            DocumentSourcesView.c.gender.label("gender"),
+            DocumentSourcesView.c.race.label("race"),
+            DocumentsView.c.medium_group.label("medium_group"),
+            DocumentsView.c.medium_type.label("medium_type"),
+            DocumentPlacesView.c.province_code,
+            DocumentPlacesView.c.province_name,
+            DocumentPlacesView.c.municipality_code,
+            DocumentPlacesView.c.municipality_name,
+            ]}
+
+    # let the user choose what columns they get back as a comma-separated list
+    if not keys:
+        keys = FIELDS.keys()
+        if group == 'groups':
+            # remove the affiliation column
+            keys.remove('affiliation')
+
+    cols = [FIELDS[c] for c in FIELDS.viewkeys() & keys]
+
+    query = db.session.query(
+                func.count(DocumentSourcesView.c.document_id).label("record_count"),
+                *cols
+            )\
+            .join(DocumentsView, DocumentSourcesView.c.document_id == DocumentsView.c.document_id)\
+            .outerjoin(DocumentPlacesView, DocumentPlacesView.c.document_id == DocumentsView.c.document_id)\
+            .group_by(*cols)\
+            .filter(DocumentsView.c.published_at >= start_date)\
+            .filter(DocumentsView.c.published_at <= end_date)
+
+    if group == 'political-parties':
+        query = query.filter(DocumentSourcesView.c.affiliation_code.like('4.%'))
+
+
+    # {
+    #   "date-start":"2014-04-03",
+    #   "date-end":"2014-04-05",
+    #   "cells": [
+    #     {
+    #       "affiliation": null,
+    #       "record_count": 1,
+    #       "source_name": "Narend Singh",
+    #       "medium_group": "Beeld"
+    #     },
+    results = {
+        "date-start": start_date,
+        "date-end": end_date,
+        "cells": [r._asdict() for r in query.all()]
+    }
+
+    return results
+
