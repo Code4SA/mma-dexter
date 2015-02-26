@@ -86,10 +86,10 @@ def api_people_sourced(name):
             .filter(DocumentSource.person_id == person.id)\
             .filter(DocumentsView.c.published_at >= start_date)\
             .filter(DocumentsView.c.published_at <= end_date)\
+
+    query = filter_country(query, DocumentsView.c.country, request.args.get('country'))\
             .order_by(DocumentsView.c.published_at.desc())\
             .limit(50) # only return the most recent 50
-
-    query = filter_country(query, DocumentsView.c.country, request.args.get('country'))
 
     result = {
         "date-start": start_date,
