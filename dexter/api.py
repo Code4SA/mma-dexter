@@ -1,17 +1,18 @@
 import logging
 import urlparse
+import urllib
 from datetime import datetime, timedelta
 from dateutil.parser import parse
 log = logging.getLogger(__name__)
 
 from flask import request, url_for, redirect, jsonify, abort
-from flask.ext.login import login_required
+from flask.ext.login import login_required, current_user
 from flask.ext import htauth
 from sqlalchemy.orm import joinedload, lazyload
 from sqlalchemy.sql import func
 
 from .app import app
-from .models import db, Author, Person, Entity, Document, DocumentSource, Medium, Location, Topic, Affiliation, DocumentPlace, Place
+from .models import db, Author, Person, Entity, Document, DocumentSource, Medium, Location, Topic, Affiliation, DocumentPlace, Place, Country
 from .analysis import BiasCalculator
 
 @app.route('/api/authors')
@@ -60,6 +61,46 @@ def api_people():
 
     return jsonify({'people': [p.json() for p in people]})
 
+# THIS IS A PUBLIC API
+@app.route('/api/people/<string:name>/sourced')
+def api_people_sourced(name):
+    """
+    Returns the documents where a person has been sourced.
+    """
+    from dexter.models.views import DocumentsView
+
+    start_date, end_date = api_date_range(request)
+    name = urllib.unquote_plus(name)
+
+    person = Person.query.filter(Person.name == name).first()
+    if not person:
+        abort(404)
+
+    query = db.session.query(
+                DocumentsView.c.article_url,
+                DocumentsView.c.title,
+                DocumentsView.c.published_date,
+                DocumentsView.c.medium,
+            )\
+            .join(DocumentSource, DocumentSource.doc_id == DocumentsView.c.document_id)\
+            .filter(DocumentSource.person_id == person.id)\
+            .filter(DocumentsView.c.published_at >= start_date)\
+            .filter(DocumentsView.c.published_at <= end_date)\
+            .order_by(DocumentsView.c.published_at.desc())\
+            .limit(50) # only return the most recent 50
+
+    query = filter_country(query, DocumentsView.c.country, request.args.get('country'))
+
+    result = {
+        "date-start": start_date,
+        "date-end": end_date,
+        "source": person.json(),
+        "sourced_by": [r._asdict() for r in query.all()]
+    }
+
+    return jsonify(result)
+
+
 @app.route('/api/entities')
 @login_required
 def api_entities():
@@ -102,7 +143,7 @@ def api_feed_people():
     # since it's public, keep the list of permitted keys limited
     keys = ['source_name', 'gender', 'race', 'affiliation', 'affiliation_group']
 
-    results = get_sources_feed(start_date, end_date, keys)
+    results = get_sources_feed(start_date, end_date, keys, source_type='person')
     return jsonify(results)
 
 @app.route('/api/feeds/sources')
@@ -147,6 +188,8 @@ def api_feed_topics():
             .filter(DocumentsView.c.published_at >= start_date)\
             .filter(DocumentsView.c.published_at <= end_date)
 
+    query = filter_country(query, DocumentsView.c.country, request.args.get('country'))
+
     results = {
         "date-start": start_date,
         "date-end": end_date,
@@ -159,7 +202,7 @@ def api_feed_topics():
 @app.route('/api/feeds/origins')
 @htauth.authenticated
 def api_feed_origins():
-    from dexter.models.views import DocumentSourcesView, DocumentsView
+    from dexter.models.views import DocumentsView
 
     start_date, end_date = api_date_range(request)
 
@@ -177,6 +220,8 @@ def api_feed_origins():
             .filter(DocumentsView.c.published_at >= start_date)\
             .filter(DocumentsView.c.published_at <= end_date)
 
+    query = filter_country(query, DocumentsView.c.country, request.args.get('country'))
+
     results = {
         "date-start": start_date,
         "date-end": end_date,
@@ -193,9 +238,15 @@ def api_feed_bias():
     calc = BiasCalculator()
 
     log.info("Loading documents for bias calculation")
-    documents = calc.get_query()\
+    query = calc.get_query()\
+            .join(Country)\
             .filter(Document.published_at >= start_date)\
-            .filter(Document.published_at <= end_date).all()
+            .filter(Document.published_at <= end_date)
+
+    query = filter_country(query, Country.name, request.args.get('country'))
+
+    documents = query.all()
+
     log.info("Loaded %d docs" % len(documents))
 
     scores = calc.calculate_bias_scores(documents, key=lambda d: (d.medium.group_name(), d.medium.medium_type))
@@ -268,7 +319,7 @@ def api_date_range(request):
 
     return (start_date, end_date)
 
-def get_sources_feed(start_date, end_date, keys=None, group=None):
+def get_sources_feed(start_date, end_date, keys=None, group=None, source_type=None):
     """
     Get a rollup of sources over a period, where 'keys' is a list
     of keys to group them by.
@@ -312,9 +363,13 @@ def get_sources_feed(start_date, end_date, keys=None, group=None):
             .filter(DocumentsView.c.published_at >= start_date)\
             .filter(DocumentsView.c.published_at <= end_date)
 
+    if source_type is not None:
+        query = query.filter(DocumentSourcesView.c.source_type == source_type)
+
     if group == 'political-parties':
         query = query.filter(DocumentSourcesView.c.affiliation_code.like('4.%'))
 
+    query = filter_country(query, DocumentsView.c.country, request.args.get('country'))
 
     # {
     #   "date-start":"2014-04-03",
@@ -333,4 +388,18 @@ def get_sources_feed(start_date, end_date, keys=None, group=None):
     }
 
     return results
+
+def filter_country(query, col, country=None):
+    if not country:
+        if current_user and current_user.is_authenticated():
+            country = current_user.country
+        else:
+            country = Country.query.filter(Country.code == 'za').first()
+    else:
+        country = Country.query.filter(Country.code == country).first()
+
+    if not country:
+        abort(400, 'invalid country')
+
+    return query.filter(col == country)
 
