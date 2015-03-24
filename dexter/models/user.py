@@ -35,7 +35,7 @@ class User(db.Model, UserMixin):
     disabled    = Column(Boolean, default=False)
     encrypted_password = Column(String(100))
 
-    default_analysis_nature_id = Column(Integer, ForeignKey('analysis_natures.id'), default=1)
+    default_analysis_nature_id = Column(Integer, ForeignKey('analysis_natures.id'), default=1, nullable=False)
 
     country_id  = Column(Integer, ForeignKey('countries.id'), nullable=False)
 

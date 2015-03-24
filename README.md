@@ -101,8 +101,25 @@ To deploy changes to the service,
 * make the changes elsewhere, commit to git and push to github
 * `fab prod deploy`
 
+### Deploying database changes
+
+Dexter uses [Flask-Migrate](https://flask-migrate.readthedocs.org/en/latest/) (which uses Alembic) to handle database migrations.
+
+To add a new model or make changes, update the SQLAlchemy definitions in `dexter/models/`. Then run
+
+    python app.py db migrate --message "a description of your change"
+
+This will autogenerate a change. Double check that it make sense. To apply it on your machine, run
+
+    python app.py db upgrade head
+
+To deploy it remotely, ensure it is committeed and pushed, then run:
+
+    fab production deploy migrate restart
+
 ## Database
 
 The server expects MySQL 5.6 because it uses the CURRENT_TIMESTAMP default value
 on a DATETIME column, [as described here](http://shankargopal.blogspot.com/2013/03/mysql-566-timestamp-columns-and-default.html).
 This means on some systems you'll need to [upgrade from 5.5 to 5.6](https://rtcamp.com/tutorials/mysql/mysql-5-6-ubuntu-12-04/).
+
