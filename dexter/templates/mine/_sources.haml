@@ -1,0 +1,21 @@
+%%namespace(file="../dashboard/helpers.haml", **{'import': '*'})
+
+- import itertools
+
+%section
+  %h3 Top People Sources
+
+%section
+  %table.table.table-striped.table-condensed.analysis
+    %tr
+      %th
+      %th Person
+      %th.sparkline
+
+    - for i, source in enumerate(source_analyser.top_people):
+      %tr
+        %td.rank ${i+1}.
+        %td
+          %a(href=url_for('show_person', id=source.person.id))&= source.person.name
+          %span.text-muted&= source.person.affiliation and source.person.affiliation.name or ''
+        %td.sparkline(dataSparkline=','.join(str(round(i, 0)) for i in source.source_counts), dataLabel='{point.y}%')
