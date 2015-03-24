@@ -1,6 +1,28 @@
 form.mine {
 }
 
+// put people table alongside quotations
+
+.people-table {
+  float: left;
+  width: 50%;
+
+  h3 {
+    margin-top: 0px;
+  }
+
+  tr {
+    cursor: pointer;
+  }
+
+}
+
+.quotations {
+  float: left;
+  width: 50%;
+  padding-left: 10px;
+}
+
 footer {
   border-top: 10px solid #ddd;
   margin-top: 120px;
