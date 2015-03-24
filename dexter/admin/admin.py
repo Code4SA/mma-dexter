@@ -29,7 +29,6 @@ class MyIndexView(AdminIndexView):
 class DocumentView(MyModelView):
     can_create = False
     can_edit = False
-    list_template = 'admin/custom_list_template.html'
     column_list = (
         'published_at',
         'medium',
@@ -68,7 +67,6 @@ class DocumentView(MyModelView):
 class EntityView(MyModelView):
     can_create = False
     can_edit = False
-    list_template = 'admin/custom_list_template.html'
     column_list = (
         'name',
         'group',
@@ -90,7 +88,6 @@ class EntityView(MyModelView):
 
 
 class MediumView(MyModelView):
-    list_template = 'admin/custom_list_template.html'
     column_list = (
         'name',
         'domain',
@@ -133,7 +130,6 @@ class MediumView(MyModelView):
       )
 
 class AffiliationView(MyModelView):
-    list_template = 'admin/custom_list_template.html'
     column_list = (
         'code',
         'name',
@@ -182,7 +178,6 @@ class AffiliationView(MyModelView):
 
 
 class IssueView(MyModelView):
-    list_template = 'admin/custom_list_template.html'
     column_list = (
         'name',
         'description',
@@ -230,7 +225,6 @@ class CountryView(MyModelView):
         return form_class
 
 class UserView(MyModelView):
-    list_template = 'admin/custom_list_template.html'
     column_list = (
         'first_name',
         'last_name',
@@ -252,7 +246,7 @@ class UserView(MyModelView):
         del form_class.created_documents
         return form_class
 
-admin_instance = Admin(url='/admin', base_template='admin/custom_master.html', name="Dexter Admin", index_view=MyIndexView())
+admin_instance = Admin(url='/admin', base_template='admin/custom_master.html', name="Dexter Admin", index_view=MyIndexView(), template_mode='bootstrap3')
 admin_instance.add_view(UserView(User, db.session, name="Users", endpoint='user'))
 admin_instance.add_view(CountryView(Country, db.session, name="Countries", endpoint='country'))
 
