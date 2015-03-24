@@ -11,6 +11,7 @@ import dexter.entities
 import dexter.api
 import dexter.users
 import dexter.dashboard
+import dexter.mine
 import dexter.search
 
 @app.route('/')
