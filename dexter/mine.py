@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+import time
 
 from wtforms import validators, HiddenField, TextField, SelectMultipleField, BooleanField
 from wtforms.fields.html5 import DateField
@@ -6,6 +7,7 @@ from wtforms.fields.html5 import DateField
 from flask import request, url_for, flash, redirect, make_response, jsonify, abort
 from flask.ext.mako import render_template
 from flask.ext.login import login_required, current_user
+from wsgiref.handlers import format_date_time
 
 from dexter.app import app
 from dexter.models import *
@@ -22,9 +24,17 @@ def mine_home():
     sa.analyse()
     sa.load_utterances()
 
-    return render_template('mine/index.haml',
-            form=form,
-            source_analyser=sa)
+    expires = datetime.now() + timedelta(minutes=10)
+
+    return (
+            render_template('mine/index.haml',
+                form=form,
+                source_analyser=sa),
+            200,
+            {
+                'Cache-Control': 'public',
+                'Expires': format_date_time(time.mktime(expires.timetuple())),
+            })
 
 
 class MineForm(Form):
