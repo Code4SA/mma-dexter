@@ -36,7 +36,7 @@ request_started.connect(log_attach_user_id, app)
 
 
 # setup templates and haml
-from flask.ext.mako import MakoTemplates, _lookup
+from flask.ext.mako import MakoTemplates, _lookup, render_template
 import haml
 MakoTemplates(app)
 app.config['MAKO_PREPROCESSOR'] = haml.preprocessor
@@ -49,25 +49,12 @@ CsrfProtect(app)
 
 
 # user authentication
-from flask.ext.login import LoginManager
-login_manager = LoginManager()
-login_manager.init_app(app)
-login_manager.login_view = 'user_login'
+from dexter.models import db, User, Role
+from flask.ext.security import Security, SQLAlchemyUserDatastore
+user_datastore = SQLAlchemyUserDatastore(db, User, Role)
+security = Security(app, user_datastore)
+app.extensions['security'].render_template = render_template
 
-from dexter.authn import AnonymousUser
-login_manager.anonymous_user = AnonymousUser
-
-@login_manager.user_loader
-def load_user(userid):
-    from .models import User
-
-    user = User.query.get(userid)
-
-    # don't allow disabled users
-    if user and user.disabled:
-        user = None
-
-    return user
 
 # htpasswd-based basic auth for API access
 from flask.ext import htauth
