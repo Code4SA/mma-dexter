@@ -561,7 +561,7 @@ class XLSXExportBuilder:
         ws.write(3, 0, 'discrepancy')
         ws.write(4, 0, 'parties')
         ws.write(5, 0, 'fair')
-        ws.write(6, 0, 'bias')
+        ws.write(6, 0, 'final score')
 
         for i, score in enumerate(scores):
             col = i + 1
@@ -573,6 +573,20 @@ class XLSXExportBuilder:
             ws.write(4, col, score.parties)
             ws.write(5, col, score.fair)
             ws.write(6, col, score.score)
+
+        # key
+        ws.write(9, 0, 'KEY')
+        key = [
+                ('Oppose', 'number of stories biased against an entity'),
+                ('Favour', 'number of stories biased in favour of an entity'),
+                ('Discrepancy', 'difference between the number of stories biased and/or favouring an entity (1 is the ideal score)'),
+                ('Parties', 'spread of political party coverage (the better the spread of coverage the better the score - 1 is the ideal score although media are compared against each other'),
+                ('Fair', 'percentage of stories that are fair'),
+                ('Final score', 'the total weighting of all the scores above. The closer the score is to 1, the better the performance in terms of fairness. This can be used as a percentage.'),
+            ]
+        for i, item in enumerate(key):
+            ws.write(10+i, 0, item[0])
+            ws.write(10+i, 1, item[1])
 
     def write_table(self, ws, name, rows, keys=None, rownum=0, colnum=0):
         if rows:
