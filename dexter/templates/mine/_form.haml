@@ -21,13 +21,12 @@
         .col-sm-3
           = vertical_field(form.medium_id, class_='select2')
 
-        .col-sm-3
+        -#.col-sm-3
           -# need to inject the name of the person for the select2 field
           -# to setup correctly
           -#- person = form.source_person()
           -#- kwargs = {'data-text': person and person.name or ''}
           -#= vertical_field(form.source_person_id, **kwargs)
-
-      .row.buttons
-        .col-sm-5
-          %input.btn.btn-success.form-control(type='submit', value='Explore')
+      .row
+        .col-sm-3.col-sm-offset-9.buttons
+          %input.btn.btn-success.form-control(type='submit', value='Explore', dataDisableWith='Working...')

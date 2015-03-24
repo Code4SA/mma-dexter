@@ -110,6 +110,7 @@ assets.register('mine-js', Bundle(
     'js/bootstrap-datetimepicker.min.js',
     'js/daterangepicker-1.3.5.js',
     'js/select2-3.4.8.min.js',
+    'js/mine.js',
     charts,
     output='js/mine.%(version)s.js'))
 

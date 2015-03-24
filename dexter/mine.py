@@ -37,11 +37,13 @@ class MineForm(Form):
     def __init__(self, *args, **kwargs):
         super(MineForm, self).__init__(*args, **kwargs)
 
-        self.medium_id.choices = [(str(m.id), m.name) for m in Medium.query.order_by(Medium.name).all()]
+        self.country = current_user.country
+
+        media = Medium.query.filter(Medium.country == self.country).order_by(Medium.name).all()
+        self.medium_id.choices = [('', 'All Media')] + [(str(m.id), m.name) for m in media]
         if not self.published_at.data:
             self.published_at.data = ' - '.join(d.strftime("%Y/%m/%d") for d in [datetime.utcnow() - timedelta(days=14), datetime.utcnow()])
 
-        self.country = current_user.country
 
     @property
     def published_from(self):
@@ -68,7 +70,6 @@ class MineForm(Form):
 
         if self.medium_id.data:
             query = query.filter(Document.medium_id.in_(self.medium_id.data))
-
 
         if self.published_from:
             query = query.filter(Document.published_at >= self.published_from)
