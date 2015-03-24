@@ -15,9 +15,9 @@
             %span.text-muted&= source.person.affiliation and source.person.affiliation.name or ''
           %td.sparkline(dataSparkline=','.join(str(round(i, 0)) for i in source.source_counts), dataLabel='{point.y}%')
 
-  .quotations
+  .people-quotations
     - for i, source in enumerate(source_analyser.top_people):
-      .person-quotations.collapse(id="quotations-%s" % i, class_=("in" if i == 0 else ""))
+      .collapse(id="quotations-%s" % i, class_=("in" if i == 0 else ""))
         %h4
           ${i+1}. 
           &= source.person.name
@@ -25,9 +25,16 @@
 
         - utterances = source_analyser.person_utterances.get(source.person.id, [])
         - if utterances:
-          %ul.fa-ul
+          %ul.fa-ul.quotation-list
             - for u in utterances:
               %li
                 %i.fa.fa-li.fa-quote-left
-                &= u.quote
+                %i&= u.quote
+
+                %ul.list-unstyled
+                  - for doc in u.docs_sampling:
+                    %li.doc
+                      %a(href=doc.url, target="_blank")&= doc.title
+                      \-
+                      %span.text-muted&=doc.medium.name
 

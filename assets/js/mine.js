@@ -25,7 +25,7 @@ $(function() {
 
 // People and quotations
 $(function () {
-  var $quotations = $('.people .quotations');
+  var $quotations = $('.people-quotations');
 
   $('.people-table a, .people-table tr').on('click', function(e) {
     e.preventDefault();

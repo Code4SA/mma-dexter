@@ -65,10 +65,15 @@ class SourceAnalyser(BaseAnalyser):
                         dup = True
                         break
 
-                if not dup:
+                if dup:
+                    # collect documents, on from each medium
+                    if not any(d.medium == utterance.document.medium for d in au.docs_sampling):
+                        au.docs_sampling.append(utterance.document)
+                else:
                     au = AnalysedUtterance()
                     au.quote = utterance.quote
                     au.count = 1
+                    au.docs_sampling = [utterance.document]
                     for_person.append(au)
 
             for_person.sort(key=lambda au: au.count, reverse=True)
