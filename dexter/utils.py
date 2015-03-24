@@ -1,7 +1,9 @@
 from __future__ import division
+from functools import wraps
+from datetime import timedelta, datetime
 
 from flask.ext.sqlalchemy import Pagination
-from flask import abort
+from flask import abort, Response, make_response
 
 import nltk
 
@@ -40,3 +42,23 @@ def levenshtein(first, second):
         return 0
 
     return (lensum - ldist) / lensum
+
+
+# TODO: use flask-cache or something and do server-side caching too.
+def client_cache_for(**duration):
+    def wrapper(f):
+        @wraps(f)
+        def wrapped(*args, **kwargs):
+            response = f(*args, **kwargs)
+            if not isinstance(response, Response):
+                response = make_response(*response)
+
+            if response.status_code == 200:
+                delta = timedelta(**duration)
+                response.cache_control.max_age = int(delta.total_seconds())
+                response.expires = datetime.utcnow() + delta
+
+            return response
+        return wrapped
+
+    return wrapper
