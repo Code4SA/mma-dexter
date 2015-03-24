@@ -12,7 +12,7 @@ from sqlalchemy.orm import relationship
 import logging
 log = logging.getLogger(__name__)
 
-from flask.ext.login import UserMixin
+from flask.ext.security import UserMixin, RoleMixin
 
 from passlib.hash import sha256_crypt
 
@@ -45,6 +45,7 @@ class User(db.Model, UserMixin):
     # associations
     default_analysis_nature = relationship("AnalysisNature")
     country     = relationship("Country")
+    roles       = db.relationship('Role', secondary='roles_users', backref=db.backref('users', lazy='dynamic'))
 
     def get_password(self):
         return None
@@ -106,6 +107,30 @@ class User(db.Model, UserMixin):
         admin_user.encrypted_password = sha256_crypt.encrypt('admin')
 
         return [admin_user]
+
+
+class Role(db.Model, RoleMixin):
+
+    __tablename__ = "roles"
+
+    id = db.Column(db.Integer(), primary_key=True)
+    name = db.Column(db.String(80), unique=True)
+    description = db.Column(db.String(255))
+
+    def __unicode__(self):
+        return unicode(self.name)
+
+    @classmethod
+    def create_defaults(self):
+        return [
+                Role(name='monitor', description='user can add and edit documents'),
+                Role(name='miner', description='user can use the Dexter Mine feature'),
+                ]
+
+
+roles_users = db.Table('roles_users',
+        db.Column('user_id', db.Integer(), db.ForeignKey('users.id', ondelete='CASCADE')),
+        db.Column('role_id', db.Integer(), db.ForeignKey('roles.id', ondelete='CASCADE')))
 
 
 class LoginForm(Form):
