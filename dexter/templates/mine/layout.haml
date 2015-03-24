@@ -1,0 +1,77 @@
+- from flask.ext.login import current_user
+
+!!! 5
+%html
+  %head
+    %meta(charset="utf-8")
+    %meta(httpEquiv="X-UA-Compatible", content="IE=edge,chrome=1")
+    %title
+      %%block(name="title")
+      \- Dexter Mine
+    %meta(name='csrf-param', content='csrf_token')
+    %meta(name='csrf-token', content=csrf_token())
+
+    - for url in webassets('mine-css'):
+      %link(rel="stylesheet", href=url)
+
+    %%block(name="extra_header_tags")
+
+  %body
+    %header
+      .navbar.navbar-default
+        .container
+          .navbar-header
+            %a.navbar-brand(href=url_for('mine_home'))
+              Dexter Mine
+
+          - if current_user.is_authenticated():
+            .navbar-nav.navbar-right
+              %ul.nav.navbar-nav
+                %li
+                  %a.dropdown-toggle(href="#", dataToggle='dropdown')
+                    &= current_user.full_name()
+                    %b.caret
+                  %ul.dropdown-menu
+                    %li
+                      %a(href=url_for('user_logout'), dataMethod='post')
+                        Logout
+
+    %%block(name='pre_content')
+
+    .container
+      -# show flash messages
+      - for category, message in (get_flashed_messages(with_categories=True) or []):
+        - category = 'info' if category == 'message' else category
+        - category = 'danger' if category == 'error' else category
+        %p.alert(class_="alert-" + category)
+          &= message
+
+      ${next.body()}
+
+    %footer
+      .container
+        .col-sm-3
+          %p
+            &copy; 2014
+            %a(href="http://www.mediamonitoringafrica.org") Media Monitoring Africa
+          %p
+            %a(href="mailto:dexter@mma.org.za") dexter@mma.org.za
+
+        .col-sm-3
+          %a(href="http://www.mediamonitoringafrica.org/", target="_blank")
+            %img.logo(src="/public/images/mma-logo.png")
+
+        .col-sm-6.text-right
+          %a(href="http://www.code4sa.org/", target="_blank")
+            %img.logo(src="/public/images/code4sa-logo-small.png")
+
+          %a(href="http://www.alchemyapi.com/", target="_blank")
+            %img.logo.partner(src="/public/images/alchemyapi-logo.png")
+
+          %a(href="http://www.opencalais.com/", target="_blank")
+            %img.logo.partner(src="/public/images/calais-logo.jpg")
+
+    - for url in webassets('mine-js'):
+      %script(src=url)
+
+    %%block(name="extra_javascript")
