@@ -45,6 +45,8 @@ class SourceAnalyser(BaseAnalyser):
 
         utterances = Utterance.query\
                       .join(Entity)\
+                      .options(joinedload(Utterance.document))\
+                      .options(joinedload('document.medium'))\
                       .filter(Entity.person_id.in_(ids))\
                       .filter(Utterance.doc_id.in_(self.doc_ids))\
                       .order_by(Entity.person_id)\
@@ -66,7 +68,7 @@ class SourceAnalyser(BaseAnalyser):
                         break
 
                 if dup:
-                    # collect documents, on from each medium
+                    # collect documents, one from each medium
                     if not any(d.medium == utterance.document.medium for d in au.docs_sampling):
                         au.docs_sampling.append(utterance.document)
                 else:
