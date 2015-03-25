@@ -31,7 +31,7 @@ class User(db.Model, UserMixin):
     last_name   = Column(String(50), nullable=False)
     admin       = Column(Boolean, default=False)
     disabled    = Column(Boolean, default=False)
-    password    = Column(String(100))
+    password    = Column(String(100), default='')
 
     default_analysis_nature_id = Column(Integer, ForeignKey('analysis_natures.id'), default=1, nullable=False)
 
