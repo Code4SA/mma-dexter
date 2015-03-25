@@ -3,7 +3,10 @@
 %section
   %h2
     Hi
-    &= current_user.first_name or current_user.email
+    - if current_user.is_authenticated():
+      &= current_user.first_name or current_user.email
+    - else:
+      there
 
   %p
     It looks like you don't have any permissions to see anything.
