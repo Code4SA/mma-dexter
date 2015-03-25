@@ -18,6 +18,8 @@ loggers:
     level: DEBUG
   sqlalchemy.engine:
     level: INFO
+  passlib:
+    level: INFO
 root:
   handlers: [console]
   level: DEBUG

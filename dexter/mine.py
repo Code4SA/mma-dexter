@@ -6,7 +6,7 @@ from wtforms.fields.html5 import DateField
 
 from flask import request, url_for, flash, redirect, make_response, jsonify, abort
 from flask.ext.mako import render_template
-from flask.ext.login import login_required, current_user
+from flask.ext.security import roles_accepted, current_user
 from wsgiref.handlers import format_date_time
 
 from dexter.app import app
@@ -17,7 +17,7 @@ from dexter.utils import client_cache_for
 
 
 @app.route('/mine/')
-@login_required
+@roles_accepted('monitor', 'miner')
 @client_cache_for(minutes=10)
 def mine_home():
     form = MineForm(request.args)

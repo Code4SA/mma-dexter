@@ -15,8 +15,7 @@
             %a(href="#quotations-%s" % i)&= source.person.name
             %span.text-muted&= source.person.affiliation and source.person.affiliation.name or ''
           %td.dot-holder
-            -# area must be proportional to the values
-            - size = (3+17*(source.source_counts_normalised**2))
+            - size = (3+17*source.source_counts_normalised)
             .dot(style="width: %dpx; height: %dpx" % (size, size))
           %td.sparkline(dataSparkline=','.join(str(round(i, 0)) for i in source.source_counts), dataLabel='{point.y}%')
 

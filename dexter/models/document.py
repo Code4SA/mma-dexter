@@ -50,12 +50,12 @@ class Document(db.Model):
     section   = Column(String(100), index=True)
     item_num  = Column(Integer)
 
-    author_id         = Column(Integer, ForeignKey('authors.id'), index=True)
-    medium_id         = Column(Integer, ForeignKey('mediums.id'), index=True)
+    author_id         = Column(Integer, ForeignKey('authors.id'), index=True, nullable=False)
+    medium_id         = Column(Integer, ForeignKey('mediums.id'), index=True, nullable=False)
     document_type_id  = Column(Integer, ForeignKey('document_types.id'), index=True)
     origin_location_id = Column(Integer, ForeignKey('locations.id'), index=True)
 
-    country_id        = Column(Integer, ForeignKey('countries.id'), index=True)
+    country_id        = Column(Integer, ForeignKey('countries.id'), index=True, nullable=False)
 
     created_by_user_id = Column(Integer, ForeignKey('users.id'), index=True)
     checked_by_user_id = Column(Integer, ForeignKey('users.id'), index=True)

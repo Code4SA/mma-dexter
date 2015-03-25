@@ -3,7 +3,7 @@ import os
 
 from flask import request, url_for, flash, redirect, make_response, jsonify
 from flask.ext.mako import render_template
-from flask.ext.login import login_required, current_user
+from flask.ext.security import roles_accepted, current_user
 
 from werkzeug.exceptions import Forbidden, NotAcceptable
 from wand.exceptions import WandError
@@ -22,7 +22,7 @@ from .processing import DocumentProcessor, ProcessingError
 log = logging.getLogger(__name__)
 
 @app.route('/articles/<id>')
-@login_required
+@roles_accepted('monitor')
 def show_article(id):
     document = Document.query.get_or_404(id)
 
@@ -33,7 +33,7 @@ def show_article(id):
             document=document)
 
 @app.route('/articles/<id>/delete', methods=['POST'])
-@login_required
+@roles_accepted('monitor')
 def delete_article(id):
     document = Document.query.get_or_404(id)
 
@@ -50,7 +50,7 @@ def delete_article(id):
  
 
 @app.route('/articles/new', methods=['GET', 'POST'])
-@login_required
+@roles_accepted('monitor')
 def new_article():
     form = DocumentForm()
     author_form = AuthorForm(prefix='author', csrf_enabled=False)
@@ -126,7 +126,7 @@ def new_article():
 
 
 @app.route('/articles/<id>/edit', methods=['GET', 'POST'])
-@login_required
+@roles_accepted('monitor')
 def edit_article(id):
     doc = Document.query.get_or_404(id)
     if not doc.can_user_edit(current_user):
@@ -160,7 +160,7 @@ def edit_article(id):
 
 
 @app.route('/articles/<id>/analysis', methods=['GET', 'POST'])
-@login_required
+@roles_accepted('monitor')
 def edit_article_analysis(id):
     document = Document.query.get_or_404(id)
 
@@ -268,7 +268,7 @@ def edit_article_analysis(id):
             {'Cache-Control': 'no-cache, no-store, must-revalidate'})
 
 @app.route('/articles/<id>/analysis/nature', methods=['POST'])
-@login_required
+@roles_accepted('monitor')
 def edit_article_analysis_nature(id):
     document = Document.query.get_or_404(id)
 
@@ -291,7 +291,7 @@ def edit_article_analysis_nature(id):
 
 
 @app.route('/articles/attachments', methods=['POST'])
-@login_required
+@roles_accepted('monitor')
 def create_article_attachment():
     try:
         if 'file' in request.files:
