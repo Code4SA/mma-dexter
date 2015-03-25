@@ -48,6 +48,11 @@ from flask_wtf.csrf import CsrfProtect
 CsrfProtect(app)
 
 
+# Mail
+from flask_mail import Mail
+mail = Mail(app)
+
+
 # user authentication
 from dexter.models import db, User, Role
 from flask.ext.security import Security, SQLAlchemyUserDatastore
