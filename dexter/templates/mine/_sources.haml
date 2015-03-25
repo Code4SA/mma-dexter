@@ -1,10 +1,11 @@
 %%namespace(file="../dashboard/helpers.haml", **{'import': '*'})
 
 - import itertools
+- from random import choice
 
 %section.people
   .people-table
-    %h3 People speaking in the news
+    %h3 Top people speaking in the news
 
     %table.table.table-condensed.analysis
       - for i, source in enumerate(source_analyser.top_people):
@@ -13,6 +14,10 @@
           %td
             %a(href="#quotations-%s" % i)&= source.person.name
             %span.text-muted&= source.person.affiliation and source.person.affiliation.name or ''
+          %td.dot-holder
+            -# area must be proportional to the values
+            - size = (3+17*(source.source_counts_normalised**2))
+            .dot(style="width: %dpx; height: %dpx" % (size, size))
           %td.sparkline(dataSparkline=','.join(str(round(i, 0)) for i in source.source_counts), dataLabel='{point.y}%')
 
   .people-quotations
@@ -30,11 +35,14 @@
               %li
                 %i.fa.fa-li.fa-quote-left
                 %i&= u.quote
+                .headline
+                  - sample = choice(u.docs_sampling)
+                  %a(href=sample.url, target="_blank")&= sample.title
+                  \-
+                  %span.text-muted&=sample.medium.name
 
-                %ul.list-unstyled
-                  - for doc in u.docs_sampling:
-                    %li.doc
-                      %a(href=doc.url, target="_blank")&= doc.title
-                      \-
-                      %span.text-muted&=doc.medium.name
-
+                %ul.list-inline
+                  - for i, doc in enumerate(u.docs_sampling):
+                    - if sample != doc:
+                      %li
+                        %a(href=doc.url, target="_blank")&= doc.medium.name
