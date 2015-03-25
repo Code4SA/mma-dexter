@@ -1,14 +1,14 @@
 """adjust user models to match flask-security
 
 Revision ID: 213cdaf404ca
-Revises: 2a3bbd3d21d
+Revises: 437e0ac0a455
 Create Date: 2015-03-25 11:57:14.612776
 
 """
 
 # revision identifiers, used by Alembic.
 revision = '213cdaf404ca'
-down_revision = '2a3bbd3d21d'
+down_revision = '437e0ac0a455'
 
 from alembic import op
 import sqlalchemy as sa
