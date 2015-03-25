@@ -13,10 +13,12 @@ from dexter.app import app
 from dexter.models import *
 from dexter.forms import Form, SelectField, MultiCheckboxField, RadioField
 from dexter.analysis import SourceAnalyser, TopicAnalyser
+from dexter.utils import client_cache_for
 
 
 @app.route('/mine/')
 @login_required
+@client_cache_for(minutes=10)
 def mine_home():
     form = MineForm(request.args)
 
@@ -26,15 +28,9 @@ def mine_home():
 
     expires = datetime.now() + timedelta(minutes=10)
 
-    return (
-            render_template('mine/index.haml',
-                form=form,
-                source_analyser=sa),
-            200,
-            {
-                'Cache-Control': 'public',
-                'Expires': format_date_time(time.mktime(expires.timetuple())),
-            })
+    return render_template('mine/index.haml',
+            form=form,
+            source_analyser=sa),
 
 
 class MineForm(Form):

@@ -130,9 +130,12 @@ class SourceAnalyser(BaseAnalyser):
                     src.source_counts[i] = 100.0 * n / totals[i]
 
         # calculate trends
-        for src in self.analysed_people.itervalues():
-            src.source_counts_trend = moving_weighted_avg_zscore(src.source_counts, 0.8)
-
+        # normalise source counts
+        if self.analysed_people:
+            biggest = max(src.source_counts_total for src in self.analysed_people.itervalues())
+            for src in self.analysed_people.itervalues():
+                src.source_counts_trend = moving_weighted_avg_zscore(src.source_counts, 0.8)
+                src.source_counts_normalised = src.source_counts_total * 1.0 / biggest
 
         # top 20 sources
         self.top_people = sorted(

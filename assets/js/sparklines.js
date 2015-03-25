@@ -69,15 +69,15 @@ $(function() {
       plotOptions: {
         series: {
           animation: false,
-          lineWidth: 1,
+          lineWidth: 2,
           shadow: false,
           states: {
             hover: {
-              lineWidth: 1
+              lineWidth: 2
             }
           },
           marker: {
-            radius: 1,
+            radius: 0,
             states: {
               hover: {
                 radius: 2
