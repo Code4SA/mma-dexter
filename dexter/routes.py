@@ -9,7 +9,6 @@ from dexter.models import db, Document, Entity, Medium
 import dexter.articles
 import dexter.entities
 import dexter.api
-import dexter.users
 import dexter.dashboard
 import dexter.mine
 import dexter.search
@@ -17,7 +16,7 @@ import dexter.search
 @app.route('/')
 @login_required
 def home():
-    if current_user.admin:
+    if current_user.is_authenticated() and current_user.admin:
         return redirect(url_for('dashboard'))
     else:
         return redirect(url_for('monitor_dashboard'))
