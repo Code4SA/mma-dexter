@@ -1,6 +1,7 @@
 %%namespace(file="../helpers/bootstrap_wtf.haml", **{'import': '*'})
 
 %form.mine(action=url_for('mine_home'), method='GET')
+  = form.medium_id()
 
   .panel.panel-default
     .panel-heading
@@ -17,9 +18,6 @@
               %span.input-group-btn
                 %button.btn.btn-default(dataClear='input-group')
                   %i.fa.fa-times
-
-        .col-sm-3
-          = vertical_field(form.medium_id, class_='select2')
 
         -#.col-sm-3
           -# need to inject the name of the person for the select2 field

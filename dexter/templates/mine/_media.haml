@@ -1,0 +1,27 @@
+%%namespace(file="../dashboard/helpers.haml", **{'import': '*'})
+
+- from dexter.utils import slice
+
+%section.media
+
+  .row
+    .col-sm-4
+      .row.medium(class_='active' if not medium else '')
+        .col-sm-5
+          %a(href=url_for('mine_home', published_at=request.values.get('published_at'))) All publications
+        .col-sm-7
+          .media-bar
+            .bar(style="width: 100%")
+
+  .row
+    - for batch in slice(media_analyser.media, 3):
+      .col-sm-4
+        - for m in batch:
+          .row.medium(class_='active' if medium == m.medium else '')
+            .col-sm-5
+              %a(href=url_for('mine_home', medium_id=m.medium.id, published_at=request.values.get('published_at')))
+                &= m.medium.name
+
+            .col-sm-7
+              .media-bar
+                .bar(style="width: %s%%" % (max(2.0, m.normalised_count*100)))

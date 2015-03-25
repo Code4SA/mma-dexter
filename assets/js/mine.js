@@ -41,3 +41,16 @@ $(function () {
     $($link.attr('href')).addClass('in');
   });
 });
+
+// media
+$(function() {
+  $('.medium').on('click', function(e) {
+    e.preventDefault();
+
+    var $this = $(this),
+        $link = $this.find('a');
+
+    document.location = $link.attr('href');
+
+  });
+});

@@ -1,6 +1,10 @@
 form.mine {
 }
 
+section {
+  margin-bottom: 20px;
+}
+
 // put people table alongside quotations
 
 .people-table {
@@ -39,6 +43,32 @@ form.mine {
 
   .list-inline a {
     color: #777;
+  }
+}
+
+.media {
+  .medium {
+    cursor: pointer;
+  }
+
+  .media-bar {
+    background-color: #efefef;
+    margin-top: 5px;
+    
+    .bar {
+      background-color: gray;
+      height: 10px;
+    }
+  }
+
+  .active {
+    a {
+      font-weight: bold;
+      color: inherit;
+    }
+    .bar {
+      background-color: orange;
+    }
   }
 }
 

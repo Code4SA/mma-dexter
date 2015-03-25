@@ -23,6 +23,40 @@ def paginate(query, page, per_page=20, error_out=True):
 
     return Pagination(query, page, per_page, total, items)
 
+
+def slice(value, slices, fill_with=None):
+    """Slice an iterator and return a list of lists containing
+    those items. Useful if you want to create a div containing
+    three ul tags that represent columns:
+    .. sourcecode:: html+jinja
+        <div class="columwrapper">
+          {%- for column in items|slice(3) %}
+            <ul class="column-{{ loop.index }}">
+            {%- for item in column %}
+              <li>{{ item }}</li>
+            {%- endfor %}
+            </ul>
+          {%- endfor %}
+        </div>
+    If you pass it a second argument it's used to fill missing
+    values on the last iteration.
+    """
+    seq = list(value)
+    length = len(seq)
+    items_per_slice = length // slices
+    slices_with_extra = length % slices
+    offset = 0
+    for slice_number in range(slices):
+        start = offset + slice_number * items_per_slice
+        if slice_number < slices_with_extra:
+            offset += 1
+        end = offset + (slice_number + 1) * items_per_slice
+        tmp = seq[start:end]
+        if fill_with is not None and slice_number >= slices_with_extra:
+            tmp.append(fill_with)
+        yield tmp
+
+
 def levenshtein(first, second):
     """
     Return a similarity ratio of two pieces of text. 0 means the strings are not similar at all,
@@ -51,7 +85,7 @@ def client_cache_for(**duration):
         def wrapped(*args, **kwargs):
             response = f(*args, **kwargs)
             if not isinstance(response, Response):
-                response = make_response(*response)
+                response = make_response(response)
 
             if response.status_code == 200:
                 delta = timedelta(**duration)
