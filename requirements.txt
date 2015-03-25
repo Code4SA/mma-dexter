@@ -5,8 +5,13 @@ Flask-Admin==1.1.0
 Flask-Assets==0.8
 Flask-HTAuth==0.1.2
 Flask-Login==0.2.10
+Flask-Mail==0.9.1
 Flask-Mako==0.3
+Flask-Migrate==1.3.1
+Flask-Principal==0.4.0
 Flask-SQLAlchemy==1.0
+Flask-Script==2.0.5
+-e git+https://github.com/longhotsummer/flask-security.git@50b17fbb53e7f48d4806c8ff2b5809719fa6b5da#egg=Flask-Security
 Flask-Testing==0.4
 Flask-Uploads==0.1.3
 Flask-WTF==0.9.5
@@ -22,15 +27,17 @@ SQLAlchemy==0.9.1
 SQLAlchemy-ImageAttach==0.8.1
 SQLAlchemy-Utils==0.27.8
 Unidecode==0.04.16
-WTForms==2.0.2
+WTForms==1.0.5
 WTForms-Alchemy==0.13.0
 WTForms-Components==0.9.6
 Wand==0.3.7
 WebHelpers==1.3
 Werkzeug==0.10.1
 XlsxWriter==0.5.3
+alembic==0.7.5.post2
 amqp==1.4.6
 anyjson==0.3.3
+argh==0.26.1
 backports.ssl-match-hostname==3.4.0.2
 beautifulsoup4==4.3.2
 billiard==3.3.0.18
@@ -59,6 +66,7 @@ nose==1.3.0
 numpy==1.9.1
 paramiko==1.12.4
 passlib==1.6.2
+pathtools==0.1.2
 pbr==0.10.0
 pyScss==1.2.0.post3
 pycrypto==2.6.1
@@ -72,5 +80,6 @@ tld==0.6.3
 tornado==4.0.1
 twill==0.9.1
 validators==0.7
+watchdog==0.8.3
 webassets==0.8
 wsgiref==0.1.2

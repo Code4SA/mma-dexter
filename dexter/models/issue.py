@@ -38,7 +38,7 @@ class Issue(db.Model):
     id          = Column(Integer, primary_key=True)
     name        = Column(String(50), index=True, nullable=False, unique=True)
     description = Column(String(100), index=True, nullable=False, unique=True)
-    analysis_nature_id = Column(Integer, ForeignKey("analysis_natures.id"), default=1)
+    analysis_nature_id = Column(Integer, ForeignKey("analysis_natures.id"), default=1, nullable=False)
 
     def __repr__(self):
         return "<Issue name='%s'>" % (self.name.encode('utf-8'),)

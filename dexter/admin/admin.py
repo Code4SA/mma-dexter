@@ -236,15 +236,17 @@ class UserView(MyModelView):
     column_searchable_list = ('first_name', 'last_name', 'email')
     column_filters = ['country.name']
 
-    def scaffold_form(self):
-        form_class = super(UserView, self).scaffold_form()
-        form_class.password = TextField('Change password')
-        del form_class.encrypted_password
-        del form_class.created_at
-        del form_class.updated_at
-        del form_class.checked_documents
-        del form_class.created_documents
-        return form_class
+    form_columns = [
+        'email',
+        'first_name',
+        'last_name',
+        'country',
+        'disabled',
+        'roles',
+        'admin',
+        'default_analysis_nature',
+    ]
+
 
 admin_instance = Admin(url='/admin', base_template='admin/custom_master.html', name="Dexter Admin", index_view=MyIndexView(), template_mode='bootstrap3')
 admin_instance.add_view(UserView(User, db.session, name="Users", endpoint='user'))

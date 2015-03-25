@@ -11,7 +11,7 @@ from .author import Author, AuthorType
 from .location import Location
 from .issue import Issue
 from .fairness import Fairness, Affiliation, DocumentFairness
-from .user import User
+from .user import User, Role
 from .place import Place, DocumentPlace
 from .analysis_nature import AnalysisNature
 from .children import SourceRole, SourceAge

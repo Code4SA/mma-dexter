@@ -12,9 +12,7 @@ from sqlalchemy.orm import relationship
 import logging
 log = logging.getLogger(__name__)
 
-from flask.ext.login import UserMixin
-
-from passlib.hash import sha256_crypt
+from flask.ext.security import UserMixin, RoleMixin
 
 from .support import db
 from wtforms import StringField, validators, PasswordField
@@ -33,9 +31,9 @@ class User(db.Model, UserMixin):
     last_name   = Column(String(50), nullable=False)
     admin       = Column(Boolean, default=False)
     disabled    = Column(Boolean, default=False)
-    encrypted_password = Column(String(100))
+    password    = Column(String(100), default='')
 
-    default_analysis_nature_id = Column(Integer, ForeignKey('analysis_natures.id'), default=1)
+    default_analysis_nature_id = Column(Integer, ForeignKey('analysis_natures.id'), default=1, nullable=False)
 
     country_id  = Column(Integer, ForeignKey('countries.id'), nullable=False)
 
@@ -45,14 +43,7 @@ class User(db.Model, UserMixin):
     # associations
     default_analysis_nature = relationship("AnalysisNature")
     country     = relationship("Country")
-
-    def get_password(self):
-        return None
-
-    def set_password(self, password):
-        if password:
-            self.encrypted_password = sha256_crypt.encrypt(password)
-
+    roles       = db.relationship('Role', secondary='roles_users', backref=db.backref('users', lazy='dynamic'))
 
     def short_name(self):
         s = ""
@@ -80,22 +71,22 @@ class User(db.Model, UserMixin):
         return s
 
 
-    password = property(get_password, set_password)
-
     def __repr__(self):
         return "<User email=%s>" % (self.email,)
 
-    @classmethod
-    def get_and_authenticate(cls, email, password):
-        user = cls.query.filter(User.email == email).first()
-        if user and not user.disabled and sha256_crypt.verify(password, user.encrypted_password):
-            return user
+    # Flask-Security requires an active attribute
+    @property
+    def active(self):
+        return not self.disabled
 
-        return None
+    @active.setter
+    def active(self, value):
+        self.disabled = not value
 
     @classmethod
     def create_defaults(self):
         from . import Country
+        from flask.ext.security import encrypt_password
 
         admin_user = User()
         admin_user.first_name = "Admin"
@@ -103,9 +94,33 @@ class User(db.Model, UserMixin):
         admin_user.admin = True
         admin_user.email = "admin@code4sa.org"
         admin_user.country = Country.query.filter(Country.name == 'South Africa').one()
-        admin_user.encrypted_password = sha256_crypt.encrypt('admin')
+        admin_user.password = encrypt_password('admin')
 
         return [admin_user]
+
+
+class Role(db.Model, RoleMixin):
+
+    __tablename__ = "roles"
+
+    id = db.Column(db.Integer(), primary_key=True)
+    name = db.Column(db.String(80), unique=True)
+    description = db.Column(db.String(255))
+
+    def __unicode__(self):
+        return unicode(self.name)
+
+    @classmethod
+    def create_defaults(self):
+        return [
+                Role(name='monitor', description='user can add and edit documents'),
+                Role(name='miner', description='user can use the Dexter Mine feature'),
+                ]
+
+
+roles_users = db.Table('roles_users',
+        db.Column('user_id', db.Integer(), db.ForeignKey('users.id', ondelete='CASCADE')),
+        db.Column('role_id', db.Integer(), db.ForeignKey('roles.id', ondelete='CASCADE')))
 
 
 class LoginForm(Form):

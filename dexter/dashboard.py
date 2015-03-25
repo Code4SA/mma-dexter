@@ -5,7 +5,7 @@ from collections import Counter
 from dexter.app import app
 from flask import request, url_for, flash, redirect, make_response, jsonify, abort
 from flask.ext.mako import render_template
-from flask.ext.login import login_required, current_user
+from flask.ext.security import roles_accepted, current_user
 from sqlalchemy.sql import func, distinct, or_
 from sqlalchemy.orm import joinedload
 
@@ -21,7 +21,7 @@ from .analysis import SourceAnalyser, TopicAnalyser, XLSXExportBuilder, Children
 from utils import paginate
 
 @app.route('/dashboard')
-@login_required
+@roles_accepted('monitor')
 def dashboard():
     latest_docs = [x.id for x in Document.query.order_by(Document.created_at.desc()).limit(30)]
 
@@ -44,7 +44,7 @@ def dashboard():
 
 
 @app.route('/monitor-dashboard')
-@login_required
+@roles_accepted('monitor')
 def monitor_dashboard():
     docs = [x.id for x in Document.query.filter(Document.created_by_user_id == current_user.id)\
         .order_by(Document.created_at.desc()).limit(30)]
@@ -69,7 +69,7 @@ def monitor_dashboard():
 
 
 @app.route('/activity')
-@login_required
+@roles_accepted('monitor')
 def activity():
     per_page = 100
 
@@ -143,7 +143,7 @@ def activity():
                            doc_groups=doc_groups)
 
 @app.route('/activity/map')
-@login_required
+@roles_accepted('monitor')
 def activity_map():
     form = ActivityForm(request.args)
 
@@ -160,7 +160,7 @@ def activity_map():
 
 
 @app.route('/activity/sources')
-@login_required
+@roles_accepted('monitor')
 def activity_sources():
     form = ActivityForm(request.args)
 
@@ -180,7 +180,7 @@ def activity_sources():
 
 
 @app.route('/activity/mentions')
-@login_required
+@roles_accepted('monitor')
 def activity_mentions():
     form = ActivityForm(request.args)
 
@@ -193,7 +193,7 @@ def activity_mentions():
 
 
 @app.route('/activity/topics')
-@login_required
+@roles_accepted('monitor')
 def activity_topics():
     # topics take a while to build, so this
     # just returns a shell view which calls back for
@@ -205,7 +205,7 @@ def activity_topics():
 
 
 @app.route('/activity/topics/detail')
-@login_required
+@roles_accepted('monitor')
 def activity_topics_detail():
     form = ActivityForm(request.args)
 
