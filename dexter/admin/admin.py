@@ -2,8 +2,9 @@ from flask.ext.admin import Admin, expose, AdminIndexView
 from flask.ext.admin.contrib.sqla import ModelView
 from flask.ext.admin.model.template import macro
 from wtforms.fields import SelectField, TextAreaField, TextField, HiddenField
+from flask import abort
 import flask_wtf
-from flask.ext.login import current_user
+from flask.ext.security import current_user
 
 from sqlalchemy import desc, func
 
@@ -24,6 +25,8 @@ class MyModelView(ModelView):
 class MyIndexView(AdminIndexView):
     @expose('/')
     def index(self):
+        if not (current_user.is_authenticated() and current_user.admin):
+            abort(403)
         return super(MyIndexView, self).index()
 
 class DocumentView(MyModelView):
