@@ -25,4 +25,7 @@ def home():
         if current_user.has_role('miner'):
             return redirect(url_for('mine_home'))
 
-    return render_template('noperms.haml')
+        return render_template('noperms.haml')
+    else:
+        return redirect(url_for('security.login'))
+
