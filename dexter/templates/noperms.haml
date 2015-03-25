@@ -1,0 +1,14 @@
+%%inherit(file="mine/layout.haml")
+
+%section
+  %h2
+    Hi
+    &= current_user.first_name or current_user.email
+
+  %p
+    It looks like you don't have any permissions to see anything.
+
+  %p
+    Please contact
+    %a(href="mailto:dexter@mma.org.za") dexter@mma.org.za
+    and we'll help you out.

@@ -6,7 +6,7 @@ from dateutil.parser import parse
 log = logging.getLogger(__name__)
 
 from flask import request, url_for, redirect, jsonify, abort
-from flask.ext.login import login_required, current_user
+from flask.ext.security import roles_accepted, current_user
 from flask.ext import htauth
 from sqlalchemy.orm import joinedload, lazyload
 from sqlalchemy.sql import func
@@ -16,7 +16,7 @@ from .models import db, Author, Person, Entity, Document, DocumentSource, Medium
 from .analysis import BiasCalculator
 
 @app.route('/api/authors')
-@login_required
+@roles_accepted('monitor')
 def api_authors():
     q = request.args.get('q', '').strip()
     try:
@@ -37,7 +37,7 @@ def api_authors():
     return jsonify({'authors': [a.json() for a in authors]})
 
 @app.route('/api/people')
-@login_required
+@roles_accepted('monitor')
 def api_people():
     q = request.args.get('q', '').strip()
     try:
@@ -102,7 +102,7 @@ def api_people_sourced(name):
 
 
 @app.route('/api/entities')
-@login_required
+@roles_accepted('monitor')
 def api_entities():
     q = request.args.get('q', '').strip()
     try:
@@ -123,7 +123,7 @@ def api_entities():
     return jsonify({'entities': [e.json() for e in entities]})
 
 @app.route('/api/entities/<string:group>')
-@login_required
+@roles_accepted('monitor')
 def api_group_entities(group):
     query = Entity.query.filter(Entity.group == group).order_by(Entity.name)
     q = request.args.get('q', '').strip()
