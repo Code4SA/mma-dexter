@@ -14,7 +14,7 @@ from sqlalchemy import (
     )
 from sqlalchemy.orm import relationship
 
-from .support import db
+from ..app import db
 from .with_offsets import WithOffsets
 
 import re

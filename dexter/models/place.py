@@ -14,7 +14,7 @@ from sqlalchemy.orm import relationship, backref
 import logging
 log = logging.getLogger(__name__)
 
-from .support import db
+from ..app import db
 from .with_offsets import WithOffsets
 
 class Place(db.Model):

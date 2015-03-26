@@ -3,8 +3,7 @@ from mock import patch, MagicMock
 from . import UserSessionTestCase
 
 from dexter.core import app
-from dexter.models.support import db
-from dexter.models import Author, Document
+from dexter.models import Author, Document, db
 from dexter.authn import AnonymousUser
 
 from tests.fixtures import dbfixture, DocumentData, UserData

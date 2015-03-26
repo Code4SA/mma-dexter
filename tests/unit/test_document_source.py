@@ -1,7 +1,6 @@
 import unittest
 
-from dexter.models import Document, DocumentSource
-from dexter.models.support import db
+from dexter.models import Document, DocumentSource, db
 from dexter.models.seeds import seed_db
 
 class TestDocumentSource(unittest.TestCase):

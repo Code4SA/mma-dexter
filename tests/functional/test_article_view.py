@@ -4,8 +4,7 @@ from mock import patch, MagicMock
 
 from . import UserSessionTestCase
 from dexter.core import app
-from dexter.models.support import db
-from dexter.models import Document, DocumentFairness
+from dexter.models import Document, DocumentFairness, db
 
 from tests.fixtures import dbfixture, PersonData, EntityData, UserData
 

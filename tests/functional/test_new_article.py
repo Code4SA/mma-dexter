@@ -2,8 +2,7 @@ from mock import patch, MagicMock
 
 from . import UserSessionTestCase
 
-from dexter.models.support import db
-from dexter.models import Author
+from dexter.models import Author, db
 from dexter.processing.crawlers import MGCrawler
 from dexter.processing.extractors import AlchemyExtractor, CalaisExtractor
 

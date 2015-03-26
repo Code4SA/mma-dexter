@@ -17,7 +17,7 @@ from sqlalchemy.orm import relationship, subqueryload
 from wtforms import StringField, validators, SelectField, HiddenField, BooleanField
 from flask.ext.login import current_user
 
-from .support import db
+from ..app import db
 from ..forms import Form, MultiCheckboxField
 from ..utils import levenshtein
 

@@ -24,7 +24,7 @@ from sqlalchemy import (
     Boolean,
     )
 from sqlalchemy.orm import relationship, backref, deferred
-from .support import db
+from ..app import db
 from .problems import DocumentAnalysisProblem
 from .user import default_analysis_nature_id, default_country_id
 

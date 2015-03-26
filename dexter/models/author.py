@@ -11,7 +11,7 @@ from sqlalchemy.orm import relationship
 from wtforms import StringField, validators, SelectField, HiddenField
 
 from . import Person, Gender, Race
-from .support import db
+from ..app import db
 from ..forms import Form
 
 import logging

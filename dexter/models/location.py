@@ -9,7 +9,7 @@ from sqlalchemy import (
     )
 from sqlalchemy.orm import relationship
 
-from .support import db
+from ..app import db
 
 class Location(db.Model):
     """

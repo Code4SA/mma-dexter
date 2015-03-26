@@ -1,4 +1,4 @@
-from .support import db
+from dexter.app import db
 from .document import Document, DocumentType
 from .entity import DocumentEntity, Entity
 from .keyword import DocumentKeyword

@@ -8,7 +8,7 @@ from sqlalchemy import (
     Table
 )
 
-from .support import db
+from ..app import db
 
 
 class DocumentIssue(db.Model):

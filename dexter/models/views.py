@@ -1,6 +1,6 @@
 from sqlalchemy import Table, Column, Integer, ForeignKey
 
-from .support import db
+from ..app import db
 
 # NOTE: sqlalchemy doesn't easily support creating views, so that is done
 # in mysql-specific SQL in resources/mysql/views.sql. 

@@ -13,7 +13,7 @@ from sqlalchemy import (
     )
 from sqlalchemy.orm import relationship, backref
 
-from .support import db
+from ..app import db
 from ..utils import levenshtein
 
 class Utterance(db.Model):

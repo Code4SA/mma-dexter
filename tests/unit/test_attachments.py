@@ -4,9 +4,7 @@ import datetime
 from werkzeug.datastructures import FileStorage
 
 from dexter.attachments import HttpExposedFileSystemStore, S3Store
-from dexter.models import Document, DocumentAttachment, AttachmentImage
-
-from dexter.models.support import db
+from dexter.models import Document, DocumentAttachment, AttachmentImage, db
 from dexter.models.seeds import seed_db
 
 

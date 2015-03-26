@@ -6,7 +6,7 @@ from sqlalchemy import (
 
 from sqlalchemy.orm import relationship
 
-from .support import db
+from ..app import db
 
 
 class AnalysisNature(db.Model):

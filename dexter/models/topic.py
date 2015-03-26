@@ -6,7 +6,7 @@ from sqlalchemy import (
     )
 
 from itertools import groupby
-from .support import db
+from ..app import db
 
 class Topic(db.Model):
     """

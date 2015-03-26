@@ -1,7 +1,6 @@
 import unittest
 
-from dexter.models import Document, Entity, Person, DocumentEntity, Utterance, Gender
-from dexter.models.support import db
+from dexter.models import Document, Entity, Person, DocumentEntity, Utterance, Gender, db
 from dexter.models.seeds import seed_db
 from dexter.processing.extractors import SourcesExtractor
 

@@ -10,7 +10,7 @@ from sqlalchemy import (
 from sqlalchemy.orm import relationship
 from wtforms import StringField, validators, HiddenField, BooleanField, RadioField
 
-from .support import db
+from ..app import db
 from .with_offsets import WithOffsets
 from ..forms import Form, SelectField
 

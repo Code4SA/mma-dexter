@@ -14,7 +14,7 @@ from wtforms import StringField, TextAreaField, validators, DateTimeField, Hidde
 from wtforms.fields.html5 import URLField
 
 from ..forms import Form, SelectField
-from .support import db
+from ..app import db
 
 class Fairness(db.Model):
     """

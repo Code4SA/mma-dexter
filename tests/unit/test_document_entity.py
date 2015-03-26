@@ -1,8 +1,7 @@
 import unittest
 
-from dexter.models import Document, DocumentEntity, Entity
+from dexter.models import Document, DocumentEntity, Entity, db
 from dexter.models.entity import sanitise_name
-from dexter.models.support import db
 from dexter.models.seeds import seed_db
 
 class TestDocumentEntity(unittest.TestCase):

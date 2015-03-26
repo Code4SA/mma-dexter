@@ -1,9 +1,7 @@
 import unittest
 import datetime
 
-from dexter.models import Document, Cluster, ClusteredDocument
-
-from dexter.models.support import db
+from dexter.models import Document, Cluster, ClusteredDocument, db
 from dexter.models.seeds import seed_db
 
 class TestCluster(unittest.TestCase):

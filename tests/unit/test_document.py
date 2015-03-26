@@ -1,9 +1,7 @@
 import unittest
 import datetime
 
-from dexter.models import Document, DocumentEntity, Entity, Utterance, DocumentKeyword, DocumentPlace
-
-from dexter.models.support import db
+from dexter.models import Document, DocumentEntity, Entity, Utterance, DocumentKeyword, DocumentPlace, db
 from dexter.models.seeds import seed_db
 
 class TestDocument(unittest.TestCase):

@@ -47,6 +47,10 @@ app.config['MAKO_DEFAULT_FILTERS'] = ['decode.utf8']
 from flask_wtf.csrf import CsrfProtect
 CsrfProtect(app)
 
+# Database
+from flask.ext.sqlalchemy import SQLAlchemy
+db = SQLAlchemy(app)
+
 
 # Mail
 from flask_mail import Mail

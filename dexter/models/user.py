@@ -14,7 +14,7 @@ log = logging.getLogger(__name__)
 
 from flask.ext.security import UserMixin, RoleMixin
 
-from .support import db
+from ..app import db
 from wtforms import StringField, validators, PasswordField
 from wtforms.fields.html5 import EmailField
 from ..forms import Form

@@ -11,7 +11,7 @@ from sqlalchemy import (
     )
 from sqlalchemy.orm import relationship
 
-from .support import db
+from ..app import db
 
 class Medium(db.Model):
     """ A medium from which articles are drawn, such as a newspaper

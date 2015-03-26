@@ -2,8 +2,7 @@
 
 import unittest
 
-from dexter.models import Document, Author
-from dexter.models.support import db
+from dexter.models import Document, Author, db
 from dexter.models.seeds import seed_db
 from dexter.processing.crawlers.zambia import *
 

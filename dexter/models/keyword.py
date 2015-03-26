@@ -7,7 +7,7 @@ from sqlalchemy import (
     Index
     )
 
-from .support import db
+from ..app import db
 from .with_offsets import WithOffsets
 
 class DocumentKeyword(db.Model, WithOffsets):

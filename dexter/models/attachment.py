@@ -21,7 +21,7 @@ from sqlalchemy_imageattach.context import current_store
 from werkzeug.utils import secure_filename
 from wand.image import Image as WandImage
 
-from .support import db
+from ..app import db
 
 
 import logging

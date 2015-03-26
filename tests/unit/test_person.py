@@ -1,9 +1,7 @@
 import unittest
 import datetime
 
-from dexter.models import Document, DocumentSource, Person, Affiliation, Entity
-
-from dexter.models.support import db
+from dexter.models import Document, DocumentSource, Person, Affiliation, Entity, db
 from dexter.models.seeds import seed_db
 
 from tests.fixtures import dbfixture, DocumentData, PersonData, EntityData

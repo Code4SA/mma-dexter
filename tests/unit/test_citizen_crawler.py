@@ -2,8 +2,7 @@
 
 import unittest
 
-from dexter.models import Document
-from dexter.models.support import db
+from dexter.models import Document, db
 from dexter.models.seeds import seed_db
 from dexter.processing.crawlers import CitizenCrawler
 

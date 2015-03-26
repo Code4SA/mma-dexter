@@ -9,7 +9,7 @@ from sqlalchemy import (
     Enum
 )
 
-from .support import db
+from ..app import db
 
 
 class SourceRole(db.Model):

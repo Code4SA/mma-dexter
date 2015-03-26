@@ -13,7 +13,7 @@ from sqlalchemy.orm import relationship
 import logging
 log = logging.getLogger(__name__)
 
-from .support import db
+from ..app import db
 
 class Country(db.Model):
     """

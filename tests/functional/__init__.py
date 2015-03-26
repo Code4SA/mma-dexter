@@ -2,7 +2,7 @@ from flask.ext.testing import TestCase
 from flask.ext.fillin import FormWrapper
 
 from dexter.core import app
-from dexter.models.support import db
+from dexter.app import db
 from dexter.models.seeds import seed_db
 
 class UserSessionTestCase(TestCase):
