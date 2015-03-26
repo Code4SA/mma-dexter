@@ -6,7 +6,7 @@ from fabric.contrib.files import exists, upload_template
 
 VIRTUALENV_DIR = 'env'
 CODE_DIR = 'mma-dexter'
-PROD_HOSTS = ['ec2-52-16-43-97.eu-west-1.compute.amazonaws.com']
+PROD_HOSTS = ['mma-dexter.code4sa.org']
 
 PACKAGES = [
     'build-essential',
