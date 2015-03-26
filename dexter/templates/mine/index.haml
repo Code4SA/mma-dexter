@@ -3,8 +3,19 @@
 %%block(name='title')
   Mine
 
-%%include(file='_form.haml')
+%h2
+  - if form.medium:
+    &= form.medium.name
+  - else:
+    All publications
 
-%%include(file='_media.haml')
+  %i.text-muted.fa.fa-spinner.fa-pulse.hidden
+
+.row
+  .col-sm-3
+    %%include(file='_form.haml')
+
+  .col-sm-9
+    %%include(file='_media.haml')
 
 %%include(file='_sources.haml')

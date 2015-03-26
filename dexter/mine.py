@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 import time
 
 from wtforms import validators, HiddenField, TextField, SelectMultipleField, BooleanField
@@ -29,51 +29,46 @@ def mine_home():
     sa.analyse()
     sa.load_utterances()
 
-    medium = form.medium()
-
-    expires = datetime.now() + timedelta(minutes=10)
     return render_template('mine/index.haml',
             form=form,
             source_analyser=sa,
-            media_analyser=ma,
-            medium=medium)
+            media_analyser=ma)
 
 
 class MineForm(Form):
     medium_id       = HiddenField('Medium', [validators.Optional()])
-    published_at    = TextField('Published', [validators.Optional()])
+    # period to cover, expressed in days since yesterday
+    period          = RadioField('Period', [validators.Optional()], choices=[('7', 'last 7 days'), ('30', 'last 30 days'), ('90', 'last 90 days')], default='7')
     source_person_id = TextField('With source', [validators.Optional()])
 
     nature_id = AnalysisNature.ANCHOR
 
     def __init__(self, *args, **kwargs):
         super(MineForm, self).__init__(*args, **kwargs)
-
         self.country = current_user.country
-        if not self.published_at.data:
-            self.published_at.data = ' - '.join(d.strftime("%Y/%m/%d") for d in [datetime.utcnow() - timedelta(days=14), datetime.utcnow()])
+        self.yesterday = date.today() - timedelta(days=1)
 
 
     @property
     def published_from(self):
-        if self.published_at.data:
-            return self.published_at.data.split(' - ')[0].strip()
-        else:
-            return None
+        try:
+            days = int(self.period.data)
+        except ValueError:
+            days = 7
+
+        return (self.yesterday - timedelta(days=days)).strftime('%Y-%m-%d 00:00:00')
 
     @property
     def published_to(self):
-        if self.published_at.data and ' - ' in self.published_at.data:
-            return self.published_at.data.split(' - ')[1].strip() + ' 23:59:59'
-        else:
-            return self.published_from
+        return (self.yesterday - timedelta(days=1)).strftime('%Y-%m-%d 23:59:59')
 
     def document_ids(self, overview=False):
         return [d[0] for d in self.filter_query(db.session.query(Document.id), overview=overview).all()]
 
+    @property
     def medium(self):
         if self.medium_id.data:
-            return Medium.query.filter(Medium.id == self.medium_id.data).first()
+            return Medium.query.get(self.medium_id.data)
 
     def filter_query(self, query, overview=False):
         query = query.filter(
@@ -81,14 +76,12 @@ class MineForm(Form):
                 Document.country == self.country,
                 )
 
-        if not overview and self.medium_id.data:
-            query = query.filter(Document.medium_id == self.medium_id.data)
+        if not overview and self.medium:
+            query = query.filter(Document.medium == self.medium)
 
-        if self.published_from:
-            query = query.filter(Document.published_at >= self.published_from)
-
-        if self.published_to:
-            query = query.filter(Document.published_at <= self.published_to)
+        query = query.filter(
+                Document.published_at >= self.published_from,
+                Document.published_at <= self.published_to)
 
         if self.source_person_id.data:
             query = query\

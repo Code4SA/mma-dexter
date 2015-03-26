@@ -54,3 +54,10 @@ $(function() {
 
   });
 });
+
+// show spinner
+$(function() {
+  $('.dates a, .media a').click(function() {
+    $('.fa-spinner').removeClass('hidden');
+  });
+});

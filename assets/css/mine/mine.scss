@@ -3,18 +3,19 @@ form.mine {
 
 section {
   margin-bottom: 20px;
+
+  > h1:first-child,
+  > h2:first-child,
+  > h3:first-child,
+  > h4:first-child,
+  > h5:first-child {
+    margin-top: 0px;
+  }
 }
 
 // put people table alongside quotations
 
 .people-table {
-  float: left;
-  width: 50%;
-
-  h3 {
-    margin-top: 0px;
-  }
-
   tr {
     cursor: pointer;
   }
@@ -33,10 +34,6 @@ section {
 }
 
 .people-quotations {
-  float: left;
-  width: 50%;
-  padding-left: 10px;
-
   .quotation-list > li {
     margin-bottom: 10px;
   }

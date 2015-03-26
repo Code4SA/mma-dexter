@@ -4,44 +4,45 @@
 - from random import choice
 
 %section.people
-  .people-table
-    %h3 Top people speaking in the news
+  .row
+    .col-sm-6
+      .people-table
+        %h3 Top people speaking in the news
 
-    %table.table.table-condensed.analysis
-      - for i, source in enumerate(source_analyser.top_people):
-        %tr(class_='active' if i == 0 else '')
-          %td.rank ${i+1}.
-          %td
-            %a(href="#quotations-%s" % i)&= source.person.name
-            %span.text-muted&= source.person.affiliation and source.person.affiliation.name or ''
-          %td.dot-holder
-            - size = (3+17*source.source_counts_normalised)
-            .dot(style="width: %dpx; height: %dpx" % (size, size))
-          %td.sparkline(dataSparkline=','.join(str(round(i, 0)) for i in source.source_counts), dataLabel='{point.y}%')
+        %table.table.table-condensed.analysis
+          - for i, source in enumerate(source_analyser.top_people):
+            %tr(class_='active' if i == 0 else '')
+              %td.rank ${i+1}.
+              %td
+                %a(href="#quotations-%s" % i)&= source.person.name
+                %span.text-muted&= source.person.affiliation and source.person.affiliation.name or ''
+              %td.dot-holder
+                - size = (3+17*source.source_counts_normalised)
+                .dot(style="width: %dpx; height: %dpx" % (size, size))
+              %td.sparkline(dataSparkline=','.join(str(round(i, 0)) for i in source.source_counts), dataLabel='{point.y}%')
 
-  .people-quotations
-    - for i, source in enumerate(source_analyser.top_people):
-      .collapse(id="quotations-%s" % i, class_=("in" if i == 0 else ""))
-        %h4
-          ${i+1}. 
-          &= source.person.name
-          %small&= source.person.affiliation and source.person.affiliation.name or ''
+    .col-sm-6
+      .people-quotations
+        - for i, source in enumerate(source_analyser.top_people):
+          .collapse(id="quotations-%s" % i, class_=("in" if i == 0 else ""))
+            %h3&= source.person.name
+            %h4.text-muted&= source.person.affiliation and source.person.affiliation.name or ''
 
-        - utterances = source_analyser.person_utterances.get(source.person.id, [])
-        - if utterances:
-          %ul.fa-ul.quotation-list
-            - for u in utterances:
-              %li
-                %i.fa.fa-li.fa-quote-left
-                %i&= u.quote
-                .headline
-                  - sample = choice(u.docs_sampling)
-                  %a(href=sample.url, target="_blank")&= sample.title
-                  \-
-                  %span.text-muted&=sample.medium.name
+            - utterances = source_analyser.person_utterances.get(source.person.id, [])
+            - if utterances:
+              %ul.fa-ul.quotation-list
+                - for u in utterances:
+                  %li
+                    %i.fa.fa-li.fa-quote-left
+                    %i&= u.quote
+                    .headline
+                      - sample = choice(u.docs_sampling)
+                      %a(href=sample.url, target="_blank")&= sample.title
+                      \-
+                      %span.text-muted&=sample.medium.name
 
-                %ul.list-inline
-                  - for i, doc in enumerate(u.docs_sampling):
-                    - if sample != doc:
-                      %li
-                        %a(href=doc.url, target="_blank")&= doc.medium.name
+                    %ul.list-inline
+                      - for i, doc in enumerate(u.docs_sampling):
+                        - if sample != doc:
+                          %li
+                            %a(href=doc.url, target="_blank")&= doc.medium.name
