@@ -1,8 +1,10 @@
 import unittest
 import datetime
 
-from dexter.models import Document, Cluster, ClusteredDocument, db
+from dexter.models import Document, Cluster, ClusteredDocument, db, Author, Medium, Country
 from dexter.models.seeds import seed_db
+
+from tests.fixtures import dbfixture, DocumentData
 
 class TestCluster(unittest.TestCase):
     def setUp(self):
@@ -11,7 +13,11 @@ class TestCluster(unittest.TestCase):
         self.db.create_all()
         seed_db(db)
 
+        self.fx = dbfixture.data(DocumentData)
+        self.fx.setup()
+
     def tearDown(self):
+        self.fx.teardown()
         self.db.session.remove()
         self.db.drop_all()
 
@@ -39,6 +45,9 @@ class TestCluster(unittest.TestCase):
         docs = [Document(url='foo-%s' % i) for i in xrange(3)]
         for d in docs:
             d.published_at = datetime.datetime.now()
+            d.medium = Medium.query.first()
+            d.author = Author.query.first()
+            d.country = Country.query.first()
 
         # get ids
         db.session.add_all(docs)
