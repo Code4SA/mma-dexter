@@ -34,6 +34,10 @@ class MediaAnalyser(BaseAnalyser):
 
         self.media = []
         for id, count in rows:
+            # ignore media with too few articles
+            if count < 10:
+                continue
+
             m = AnalysedMedium()
             m.medium = media[id]
             m.count = count
