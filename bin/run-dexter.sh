@@ -14,5 +14,6 @@ exec gunicorn \
     -w $GUNICORN_WORKERS \
     -b unix:$GUNICORN_SOCKET \
     --timeout 120 \
+    --pid gunicorn.pid \
     app:app
     2>&1

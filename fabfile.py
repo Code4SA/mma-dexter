@@ -84,13 +84,17 @@ def deploy():
     sudo('ln -fs %s/resources/upstart/dexter-celery.conf /etc/init/' % env.repo_dir)
     sudo('initctl reload-configuration')
 
-    # restart dexter
-    # on first deploy these aren't running
-    with warn_only():
-        sudo('initctl stop dexter')
-        sudo('initctl stop dexter-celery')
+    restart()
 
-    sudo('initctl start dexter')
+@task
+def restart():
+    # on first deploy, dexter won't not be running
+    sudo("kill -HUP `cat %s/gunicorn.pid` || initctl restart dexter || (initctl stop dexter; initctl start dexter)"\
+            % (env.repo_dir))
+
+    # restart dexter-celery
+    with warn_only():
+        sudo('initctl stop dexter-celery')
     sudo('initctl start dexter-celery')
 
 @task
