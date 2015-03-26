@@ -44,6 +44,7 @@ class BaseCrawler(object):
     def extract(self, doc, raw_html):
         """ Run extractions on the HTML. Subclasses should override this
         method and call super() in their implementations. """
+        doc.raw_html = raw_html
         doc.medium = self.identify_medium(doc)
         doc.country = doc.medium.country
 

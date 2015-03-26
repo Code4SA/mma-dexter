@@ -23,7 +23,7 @@ from sqlalchemy import (
     Index,
     Boolean,
     )
-from sqlalchemy.orm import relationship, backref
+from sqlalchemy.orm import relationship, backref, deferred
 from .support import db
 from .problems import DocumentAnalysisProblem
 from .user import default_analysis_nature_id, default_country_id
@@ -49,6 +49,10 @@ class Document(db.Model):
     text      = Column(Text)
     section   = Column(String(100), index=True)
     item_num  = Column(Integer)
+
+    # the raw HTML for archive purposes. Marked as deferred so we only
+    # load it when it's actually used
+    raw_html  = deferred(Column(Text))
 
     author_id         = Column(Integer, ForeignKey('authors.id'), index=True, nullable=False)
     medium_id         = Column(Integer, ForeignKey('mediums.id'), index=True, nullable=False)
