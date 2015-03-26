@@ -1,30 +1,13 @@
 %%namespace(file="../helpers/bootstrap_wtf.haml", **{'import': '*'})
 
-%form.mine(action=url_for('mine_home'), method='GET')
-  = form.medium_id()
+- from datetime import date, timedelta
 
-  .panel.panel-default
-    .panel-heading
-      %h3.panel-title
-        What would you like to explore?
-
-    .panel-body
-      .row
-        .col-sm-3
-          .form-group
-            = form.published_at.label()
-            .input-group
-              = form.published_at(class_='form-control use-daterangepicker')
-              %span.input-group-btn
-                %button.btn.btn-default(dataClear='input-group')
-                  %i.fa.fa-times
-
-        -#.col-sm-3
-          -# need to inject the name of the person for the select2 field
-          -# to setup correctly
-          -#- person = form.source_person()
-          -#- kwargs = {'data-text': person and person.name or ''}
-          -#= vertical_field(form.source_person_id, **kwargs)
-      .row
-        .col-sm-3.col-sm-offset-9.buttons
-          %input.btn.btn-success.form-control(type='submit', value='Explore', dataDisableWith='Working...')
+.dates
+  .list-group
+    - for option in form.period:
+      %a.list-group-item(href=url_for('mine_home', medium_id=form.medium_id.data, period=option.data), class_='active' if option.checked else '')
+        %h4.list-group-item-heading Last ${option.data} days
+        %p.list-group-item-text
+          = (date.today() - timedelta(days=int(option.data))).strftime('%d %b')
+          to
+          = form.yesterday.strftime('%d %b')
