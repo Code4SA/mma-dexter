@@ -4,9 +4,10 @@ import datetime
 from werkzeug.datastructures import FileStorage
 
 from dexter.attachments import HttpExposedFileSystemStore, S3Store
-from dexter.models import Document, DocumentAttachment, AttachmentImage, db
+from dexter.models import Document, DocumentAttachment, AttachmentImage, db, Author, Country, Medium
 from dexter.models.seeds import seed_db
 
+from tests.fixtures import dbfixture, DocumentData
 
 class TestAttachments(unittest.TestCase):
     def setUp(self):
@@ -15,7 +16,12 @@ class TestAttachments(unittest.TestCase):
         self.db.create_all()
         seed_db(db)
 
+        self.fx = dbfixture.data(DocumentData)
+        self.fx.setup()
+
+
     def tearDown(self):
+        self.fx.teardown()
         self.db.session.remove()
         self.db.drop_all()
 
@@ -32,11 +38,7 @@ class TestAttachments(unittest.TestCase):
             "attachment:1:0:1.0x0.pdf")
 
     def test_delete_attachments(self):
-        doc = Document()
-        doc.url = "url"
-        doc.published_at = datetime.datetime.now()
-        db.session.add(doc)
-        db.session.commit()
+        doc = Document.query.get(self.fx.DocumentData.simple.id)
 
         with open("tests/fixtures/smiley.png") as f:
             upload = FileStorage(f, 'smiley.png', name='file', content_type='image/png')

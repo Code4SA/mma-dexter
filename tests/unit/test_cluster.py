@@ -1,8 +1,10 @@
 import unittest
 import datetime
 
-from dexter.models import Document, Cluster, ClusteredDocument, db
+from dexter.models import Document, Cluster, ClusteredDocument, db, Author, Medium, Country
 from dexter.models.seeds import seed_db
+
+from tests.fixtures import dbfixture, AuthorData
 
 class TestCluster(unittest.TestCase):
     def setUp(self):
@@ -11,18 +13,29 @@ class TestCluster(unittest.TestCase):
         self.db.create_all()
         seed_db(db)
 
+        self.fx = dbfixture.data(AuthorData)
+        self.fx.setup()
+
     def tearDown(self):
+        self.fx.teardown()
         self.db.session.remove()
         self.db.drop_all()
 
-    def test_find_or_create(self):
+    def make_docs(self):
         docs = [Document(url='foo-%s' % i) for i in xrange(3)]
         for d in docs:
             d.published_at = datetime.datetime.now()
+            d.medium = Medium.query.first()
+            d.author = Author.query.first()
+            d.country = Country.query.first()
 
         # get ids
         db.session.add_all(docs)
         db.session.flush()
+        return docs
+
+    def test_find_or_create(self):
+        docs = self.make_docs()
 
         cluster = Cluster.find_or_create(docs=docs)
         self.assertEqual(cluster.fingerprint, '202cb962ac59075b964b07152d234b70')
@@ -36,13 +49,7 @@ class TestCluster(unittest.TestCase):
         self.assertEqual(cluster.id, cluster2.id)
 
     def test_delete_cascades(self):
-        docs = [Document(url='foo-%s' % i) for i in xrange(3)]
-        for d in docs:
-            d.published_at = datetime.datetime.now()
-
-        # get ids
-        db.session.add_all(docs)
-        db.session.flush()
+        docs = self.make_docs()
 
         cluster = Cluster.find_or_create(docs=docs)
         db.session.add(cluster)

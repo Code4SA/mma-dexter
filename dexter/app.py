@@ -57,14 +57,6 @@ from flask_mail import Mail
 mail = Mail(app)
 
 
-# user authentication
-from dexter.models import db, User, Role
-from flask.ext.security import Security, SQLAlchemyUserDatastore
-user_datastore = SQLAlchemyUserDatastore(db, User, Role)
-security = Security(app, user_datastore)
-app.extensions['security'].render_template = render_template
-
-
 # htpasswd-based basic auth for API access
 from flask.ext import htauth
 app.config['HTAUTH_HTPASSWD_PATH'] = './resources/nginx/htpasswd'

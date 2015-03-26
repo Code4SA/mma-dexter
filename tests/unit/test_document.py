@@ -4,6 +4,8 @@ import datetime
 from dexter.models import Document, DocumentEntity, Entity, Utterance, DocumentKeyword, DocumentPlace, db
 from dexter.models.seeds import seed_db
 
+from tests.fixtures import dbfixture, DocumentData
+
 class TestDocument(unittest.TestCase):
     def setUp(self):
         self.db = db
@@ -11,12 +13,18 @@ class TestDocument(unittest.TestCase):
         self.db.create_all()
         seed_db(db)
 
+        self.fx = dbfixture.data(DocumentData)
+        self.fx.setup()
+
+        self.doc = Document.query.get(self.fx.DocumentData.simple.id)
+
     def tearDown(self):
+        self.fx.teardown()
         self.db.session.remove()
         self.db.drop_all()
 
     def test_add_keyword_no_dups(self):
-        doc = Document()
+        doc = self.doc
 
         k = DocumentKeyword(keyword=u'foo')
         self.assertTrue(doc.add_keyword(k))
@@ -26,7 +34,7 @@ class TestDocument(unittest.TestCase):
         self.assertFalse(doc.add_keyword(DocumentKeyword(keyword=u'go\xfbt')))
 
     def test_add_entities_no_dups(self):
-        doc = Document()
+        doc = self.doc
 
         e = Entity()
         e.group = 'group'
@@ -55,7 +63,7 @@ class TestDocument(unittest.TestCase):
         self.assertEqual([de], list(doc.entities))
 
     def test_add_utterance(self):
-        doc = Document()
+        doc = self.doc
         doc.text = 'And Fred said "Hello" to everyone.'
         
         u = Utterance()
@@ -72,7 +80,7 @@ class TestDocument(unittest.TestCase):
         self.assertEqual(1, len(doc.utterances))
 
     def test_add_utterance_similar(self):
-        doc = Document()
+        doc = self.doc
         doc.text = 'And Fred said "Hello there guys," to everyone.'
         
         u = Utterance()
@@ -96,7 +104,7 @@ class TestDocument(unittest.TestCase):
 
 
     def test_add_utterance_update_offset(self):
-        doc = Document()
+        doc = self.doc
         doc.text = u'And Fred said "Hello" to everyone.'
         
         u = Utterance()
@@ -121,7 +129,7 @@ class TestDocument(unittest.TestCase):
         self.assertFalse(doc.add_utterance(u2))
 
     def test_delete_document(self):
-        doc = Document()
+        doc = self.doc
         doc.text = u'And Fred said "Hello" to everyone.'
         doc.published_at = datetime.datetime.utcnow()
         
@@ -149,7 +157,7 @@ class TestDocument(unittest.TestCase):
         dp2 = DocumentPlace(relevance=0.8)
         dp3 = DocumentPlace()
 
-        doc = Document()
+        doc = self.doc
         doc.places = [dp1, dp2, dp3]
 
         self.assertAlmostEqual(doc.places_relevance_threshold(), 0.5, 3)
@@ -160,7 +168,7 @@ class TestDocument(unittest.TestCase):
         dk2 = DocumentKeyword(relevance=0.8)
         dk3 = DocumentKeyword()
 
-        doc = Document()
+        doc = self.doc
         doc.keywords = [dk1, dk2, dk3]
 
         self.assertAlmostEqual(doc.keyword_relevance_threshold(), 0.5, 3)

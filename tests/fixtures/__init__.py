@@ -2,7 +2,7 @@ import datetime
 
 from fixture import DataSet, NamedDataStyle, SQLAlchemyFixture
 
-from dexter.models import db, Person, Entity, Author, Document, User
+from dexter.models import db, Person, Entity, Author, Document, User, Role
 
 class PersonData(DataSet):
     class joe_author:
@@ -39,6 +39,11 @@ class AuthorData(DataSet):
         name = 'Joe Author'
         author_type_id = 1
         person = PersonData.joe_author
+
+class RoleData(DataSet):
+    class monitor:
+        name = 'monitor'
+        description = 'monitor'
 
 class UserData(DataSet):
     class user:

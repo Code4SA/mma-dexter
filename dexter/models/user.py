@@ -14,7 +14,7 @@ log = logging.getLogger(__name__)
 
 from flask.ext.security import UserMixin, RoleMixin
 
-from ..app import db
+from ..app import db, app
 from wtforms import StringField, validators, PasswordField
 from wtforms.fields.html5 import EmailField
 from ..forms import Form
@@ -86,7 +86,7 @@ class User(db.Model, UserMixin):
     @classmethod
     def create_defaults(self):
         from . import Country
-        from flask.ext.security import encrypt_password
+        from flask_security.utils import encrypt_password
 
         admin_user = User()
         admin_user.first_name = "Admin"
@@ -143,3 +143,11 @@ def default_country_id():
         return current_user.country_id
 
     return None
+
+
+# user authentication
+from flask.ext.security import Security, SQLAlchemyUserDatastore
+from flask.ext.mako import render_template
+user_datastore = SQLAlchemyUserDatastore(db, User, Role)
+security = Security(app, user_datastore)
+app.extensions['security'].render_template = render_template
