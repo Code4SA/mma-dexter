@@ -1,4 +1,12 @@
-form.mine {
+.jumbotron {
+  padding: 10px 30px !important;
+
+  h2 {
+    background-image: url(/public/images/mma-logo.png);
+    background-repeat: no-repeat;
+    background-position: right;
+    background-size: contain;
+  }
 }
 
 section {

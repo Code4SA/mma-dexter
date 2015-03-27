@@ -3,7 +3,18 @@
 %%block(name='title')
   Mine
 
-%h2
+.jumbotron
+  %h2
+    Dexter Mine
+    %small Who's speaking in the South Africa media?
+
+  %p
+    We scan online media daily and see who's quoted and what they're saying.
+    Sometimes we get it wrong, so always double check and
+    %a(href="#", dataUvTrigger="contact") let us know
+    if there's a problem.
+
+%h3
   - if form.medium:
     &= form.medium.name
   - else:

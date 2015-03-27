@@ -6,7 +6,7 @@
   .list-group
     - for option in form.period:
       %a.list-group-item(href=url_for('mine_home', medium_id=form.medium_id.data, period=option.data), class_='active' if option.checked else '')
-        %h4.list-group-item-heading Last ${option.data} days
+        %h5.list-group-item-heading Last ${option.data} days
         %p.list-group-item-text
           = (date.today() - timedelta(days=int(option.data))).strftime('%d %b')
           to
