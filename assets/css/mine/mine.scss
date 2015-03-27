@@ -56,6 +56,11 @@ section {
     cursor: pointer;
   }
 
+  .all {
+    .col-sm-3 { width: 20.75%; }
+    .col-sm-9 { width: 79.25%; }
+  }
+
   .media-bar {
     background-color: #efefef;
     margin-top: 5px;
