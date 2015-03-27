@@ -60,7 +60,8 @@ class SourceAnalyser(BaseAnalyser):
                 # are any ones we already have similar?
                 dup = False
                 for au in for_person:
-                    # checking levenshtein similarity is too slow
+                    # checking levenshtein similarity is too slow, just see if they
+                    # match directly
                     if au.quote == utterance.quote:
                         # it's similar
                         au.count += 1
@@ -68,10 +69,13 @@ class SourceAnalyser(BaseAnalyser):
                         break
 
                 if dup:
-                    # collect documents, one from each medium
+                    # we already have this utterance, collect the documents
+                    # that have it, one from each medium
                     if not any(d.medium == utterance.document.medium for d in au.docs_sampling):
                         au.docs_sampling.append(utterance.document)
-                else:
+
+                elif len([1 for u in for_person if utterance.document in u.docs_sampling]) < 2:
+                    # only use up to two utterances per document
                     au = AnalysedUtterance()
                     au.quote = utterance.quote
                     au.count = 1
