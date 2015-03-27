@@ -1,7 +1,6 @@
 %%namespace(file="../dashboard/helpers.haml", **{'import': '*'})
 
 - import itertools
-- from random import choice
 
 %section.people
   .row
@@ -36,13 +35,12 @@
                     %i.fa.fa-li.fa-quote-left
                     %i&= u.quote
                     .headline
-                      - sample = choice(u.docs_sampling)
-                      %a(href=sample.url, target="_blank")&= sample.title
+                      %a(href=u.sample.document.url, target="_blank")&= u.sample.document.title
                       \-
-                      %span.text-muted&=sample.medium.name
+                      %span.text-muted&=u.sample.document.medium.name
 
                     %ul.list-inline
-                      - for i, doc in enumerate(u.docs_sampling):
-                        - if sample != doc:
+                      - for i, utterance in enumerate(u.utterances):
+                        - if utterance != u.sample:
                           %li
-                            %a(href=doc.url, target="_blank")&= doc.medium.name
+                            %a(href=utterance.document.url, target="_blank")&= utterance.document.medium.name

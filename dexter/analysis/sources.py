@@ -1,5 +1,6 @@
 from math import sqrt
-from collections import defaultdict
+from random import choice
+from collections import defaultdict, Counter
 from itertools import groupby, chain
 from datetime import datetime
 from dateutil.parser import parse
@@ -64,26 +65,39 @@ class SourceAnalyser(BaseAnalyser):
                     # match directly
                     if au.quote == utterance.quote:
                         # it's similar
-                        au.count += 1
                         dup = True
+                        au.count += 1
+                        # collect the documents that have it, one from each medium
+                        if not any(u.document.medium == utterance.document.medium for u in au.utterances):
+                            au.utterances.append(utterance)
                         break
 
-                if dup:
-                    # we already have this utterance, collect the documents
-                    # that have it, one from each medium
-                    if not any(d.medium == utterance.document.medium for d in au.docs_sampling):
-                        au.docs_sampling.append(utterance.document)
-
-                elif len([1 for u in for_person if utterance.document in u.docs_sampling]) < 2:
-                    # only use up to two utterances per document
+                if not dup:
                     au = AnalysedUtterance()
                     au.quote = utterance.quote
                     au.count = 1
-                    au.docs_sampling = [utterance.document]
+                    au.utterances = [utterance]
                     for_person.append(au)
 
+            # best first
             for_person.sort(key=lambda au: au.count, reverse=True)
-            self.person_utterances[person_id] = for_person[0:10]
+
+            # we only want up to two utterances from the same document
+            counter = Counter()
+            keep = []
+            for au in for_person:
+                # only keep it if all of the linked documents have been
+                # referenced fewer than two times
+                if not any(counter.get(u.document, 0) >= 2 for u in au.utterances):
+                    keep.append(au)
+                    counter.update(u.document for u in au.utterances)
+
+            # top 10
+            for_person = keep[0:10]
+            for au in for_person:
+                au.sample = choice(au.utterances)
+
+            self.person_utterances[person_id] = for_person
 
 
     def _load_people_sources(self):
