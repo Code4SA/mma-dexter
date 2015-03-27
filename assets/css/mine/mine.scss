@@ -21,6 +21,14 @@ section {
   }
 }
 
+mark {
+  background-color: yellow;
+}
+
+.popover {
+  max-width: 400px;
+}
+
 // put people table alongside quotations
 
 .people-table {
@@ -48,6 +56,11 @@ section {
 
   .list-inline a {
     color: #777;
+  }
+
+  .quote {
+    // needed because we attached popovers to these guys
+    display: block;
   }
 }
 

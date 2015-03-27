@@ -61,3 +61,21 @@ $(function() {
     $('.fa-spinner').removeClass('hidden');
   });
 });
+
+// show popover with quote context
+$(function() {
+  $('.people-quotations .quote')
+    .each(function(i) {
+      $(this).popover({
+        content: $(this).data('snippet'),
+        html: true,
+        placement: 'top auto',
+      })
+    })
+    .on('mouseover', function() {
+      $(this).popover('show');
+    })
+    .on('mouseout', function() {
+      $(this).popover('hide');
+    });
+});

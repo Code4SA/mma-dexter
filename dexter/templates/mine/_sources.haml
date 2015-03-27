@@ -33,7 +33,7 @@
                 - for u in utterances:
                   %li
                     %i.fa.fa-li.fa-quote-left
-                    %i&= u.quote
+                    %i.quote(dataSnippet=u.sample.snippet())&= u.quote
                     .headline
                       %a(href=u.sample.document.url, target="_blank")&= u.sample.document.title
                       \-

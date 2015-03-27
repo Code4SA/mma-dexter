@@ -46,6 +46,41 @@ class Utterance(db.Model):
         1.0 means they're identical. """
         return levenshtein(self.quote, other.quote)
 
+    def snippet(self, mark=True, context=150):
+        """ Get a snippet from the document surrounding this utterance.
+        If `mark` is True, then surround it with <mark> tags.
+        """
+        if self.offset is None or self.length is None:
+            return None
+
+        start = max(0, self.offset-context)
+        quote_end = self.offset + self.length
+        end   = min(len(self.document.text), quote_end + context)
+
+        if start > 0:
+            # find the first space
+            start = max(start, self.document.text.find(' ', start, self.offset))
+
+        if end < len(self.document.text):
+            # find the first space
+            end = max(quote_end, self.document.text.rfind(' ', quote_end, end))
+
+        if mark:
+            snippet = '%s<mark>%s</mark>%s' % (
+                    self.document.text[start:self.offset],
+                    self.document.text[self.offset:quote_end],
+                    self.document.text[quote_end:end]
+                    )
+        else:
+            snippet = self.document.text[start:end]
+
+        if start > 0:
+            snippet = "... " + snippet
+        if end < len(self.document.text):
+            snippet = snippet + " ..."
+
+        return snippet
+
 
     def __eq__(self, other):
         # to compare, we emulate mysql's utf8_general_ci collation:
