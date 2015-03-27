@@ -10,7 +10,7 @@ UserVoice.push(['set', {
 }]);
 
 // Add default trigger to the bottom-right corner of the window:
-UserVoice.push(['addTrigger', { mode: 'contact', trigger_position: 'bottom-right', tab_label: 'get help' }]);
+UserVoice.push(['addTrigger', { mode: 'contact', trigger_position: 'bottom-right', tab_label: 'help & feedback' }]);
 
 (function () {
   var $body = $('body');
