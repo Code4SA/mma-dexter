@@ -1,4 +1,12 @@
-form.mine {
+.jumbotron {
+  padding: 10px 30px !important;
+
+  h2 {
+    background-image: url(/public/images/mma-logo.png);
+    background-repeat: no-repeat;
+    background-position: right;
+    background-size: contain;
+  }
 }
 
 section {
@@ -11,13 +19,6 @@ section {
   > h5:first-child {
     margin-top: 0px;
   }
-}
-
-.pooh {
-  background: url(http://img2.wikia.nocookie.net/__cb20140909020750/disney/images/5/54/Pooh-bear-clip-art-winniepooh_1_800_800.jpg);
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: right;
 }
 
 // put people table alongside quotations
@@ -53,6 +54,11 @@ section {
 .media {
   .medium {
     cursor: pointer;
+  }
+
+  .all {
+    .col-sm-3 { width: 20.75%; }
+    .col-sm-9 { width: 79.25%; }
   }
 
   .media-bar {

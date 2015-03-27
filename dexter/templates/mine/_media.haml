@@ -3,14 +3,12 @@
 - from dexter.utils import slice
 
 %section.media
-  .row
-    .col-sm-6
-      .row.medium(class_='active' if not form.medium else '')
-        .col-sm-5
-          %a(href=url_for('mine_home', period=form.period.data)) All publications
-        .col-sm-7
-          .media-bar
-            .bar(style="width: 100%")
+  .row.medium.all(class_='active' if not form.medium else '')
+    .col-sm-3
+      %a(href=url_for('mine_home', period=form.period.data)) All publications
+    .col-sm-9
+      .media-bar
+        .bar(style="width: 100%")
 
   .row
     - for batch in slice(media_analyser.media, 2):
