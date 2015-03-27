@@ -102,4 +102,4 @@ def migrate():
     require('deploy_type', 'deploy_dir', 'branch', provided_by=[prod])
 
     with cd(env.repo_dir), prefix('. %s/bin/activate' % env.ve_dir):
-        run('python app.py db upgrade head')
+        run('source production-settings.sh; python app.py db upgrade head')
