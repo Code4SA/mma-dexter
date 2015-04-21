@@ -151,8 +151,8 @@ class AffiliationView(MyModelView):
     column_default_sort = ('code', False)
     page_size = 100
 
-    def _order_by(self, query, joins, sort_field, sort_desc):
-        query, joins = super(AffiliationView, self)._order_by(query, joins, sort_field, sort_desc)
+    def _order_by(self, query, joins, sort_joins, sort_field, sort_desc):
+        query, joins = super(AffiliationView, self)._order_by(query, joins, sort_joins, sort_field, sort_desc)
 
         if sort_field.name == 'code':
             # sort by the code field, which has entries like:
