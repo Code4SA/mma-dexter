@@ -83,15 +83,14 @@
                               %i.fa(class_=nature.icon())
                               &= nature.name.title()
 
-                - if document.analysis_nature != AnalysisNature.ANCHOR:
-                  = field(form.topic_id, class_='select2')
-                  = field(form.origin_location_id, class_='select2')
+                = field(form.topic_id, class_='select2')
+                = field(form.origin_location_id, class_='select2')
 
               %hr
               %section.sources
                 %%include(file='edit_analysis_sources.haml')
 
-              - if document.analysis_nature != AnalysisNature.ANCHOR and form.issues.choices:
+              - if form.issues.choices:
                 %hr
                 %section.form-horizontal
                   %h4 Issues Raised

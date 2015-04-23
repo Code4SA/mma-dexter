@@ -141,27 +141,27 @@ class AnchorAnalysisForm(DocumentAnalysisForm):
     """
     Anchor (automated) analysis of a document
     """
-    pass
+    issues = MultiCheckboxField('Issues')
+    topic_id = SelectField('Topic')
+    origin_location_id = SelectField('Origin')
+
+    def __init__(self, *args, **kwargs):
+        super(AnchorAnalysisForm, self).__init__(*args, **kwargs)
+
+        country = self._obj.country
+        self.origin_location_id.choices = [['', '(none)']] + [
+            [str(loc.id), loc.name] for loc in Location.for_country(country)]
+
+        nature = self._obj.analysis_nature
+        self.issues.choices = [(str(issue.id), issue.name) for issue in Issue.for_nature(nature)]
+        self.topic_id.choices = [['', '(none)']] + Topic.for_select_widget(Topic.for_nature(nature))
 
 
 class ElectionsAnalysisForm(AnchorAnalysisForm):
     """
     Analysis of a document from an elections standpoint.
     """
-    topic_id            = SelectField('Topic')
-    issues              = MultiCheckboxField('Issues')
-    origin_location_id  = SelectField('Origin')
-
-    def __init__(self, *args, **kwargs):
-        super(ElectionsAnalysisForm, self).__init__(*args, **kwargs)
-
-        nature = self._obj.analysis_nature
-        country = self._obj.country
-
-        self.topic_id.choices = [['', '(none)']] + Topic.for_select_widget(nature.topics)
-        self.issues.choices = [(str(issue.id), issue.name) for issue in nature.issues]
-        self.origin_location_id.choices = [['', '(none)']] + [
-            [str(loc.id), loc.name] for loc in Location.for_country(country)]
+    pass
 
 
 class ChildrenAnalysisForm(ElectionsAnalysisForm):

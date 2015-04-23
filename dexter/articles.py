@@ -201,9 +201,8 @@ def edit_article_analysis(id):
 
         forms = [form] + fairness_forms
         if all(f.validate() for f in forms):
-            if nature != AnalysisNature.ANCHOR:
-                # convert issue id's to Issue objects
-                form.issues.data = [Issue.query.get_or_404(i) for i in form.issues.data]
+            # convert issue id's to Issue objects
+            form.issues.data = [Issue.query.get_or_404(i) for i in form.issues.data]
 
             # update document
             form.populate_obj(document)
@@ -242,14 +241,13 @@ def edit_article_analysis(id):
             else:
                 flash('Please correct the problems below and try again.', 'warning')
     else:
-        if nature != AnalysisNature.ANCHOR:
-            # wtforms turns None values into None, which sucks
-            if form.topic_id.data == 'None':
-                form.topic_id.data = ''
-            if form.origin_location_id.data == 'None':
-                form.origin_location_id.data = ''
-            # ensure that checkboxes can be pre-populated
-            form.issues.data = [str(i.id) for i in document.issues]
+        # wtforms turns None values into None, which sucks
+        if form.topic_id.data == 'None':
+            form.topic_id.data = ''
+        if form.origin_location_id.data == 'None':
+            form.origin_location_id.data = ''
+        # ensure that checkboxes can be pre-populated
+        form.issues.data = [str(i.id) for i in document.issues]
 
     # only render if it's not an ajax request
     if not request.is_xhr:

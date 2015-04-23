@@ -29,8 +29,6 @@ class AnalysisNature(db.Model):
     name        = Column(String(100), nullable=False, index=True, unique=True)
 
     # associations
-    topics      = relationship("Topic", backref="analysis_nature", order_by="Topic.name")
-    issues      = relationship("Issue", backref="analysis_nature", order_by="Issue.name")
     roles       = relationship("SourceRole", backref="analysis_nature", order_by="SourceRole.name")
 
     @property

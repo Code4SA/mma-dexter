@@ -1,12 +1,9 @@
-from sqlalchemy import (
-    Column,
-    ForeignKey,
-    Integer,
-    String,
-    )
+from sqlalchemy import Column, ForeignKey, Integer, String
+from sqlalchemy.orm import relationship
 
 from itertools import groupby
 from ..app import db
+
 
 class Topic(db.Model):
     """
@@ -18,10 +15,10 @@ class Topic(db.Model):
     name      = Column(String(150), index=True, nullable=False, unique=True)
     group     = Column(String(100))
     analysis_nature_id = Column(Integer, ForeignKey('analysis_natures.id'), index=True, nullable=True)
+    analysis_nature = relationship("AnalysisNature")
 
     def __repr__(self):
         return "<Topic name='%s'>" % (self.name.encode('utf-8'),)
-
 
     def sort_key(self):
         try:
@@ -32,15 +29,19 @@ class Topic(db.Model):
         except:
             return (self.group, self.name)
 
-
     @classmethod
     def for_select_widget(cls, topics):
         choices = []
         topics.sort(key=cls.sort_key)
         for group, items in groupby(topics, lambda t: t.group):
-            choices.append((group, [[str(t.id), t.name] for t in items]))
+            choices.append((group or 'General', [[str(t.id), t.name] for t in items]))
         return choices
 
+    @classmethod
+    def for_nature(cls, nature):
+        # either the ones just for this nature, or the null ones
+        return cls.query.filter(cls.analysis_nature == nature).all()\
+            or cls.query.filter(cls.analysis_nature == None).all()   # noqa
 
     @classmethod
     def create_defaults(self):
@@ -48,7 +49,7 @@ class Topic(db.Model):
 1|Voter education & registration
 1|Election fraud
 1|Election funding
-1|Election logistics 
+1|Election logistics
 1|Election results
 1|Opinion polls
 1|Political party campaigning (only when no other code applies)
@@ -148,7 +149,7 @@ class Topic(db.Model):
             t.name = parts[1].strip()
 
             if len(parts) > 2:
-              t.group = parts[2].strip()
+                t.group = parts[2].strip()
 
             topics.append(t)
 
