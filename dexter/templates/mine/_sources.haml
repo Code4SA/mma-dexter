@@ -9,38 +9,17 @@
         %h3 Top people speaking in the news
 
         %table.table.table-condensed.analysis
+          %tr.person-filter
+            %td
+              %i.fa.fa-search
+            %td
+              %input.form-control.person-filter-box(type="hidden")
+            %td
+            %td
           - for i, source in enumerate(source_analyser.top_people):
-            %tr(class_='active' if i == 0 else '')
-              %td.rank ${i+1}.
-              %td
-                %a(href="#quotations-%s" % i)&= source.person.name
-                %span.text-muted&= source.person.affiliation and source.person.affiliation.name or ''
-              %td.dot-holder
-                - size = (3+17*source.source_counts_normalised)
-                .dot(style="width: %dpx; height: %dpx" % (size, size))
-              %td.sparkline(dataSparkline=','.join(str(round(i, 0)) for i in source.source_counts), dataLabel='{point.y}%')
+            %%include(file="_source.haml", args="i=i, source=source")
 
     .col-sm-6
       .people-quotations
         - for i, source in enumerate(source_analyser.top_people):
-          .collapse(id="quotations-%s" % i, class_=("in" if i == 0 else ""))
-            %h3&= source.person.name
-            %h4.text-muted&= source.person.affiliation and source.person.affiliation.name or ''
-
-            - utterances = source_analyser.person_utterances.get(source.person.id, [])
-            - if utterances:
-              %ul.fa-ul.quotation-list
-                - for u in utterances:
-                  %li
-                    %i.fa.fa-li.fa-quote-left
-                    %i.quote(dataSnippet=u.sample.snippet())&= u.quote
-                    .headline
-                      %a(href=u.sample.document.url, target="_blank")&= u.sample.document.title
-                      \-
-                      %span.text-muted&=u.sample.document.medium.name
-
-                    %ul.list-inline
-                      - for i, utterance in enumerate(u.utterances):
-                        - if utterance != u.sample:
-                          %li
-                            %a(href=utterance.document.url, target="_blank")&= utterance.document.medium.name
+          %%include(file="_quotations.haml", args="i=i, source=source")

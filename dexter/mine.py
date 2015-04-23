@@ -1,18 +1,15 @@
-from datetime import datetime, timedelta, date
-import time
+from datetime import timedelta, date
 
-from wtforms import validators, HiddenField, TextField, SelectMultipleField, BooleanField
-from wtforms.fields.html5 import DateField
+from wtforms import validators, HiddenField, TextField
 
-from flask import request, url_for, flash, redirect, make_response, jsonify, abort
+from flask import request, jsonify
 from flask.ext.mako import render_template
 from flask.ext.security import roles_accepted, current_user
-from wsgiref.handlers import format_date_time
 
 from dexter.app import app
-from dexter.models import *
-from dexter.forms import Form, SelectField, MultiCheckboxField, RadioField
-from dexter.analysis import SourceAnalyser, TopicAnalyser, MediaAnalyser
+from dexter.models import *  # noqa
+from dexter.forms import Form, RadioField
+from dexter.analysis import SourceAnalyser, MediaAnalyser
 from dexter.utils import client_cache_for
 
 
@@ -30,9 +27,48 @@ def mine_home():
     sa.load_utterances()
 
     return render_template('mine/index.haml',
-            form=form,
-            source_analyser=sa,
-            media_analyser=ma)
+                           form=form,
+                           source_analyser=sa,
+                           media_analyser=ma)
+
+
+@app.route('/mine/people/<id>')
+@roles_accepted('monitor', 'miner')
+@client_cache_for(minutes=10)
+def mine_person(id):
+    person = Person.query.get_or_404(id)
+    form = MineForm(request.args)
+
+    sa = SourceAnalyser(doc_ids=form.document_ids())
+    sa.analyse()
+    sa.load_utterances([person])
+
+    source = sa.analysed_people.get(person.id)
+    if not source:
+        return jsonify({'row': '', 'utterances': ''})
+
+    row = render_template('mine/_source.haml', i=-1, source=source)
+    utterances = render_template("mine/_quotations.haml", i=-1, source=source, source_analyser=sa)
+
+    return jsonify({
+        'row': row,
+        'utterances': utterances,
+    })
+
+
+@app.route('/mine/people/')
+@roles_accepted('monitor', 'miner')
+@client_cache_for(minutes=10)
+def mine_people():
+    """ All the people that are in the documents covered by this span. """
+    form = MineForm(request.args)
+
+    sa = SourceAnalyser(doc_ids=form.document_ids())
+    sa.load_people_sources()
+
+    return jsonify({
+        'people': [p.json() for p in sa.people.itervalues()]
+    })
 
 
 class MineForm(Form):
@@ -47,7 +83,6 @@ class MineForm(Form):
         super(MineForm, self).__init__(*args, **kwargs)
         self.country = current_user.country
         self.yesterday = date.today() - timedelta(days=1)
-
 
     @property
     def published_from(self):
@@ -72,16 +107,16 @@ class MineForm(Form):
 
     def filter_query(self, query, overview=False):
         query = query.filter(
-                Document.analysis_nature_id == self.nature_id,
-                Document.country == self.country,
-                )
+            Document.analysis_nature_id == self.nature_id,
+            Document.country == self.country,
+        )
 
         if not overview and self.medium:
             query = query.filter(Document.medium == self.medium)
 
         query = query.filter(
-                Document.published_at >= self.published_from,
-                Document.published_at <= self.published_to)
+            Document.published_at >= self.published_from,
+            Document.published_at <= self.published_to)
 
         if self.source_person_id.data:
             query = query\

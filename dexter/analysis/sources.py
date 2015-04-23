@@ -33,16 +33,19 @@ class SourceAnalyser(BaseAnalyser):
         self.person_utterances = None
 
     def analyse(self):
-        self._load_people_sources()
-        self._analyse_people_sources()
+        self.load_people_sources()
+        self.analyse_people_sources()
 
 
-    def load_utterances(self):
+    def load_utterances(self, people=None):
         """ Find utterances for the sources we've analysed.
         Sets `person_utterances`, a map from person id to 
         `AnalysedUtterance` instances.
         """
-        ids = [src.person.id for src in chain(self.top_people, self.people_trending_up, self.people_trending_down)]
+        if not people:
+            ids = [src.person.id for src in chain(self.top_people, self.people_trending_up, self.people_trending_down)]
+        else:
+            ids = [p.id for p in people]
 
         utterances = Utterance.query\
                       .join(Entity)\
@@ -100,7 +103,7 @@ class SourceAnalyser(BaseAnalyser):
             self.person_utterances[person_id] = for_person
 
 
-    def _load_people_sources(self):
+    def load_people_sources(self):
         """
         Load all people source data for this period.
         """
@@ -113,7 +116,7 @@ class SourceAnalyser(BaseAnalyser):
         self.people = self._lookup_people([r[0] for r in rows])
 
 
-    def _analyse_people_sources(self):
+    def analyse_people_sources(self):
         """
         Do trend analysis on people.
         """
