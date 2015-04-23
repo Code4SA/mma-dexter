@@ -46,8 +46,12 @@ def dashboard():
 @app.route('/monitor-dashboard')
 @roles_accepted('monitor')
 def monitor_dashboard():
-    docs = [x.id for x in Document.query.filter(Document.created_by_user_id == current_user.id)\
-        .order_by(Document.created_at.desc()).limit(30)]
+    docs = [x.id for x in Document.query\
+            .filter(or_(
+                Document.created_by_user_id == current_user.id,
+                Document.checked_by_user_id == current_user.id
+            ))
+            .order_by(Document.created_at.desc()).limit(30)]
 
     docs = Document.query\
         .options(
@@ -221,7 +225,7 @@ def activity_topics_detail():
 class ActivityForm(Form):
     cluster_id      = HiddenField('Cluster')
     analysis_nature_id = RadioField('Analysis', default=AnalysisNature.ANCHOR)
-    user_id         = SelectField('Added by', [validators.Optional()], default='')
+    user_id         = SelectField('User', [validators.Optional()], default='')
     medium_id       = SelectMultipleField('Medium', [validators.Optional()], default='')
     country_id      = SelectField('Country', default=default_country_id)
     created_at      = TextField('Added', [validators.Optional()])
@@ -340,9 +344,13 @@ class ActivityForm(Form):
 
         if self.user_id.data:
             if self.user_id.data == '-':
-                query = query.filter(Document.created_by_user_id == None)
+                query = query.filter(or_(
+                    Document.created_by_user_id == None,
+                    Document.checked_by_user_id == None))
             else:
-                query = query.filter(Document.created_by_user_id == self.user_id.data)
+                query = query.filter(or_(
+                    Document.created_by_user_id == self.user_id.data,
+                    Document.checked_by_user_id == self.user_id.data))
 
         if self.country_id.data:
             query = query.filter(Document.country_id == self.country_id.data)
