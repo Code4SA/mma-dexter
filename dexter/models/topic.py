@@ -17,7 +17,7 @@ class Topic(db.Model):
     id        = Column(Integer, primary_key=True)
     name      = Column(String(150), index=True, nullable=False, unique=True)
     group     = Column(String(100))
-    analysis_nature_id = Column(Integer, ForeignKey('analysis_natures.id'), index=True, nullable=False, default=1)
+    analysis_nature_id = Column(Integer, ForeignKey('analysis_natures.id'), index=True, nullable=True)
 
     def __repr__(self):
         return "<Topic name='%s'>" % (self.name.encode('utf-8'),)
