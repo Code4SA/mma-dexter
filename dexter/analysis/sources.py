@@ -37,12 +37,15 @@ class SourceAnalyser(BaseAnalyser):
         self._analyse_people_sources()
 
 
-    def load_utterances(self):
+    def load_utterances(self, people=None):
         """ Find utterances for the sources we've analysed.
         Sets `person_utterances`, a map from person id to 
         `AnalysedUtterance` instances.
         """
-        ids = [src.person.id for src in chain(self.top_people, self.people_trending_up, self.people_trending_down)]
+        if not people:
+            ids = [src.person.id for src in chain(self.top_people, self.people_trending_up, self.people_trending_down)]
+        else:
+            ids = [p.id for p in people]
 
         utterances = Utterance.query\
                       .join(Entity)\

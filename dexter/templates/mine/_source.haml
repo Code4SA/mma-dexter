@@ -1,0 +1,13 @@
+%%page(args="i, source")
+
+%tr(class_='active' if i == 0 else '', dataId=source.person.id)
+  %td.rank
+    - if i >= 0:
+      ${i+1}.
+  %td
+    %a.name(href="#quotations-%s" % source.person.id)&= source.person.name
+    %span.text-muted&= source.person.affiliation and source.person.affiliation.name or ''
+  %td.dot-holder
+    - size = (3+17*source.source_counts_normalised)
+    .dot(style="width: %dpx; height: %dpx" % (size, size))
+  %td.sparkline(dataSparkline=','.join(str(round(i, 0)) for i in source.source_counts), dataLabel='{point.y}%')

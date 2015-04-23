@@ -1,0 +1,23 @@
+%%page(args="i, source")
+
+.collapse(id="quotations-%s" % source.person.id, class_=("in" if i == 0 else ""))
+  %h3&= source.person.name
+  %h4.text-muted&= source.person.affiliation and source.person.affiliation.name or ''
+
+  - utterances = source_analyser.person_utterances.get(source.person.id, [])
+  - if utterances:
+    %ul.fa-ul.quotation-list
+      - for u in utterances:
+        %li
+          %i.fa.fa-li.fa-quote-left
+          %i.quote(dataSnippet=u.sample.snippet())&= u.quote
+          .headline
+            %a(href=u.sample.document.url, target="_blank")&= u.sample.document.title
+            \-
+            %span.text-muted&=u.sample.document.medium.name
+
+          %ul.list-inline
+            - for i, utterance in enumerate(u.utterances):
+              - if utterance != u.sample:
+                %li
+                  %a(href=utterance.document.url, target="_blank")&= utterance.document.medium.name

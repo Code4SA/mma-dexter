@@ -37,7 +37,7 @@ def api_authors():
     return jsonify({'authors': [a.json() for a in authors]})
 
 @app.route('/api/people')
-@roles_accepted('monitor')
+@roles_accepted('monitor', 'mine')
 def api_people():
     q = request.args.get('q', '').strip()
     try:

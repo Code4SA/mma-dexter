@@ -36,6 +36,16 @@ mark {
     cursor: pointer;
   }
 
+  .person-filter {
+    td {
+      border-top: 0px;
+    }
+
+    td:first-child {
+      padding-top: 10px;
+    }
+  }
+
   .dot-holder {
     padding: 0px;
     vertical-align: middle;
