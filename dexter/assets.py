@@ -55,6 +55,7 @@ assets.register('maps-css',
 
 assets.register('js', Bundle(
     'js/jquery-1.10.2.min.js',
+    'js/underscore-1.6.0.js',
     'js/bootstrap-3.2.0.min.js',
     'js/typeahead.bundle-0.10.2.min.js',
     'js/jquery-throttle-debounce.js',
@@ -71,13 +72,12 @@ assets.register('js', Bundle(
 
 
 maps = Bundle(
-        'js/underscore-1.6.0.js',
-        'js/d3.v3.min.js',
-        'js/topojson.v1.min.js',
-        'http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.js',
-        'js/maps.js')
+    'js/d3.v3.min.js',
+    'js/topojson.v1.min.js',
+    'http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.js',
+    'js/maps.js')
 
-charts = assets.register('charts', 
+charts = assets.register('charts',
     Bundle(
         'js/highcharts-4.0.1.js',
         'js/sparklines.js',
@@ -87,7 +87,6 @@ assets.register('dashboard',
     Bundle(
         maps,
         charts,
-        'js/underscore-1.6.0.js',
         'js/dashboard/*.js',
         output='js/dashboard.%(version)s.js'))
 
@@ -101,6 +100,7 @@ assets.register('documents',
 
 assets.register('mine-js', Bundle(
     'js/jquery-1.10.2.min.js',
+    'js/underscore-1.6.0.js',
     'js/bootstrap-3.2.0.min.js',
     'js/typeahead.bundle-0.10.2.min.js',
     'js/jquery-throttle-debounce.js',

@@ -33,8 +33,8 @@ class SourceAnalyser(BaseAnalyser):
         self.person_utterances = None
 
     def analyse(self):
-        self._load_people_sources()
-        self._analyse_people_sources()
+        self.load_people_sources()
+        self.analyse_people_sources()
 
 
     def load_utterances(self, people=None):
@@ -103,7 +103,7 @@ class SourceAnalyser(BaseAnalyser):
             self.person_utterances[person_id] = for_person
 
 
-    def _load_people_sources(self):
+    def load_people_sources(self):
         """
         Load all people source data for this period.
         """
@@ -116,7 +116,7 @@ class SourceAnalyser(BaseAnalyser):
         self.people = self._lookup_people([r[0] for r in rows])
 
 
-    def _analyse_people_sources(self):
+    def analyse_people_sources(self):
         """
         Do trend analysis on people.
         """

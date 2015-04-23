@@ -43,7 +43,9 @@ $(function () {
 });
 
 $(function() {
-  // people search/filter
+  // People search/filter.
+  // The first time the user tries to search, we ask the server for all the people
+  // involved for the period covered by the current page. We then cache and re-use that.
   var people = $('.people-table tr[data-id]').map(function(i) {
     return {
       id: $(this).data('id'),
@@ -52,31 +54,39 @@ $(function() {
   }).toArray();
 
   var filterBox = $('.person-filter-box');
+  var allPeople;
+
+  function find(needle) {
+    needle = needle.toLowerCase();
+
+    return _.filter(allPeople, function(data) {
+      return data.lower_text.indexOf(needle) > -1;
+    });
+  }
 
   filterBox.select2({
     placeholder: 'Find a person',
-    allowClear: true,
-    minimumInputLength: 3,
-    data: people,
-    ajax: {
-      url: '/api/people',
-      data: function (term, page) {
-        return {
-          q: term, // search term
-        };
-      },
-      results: function(data, page, query) {
-        return {
-          more: data.length == 10,
-          results: $.map(data.people, function(item) {
-            return {
-              id: item.id,
-              text: item.name,
-            };
-          })
-        };
-      },
-    }
+    minimumInputLength: 1,
+    query: function(options) {
+      // do we already have the people?
+      if (allPeople) {
+        options.callback({results: find(options.term)});
+      } else {
+        // load all the people once for this page
+        $.get('/mine/people/' + document.location.search)
+          .then(function(data) {
+            allPeople = _.map(data.people, function(item) {
+              return {
+                id: item.id,
+                text: item.name,
+                lower_text: item.name.toLowerCase(),
+              };
+            });
+
+            options.callback({results: find(options.term)});
+          });
+      }
+    },
   });
 
   // user chose a person
@@ -113,7 +123,7 @@ $(function() {
 
   function loadPersonData(personId) {
     // load the person row and the utterances from the server
-    var url = '/mine/person/' + personId + document.location.search;
+    var url = '/mine/people/' + personId + document.location.search;
 
     $.get(url)
       .then(function(data) {

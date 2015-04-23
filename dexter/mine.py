@@ -32,14 +32,12 @@ def mine_home():
                            media_analyser=ma)
 
 
-@app.route('/mine/person/<id>')
+@app.route('/mine/people/<id>')
 @roles_accepted('monitor', 'miner')
 @client_cache_for(minutes=10)
 def mine_person(id):
     person = Person.query.get_or_404(id)
     form = MineForm(request.args)
-
-    # TODO: just this person
 
     sa = SourceAnalyser(doc_ids=form.document_ids())
     sa.analyse()
@@ -49,13 +47,27 @@ def mine_person(id):
     if not source:
         return jsonify({'row': '', 'utterances': ''})
 
-    # TODO: render the table row, render the utterances div
     row = render_template('mine/_source.haml', i=-1, source=source)
     utterances = render_template("mine/_quotations.haml", i=-1, source=source, source_analyser=sa)
 
     return jsonify({
         'row': row,
         'utterances': utterances,
+    })
+
+
+@app.route('/mine/people/')
+@roles_accepted('monitor', 'miner')
+@client_cache_for(minutes=10)
+def mine_people():
+    """ All the people that are in the documents covered by this span. """
+    form = MineForm(request.args)
+
+    sa = SourceAnalyser(doc_ids=form.document_ids())
+    sa.load_people_sources()
+
+    return jsonify({
+        'people': [p.json() for p in sa.people.itervalues()]
     })
 
 
