@@ -1,12 +1,11 @@
 from functools import partial
 
-from wtforms import StringField, TextAreaField, BooleanField, validators, DateTimeField, HiddenField, widgets
+from wtforms import BooleanField, validators, HiddenField, widgets
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
 from wtforms_alchemy import ModelFieldList
-from wtforms_alchemy.utils import null_or_int
 
 from dexter.forms import ModelForm, FormField, MultiCheckboxField, IntegerField, SelectField, RadioField, YesNoField
-from dexter.models import *
+from dexter.models import *  # noqa
 
 
 QueryRadioField = partial(QuerySelectField, widget=widgets.ListWidget(prefix_label=False), option_widget=widgets.RadioInput())
@@ -34,7 +33,6 @@ class DocumentSourceForm(ModelForm):
     age         = QuerySelectField('Age', get_label='name', allow_blank=True, blank_text='(none)', query_factory=SourceAge.all)
     affiliation = QuerySelectField('Affiliation', get_label='full_name', allow_blank=True, blank_text='(none)')
 
-
     def __init__(self, document, *args, **kwargs):
         self.role.kwargs['query_factory'] = lambda: document.analysis_nature.roles
         self.affiliation.kwargs['query_factory'] = lambda: Affiliation.organisations(document.country)
@@ -45,18 +43,14 @@ class DocumentSourceForm(ModelForm):
         """ the associated source object, if any """
         return self._obj
 
-
     def is_new(self):
         return self.source is None
-
 
     def is_empty(self):
         return self.is_new() and self.named.data and not self.name.data
 
-
     def is_deleted(self):
         return self.deleted.data == '1'
-
 
     def validate(self):
         if self.source_type.data == 'person':
@@ -85,7 +79,6 @@ class DocumentSourceForm(ModelForm):
             self.name.data = None
 
         return super(DocumentSourceForm, self).validate()
-
 
     def populate_obj(self, obj):
         # the form only deals with person_id to make life simpler,
@@ -144,34 +137,31 @@ class DocumentAnalysisForm(ModelForm):
         return [s.form for s in self.sources if s.form.is_new()]
 
 
-
-
-
 class AnchorAnalysisForm(DocumentAnalysisForm):
     """
     Anchor (automated) analysis of a document
     """
-    pass
+    issues = MultiCheckboxField('Issues')
+    topic_id = SelectField('Topic')
+    origin_location_id = SelectField('Origin')
+
+    def __init__(self, *args, **kwargs):
+        super(AnchorAnalysisForm, self).__init__(*args, **kwargs)
+
+        country = self._obj.country
+        self.origin_location_id.choices = [['', '(none)']] + [
+            [str(loc.id), loc.name] for loc in Location.for_country(country)]
+
+        nature = self._obj.analysis_nature
+        self.issues.choices = [(str(issue.id), issue.name) for issue in Issue.for_nature(nature)]
+        self.topic_id.choices = [['', '(none)']] + Topic.for_select_widget(Topic.for_nature(nature))
 
 
 class ElectionsAnalysisForm(AnchorAnalysisForm):
     """
     Analysis of a document from an elections standpoint.
     """
-    topic_id            = SelectField('Topic')
-    issues              = MultiCheckboxField('Issues')
-    origin_location_id  = SelectField('Origin')
-
-    def __init__(self, *args, **kwargs):
-        super(ElectionsAnalysisForm, self).__init__(*args, **kwargs)
-
-        nature = self._obj.analysis_nature
-        country = self._obj.country
-
-        self.topic_id.choices = [['', '(none)']] + Topic.for_select_widget(nature.topics)
-        self.issues.choices = [(str(issue.id), issue.name) for issue in nature.issues]
-        self.origin_location_id.choices = [['', '(none)']] + [
-                [str(loc.id), loc.name] for loc in Location.for_country(country)]
+    pass
 
 
 class ChildrenAnalysisForm(ElectionsAnalysisForm):
@@ -203,7 +193,6 @@ class ChildrenAnalysisForm(ElectionsAnalysisForm):
         self.principle_supported_id.choices = [['', '(none)']] + [(str(p.id), p.name) for p in principles]
         self.principle_violated_id.choices = self.principle_supported_id.choices
 
-
     @property
     def quality_fields(self):
         return [
@@ -222,5 +211,3 @@ class ChildrenAnalysisForm(ElectionsAnalysisForm):
             self.abuse_identified,
             self.abuse_victim,
         ]
-
-

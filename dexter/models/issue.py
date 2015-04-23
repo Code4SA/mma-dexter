@@ -1,12 +1,5 @@
-from sqlalchemy import (
-    Column,
-    ForeignKey,
-    Integer,
-    String,
-    Float,
-    Index,
-    Table
-)
+from sqlalchemy import Column, ForeignKey, Integer, String, Index, or_
+from sqlalchemy.orm import relationship
 
 from ..app import db
 
@@ -23,10 +16,9 @@ class DocumentIssue(db.Model):
 
     def __repr__(self):
         return "<DocumentIssue issue='%s', doc=%s>" % (
-                self.issue.encode('utf-8'), self.document)
+            self.issue.encode('utf-8'), self.document)
 
 Index('doc_issue_doc_id_issue_ix', DocumentIssue.doc_id, DocumentIssue.issue_id, unique=True)
-
 
 
 class Issue(db.Model):
@@ -38,10 +30,18 @@ class Issue(db.Model):
     id          = Column(Integer, primary_key=True)
     name        = Column(String(50), index=True, nullable=False, unique=True)
     description = Column(String(100), index=True, nullable=False, unique=True)
-    analysis_nature_id = Column(Integer, ForeignKey("analysis_natures.id"), default=1, nullable=False)
+    analysis_nature_id = Column(Integer, ForeignKey("analysis_natures.id"), nullable=True)
+    analysis_nature = relationship("AnalysisNature")
 
     def __repr__(self):
         return "<Issue name='%s'>" % (self.name.encode('utf-8'),)
+
+    @classmethod
+    def for_nature(cls, nature):
+        return cls.query.filter(or_(
+            cls.analysis_nature == nature,
+            cls.analysis_nature_id == None,  # noqa
+            )).all()
 
     @classmethod
     def create_defaults(self):
