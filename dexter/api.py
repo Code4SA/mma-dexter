@@ -8,6 +8,7 @@ log = logging.getLogger(__name__)
 from flask import request, url_for, redirect, jsonify, abort
 from flask.ext.security import roles_accepted, current_user
 from flask.ext import htauth
+from flask_cors import cross_origin
 from sqlalchemy.orm import joinedload, lazyload
 from sqlalchemy.sql import func
 
@@ -63,6 +64,7 @@ def api_people():
 
 # THIS IS A PUBLIC API
 @app.route('/api/people/<string:name>/sourced')
+@cross_origin()
 def api_people_sourced(name):
     """
     Returns the documents where a person has been sourced.
@@ -137,6 +139,7 @@ def api_group_entities(group):
 
 # THIS IS A PUBLIC API!
 @app.route('/api/feeds/sources/people')
+@cross_origin()
 def api_feed_people():
     start_date, end_date = api_date_range(request)
 
