@@ -38,6 +38,12 @@ export CALAIS_API_KEY=anotherkey
 * log in as `admin@code4sa.org` with password `admin`
 * to add a new article to the database, visit [http://localhost:5000/articles/new] and enter a Mail and Guardian URL.
 
+## Running Tests
+
+Use [nose](https://nose.readthedocs.org/en/latest/):
+
+    nosetests
+
 ## Production
 
 Note: if you're on Ubuntu 12.04 you will need to manually [install mysql 5.6](https://rtcamp.com/tutorials/mysql/mysql-5-6-ubuntu-12-04/)
@@ -122,4 +128,3 @@ To deploy it remotely, ensure it is committeed and pushed, then run:
 The server expects MySQL 5.6 because it uses the CURRENT_TIMESTAMP default value
 on a DATETIME column, [as described here](http://shankargopal.blogspot.com/2013/03/mysql-566-timestamp-columns-and-default.html).
 This means on some systems you'll need to [upgrade from 5.5 to 5.6](https://rtcamp.com/tutorials/mysql/mysql-5-6-ubuntu-12-04/).
-
