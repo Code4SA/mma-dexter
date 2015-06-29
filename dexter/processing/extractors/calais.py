@@ -59,7 +59,7 @@ class CalaisExtractor(BaseExtractor):
 
         for quote in calais.get('relations', {}).get('Quotation', {}).itervalues():
             u = Utterance()
-            u.quote = quote['quote'].strip()
+            u.quote = quote['quotation'].strip()
 
             if quote.get('instances', []):
                 u.offset = quote['instances'][0]['offset']
@@ -67,8 +67,8 @@ class CalaisExtractor(BaseExtractor):
 
             # uttering entity
             u.entity = Entity.get_or_create(
-                    self.normalise_name(quote['person']['_type']),
-                    quote['person']['name'])
+                    self.normalise_name(quote['speaker']['_type']),
+                    quote['speaker']['name'])
 
             if doc.add_utterance(u):
                 utterances_added += 1
@@ -89,11 +89,11 @@ class CalaisExtractor(BaseExtractor):
                 if not self.API_KEY:
                     raise ValueError('%s.%s.API_KEY must be defined.' % (self.__module__, self.__class__.__name__))
 
-                res = requests.post('http://api.opencalais.com/tag/rs/enrich', doc.text.encode('utf-8'),
+                res = requests.post('https://api.thomsonreuters.com/permid/calais', doc.text.encode('utf-8'),
                     headers={
-                        'x-calais-licenseID': self.API_KEY,
-                        'content-type': 'text/raw',
-                        'accept': 'application/json',
+                        'x-ag-access-token': self.API_KEY,
+                        'Content-Type': 'text/raw',
+                        'outputFormat': 'application/json',
                         })
                 if res.status_code != 200:
                     log.error(res.text)
