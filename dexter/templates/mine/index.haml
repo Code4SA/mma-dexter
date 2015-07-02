@@ -14,38 +14,39 @@
     %a(href="#", dataUvTrigger="contact") let us know
     if there's a problem.
 
-%h3
-  - if form.medium:
-    &= form.medium.name
-  - else:
-    All publications
+%section
+  %h3
+    - if form.medium:
+      &= form.medium.name
+    - else:
+      All publications
 
-  - if form.q.data:
-    \- ${form.q.data|h}
+    - if form.q.data:
+      \- ${form.q.data|h}
 
-  %i.text-muted.fa.fa-spinner.fa-pulse.hidden
+    %i.text-muted.fa.fa-spinner.fa-pulse.hidden
 
-.row
-  .col-sm-3
-    %%include(file='_form.haml')
+  .row
+    .col-sm-3
+      %%include(file='_form.haml')
 
-  .col-sm-9
-    %%include(file='_media.haml')
+    .col-sm-9
+      %%include(file='_media.haml')
 
-    .row
-      .col-sm-6
-        %form(method="get", action=url_for('mine_home'))
-          %input(type="hidden", name=form.medium_id.name, value=form.medium_id.data)
-          %input(type="hidden", name=form.period.name, value=form.period.data)
+      .row
+        .col-sm-6
+          %form(method="get", action=url_for('mine_home'))
+            %input(type="hidden", name=form.medium_id.name, value=form.medium_id.data)
+            %input(type="hidden", name=form.period.name, value=form.period.data)
 
-          %label Explore topics
-          .input-group
-            %input.form-control(type="text", name="q", value=form.q.data, placeholder="Keywords to explore")
-            %span.input-group-btn
-              - if form.q.data:
-                %button.btn.btn-default.clear(tabindex="-1", type="button")
-                  %i.fa.fa-times
-              %button.btn.btn-success(type="submit")
-                %i.fa.fa-search
+            %label Explore topics
+            .input-group
+              %input.form-control(type="text", name="q", value=form.q.data, placeholder="Keywords to explore")
+              %span.input-group-btn
+                - if form.q.data:
+                  %button.btn.btn-default.clear(tabindex="-1", type="button")
+                    %i.fa.fa-times
+                %button.btn.btn-success(type="submit")
+                  %i.fa.fa-search
 
 %%include(file='_sources.haml')
