@@ -25,6 +25,7 @@ Pillow==2.3.0
 PyHAML==1.0.1
 PyYAML==3.10
 SQLAlchemy==0.9.1
+SQLAlchemy-FullText-Search==0.2.3
 SQLAlchemy-ImageAttach==0.8.1
 SQLAlchemy-Utils==0.27.8
 Unidecode==0.04.16

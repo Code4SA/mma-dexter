@@ -8,22 +8,21 @@ from unidecode import unidecode
 from wtforms import StringField, TextAreaField, validators, DateTimeField, HiddenField
 from wtforms.fields.html5 import URLField
 
-from ..forms import Form, IntegerField, SelectField, RadioField
-
 from sqlalchemy import (
-    Table,
     Column,
     DateTime,
     ForeignKey,
     Integer,
     String,
-    Float,
     Text,
     func,
     Index,
     Boolean,
-    )
+)
 from sqlalchemy.orm import relationship, backref, deferred
+from sqlalchemy_fulltext import FullText
+
+from ..forms import Form, IntegerField, SelectField, RadioField
 from ..app import db
 from .problems import DocumentAnalysisProblem
 from .user import default_analysis_nature_id, default_country_id
@@ -34,11 +33,13 @@ import logging
 universal_newline_re = re.compile(R"\r\n|\n|\r")  # All types of newline.
 newlines_re = re.compile(R"\n+")
 
-class Document(db.Model):
+
+class Document(FullText, db.Model):
     """
     A published document, possibly from online on entered manually.
     """
     __tablename__ = "documents"
+    __fulltext_columns__ = ('text',)
     log = logging.getLogger(__name__)
 
     id        = Column(Integer, primary_key=True)
@@ -317,6 +318,12 @@ class Document(db.Model):
 
     def __repr__(self):
         return "<Document id=%s, url=%s>" % (self.id, self.url)
+
+
+# This is actually a full text index creating during a migration.
+# Place this here ensures that Alembic's autogeneration code
+# realises that this index should exist.
+Index("documents_text_ft_ix", Document.text)
 
 
 class DocumentForm(Form):
