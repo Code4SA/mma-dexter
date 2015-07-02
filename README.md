@@ -38,6 +38,17 @@ export CALAIS_API_KEY=anotherkey
 * log in as `admin@code4sa.org` with password `admin`
 * to add a new article to the database, visit [http://localhost:5000/articles/new] and enter a Mail and Guardian URL.
 
+### Topic Clustering
+
+Dexter needs NumPy, SciPy and scikit-learn to run clustering.
+
+On Mac OS X, we recommend this:
+
+```bash
+brew install gcc
+pip install scipy
+```
+
 ## Running Tests
 
 Use [nose](https://nose.readthedocs.org/en/latest/):
