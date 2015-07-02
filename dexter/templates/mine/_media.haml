@@ -5,7 +5,7 @@
 %section.media
   .row.medium.all(class_='active' if not form.medium else '')
     .col-sm-3
-      %a(href=url_for('mine_home', period=form.period.data)) All publications
+      %a(href=url_for('mine_home', period=form.period.data, q=form.q.data)) All publications
     .col-sm-9
       .media-bar
         .bar(style="width: 100%")
@@ -16,7 +16,7 @@
         - for m in batch:
           .row.medium(class_='active' if form.medium == m.medium else '')
             .col-sm-5
-              %a(href=url_for('mine_home', medium_id=m.medium.id, period=form.period.data))
+              %a(href=url_for('mine_home', medium_id=m.medium.id, period=form.period.data, q=form.q.data))
                 &= m.medium.name
 
             .col-sm-7

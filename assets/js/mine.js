@@ -187,3 +187,18 @@ function initQuotations(elems) {
 $(function() {
   initQuotations($('.people-quotations .quote'));
 });
+
+// search
+$(function() {
+  $('form').on('submit', function() {
+    $('.fa-spinner').removeClass('hidden');
+  });
+
+  $('.btn.clear').on('click', function(e) {
+    e.preventDefault();
+    $('input[name="q"]')
+      .val('')
+      .closest('form')
+      .submit();
+  });
+});

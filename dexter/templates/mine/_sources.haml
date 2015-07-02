@@ -3,21 +3,27 @@
 - import itertools
 
 %section.people
+  %h3 Top people speaking in the news
+
+  - if not form.document_ids():
+    %p.lead
+      We couldn't find any articles for your chosen criteria.
+
   .row
     .col-sm-6
       .people-table
-        %h3 Top people speaking in the news
 
-        %table.table.table-condensed.analysis
-          %tr.person-filter
-            %td
-              %i.fa.fa-search
-            %td
-              %input.form-control.person-filter-box(type="hidden")
-            %td
-            %td
-          - for i, source in enumerate(source_analyser.top_people):
-            %%include(file="_source.haml", args="i=i, source=source")
+        - if form.document_ids():
+          %table.table.table-condensed.analysis
+            %tr.person-filter
+              %td
+                %i.fa.fa-search
+              %td
+                %input.form-control.person-filter-box(type="hidden")
+              %td
+              %td
+            - for i, source in enumerate(source_analyser.top_people):
+              %%include(file="_source.haml", args="i=i, source=source")
 
     .col-sm-6
       .people-quotations

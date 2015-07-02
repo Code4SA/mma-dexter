@@ -5,6 +5,8 @@ from wtforms import validators, HiddenField, TextField
 from flask import request, jsonify
 from flask.ext.mako import render_template
 from flask.ext.security import roles_accepted, current_user
+from sqlalchemy_fulltext import FullTextSearch
+import sqlalchemy_fulltext.modes as FullTextMode
 
 from dexter.app import app
 from dexter.models import *  # noqa
@@ -76,6 +78,8 @@ class MineForm(Form):
     # period to cover, expressed in days since yesterday
     period          = RadioField('Period', [validators.Optional()], choices=[('7', 'last 7 days'), ('30', 'last 30 days'), ('90', 'last 90 days')], default='7')
     source_person_id = TextField('With source', [validators.Optional()])
+    # free text search
+    q = TextField('Search', [validators.Optional()])
 
     nature_id = AnalysisNature.ANCHOR
 
@@ -90,6 +94,7 @@ class MineForm(Form):
             days = int(self.period.data)
         except ValueError:
             days = 7
+        days = days
 
         return (self.yesterday - timedelta(days=days)).strftime('%Y-%m-%d 00:00:00')
 
@@ -122,5 +127,9 @@ class MineForm(Form):
             query = query\
                 .join(DocumentSource)\
                 .filter(DocumentSource.person_id == self.source_person_id.data)
+
+        if self.q.data:
+            # full text search
+            query = query.filter(FullTextSearch(self.q.data, Document, FullTextMode.NATURAL))
 
         return query
