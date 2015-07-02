@@ -1,4 +1,5 @@
 import collections
+import math
 from itertools import groupby
 from dateutil.parser import parse
 
@@ -207,9 +208,14 @@ class TopicAnalyser(BaseAnalyser):
 
             # top 20 of each cluster are used to characterize the cluster
             best = clustering[0:20]
-            cluster.score = numpy.average([p[1] for p in best])
+            cluster.score = numpy.median([p[1] for p in best])
+
+            # keep only the clusters with a score > self.topic_score_threshold
+            if cluster.score <= self.topic_score_threshold:
+                continue
+
             # score for this cluster as stars, from 0 to 3
-            cluster.stars = int(round(3.0 * (cluster.score - self.topic_score_threshold) / self.topic_score_threshold, 0))
+            cluster.stars = math.ceil((cluster.score - self.topic_score_threshold) / ((1.0 - self.topic_score_threshold) / 3.0))
 
             # media counts
             media = dict(collections.Counter([d.medium for d in cluster_docs]))
@@ -221,9 +227,6 @@ class TopicAnalyser(BaseAnalyser):
             cluster.histogram = self.normalise_histogram(cluster.histogram, day_counts)
 
             self.clustered_topics.append(cluster)
-
-        # keep only the clusters with a score >= self.topic_score_threshold
-        self.clustered_topics = [t for t in self.clustered_topics if t.score >= self.topic_score_threshold]
 
         # sort clusters by size
         self.clustered_topics.sort(key=lambda t: t.score, reverse=True)
