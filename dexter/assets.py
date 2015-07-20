@@ -73,7 +73,6 @@ assets.register('js', Bundle(
 
 maps = Bundle(
     'js/d3.v3.min.js',
-    'js/topojson.v1.min.js',
     'http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.js',
     'js/maps.js')
 

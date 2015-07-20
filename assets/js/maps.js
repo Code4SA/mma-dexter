@@ -4,6 +4,12 @@
 
   Dexter.Maps = function() {
     var self = this;
+  
+    self.MAPIT_TYPES = {
+      'province': 'PR',
+      'municipality': 'MN',
+      'ward': 'WD',
+    };
 
     self.init = function() {
       if ($('#slippy-map').length === 0) {
@@ -66,11 +72,10 @@
           self.drawPlaceMarker(place, place.coordinates, radius);
         } else {
           // it's a region, get the centroid
-          d3.json("https://maps.code4sa.org/political/2011/" + place.level + '?filter[' + place.level + ']=' + place.code + '&quantization=5000', function(error, topo) {
-            if (!topo)
+          d3.json('http://mapit.code4sa.org/area/MDB:' + place.code + '/feature.geojson?generation=1&type=' + self.MAPIT_TYPES[place.level], function(error, region) {
+            if (!region)
               return;
 
-            var region = topojson.feature(topo, topo.objects.demarcation);
             var coords = d3.geo.centroid(region);
             self.drawPlaceMarker(place, [coords[1], coords[0]], radius);
           });
