@@ -1,9 +1,8 @@
 from itertools import groupby
 from datetime import datetime, timedelta
-from collections import Counter
 
 from dexter.app import app
-from flask import request, url_for, flash, redirect, make_response, jsonify, abort
+from flask import request, make_response, jsonify
 from flask.ext.mako import render_template
 from flask.ext.security import roles_accepted, current_user
 from sqlalchemy.sql import func, distinct, or_
@@ -11,16 +10,16 @@ from sqlalchemy.orm import joinedload
 from sqlalchemy_fulltext import FullTextSearch
 import sqlalchemy_fulltext.modes as FullTextMode
 
-from dexter.models import *
+from dexter.models import *  # noqa
 from dexter.models.document import DocumentAnalysisProblem
-from dexter.models.user import default_analysis_nature_id, default_country_id
+from dexter.models.user import default_country_id
 
 from wtforms import validators, HiddenField, TextField, SelectMultipleField, BooleanField
-from wtforms.fields.html5 import DateField
 from .forms import Form, SelectField, MultiCheckboxField, RadioField
 from .analysis import SourceAnalyser, TopicAnalyser, XLSXExportBuilder, ChildrenRatingExport
 
 from utils import paginate
+
 
 @app.route('/dashboard')
 @roles_accepted('monitor')
@@ -48,7 +47,7 @@ def dashboard():
 @app.route('/monitor-dashboard')
 @roles_accepted('monitor')
 def monitor_dashboard():
-    docs = [x.id for x in Document.query\
+    docs = [x.id for x in Document.query
             .filter(or_(
                 Document.created_by_user_id == current_user.id,
                 Document.checked_by_user_id == current_user.id
@@ -73,7 +72,6 @@ def monitor_dashboard():
                            doc_groups=doc_groups)
 
 
-
 @app.route('/activity')
 @roles_accepted('monitor')
 def activity():
@@ -92,8 +90,7 @@ def activity():
 
     elif form.format.data == 'places-json':
         # places in json format
-        query = Document.query\
-                  .options(joinedload('places').joinedload('place'))
+        query = Document.query.options(joinedload('places').joinedload('place'))
         query = form.filter_query(query)
 
         return jsonify(DocumentPlace.summary_for_docs(query.all()))
@@ -116,7 +113,6 @@ def activity():
         response.headers["Content-Type"] = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
         return response
 
-
     # setup pagination for doc ids
     query = db.session.query(Document.id).order_by(Document.created_at.desc())
     query = form.filter_query(query)
@@ -126,17 +122,16 @@ def activity():
 
     # get documents
     docs = Document.query\
-                .options(
-                    joinedload(Document.created_by),
-                    joinedload(Document.medium),
-                    joinedload(Document.topic),
-                    joinedload(Document.origin),
-                    joinedload(Document.fairness),
-                    joinedload(Document.sources).lazyload('*')
-                )\
-                .filter(Document.id.in_(doc_ids))\
-                .order_by(Document.created_at.desc())\
-                .all()
+        .options(joinedload(Document.created_by),
+                 joinedload(Document.medium),
+                 joinedload(Document.topic),
+                 joinedload(Document.origin),
+                 joinedload(Document.fairness),
+                 joinedload(Document.sources).lazyload('*')
+                 )\
+        .filter(Document.id.in_(doc_ids))\
+        .order_by(Document.created_at.desc())\
+        .all()
 
     # group by date added
     doc_groups = []
@@ -148,6 +143,7 @@ def activity():
                            pagination=pagination,
                            doc_groups=doc_groups)
 
+
 @app.route('/activity/map')
 @roles_accepted('monitor')
 def activity_map():
@@ -155,8 +151,7 @@ def activity_map():
 
     if form.format.data == 'places-json':
         # places in json format
-        query = Document.query\
-                  .options(joinedload('places').joinedload('place'))
+        query = Document.query.options(joinedload('places').joinedload('place'))
         query = form.filter_query(query)
 
         return jsonify(DocumentPlace.summary_for_docs(query.all()))
@@ -173,7 +168,6 @@ def activity_sources():
     sa = SourceAnalyser(doc_ids=form.document_ids())
     sa.analyse()
     sa.load_utterances()
-
 
     # problem sources
     problem_people = sa.find_problem_people()
@@ -244,7 +238,7 @@ class ActivityForm(Form):
         super(ActivityForm, self).__init__(*args, **kwargs)
 
         self.user_id.choices = [['', '(any)'], ['-', '(none)']] + [
-                [str(u.id), u.short_name()] for u in sorted(User.query.all(), key=lambda u: u.short_name())]
+            [str(u.id), u.short_name()] for u in sorted(User.query.all(), key=lambda u: u.short_name())]
 
         self.medium_id.choices = [(str(m.id), m.name) for m in Medium.query.order_by(Medium.name).all()]
         self.analysis_nature_id.choices = [[str(n.id), n.name] for n in AnalysisNature.all()]
@@ -266,7 +260,6 @@ class ActivityForm(Form):
         oneof = [self.created_at, self.published_at, self.user_id, self.medium_id, self.cluster_id]
         if not any(x.data for x in oneof):
             self.published_at.data = ' - '.join(d.strftime("%Y/%m/%d") for d in [datetime.utcnow() - timedelta(days=14), datetime.utcnow()])
-
 
     def user(self):
         if self.user_id.data and self.user_id.data != '-':
@@ -302,7 +295,6 @@ class ActivityForm(Form):
     def get_problems(self):
         return [DocumentAnalysisProblem.lookup(code) for code in self.problems.data]
 
-
     @property
     def created_from(self):
         if self.created_at.data:
@@ -331,10 +323,8 @@ class ActivityForm(Form):
         else:
             return self.published_from
 
-
     def document_ids(self):
         return [d[0] for d in self.filter_query(db.session.query(Document.id)).all()]
-
 
     def filter_query(self, query):
         query = query.filter(Document.analysis_nature_id == self.analysis_nature_id.data)
@@ -349,7 +339,7 @@ class ActivityForm(Form):
         if self.user_id.data:
             if self.user_id.data == '-':
                 query = query.filter(or_(
-                    Document.created_by_user_id == None,
+                    Document.created_by_user_id == None,  # noqa
                     Document.checked_by_user_id == None))
             else:
                 query = query.filter(or_(
@@ -381,12 +371,12 @@ class ActivityForm(Form):
                 query = DocumentAnalysisProblem.lookup(code).filter_query(query)
 
         if self.flagged.data:
-            query = query.filter(Document.flagged == True)
+            query = query.filter(Document.flagged == True)  # noqa
 
         if self.has_url.data == '1':
-            query = query.filter(Document.url != None, Document.url != '')
+            query = query.filter(Document.url != None, Document.url != '')  # noqa
         elif self.has_url.data == '0':
-            query = query.filter(or_(Document.url == None, Document.url == ''))
+            query = query.filter(or_(Document.url == None, Document.url == ''))  # noqa
 
         if self.q.data:
             # full text search
@@ -422,7 +412,6 @@ class ActivityChartHelper:
         # complex filter logic into our view queries
         self.doc_ids = [d[0] for d in form.filter_query(db.session.query(Document.id)).all()]
 
-
     def chart_data(self):
         return {
             'charts': {
@@ -440,13 +429,11 @@ class ActivityChartHelper:
             }
         }
 
-
     def created_chart(self):
         query = db.session.query(
-                  func.date_format(Document.created_at, '%Y/%m/%d').label('t'),
-                  func.count(Document.id),
-                )\
-                .group_by('t')
+            func.date_format(Document.created_at, '%Y/%m/%d').label('t'),
+            func.count(Document.id),
+        ).group_by('t')
 
         return {
             'values': dict(self.filter(query).all())
@@ -454,10 +441,9 @@ class ActivityChartHelper:
 
     def published_chart(self):
         query = db.session.query(
-                  func.date_format(Document.published_at, '%Y/%m/%d').label('t'),
-                  func.count(Document.id),
-                )\
-                .group_by('t')
+            func.date_format(Document.published_at, '%Y/%m/%d').label('t'),
+            func.count(Document.id),
+        ).group_by('t')
 
         return {
             'values': dict(self.filter(query).all())
@@ -465,10 +451,9 @@ class ActivityChartHelper:
 
     def users_chart(self):
         query = db.session.query(
-                  Document.created_by_user_id,
-                  func.count(Document.id),
-                )\
-                .group_by(Document.created_by_user_id)
+            Document.created_by_user_id,
+            func.count(Document.id),
+        ).group_by(Document.created_by_user_id)
         rows = self.filter(query).all()
         users = dict((u.id, u.short_name()) for u in User.query.filter(User.id.in_(r[0] for r in rows)))
 
@@ -478,10 +463,9 @@ class ActivityChartHelper:
 
     def countries_chart(self):
         query = db.session.query(
-                  Document.country_id,
-                  func.count(Document.id),
-                )\
-                .group_by(Document.country_id)
+            Document.country_id,
+            func.count(Document.id),
+        ).group_by(Document.country_id)
         rows = self.filter(query).all()
         countries = dict((c.id, c.name) for c in Country.query.filter(Country.id.in_(r[0] for r in rows)))
 
@@ -491,11 +475,12 @@ class ActivityChartHelper:
 
     def fairness_chart(self):
         query = db.session.query(
-                    Fairness.name.label('t'),
-                    func.count(distinct(DocumentFairness.doc_id)))\
-                .join(DocumentFairness)\
-                .join(Document, DocumentFairness.doc_id == Document.id)\
-                .group_by('t')
+            Fairness.name.label('t'),
+            func.count(distinct(DocumentFairness.doc_id))
+        )\
+            .join(DocumentFairness)\
+            .join(Document, DocumentFairness.doc_id == Document.id)\
+            .group_by('t')
 
         rows = self.filter(query).all()
         counts = dict(rows)
@@ -509,11 +494,9 @@ class ActivityChartHelper:
         }
 
     def media_chart(self):
-        query = db.session.query(
-                    Medium.name,
-                    func.count(Document.id))\
-                    .join(Document)\
-                    .group_by(Medium.name)
+        query = db.session.query(Medium.name, func.count(Document.id))\
+            .join(Document)\
+            .group_by(Medium.name)
         rows = self.filter(query).all()
 
         return {
@@ -537,38 +520,36 @@ class ActivityChartHelper:
         counts = {}
 
         # flagged
-        query = self.filter(db.session.query(
-                  func.count(Document.id),
-                )\
-                .filter(Document.flagged == True))
+        query = self.filter(
+            db.session.query(func.count(Document.id))
+            .filter(Document.flagged == True))  # noqa
         counts['flagged'] = query.scalar()
 
         # with URL
-        query = self.filter(db.session.query(
-                  func.count(Document.id),
-                )\
-                .filter(Document.url != None, Document.url != ''))
+        query = self.filter(
+            db.session.query(func.count(Document.id))
+            .filter(Document.url != None, Document.url != ''))  # noqa
         counts['with-url'] = query.scalar()
 
         # without URL
-        query = self.filter(db.session.query(
-                  func.count(Document.id),
-                )\
-                .filter(or_(Document.url == None, Document.url == '')))
+        query = self.filter(
+            db.session.query(func.count(Document.id))
+            .filter(or_(Document.url == None, Document.url == '')))  # noqa
         counts['without-url'] = query.scalar()
 
         # average people sources per document
-        subq = self.filter(db.session\
-                .query(func.count(DocumentSource.doc_id).label('count'))\
-                .join(Document, DocumentSource.doc_id == Document.id)\
-                .filter(DocumentSource.quoted == 1)\
-                .group_by(DocumentSource.doc_id))\
-                .subquery('cnt')
+        subq = self.filter(
+            db.session
+            .query(func.count(DocumentSource.doc_id).label('count'))
+            .join(Document, DocumentSource.doc_id == Document.id)
+            .filter(DocumentSource.quoted == 1)
+            .group_by(DocumentSource.doc_id))\
+            .subquery('cnt')
 
-        n = float(db.session\
-                .query(func.avg(subq.c.count))\
-                .select_from(subq)\
-                .scalar() or 0)
+        n = float(db.session
+                  .query(func.avg(subq.c.count))
+                  .select_from(subq)
+                  .scalar() or 0)
         counts['average-sources-per-document'] = round(n, 2)
 
         return {
