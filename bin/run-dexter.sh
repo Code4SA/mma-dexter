@@ -8,7 +8,7 @@ source production-settings.sh
 export FLASK_ENV=production
 
 GUNICORN_SOCKET=/tmp/dexter-gunicorn.sock
-GUNICORN_WORKERS=2
+GUNICORN_WORKERS=1
 
 exec gunicorn \
     -w $GUNICORN_WORKERS \
