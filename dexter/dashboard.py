@@ -8,6 +8,8 @@ from flask.ext.mako import render_template
 from flask.ext.security import roles_accepted, current_user
 from sqlalchemy.sql import func, distinct, or_
 from sqlalchemy.orm import joinedload
+from sqlalchemy_fulltext import FullTextSearch
+import sqlalchemy_fulltext.modes as FullTextMode
 
 from dexter.models import *
 from dexter.models.document import DocumentAnalysisProblem
@@ -235,6 +237,8 @@ class ActivityForm(Form):
     has_url         = RadioField('hasurl', [validators.Optional()], choices=[('1', 'with URL'), ('0', 'without URL')])
     source_person_id = TextField('With source', [validators.Optional()])
     format          = HiddenField('format', default='html')
+    # free text search
+    q               = TextField('Keyword search', [validators.Optional()])
 
     def __init__(self, *args, **kwargs):
         super(ActivityForm, self).__init__(*args, **kwargs)
@@ -383,6 +387,10 @@ class ActivityForm(Form):
             query = query.filter(Document.url != None, Document.url != '')
         elif self.has_url.data == '0':
             query = query.filter(or_(Document.url == None, Document.url == ''))
+
+        if self.q.data:
+            # full text search
+            query = query.filter(FullTextSearch(self.q.data, Document, FullTextMode.NATURAL))
 
         return query
 
