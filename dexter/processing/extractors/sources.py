@@ -29,20 +29,37 @@ class SourcesExtractor(BaseExtractor):
         tomatch = [u.entity for u in doc.utterances if not u.entity.person]
         if tomatch:
             people = Person.query.all()
+            people_by_name = {p.name: p for p in people}
 
             # we could already have found matching people during this loop,
             # so protect against it
             for entity in (e for e in tomatch if not e.person):
-                # calculate distance to all other names
-                candidates = ((p, levenshtein(p.name, entity.name)) for p in people)
-                # limit to only the good ones
-                candidates = [(p, x) for p, x in candidates if x >= 0.95]
+                self.log.info("Trying to match entity %s to a person" % entity.name)
+                match = None
+                entity_name_len = len(entity.name)
 
-                if candidates:
+                if entity.name in people_by_name:
+                    # exact match
+                    match = people_by_name[entity.name]
+
+                else:
+                    # calculate distance to all other names
+                    # as a small optimisation, don't test an entity if the
+                    # length of the names is too different
+                    candidates = (
+                        (p, levenshtein(p.name, entity.name))
+                        for p in people
+                        if abs(len(p.name) - entity_name_len) <= 4)
+
+                    # limit to only the good ones
+                    candidates = [(p, x) for p, x in candidates if x >= 0.95]
+                    if candidates:
+                        match = max(candidates, key=lambda p: p[1])[0]
+
+                if match:
                     count += 1
-                    best = max(candidates, key=lambda p: p[1])
-                    self.log.info("Matched entity %s to person %s" % (entity, best[0]))
-                    entity.person = best[0]
+                    self.log.info("Matched entity %s to person %s" % (entity, match))
+                    entity.person = match
 
         self.log.info("Matched %s entities to people" % count)
 
