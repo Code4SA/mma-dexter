@@ -26,7 +26,7 @@ class SourcesExtractor(BaseExtractor):
         self.log.info("Matching entities to people")
         count = 0
 
-        tomatch = [u.entity for u in doc.utterances if not u.entity.person]
+        tomatch = set(u.entity for u in doc.utterances if not u.entity.person)
         if tomatch:
             people = Person.query.all()
             people_by_name = {p.name: p for p in people}
@@ -49,7 +49,7 @@ class SourcesExtractor(BaseExtractor):
                     candidates = (
                         (p, levenshtein(p.name, entity.name))
                         for p in people
-                        if abs(len(p.name) - entity_name_len) <= 4)
+                        if abs(len(p.name) - entity_name_len) <= 2)
 
                     # limit to only the good ones
                     candidates = [(p, x) for p, x in candidates if x >= 0.95]

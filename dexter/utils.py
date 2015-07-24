@@ -70,7 +70,7 @@ def levenshtein(first, second):
     See https://groups.google.com/forum/#!topic/nltk-users/u94RFDWbGyw
     """
     lensum = len(first) + len(second)
-    ldist = nltk.edit_distance(first, second)
+    ldist = nltk.edit_distance(first, second, transpositions=True)
 
     if lensum == 0:
         return 0
