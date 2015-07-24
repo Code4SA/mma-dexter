@@ -13,7 +13,7 @@ class SourcesExtractor(BaseExtractor):
     """
 
     log = logging.getLogger(__name__)
-    NAME_DIRTY_RE = re.compile(r'\s*\b(Chief|Justice|Deputy|Judge|President|Minister)\b\s*', re.I)
+    NAME_DIRTY_RE = re.compile(r'\s*\b(Chief|Justice|Deputy|Judge|President|Prime|Minister)\b\s*', re.I)
 
     def extract(self, doc):
         self.discover_people(doc)
