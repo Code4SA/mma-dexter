@@ -1,8 +1,9 @@
+import re
+import logging
+
 from .base import BaseExtractor
 from ...models import DocumentSource, Person
 from ...utils import levenshtein
-
-import logging
 
 
 class SourcesExtractor(BaseExtractor):
@@ -12,6 +13,7 @@ class SourcesExtractor(BaseExtractor):
     """
 
     log = logging.getLogger(__name__)
+    NAME_DIRTY_RE = re.compile(r'\s*\b(Chief|Justice|Deputy|Judge|President|Minister)\b\s*', re.I)
 
     def extract(self, doc):
         self.discover_people(doc)
@@ -34,20 +36,22 @@ class SourcesExtractor(BaseExtractor):
             # we could already have found matching people during this loop,
             # so protect against it
             for entity in (e for e in tomatch if not e.person):
-                self.log.info("Trying to match entity %s to a person" % entity.name)
-                match = None
-                entity_name_len = len(entity.name)
+                name = self.clean_name(entity.name)
+                self.log.info("Trying to match entity '%s' to a person as '%s'" % (entity.name, name))
 
-                if entity.name in people_by_name:
+                match = None
+                entity_name_len = len(name)
+
+                if name in people_by_name:
                     # exact match
-                    match = people_by_name[entity.name]
+                    match = people_by_name[name]
 
                 else:
                     # calculate distance to all other names
                     # as a small optimisation, don't test an entity if the
                     # length of the names is too different
                     candidates = (
-                        (p, levenshtein(p.name, entity.name))
+                        (p, levenshtein(p.name, name))
                         for p in people
                         if abs(len(p.name) - entity_name_len) <= 2)
 
@@ -62,6 +66,9 @@ class SourcesExtractor(BaseExtractor):
                     entity.person = match
 
         self.log.info("Matched %s entities to people" % count)
+
+    def clean_name(self, name):
+        return self.NAME_DIRTY_RE.sub('', name)
 
     def extract_sources(self, doc):
         """

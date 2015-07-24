@@ -69,3 +69,8 @@ class TestSourcesExtractor(unittest.TestCase):
         self.assertEqual('Jacob Zuma', u.entity.person.name)
         self.assertIsNone(u2.entity.person)
 
+    def test_clean_name(self):
+        self.assertEqual('Cyril Ramaphosa', self.ex.clean_name('Deputy President Cyril Ramaphosa'))
+        self.assertEqual('Nelson Mandela', self.ex.clean_name('President Nelson Mandela'))
+        self.assertEqual('NelsonPresident Mandela', self.ex.clean_name('NelsonPresident Mandela'))
+        self.assertEqual('Moegoeng Moegoeng', self.ex.clean_name('Chief Justice Moegoeng Moegoeng'))
