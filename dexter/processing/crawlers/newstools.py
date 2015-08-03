@@ -1,4 +1,4 @@
-from urlparse import urlparse, urlunparse
+from urlparse import urlparse
 import HTMLParser
 import requests
 from dateutil.parser import parse
@@ -27,16 +27,15 @@ class NewstoolsCrawler(BaseCrawler):
 
         # ignore citypress non-articles
         if m.domain == 'citypress.co.za':
-          for prefix in ['/category/', '/author/', '/entertainment/', '/lifestyle/']:
-              if parts.path.startswith(prefix):
-                  return False
+            for prefix in ['/category/', '/author/', '/entertainment/', '/lifestyle/']:
+                if parts.path.startswith(prefix):
+                    return False
 
         # ignore IOL world articles
-        if parts.path.startswith('/news/world/'):
+        if parts.path.startswith('/news/world/') or parts.path.startswith('/world/'):
             return False
 
         return True
-
 
     def crawl(self, item):
         """ Crawl this newstools feed item and return a document. """
