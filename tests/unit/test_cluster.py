@@ -1,10 +1,11 @@
 import unittest
 import datetime
 
-from dexter.models import Document, Cluster, ClusteredDocument, db, Author, Medium, Country
+from dexter.models import Document, Cluster, db, Author, Medium, Country
 from dexter.models.seeds import seed_db
 
 from tests.fixtures import dbfixture, AuthorData
+
 
 class TestCluster(unittest.TestCase):
     def setUp(self):
@@ -17,7 +18,13 @@ class TestCluster(unittest.TestCase):
         self.fx.setup()
 
     def tearDown(self):
+        # delete all docs to prevent fixture deletion from going awry
+        for d in Document.query.all():
+            db.session.delete(d)
+        self.db.session.commit()
+
         self.fx.teardown()
+        self.db.session.rollback()
         self.db.session.remove()
         self.db.drop_all()
 

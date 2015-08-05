@@ -27,7 +27,7 @@ class Author(db.Model):
     id          = Column(Integer, primary_key=True)
     name        = Column(String(100), index=True, nullable=False, unique=True)
     author_type_id = Column(Integer, ForeignKey('author_types.id'), nullable=False)
-    person_id   = Column(Integer, ForeignKey('people.id'))
+    person_id   = Column(Integer, ForeignKey('people.id', ondelete='SET NULL'))
 
     created_at   = Column(DateTime(timezone=True), index=True, unique=False, nullable=False, server_default=func.now())
     updated_at   = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.current_timestamp())

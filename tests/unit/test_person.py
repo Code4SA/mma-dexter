@@ -6,6 +6,7 @@ from dexter.models.seeds import seed_db
 
 from tests.fixtures import dbfixture, DocumentData, PersonData, EntityData
 
+
 class TestDocument(unittest.TestCase):
     def setUp(self):
         self.db = db
@@ -17,8 +18,9 @@ class TestDocument(unittest.TestCase):
         self.fx.setup()
 
     def tearDown(self):
-        self.fx.teardown()
         self.db.session.rollback()
+
+        self.fx.teardown()
         self.db.session.remove()
         self.db.drop_all()
 
@@ -45,7 +47,6 @@ class TestDocument(unittest.TestCase):
 
         self.assertTrue(zuma.relearn_affiliation())
         self.assertEqual(anc, zuma.affiliation)
-
 
     def test_relearn_affiliation_remains_same(self):
         zuma = Person.query.get(self.fx.PersonData.zuma.id)
@@ -80,7 +81,6 @@ class TestDocument(unittest.TestCase):
         self.assertFalse(zuma.relearn_affiliation())
         self.assertEqual(anc, zuma.affiliation)
 
-
     def test_merge(self):
         # we're going to merge joe into zuma
         joe = Person.query.get(self.fx.PersonData.joe_author.id)
@@ -102,7 +102,6 @@ class TestDocument(unittest.TestCase):
         # new entity should exist
         e = Entity.query.filter(Entity.group == 'person', Entity.name == self.fx.PersonData.joe_author.name).one()
         self.assertEqual(zuma, e.person)
-
 
     def test_merge_dedup_sources(self):
         # we're going to merge joe into zuma

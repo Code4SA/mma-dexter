@@ -62,8 +62,8 @@ class Document(FullText, db.Model):
 
     country_id        = Column(Integer, ForeignKey('countries.id'), index=True, nullable=False)
 
-    created_by_user_id = Column(Integer, ForeignKey('users.id'), index=True)
-    checked_by_user_id = Column(Integer, ForeignKey('users.id'), index=True)
+    created_by_user_id = Column(Integer, ForeignKey('users.id', ondelete='SET NULL'), index=True)
+    checked_by_user_id = Column(Integer, ForeignKey('users.id', ondelete='SET NULL'), index=True)
 
     published_at = Column(DateTime(timezone=True), index=True, unique=False, nullable=False)
     created_at   = Column(DateTime(timezone=True), index=True, unique=False, nullable=False, server_default=func.now())

@@ -6,6 +6,7 @@ from dexter.models.seeds import seed_db
 
 from tests.fixtures import dbfixture, DocumentData
 
+
 class TestDocument(unittest.TestCase):
     def setUp(self):
         self.db = db
@@ -19,8 +20,9 @@ class TestDocument(unittest.TestCase):
         self.doc = Document.query.get(self.fx.DocumentData.simple.id)
 
     def tearDown(self):
-        self.fx.teardown()
         self.db.session.remove()
+
+        self.fx.teardown()
         self.db.drop_all()
 
     def test_add_keyword_no_dups(self):
@@ -29,7 +31,7 @@ class TestDocument(unittest.TestCase):
         k = DocumentKeyword(keyword=u'foo')
         self.assertTrue(doc.add_keyword(k))
 
-        self.assertTrue( doc.add_keyword(DocumentKeyword(keyword=u'gout')))
+        self.assertTrue(doc.add_keyword(DocumentKeyword(keyword=u'gout')))
         # shouldn't work
         self.assertFalse(doc.add_keyword(DocumentKeyword(keyword=u'go\xfbt')))
 
@@ -48,7 +50,6 @@ class TestDocument(unittest.TestCase):
         doc.add_entity(de)
         self.assertEqual([de], list(doc.entities))
 
-
         e2 = Entity()
         e2.group = 'group'
         e2.name = u'name'
@@ -65,7 +66,7 @@ class TestDocument(unittest.TestCase):
     def test_add_utterance(self):
         doc = self.doc
         doc.text = 'And Fred said "Hello" to everyone.'
-        
+
         u = Utterance()
         u.entity = Entity()
         u.entity.group = 'person'
@@ -82,7 +83,7 @@ class TestDocument(unittest.TestCase):
     def test_add_utterance_similar(self):
         doc = self.doc
         doc.text = 'And Fred said "Hello there guys," to everyone.'
-        
+
         u = Utterance()
         u.entity = Entity()
         u.entity.group = 'person'
@@ -102,11 +103,10 @@ class TestDocument(unittest.TestCase):
         self.assertFalse(doc.add_utterance(u2))
         self.assertEqual(1, len(doc.utterances))
 
-
     def test_add_utterance_update_offset(self):
         doc = self.doc
         doc.text = u'And Fred said "Hello" to everyone.'
-        
+
         u = Utterance()
         u.entity = Entity()
         u.entity.group = 'person'
@@ -132,7 +132,7 @@ class TestDocument(unittest.TestCase):
         doc = self.doc
         doc.text = u'And Fred said "Hello" to everyone.'
         doc.published_at = datetime.datetime.utcnow()
-        
+
         u = Utterance()
         u.entity = Entity()
         u.entity.group = 'person'
@@ -142,15 +142,14 @@ class TestDocument(unittest.TestCase):
 
         de = DocumentEntity()
         de.document = doc
-        de.entity = Entity.query.first()
         de.relevance = 0.5
+        de.entity = Entity.query.first()
 
         self.db.session.add(doc)
         self.db.session.commit()
 
         self.db.session.delete(doc)
         self.db.session.commit()
-
 
     def test_place_relevance(self):
         dp1 = DocumentPlace(relevance=0.2)
@@ -161,7 +160,6 @@ class TestDocument(unittest.TestCase):
         doc.places = [dp1, dp2, dp3]
 
         self.assertAlmostEqual(doc.places_relevance_threshold(), 0.5, 3)
-
 
     def test_keyword_relevance(self):
         dk1 = DocumentKeyword(relevance=0.2)

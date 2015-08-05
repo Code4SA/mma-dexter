@@ -6,10 +6,10 @@ from mock import MagicMock
 from dexter.models import Person
 from dexter.analysis import SourceAnalyser
 
+
 class TestSourceAnalyser(unittest.TestCase):
     def setUp(self):
         self.sa = SourceAnalyser(doc_ids=[1], start_date=datetime(2014, 2, 10), end_date=datetime(2014, 2, 14))
-
 
     def test_basic_trends(self):
         self.sa.people = {
@@ -18,15 +18,15 @@ class TestSourceAnalyser(unittest.TestCase):
             3: Person(name='Sue', id=3)
         }
 
-        self.sa._load_people_sources = MagicMock()
+        self.sa.load_people_sources = MagicMock()
         self.sa.count_utterances = MagicMock(return_value={
-          1: 10,
-          2: 4,
+            1: 10,
+            2: 4,
         })
         self.sa.source_frequencies = MagicMock(return_value={
-          1: [0, 0, 0, 1, 2],
-          2: [1, 2, 3, 0, 0],
-          3: [0, 0, 9, 0, 0],
+            1: [0, 0, 0, 1, 2],
+            2: [1, 2, 3, 0, 0],
+            3: [0, 0, 9, 0, 0],
         })
         self.sa.analyse()
 
@@ -42,6 +42,3 @@ class TestSourceAnalyser(unittest.TestCase):
 
         self.assertEqual([s.person.id for s in self.sa.people_trending_up], [1])
         self.assertEqual([s.person.id for s in self.sa.people_trending_down], [2])
-
-
-

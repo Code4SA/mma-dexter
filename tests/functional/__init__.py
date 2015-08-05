@@ -7,6 +7,7 @@ from dexter.app import db
 from dexter.models.seeds import seed_db
 from dexter.models import User, Role
 
+
 class UserSessionTestCase(TestCase):
     def create_app(self):
         app.config['TESTING'] = True
@@ -17,7 +18,8 @@ class UserSessionTestCase(TestCase):
         u.roles = Role.query.all()
         db.session.commit()
 
-        res = self.client.post(url_for('security.login'),
+        res = self.client.post(
+            url_for('security.login'),
             data={'email': email, 'password': password},
             follow_redirects=True)
         self.assert200(res)

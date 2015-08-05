@@ -1,10 +1,11 @@
 import unittest
 
-from dexter.models import Document, Entity, Person, DocumentEntity, Utterance, Gender, db
+from dexter.models import Document, Entity, DocumentEntity, Utterance, db
 from dexter.models.seeds import seed_db
 from dexter.processing.extractors import SourcesExtractor
 
-from tests.fixtures import dbfixture, EntityData
+from tests.fixtures import dbfixture, EntityData, DocumentData
+
 
 class TestSourcesExtractor(unittest.TestCase):
     def setUp(self):
@@ -15,21 +16,22 @@ class TestSourcesExtractor(unittest.TestCase):
         self.db.create_all()
         seed_db(db)
 
-        self.fx = dbfixture.data(EntityData)
+        self.fx = dbfixture.data(DocumentData, EntityData)
         self.fx.setup()
 
     def tearDown(self):
-        self.fx.teardown()
         self.db.session.rollback()
+        self.fx.teardown()
         self.db.session.remove()
         self.db.drop_all()
 
     def test_guess_genders(self):
-        d = Document()
+        d = Document.query.get(self.fx.DocumentData.simple.id)
         d.text = 'Fred Astair did something. He also did something else.'
 
         de = DocumentEntity()
         de.document = d
+        de.relevance = 1.0
         de.entity = Entity.query.get(self.fx.EntityData.sue_no_gender.id)
         de.offset_list = '27:2'
 
@@ -39,30 +41,33 @@ class TestSourcesExtractor(unittest.TestCase):
         self.assertEqual('Male', d.entities[0].entity.person.gender.name)
 
     def test_extract_sources(self):
-        d = Document()
+        d = Document.query.get(self.fx.DocumentData.simple.id)
         d.text = 'Fred Astair did something. He also did something else.'
 
         u = Utterance()
-        u.entity = self.fx.EntityData.zuma
+        u.entity = Entity.query.get(self.fx.EntityData.zuma.id)
         u.document = d
+        u.quote = 'a quote'
 
         self.ex.extract_sources(d)
         self.assertEqual(['Jacob Zuma'], [s.person.name for s in d.sources])
 
     def test_match_people(self):
-        d = Document()
+        d = Document.query.get(self.fx.DocumentData.simple.id)
         d.text = 'Fred Astair did something. He also did something else.'
 
         u = Utterance()
         u.entity = Entity()
         u.entity.group = 'people'
-        u.entity.name = 'Jacob Zume' # will fix to zuma
+        u.entity.name = 'Jacob Zume'  # will fix to zuma
+        u.quote = 'a quote'
         u.document = d
 
         u2 = Utterance()
         u2.entity = Entity()
         u2.entity.group = 'people'
-        u2.entity.name = 'Jacob Zooma' # too different
+        u2.entity.name = 'Jacob Zooma'  # too different
+        u2.quote = 'a quote'
         u2.document = d
 
         self.ex.discover_people(d)
