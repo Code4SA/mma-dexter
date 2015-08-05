@@ -323,7 +323,7 @@ class Document(FullText, db.Model):
 # This is actually a full text index creating during a migration.
 # Place this here ensures that Alembic's autogeneration code
 # realises that this index should exist.
-Index("documents_text_ft_ix", Document.text)
+# Index("documents_text_ft_ix", Document.text)
 
 
 class DocumentForm(Form):

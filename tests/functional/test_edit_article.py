@@ -4,7 +4,6 @@ from . import UserSessionTestCase
 
 from dexter.core import app
 from dexter.models import Author, Document, db
-from dexter.authn import AnonymousUser
 
 from tests.fixtures import dbfixture, DocumentData, UserData
 
@@ -34,7 +33,6 @@ class TestEditArticle(UserSessionTestCase):
         self.assertEqual('Black', sue.person.race.name)
   
     def test_delete_article_success(self):
-        AnonymousUser.admin = MagicMock(return_value=True)
         res = self.client.get('/articles/%s/edit' % self.fx.DocumentData.simple.id)
         self.assert200(res)
 

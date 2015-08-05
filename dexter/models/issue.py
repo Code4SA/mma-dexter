@@ -11,7 +11,7 @@ class DocumentIssue(db.Model):
     __tablename__ = "document_issues"
 
     id        = Column(Integer, primary_key=True)
-    doc_id    = Column(Integer, ForeignKey('documents.id'), index=True)
+    doc_id    = Column(Integer, ForeignKey('documents.id', ondelete='CASCADE'), index=True)
     issue_id  = Column(Integer, ForeignKey('issues.id'), index=True, nullable=False)
 
     def __repr__(self):

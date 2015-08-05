@@ -51,7 +51,16 @@ pip install scipy
 
 ## Running Tests
 
-Use [nose](https://nose.readthedocs.org/en/latest/):
+You will need to setup a test database:
+
+```bash
+mysql -u root
+mysql> CREATE DATABASE mma_test;
+mysql> GRANT ALL ON mma.* TO 'mma'@'localhost';
+mysql> exit;
+```
+
+Then use [nose](https://nose.readthedocs.org/en/latest/) to run tests:
 
     nosetests
 
