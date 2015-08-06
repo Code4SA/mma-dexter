@@ -34,7 +34,7 @@ class TestSourceAnalyser(unittest.TestCase):
         self.assertEqual(self.sa.analysed_people[2].source_counts, [100.0, 100.0, 25.0, 0.0, 0.0])
         self.assertEqual(self.sa.analysed_people[3].source_counts, [0, 0, 75.0, 0.0, 0.0])
 
-        self.assertEqual(self.sa.analysed_people[1].source_counts_trend, 2.0)
+        self.assertAlmostEqual(self.sa.analysed_people[1].source_counts_trend, 2.0, places=1)
         self.assertAlmostEqual(self.sa.analysed_people[2].source_counts_trend, -1.5699, places=3)
         self.assertAlmostEqual(self.sa.analysed_people[3].source_counts_trend, -0.436, places=3)
 
