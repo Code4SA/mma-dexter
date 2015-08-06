@@ -1,4 +1,5 @@
-from dexter.models.analysis_nature import AnalysisNature
+from .analysis_nature import AnalysisNature
+
 
 class DocumentAnalysisProblem(object):
     """
@@ -24,7 +25,7 @@ class DocumentAnalysisProblem(object):
     @classmethod
     def for_document(cls, doc):
         return [p for p in cls.all()
-                if (not p.natures or doc.analysis_nature in p.natures) and p.check(doc)]
+                if (not p.natures or doc.analysis_nature.nature in p.natures) and p.check(doc)]
 
     @classmethod
     def for_select(cls):
@@ -46,7 +47,7 @@ class MissingTopic(DocumentAnalysisProblem):
 
     def filter_query(self, query):
         from .document import Document
-        return query.filter(Document.topic == None)
+        return query.filter(Document.topic == None)  # noqa
 
 
 class MissingOrigin(DocumentAnalysisProblem):
@@ -60,7 +61,7 @@ class MissingOrigin(DocumentAnalysisProblem):
 
     def filter_query(self, query):
         from .document import Document
-        return query.filter(Document.origin == None)
+        return query.filter(Document.origin == None)  # noqa
 
 
 class NotChildFocused(DocumentAnalysisProblem):
@@ -70,16 +71,15 @@ class NotChildFocused(DocumentAnalysisProblem):
     natures = (AnalysisNature.CHILDREN, AnalysisNature.ELECTIONS)
 
     def check(self, doc):
-        from . import AnalysisNature
-        return (doc.analysis_nature_id == AnalysisNature.CHILDREN
+        return (doc.analysis_nature.nature == 'children'
                 and doc.child_focus is None)
 
     def filter_query(self, query):
         from .document import Document
-        from . import AnalysisNature
-        return query.filter(
-                Document.analysis_nature_id == AnalysisNature.CHILDREN,
-                Document.child_focus == None)
+        return query\
+            .join(AnalysisNature)\
+            .filter(AnalysisNature.nature == 'children',
+                   Document.child_focus == None)  # noqa
 
 
 class SourceWithoutFunction(DocumentAnalysisProblem):
@@ -96,7 +96,7 @@ class SourceWithoutFunction(DocumentAnalysisProblem):
         return query\
                 .join(DocumentSource)\
                 .filter(DocumentSource.source_type != 'child')\
-                .filter(DocumentSource.function == None)
+                .filter(DocumentSource.function == None)  # noqa
 
 
 class SourceWithoutAffiliation(DocumentAnalysisProblem):
@@ -113,7 +113,7 @@ class SourceWithoutAffiliation(DocumentAnalysisProblem):
         return query\
                 .join(DocumentSource)\
                 .filter(DocumentSource.source_type != 'child')\
-                .filter(DocumentSource.affiliation == None)
+                .filter(DocumentSource.affiliation == None)  # noqa
 
 
 class ChildSourceWithoutAge(DocumentAnalysisProblem):
@@ -130,7 +130,7 @@ class ChildSourceWithoutAge(DocumentAnalysisProblem):
         return query\
                 .join(DocumentSource)\
                 .filter(DocumentSource.source_type == 'child')\
-                .filter(DocumentSource.age == None)
+                .filter(DocumentSource.age == None)  # noqa
 
 
 class ChildSourceWithoutRole(DocumentAnalysisProblem):
@@ -147,4 +147,4 @@ class ChildSourceWithoutRole(DocumentAnalysisProblem):
         return query\
                 .join(DocumentSource)\
                 .filter(DocumentSource.source_type == 'child')\
-                .filter(DocumentSource.role == None)
+                .filter(DocumentSource.role == None)  # noqa

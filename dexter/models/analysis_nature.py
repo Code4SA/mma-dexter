@@ -2,7 +2,8 @@ from sqlalchemy import (
     Column,
     Integer,
     String,
-    )
+    Enum,
+)
 
 from sqlalchemy.orm import relationship
 
@@ -12,21 +13,33 @@ from ..app import db
 class AnalysisNature(db.Model):
     """
     The type of analysis performed on a document.
+
+    An analysis type determines what analysis fields in the database are
+    used. There are three major types of analysis and each AnalysisNature
+    must be linked to one of them:
+
+    * anchor: the simplest analysis which the others are based on.
+    * elections: election monitoring with a focus on fairness
+    * children: children in the media, with a focus on the Children in the Media Principles
+
+    Admins can define new analysis natures but they must be based on one of these.
     """
     __tablename__ = "analysis_natures"
 
-    ELECTIONS = 1
-    CHILDREN  = 2
-    ANCHOR    = 3
+    ELECTIONS = 'elections'
+    CHILDREN  = 'children'
+    ANCHOR    = 'anchor'
+    ANCHOR_ID = 3
 
     ICONS = {
+        ANCHOR: 'fa-dot-circle-o',
         ELECTIONS: 'fa-university',
-        CHILDREN : 'fa-child',
-        ANCHOR   : 'fa-dot-circle-o',
+        CHILDREN: 'fa-child',
     }
 
     id          = Column(Integer, primary_key=True)
     name        = Column(String(100), nullable=False, index=True, unique=True)
+    nature      = Column(Enum(ANCHOR, ELECTIONS, CHILDREN), nullable=False)
 
     # associations
     roles       = relationship("SourceRole", backref="analysis_nature", order_by="SourceRole.name")
@@ -36,23 +49,19 @@ class AnalysisNature(db.Model):
         from dexter.analysis.forms import AnchorAnalysisForm, ElectionsAnalysisForm, ChildrenAnalysisForm
 
         return {
-            self.ANCHOR   : AnchorAnalysisForm,
+            self.ANCHOR: AnchorAnalysisForm,
             self.ELECTIONS: ElectionsAnalysisForm,
-            self.CHILDREN : ChildrenAnalysisForm,
-        }[self.id]
-
+            self.CHILDREN: ChildrenAnalysisForm,
+        }[self.nature]
 
     def icon(self):
-        return self.ICONS.get(self.id)
-
+        return self.ICONS.get(self.nature)
 
     def __str__(self):
         return self.name
 
-
     def __repr__(self):
         return "<AnalysisNature name='%s'>" % (self.name.encode('utf-8'),)
-
 
     def __eq__(self, other):
         # when comparing with an int, compare based on id
@@ -61,14 +70,12 @@ class AnalysisNature(db.Model):
         else:
             return NotImplemented
 
-
     def __ne__(self, other):
         # when comparing with an int, compare based on id
         if isinstance(other, int):
             return self.id != other
         else:
             return NotImplemented
-
 
     @classmethod
     def lookup(cls, name):
@@ -77,21 +84,22 @@ class AnalysisNature(db.Model):
     @classmethod
     def create_defaults(cls):
         elections = AnalysisNature()
-        elections.id = cls.ELECTIONS
-        elections.name = 'elections'
+        elections.id = 1
+        elections.name = cls.ELECTIONS
+        elections.nature = cls.ELECTIONS
 
         children = AnalysisNature()
-        children.id = cls.CHILDREN
-        children.name = 'children'
+        children.id = 2
+        children.name = cls.CHILDREN
+        children.nature = cls.CHILDREN
 
         anchor = AnalysisNature()
-        anchor.id = cls.ANCHOR
-        anchor.name = 'anchor'
+        anchor.id = cls.ANCHOR_ID
+        anchor.name = cls.ANCHOR
+        anchor.nature = cls.ANCHOR
 
         return [elections, children, anchor]
 
     @classmethod
     def all(cls):
-        return cls.query.all()
-
-
+        return cls.query.order_by('name').all()

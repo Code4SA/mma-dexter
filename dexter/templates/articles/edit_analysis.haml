@@ -111,7 +111,7 @@
                             = subfield.label()
                             %br
 
-              - if document.analysis_nature == AnalysisNature.CHILDREN:
+              - if document.analysis_nature.nature == AnalysisNature.CHILDREN:
                 %hr
                 %section
                   %h4&=form.child_focus.label.text
@@ -150,7 +150,7 @@
                           %span(title=form.principle_descriptions.get(support_field.label.text, ''))&= support_field.label.text
                         %td.violate= violate_field
 
-              - if document.analysis_nature == AnalysisNature.ELECTIONS:
+              - if document.analysis_nature.nature == AnalysisNature.ELECTIONS:
                 %hr
                 %section
                   %h4 Bias

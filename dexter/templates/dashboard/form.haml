@@ -17,7 +17,7 @@
               - for fld in form.analysis_nature_id:
                 %label.btn.btn-default(class_='active' if fld.checked else '', title=fld.label.text)
                   = fld()
-                  %i.fa(class_=AnalysisNature.ICONS.get(int(fld.data)))
+                  %i.fa(class_=AnalysisNature.query.get(fld.data).icon())
 
           = form.cluster_id
           - if form.cluster_id.data:
@@ -108,9 +108,9 @@
                     %li
                       %a.download(href="#", dataFormat="xlsx") Raw data (.xlsx)
 
-                    %li(class_='disabled' if form.analysis_nature() != AnalysisNature.CHILDREN else '')
+                    %li(class_='disabled' if form.analysis_nature().nature != AnalysisNature.CHILDREN else '')
                       %a.download(href="#", dataFormat="children-ratings.xlsx")
-                        %i.fa(class_=AnalysisNature.ICONS.get(AnalysisNature.CHILDREN))
+                        %i.fa(class_=AnalysisNature.ICONS[AnalysisNature.CHILDREN])
                         Children Ratings (.xlsx)
 
             .col-sm-5

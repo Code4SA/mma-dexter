@@ -192,13 +192,14 @@ class IssueView(MyModelView):
     form_create_rules = ('name', 'description')
     form_edit_rules = ('name', 'description')
 
+
 class TopicView(MyModelView):
     column_searchable_list = ('name', 'group')
     column_sortable_list = (
         'name',
         'group',
         ('analysis_nature', AnalysisNature.name),
-        )
+    )
     column_filters = ['analysis_nature.name']
 
 
@@ -227,6 +228,7 @@ class CountryView(MyModelView):
         del form_class.mediums
         return form_class
 
+
 class UserView(MyModelView):
     column_list = (
         'first_name',
@@ -251,9 +253,18 @@ class UserView(MyModelView):
     ]
 
 
+class AnalysisNatureView(MyModelView):
+    column_default_sort = 'name'
+    form_columns = [
+        'name',
+        'nature',
+    ]
+
+
 admin_instance = Admin(url='/admin', base_template='admin/custom_master.html', name="Dexter Admin", index_view=MyIndexView(), template_mode='bootstrap3')
 admin_instance.add_view(UserView(User, db.session, name="Users", endpoint='user'))
 admin_instance.add_view(CountryView(Country, db.session, name="Countries", endpoint='country'))
+admin_instance.add_view(AnalysisNatureView(AnalysisNature, db.session, name="Analyses", endpoint='analyses'))
 
 admin_instance.add_view(MediumView(Medium, db.session, name="Media", endpoint="medium", category='Article Information'))
 admin_instance.add_view(MyModelView(DocumentType, db.session, name="Types", endpoint="type", category='Article Information'))

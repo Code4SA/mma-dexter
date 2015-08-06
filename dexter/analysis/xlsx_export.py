@@ -10,7 +10,8 @@ from sqlalchemy.sql import func
 from sqlalchemy.types import Integer
 
 from ..analysis import BiasCalculator
-from ..models import Document, db, AnalysisNature
+from ..models import Document, AnalysisNature, db
+
 
 class XLSXExportBuilder:
     def __init__(self, form):
@@ -36,11 +37,11 @@ class XLSXExportBuilder:
         self.origin_worksheet(workbook)
         self.topic_worksheet(workbook)
 
-        if self.form.analysis_nature() == AnalysisNature.ELECTIONS:
+        if self.form.analysis_nature().nature == AnalysisNature.ELECTIONS:
             self.bias_worksheet(workbook)
             self.fairness_worksheet(workbook)
 
-        if self.form.analysis_nature() == AnalysisNature.CHILDREN:
+        if self.form.analysis_nature().nature == AnalysisNature.CHILDREN:
             self.child_focus_worksheet(workbook)
             self.child_gender_worksheets(workbook)
             self.child_race_worksheets(workbook)
