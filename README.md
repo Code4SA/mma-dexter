@@ -1,5 +1,7 @@
 # mma-dexter
 
+[![Build Status](https://travis-ci.org/Code4SA/mma-dexter.svg)](http://travis-ci.org/Code4SA/mma-dexter)
+
 Dexter web app for MMA.
 
 The app is a [Flask web app](http://flask.pocoo.org/) that uses [SQLAlchemy](http://www.sqlalchemy.org/) to talk to a MySQL database.
