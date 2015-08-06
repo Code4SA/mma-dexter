@@ -11,6 +11,7 @@
       self.$form.find('input[type=submit]').on('click', self.submitForm);
       self.$form.find('.download').on('click', self.download);
       self.$form.find('.remove-cluster').on('click', self.removeCluster);
+      self.$form.find('.analysis_nature a').on('click', self.setAnalysisNature);
 
       // setup person search form
       self.$form.find("*[name=source_person_id]").select2({
@@ -46,6 +47,21 @@
         }
       });
     };
+
+    self.setAnalysisNature = function(e) {
+      var nature = $(this).data('nature');
+      var $elem = $(this);
+
+      self.$form.find('[name=analysis_nature_id]').val(nature);
+      self.$form.find('.analysis_nature i.fa-check').remove();
+      self.$form.find('.analysis_nature li.disabled').toggleClass('disabled');
+      self.$form.find('.analysis_nature button.dropdown-toggle').html($elem.html() + '<span class="caret"></span>');
+
+      $elem
+        .prepend('<i class="fa fa-check"></i>')
+        .parent('li')
+        .addClass('disabled');
+    },
 
     self.removeCluster = function(e) {
       e.preventDefault();

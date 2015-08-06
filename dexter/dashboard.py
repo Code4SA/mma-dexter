@@ -220,7 +220,7 @@ def activity_topics_detail():
 
 class ActivityForm(Form):
     cluster_id      = HiddenField('Cluster')
-    analysis_nature_id = RadioField('Analysis', default=AnalysisNature.ANCHOR_ID)
+    analysis_nature_id = SelectField('Analysis', default=AnalysisNature.ANCHOR_ID)
     user_id         = SelectField('User', [validators.Optional()], default='')
     medium_id       = SelectMultipleField('Medium', [validators.Optional()], default='')
     country_id      = SelectField('Country', default=default_country_id)
@@ -242,6 +242,7 @@ class ActivityForm(Form):
 
         self.medium_id.choices = [(str(m.id), m.name) for m in Medium.query.order_by(Medium.name).all()]
         self.analysis_nature_id.choices = [[str(n.id), n.name] for n in AnalysisNature.all()]
+        self.natures = AnalysisNature.all()
 
         # only admins can see all countries
         if current_user.admin:

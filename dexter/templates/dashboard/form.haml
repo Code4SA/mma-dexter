@@ -13,11 +13,21 @@
         .col-sm-3
           .form-group.analysis_nature(class_='hidden' if form.cluster_id.data else '')
             = form.analysis_nature_id.label(class_='control-label')
-            .btn-group(dataToggle='buttons')
-              - for fld in form.analysis_nature_id:
-                %label.btn.btn-default(class_='active' if fld.checked else '', title=fld.label.text)
-                  = fld()
-                  %i.fa(class_=AnalysisNature.query.get(fld.data).icon())
+            %input(type="hidden", name=form.analysis_nature_id.name, value=form.analysis_nature_id.data)
+
+            .dropdown
+              %button.btn.btn-default.dropdown-toggle(type="button", dataToggle='dropdown')
+                %i.fa(class_=form.analysis_nature().icon())
+                &= form.analysis_nature().name.title()
+                %span.caret
+              %ul.dropdown-menu
+                - for nature in form.natures:
+                  %li(class_ = 'disabled' if form.analysis_nature() == nature else '')
+                    %a(href="#", dataNature=nature.id)
+                      - if form.analysis_nature() == nature:
+                        %i.fa.fa-check
+                      %i.fa(class_=nature.icon())
+                      &= nature.name.title()
 
           = form.cluster_id
           - if form.cluster_id.data:
