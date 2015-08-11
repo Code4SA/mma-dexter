@@ -16,7 +16,6 @@ from sqlalchemy import (
     String,
     Text,
     func,
-    Index,
     Boolean,
 )
 from sqlalchemy.orm import relationship, backref, deferred
@@ -95,7 +94,6 @@ class Document(FullText, db.Model):
     flagged              = Column(Boolean, index=True)
     notes                = Column(String(1024))
 
-
     # Associations
     author      = relationship("Author")
     entities    = relationship("DocumentEntity", backref=backref('document'), cascade='all, delete-orphan', passive_deletes=True, order_by="desc(DocumentEntity.relevance)")
@@ -120,21 +118,16 @@ class Document(FullText, db.Model):
     created_by  = relationship("User", backref=backref('created_documents'), foreign_keys=[created_by_user_id])
     checked_by  = relationship("User", backref=backref('checked_documents'), foreign_keys=[checked_by_user_id])
 
-
-
     PLACE_ENTITY_GROUPS = set(['city', 'province_or_state', 'region'])
 
     def people(self):
         return [e for e in self.entities if e.entity.group == 'person']
 
-
     def organisations(self):
         return [e for e in self.entities if e.entity.group == 'organization']
 
-
     def place_entities(self):
         return [e for e in self.entities if e.entity.group in Document.PLACE_ENTITY_GROUPS]
-
 
     def mentioned_entity(self, entity):
         """ Get the DocumentEntity for this entity, if any. """
@@ -142,7 +135,6 @@ class Document(FullText, db.Model):
             if de.entity == entity:
                 return de
         return None
-
 
     def add_entity(self, doc_entity):
         """ Add a new DocumentEntity to this document, but only
@@ -176,7 +168,7 @@ class Document(FullText, db.Model):
             # strip diacritics and lowercase
             if unidecode(k.keyword).lower() == unidecode(keyword.keyword).lower():
                 return k.add_offsets(keyword.offsets())
-                
+
         self.keywords.append(keyword)
         return True
 
@@ -186,7 +178,7 @@ class Document(FullText, db.Model):
             # this relies on DocumentSource.__cmp__
             if source == s:
                 return False
-                
+
         self.sources.append(source)
 
         # guess gender
@@ -194,7 +186,6 @@ class Document(FullText, db.Model):
             source.person.guess_gender_from_doc(self)
 
         return True
-
 
     def dedup_sources(self):
         """ Remove duplicate sources """
@@ -208,7 +199,6 @@ class Document(FullText, db.Model):
 
         return changed
 
-
     def add_place(self, doc_place):
         """ Add a new DocumentPlace to this document, but only
         if it doesn't already exist."""
@@ -219,7 +209,6 @@ class Document(FullText, db.Model):
         self.places.append(doc_place)
         return True
 
-
     def normalise_text(self):
         """ Run some normalisations on the document. """
         if self.text:
@@ -229,10 +218,8 @@ class Document(FullText, db.Model):
             # now ensure all \n's are double
             self.text = newlines_re.sub("\n\n", self.text)
 
-
     def can_user_edit(self, user):
         return user.admin or self.created_by is None or self.created_by == user
-
 
     def relearn_source_affiliations(self):
         """ Update the default affiilations for people sources linked to this
@@ -248,17 +235,14 @@ class Document(FullText, db.Model):
         for person in people:
             person.relearn_affiliation()
 
-
     def analysis_problems(self):
         """ A list of problems (possibly empty) for critical things
         missing from this document. """
         return DocumentAnalysisProblem.for_document(self)
 
-
     def is_fair(self):
         return not self.fairness or (len(self.fairness) == 1 and self.fairness[0].fairness.name == 'Fair')
 
-    
     def get_places(self, relevant=True):
         """
         Get a list of DocumentPlace instances for this document. If relevant is
@@ -266,26 +250,22 @@ class Document(FullText, db.Model):
         """
         return [dp for dp in self.places if not relevant or dp.relevant]
 
-
     def places_relevance_threshold(self):
         # calculate threshold as average of all non-None relevances
         vals = [p.relevance for p in self.places if p.relevance is not None]
         if len(vals) == 0:
             return 0
-        return sum(vals)/len(vals)
-
+        return sum(vals) / len(vals)
 
     def keyword_relevance_threshold(self):
         # calculate threshold as average of all non-None relevances
         vals = [k.relevance for k in self.keywords if k.relevance is not None]
         if len(vals) == 0:
             return 0
-        return sum(vals)/len(vals)
-
+        return sum(vals) / len(vals)
 
     def make_analysis_form(self):
         return self.analysis_nature.form(obj=self)
-
 
     def suggested_sources(self):
         """
@@ -298,9 +278,9 @@ class Document(FullText, db.Model):
         existing_names = set(s.friendly_name() for s in self.sources if not s.unnamed)
 
         entities = [e for e in self.entities
-            if e.entity.group == 'person'
-                and (e.entity.person is None or e.entity.person not in existing_people)
-                and (e.entity.name not in existing_names)]
+                    if e.entity.group == 'person'
+                    and (e.entity.person is None or e.entity.person not in existing_people)
+                    and (e.entity.name not in existing_names)]
 
         suggestions = []
         for e in entities:
@@ -314,7 +294,6 @@ class Document(FullText, db.Model):
 
         suggestions.sort(key=DocumentSource.friendly_name)
         return suggestions
-
 
     def __repr__(self):
         return "<Document id=%s, url=%s>" % (self.id, self.url)
@@ -355,10 +334,8 @@ class DocumentForm(Form):
         self.analysis_nature_id.choices = [[str(t.id), 'Analyse for %s' % t.name] for t in AnalysisNature.all()]
         self.country_id.choices = [[str(c.id), c.name] for c in Country.all()]
 
-
     def is_new(self):
         return self._obj is None
-
 
     def populate_obj(self, obj, attachment_ids):
         super(DocumentForm, self).populate_obj(obj)
