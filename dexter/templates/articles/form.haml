@@ -51,6 +51,9 @@
     = vertical_field(form.text, rows=25, placeholder='The text of the article')
   .col-sm-6
     .form-group
+      = vertical_field(form.tags)
+
+    .form-group
       %label Attachments
 
       %%include(file="attachments.haml", args="editing=True")

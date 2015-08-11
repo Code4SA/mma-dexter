@@ -19,6 +19,7 @@ from sqlalchemy import (
     Boolean,
 )
 from sqlalchemy.orm import relationship, backref, deferred
+from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy_fulltext import FullText
 
 from ..forms import Form, IntegerField, SelectField, RadioField
@@ -93,6 +94,8 @@ class Document(FullText, db.Model):
 
     flagged              = Column(Boolean, index=True)
     notes                = Column(String(1024))
+    raw_tags             = relationship("DocumentTag", lazy=False, cascade='all, delete-orphan', passive_deletes=True, order_by='DocumentTag.tag', collection_class=set)
+    tags                 = association_proxy('raw_tags', 'tag')
 
     # Associations
     author      = relationship("Author")
@@ -322,6 +325,8 @@ class DocumentForm(Form):
 
     analysis_nature_id = RadioField('Analysis', default=default_analysis_nature_id)
 
+    tags = StringField('Tags')
+
     def __init__(self, *args, **kwargs):
         self.published_at.data = datetime.datetime.utcnow()
 
@@ -333,6 +338,12 @@ class DocumentForm(Form):
         self.document_type_id.choices = [[str(t.id), t.name] for t in DocumentType.query.order_by(DocumentType.name).all()]
         self.analysis_nature_id.choices = [[str(t.id), 'Analyse for %s' % t.name] for t in AnalysisNature.all()]
         self.country_id.choices = [[str(c.id), c.name] for c in Country.all()]
+
+        if self.tags.data is not None and not isinstance(self.tags.data, basestring):
+            self.tags.data = ','.join(self.tags.data)
+
+    def validate_tags(self, field):
+        field.data = set(t for t in re.split(r'\s*,\s*', field.data) if t)
 
     def is_new(self):
         return self._obj is None
@@ -397,3 +408,16 @@ class DocumentType(db.Model):
             types.append(t)
 
         return types
+
+
+class DocumentTag(db.Model):
+    """ Free-form tags added to a document. """
+    __tablename__ = 'document_tags'
+
+    id = Column(Integer, primary_key=True)
+    doc_id = Column(Integer, ForeignKey('documents.id', ondelete='CASCADE'), index=True)
+    tag = Column(String(200), nullable=False)
+
+    def __init__(self, tag=None):
+        if tag:
+            self.tag = tag
