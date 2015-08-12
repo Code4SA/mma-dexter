@@ -325,7 +325,7 @@ class DocumentForm(Form):
 
     analysis_nature_id = RadioField('Analysis', default=default_analysis_nature_id)
 
-    tags = StringField('Tags')
+    tags = StringField('Tags', [validators.Optional()])
 
     def __init__(self, *args, **kwargs):
         self.published_at.data = datetime.datetime.utcnow()

@@ -59,7 +59,8 @@
     %li
       %i.fa.fa-tag
       - for tag in document.tags:
-        %span.label.label-default&= tag
+        %a(href=url_for('activity', tags=tag, analysis_nature_id=document.analysis_nature_id))
+          %span.label.label-info&= tag
 
 %section
   %p.article-summary
