@@ -43,6 +43,7 @@ class AnalysisNature(db.Model):
 
     # associations
     roles       = relationship("SourceRole", backref="analysis_nature", order_by="SourceRole.name")
+    issues      = relationship("Issue", secondary="analysis_nature_issues", lazy=True, backref='analysis_natures')
 
     @property
     def form(self):
@@ -103,3 +104,9 @@ class AnalysisNature(db.Model):
     @classmethod
     def all(cls):
         return cls.query.order_by('name').all()
+
+
+analysis_nature_issues = db.Table(
+    'analysis_nature_issues',
+    db.Column('analysis_nature_id', db.Integer(), db.ForeignKey('analysis_natures.id', ondelete='CASCADE')),
+    db.Column('issue_id', db.Integer(), db.ForeignKey('issues.id', ondelete='CASCADE')))

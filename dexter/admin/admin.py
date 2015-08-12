@@ -184,13 +184,17 @@ class IssueView(MyModelView):
     column_list = (
         'name',
         'description',
+        'analysis_natures',
     )
     column_searchable_list = (
         'name',
     )
+    form_columns = (
+        'name',
+        'description',
+        'analysis_natures',
+    )
     page_size = 100
-    form_create_rules = ('name', 'description')
-    form_edit_rules = ('name', 'description')
 
 
 class TopicView(MyModelView):
@@ -258,6 +262,7 @@ class AnalysisNatureView(MyModelView):
     form_columns = [
         'name',
         'nature',
+        'issues',
     ]
 
 

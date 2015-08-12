@@ -153,7 +153,7 @@ class AnchorAnalysisForm(DocumentAnalysisForm):
             [str(loc.id), loc.name] for loc in Location.for_country(country)]
 
         nature = self._obj.analysis_nature
-        self.issues.choices = [(str(issue.id), issue.name) for issue in Issue.for_nature(nature)]
+        self.issues.choices = sorted([(str(issue.id), issue.name) for issue in nature.issues], key=lambda i: i[1])
         self.topic_id.choices = [['', '(none)']] + Topic.for_select_widget(Topic.for_nature(nature))
 
 
