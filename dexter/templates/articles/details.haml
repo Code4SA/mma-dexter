@@ -47,14 +47,20 @@
             &= document.item_num
 
     %li.author
-        %i.fa.fa-user
-        - if document.author:
-          - if document.author.person:
-            %a(href=url_for('show_person', id=document.author.person.id))
-              &= document.author.person.name
-          - else:
-            &= document.author.name
-          (${document.author.author_type.name|h})
+      %i.fa.fa-user
+      - if document.author:
+        - if document.author.person:
+          %a(href=url_for('show_person', id=document.author.person.id))
+            &= document.author.person.name
+        - else:
+          &= document.author.name
+        (${document.author.author_type.name|h})
+
+    %li
+      %i.fa.fa-tag
+      - for tag in document.tags:
+        %a(href=url_for('activity', tags=tag, analysis_nature_id=document.analysis_nature_id))
+          %span.label.label-info&= tag
 
 %section
   %p.article-summary

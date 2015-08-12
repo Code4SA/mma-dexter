@@ -1,5 +1,6 @@
 from itertools import groupby
 from datetime import datetime, timedelta
+import re
 
 from dexter.app import app
 from flask import request, make_response, jsonify
@@ -233,6 +234,7 @@ class ActivityForm(Form):
     format          = HiddenField('format', default='html')
     # free text search
     q               = TextField('Keyword search', [validators.Optional()])
+    tags            = TextField('Tags', [validators.Optional()])
 
     def __init__(self, *args, **kwargs):
         super(ActivityForm, self).__init__(*args, **kwargs)
@@ -382,6 +384,11 @@ class ActivityForm(Form):
         if self.q.data:
             # full text search
             query = query.filter(FullTextSearch(self.q.data, Document, FullTextMode.NATURAL))
+
+        if self.tags.data:
+            tags = set(f for f in re.split('\s*,\s*', self.tags.data) if f)
+            for tag in tags:
+                query = query.filter(Document.tags.contains(tag))
 
         return query
 
