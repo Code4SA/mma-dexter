@@ -17,17 +17,17 @@
 
             .dropdown
               %button.btn.btn-default.dropdown-toggle(type="button", dataToggle='dropdown')
-                %i.fa(class_=form.analysis_nature().icon())
-                &= form.analysis_nature().name.title()
+                %i.fa.fa-fw(class_=form.analysis_nature().icon())
+                &= form.analysis_nature().name
                 %span.caret
               %ul.dropdown-menu
                 - for nature in form.natures:
                   %li(class_ = 'disabled' if form.analysis_nature() == nature else '')
                     %a(href="#", dataNature=nature.id)
+                      %i.fa.fa-fw(class_=nature.icon())
+                      &= nature.name
                       - if form.analysis_nature() == nature:
                         %i.fa.fa-check
-                      %i.fa(class_=nature.icon())
-                      &= nature.name.title()
 
           = form.cluster_id
           - if form.cluster_id.data:
