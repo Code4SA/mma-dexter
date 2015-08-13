@@ -90,9 +90,9 @@ class XLSXExportBuilder:
         if self.form.analysis_nature():
             ws.write('B7', self.form.analysis_nature().name)
 
-        ws.write('A8', 'country')
-        if self.form.country():
-            ws.write('B8', self.form.country().name)
+        ws.write('A8', 'countries')
+        if self.form.countries():
+            ws.write('B8', ', '.join(c.name for c in self.form.countries()))
 
         ws.write('A9', 'medium')
         media = self.form.media()

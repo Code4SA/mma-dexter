@@ -232,7 +232,7 @@ class ActivityForm(Form):
     analysis_nature_id = SelectField('Analysis', default=AnalysisNature.ANCHOR_ID)
     user_id         = SelectField('User', [validators.Optional()], default='')
     medium_id       = SelectMultipleField('Medium', [validators.Optional()], default='')
-    country_id      = SelectField('Country', default=default_country_id)
+    country_id      = SelectMultipleField('Country', [validators.Optional()], default=default_country_id)
     created_at      = TextField('Added', [validators.Optional()])
     published_at    = TextField('Published', [validators.Optional()])
     problems        = MultiCheckboxField('Article problems', [validators.Optional()], choices=DocumentAnalysisProblem.for_select())
@@ -259,12 +259,10 @@ class ActivityForm(Form):
 
         # only admins can see all countries
         if current_user.admin:
-            self.country_id.choices = [['', '(any)']]
             countries = Country.all()
         else:
-            self.country_id.choices = []
             countries = [current_user.country]
-        self.country_id.choices.extend([str(c.id), c.name] for c in countries)
+        self.country_id.choices = [[str(c.id), c.name] for c in countries]
 
         # override the analysis nature id if we have a cluster
         if self.cluster_id.data:
@@ -286,9 +284,9 @@ class ActivityForm(Form):
         else:
             return None
 
-    def country(self):
+    def countries(self):
         if self.country_id.data:
-            return Country.query.get(self.country_id.data)
+            return Country.query.filter(Country.id.in_(self.country_id.data))
         return None
 
     def analysis_nature(self):
@@ -361,7 +359,7 @@ class ActivityForm(Form):
                     Document.checked_by_user_id == self.user_id.data))
 
         if self.country_id.data:
-            query = query.filter(Document.country_id == self.country_id.data)
+            query = query.filter(Document.country_id.in_(self.country_id.data))
 
         if self.created_from:
             query = query.filter(Document.created_at >= self.created_from)
