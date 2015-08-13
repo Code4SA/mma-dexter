@@ -109,7 +109,7 @@ class DocumentSourceForm(ModelForm):
 
         # if it's linked to a person, clear the other crap
         # the form sets
-        if obj.named:
+        if obj.person and obj.named:
             obj.unnamed = False
             obj.unnamed_gender = None
             obj.unnamed_race = None
