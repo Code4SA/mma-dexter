@@ -204,9 +204,10 @@ def edit_article_analysis(id):
             # convert issue id's to Issue objects
             form.issues.data = [Issue.query.get_or_404(i) for i in form.issues.data]
 
-            # update document
-            form.populate_obj(document)
-            document.dedup_sources()
+            # update document -- no_autoflush seems to be required with wtforms alchemy
+            with db.session.no_autoflush:
+                form.populate_obj(document)
+                document.dedup_sources()
 
             # update and delete fairness
             for frm in fairness_forms:
