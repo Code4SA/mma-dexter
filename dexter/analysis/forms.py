@@ -154,7 +154,7 @@ class AnchorAnalysisForm(DocumentAnalysisForm):
 
         nature = self._obj.analysis_nature
         self.issues.choices = sorted([(str(issue.id), issue.name) for issue in nature.issues], key=lambda i: i[1])
-        self.topic_id.choices = [['', '(none)']] + Topic.for_select_widget(Topic.for_nature(nature))
+        self.topic_id.choices = [['', '(none)']] + Topic.for_select_widget(nature.topics)
 
 
 class ElectionsAnalysisForm(AnchorAnalysisForm):

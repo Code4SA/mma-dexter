@@ -44,6 +44,7 @@ class AnalysisNature(db.Model):
     # associations
     roles       = relationship("SourceRole", backref="analysis_nature", order_by="SourceRole.name")
     issues      = relationship("Issue", secondary="analysis_nature_issues", lazy=True, backref='analysis_natures')
+    topics      = relationship("Topic", secondary="analysis_nature_topics", lazy=True, backref='analysis_natures')
 
     @property
     def form(self):
@@ -110,3 +111,9 @@ analysis_nature_issues = db.Table(
     'analysis_nature_issues',
     db.Column('analysis_nature_id', db.Integer(), db.ForeignKey('analysis_natures.id', ondelete='CASCADE')),
     db.Column('issue_id', db.Integer(), db.ForeignKey('issues.id', ondelete='CASCADE')))
+
+
+analysis_nature_topics = db.Table(
+    'analysis_nature_topics',
+    db.Column('analysis_nature_id', db.Integer(), db.ForeignKey('analysis_natures.id', ondelete='CASCADE')),
+    db.Column('topic_id', db.Integer(), db.ForeignKey('topics.id', ondelete='CASCADE')))

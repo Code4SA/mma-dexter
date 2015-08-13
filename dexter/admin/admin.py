@@ -198,13 +198,21 @@ class IssueView(MyModelView):
 
 
 class TopicView(MyModelView):
+    column_list = (
+        'name',
+        'group',
+        'analysis_natures',
+    )
     column_searchable_list = ('name', 'group')
     column_sortable_list = (
         'name',
         'group',
-        ('analysis_nature', AnalysisNature.name),
     )
-    column_filters = ['analysis_nature.name']
+    form_columns = (
+        'name',
+        'group',
+        'analysis_natures',
+    )
 
 
 class LocationView(MyModelView):
@@ -263,6 +271,7 @@ class AnalysisNatureView(MyModelView):
         'name',
         'nature',
         'issues',
+        'topics',
     ]
 
 
