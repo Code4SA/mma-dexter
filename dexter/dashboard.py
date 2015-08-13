@@ -6,13 +6,13 @@ from dexter.app import app
 from flask import request, make_response, jsonify
 from flask.ext.mako import render_template
 from flask.ext.security import roles_accepted, current_user
-from sqlalchemy.sql import func, distinct, or_
+from sqlalchemy.sql import func, distinct, or_, desc
 from sqlalchemy.orm import joinedload
 from sqlalchemy_fulltext import FullTextSearch
 import sqlalchemy_fulltext.modes as FullTextMode
 
 from dexter.models import *  # noqa
-from dexter.models.document import DocumentAnalysisProblem
+from dexter.models.document import DocumentAnalysisProblem, DocumentTag
 from dexter.models.user import default_country_id
 
 from wtforms import validators, HiddenField, TextField, SelectMultipleField, BooleanField
@@ -139,10 +139,18 @@ def activity():
     for date, group in groupby(docs, lambda d: d.created_at.date()):
         doc_groups.append([date, list(group)])
 
+    # tags
+    tag_summary = db.session\
+        .query(DocumentTag.tag, func.count(1).label('count'))\
+        .group_by(DocumentTag.tag)\
+        .order_by(desc('count'), DocumentTag.tag)\
+        .all()
+
     return render_template('dashboard/activity.haml',
                            form=form,
                            pagination=pagination,
-                           doc_groups=doc_groups)
+                           doc_groups=doc_groups,
+                           tag_summary=tag_summary)
 
 
 @app.route('/activity/map')

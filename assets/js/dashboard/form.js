@@ -12,6 +12,7 @@
       self.$form.find('.download').on('click', self.download);
       self.$form.find('.remove-cluster').on('click', self.removeCluster);
       self.$form.find('.analysis_nature a').on('click', self.setAnalysisNature);
+      $('.tag-summary a').on('click', self.tagClicked);
 
       // setup person search form
       self.$form.find("*[name=source_person_id]").select2({
@@ -90,6 +91,17 @@
 
       self.$form.attr('action', old_action);
       self.$form.find('input[name=format]').val('');
+    };
+
+    self.tagClicked = function(e) {
+      e.preventDefault();
+
+      var $field = $('form.activity-refine [name=tags]');
+      var tags = $field.select2('val');
+
+      tags.unshift($(this).data('tag'));
+      $field.select2('val', tags);
+      $('form.activity-refine').submit();
     };
   };
 })(jQuery, window);
