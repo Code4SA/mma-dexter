@@ -29,3 +29,8 @@ body .container:first-child{
 .well p{
     margin-left: 7px;
 }
+
+.checkbox-list-col-2 .checkbox {
+    display: inline-block;
+    width: 50%;
+}

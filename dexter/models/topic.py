@@ -41,6 +41,10 @@ class Topic(db.Model):
         return choices
 
     @classmethod
+    def all(cls):
+        return sorted(cls.query.order_by(cls.name).all(), key=cls.sort_key)
+
+    @classmethod
     def create_defaults(self):
         text = """
 1|Voter education & registration

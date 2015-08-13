@@ -40,6 +40,10 @@ class Issue(db.Model):
         return self.name.encode('utf-8')
 
     @classmethod
+    def all(cls):
+        return cls.query.order_by(cls.name).all()
+
+    @classmethod
     def create_defaults(self):
         text = """
 free and fair elections

@@ -1,15 +1,16 @@
 from flask.ext.admin import Admin, expose, AdminIndexView
 from flask.ext.admin.contrib.sqla import ModelView
 from flask.ext.admin.model.template import macro
-from wtforms.fields import SelectField, TextAreaField, TextField, HiddenField
+from wtforms.fields import SelectField, TextAreaField
 from flask import abort
-import flask_wtf
 from flask.ext.security import current_user
 
 from sqlalchemy import desc, func
 
-from dexter.models import *
+from dexter.models import *  # noqa
 from ..forms import Form
+import dexter.admin.widgets as widgets
+
 
 class MyModelView(ModelView):
     form_base_class = Form
@@ -273,6 +274,22 @@ class AnalysisNatureView(MyModelView):
         'issues',
         'topics',
     ]
+    form_args = {
+        'issues': {
+            'widget': widgets.CheckboxSelectWidget(multiple=True)
+        },
+        'topics': {
+            'widget': widgets.CheckboxSelectWidget(multiple=True)
+        }
+    }
+    form_widget_args = {
+        'issues': {'class': 'checkbox-list-col-2'}
+    }
+
+    def on_form_prefill(self, form, id):
+        super(AnalysisNatureView, self).on_form_prefill(form, id)
+        form.issues.query = Issue.all()
+        form.topics.query = Topic.all()
 
 
 admin_instance = Admin(url='/admin', base_template='admin/custom_master.html', name="Dexter Admin", index_view=MyIndexView(), template_mode='bootstrap3')
