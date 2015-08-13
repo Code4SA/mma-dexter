@@ -107,9 +107,17 @@ class XLSXExportBuilder:
         if self.form.problems.data:
             ws.write('B11', ', '.join(p.short_desc for p in self.form.get_problems()))
 
-        ws.write('A13', 'Summary', self.formats['bold'])
-        ws.write('A14', 'articles')
-        ws.write('B14', self.filter(Document.query).count())
+        ws.write('A12', 'keyword search')
+        if self.form.q.data:
+            ws.write('B12', self.form.q.data)
+
+        ws.write('A13', 'tags')
+        if self.form.tags.data:
+            ws.write('B13', self.form.tags.data)
+
+        ws.write('A15', 'Summary', self.formats['bold'])
+        ws.write('A16', 'articles')
+        ws.write('B16', self.filter(Document.query).count())
 
     def documents_worksheet(self, wb):
         from dexter.models.views import DocumentsView

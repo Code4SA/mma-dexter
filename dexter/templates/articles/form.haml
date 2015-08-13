@@ -51,7 +51,7 @@
     = vertical_field(form.text, rows=25, placeholder='The text of the article')
   .col-sm-6
     .form-group
-      = vertical_field(form.tags)
+      = vertical_field(form.tags, class_='select2-tags', autocomplete='off', **{'data-choices': ','.join(form.tags.choices)})
 
     .form-group
       %label Attachments

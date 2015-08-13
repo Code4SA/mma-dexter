@@ -56,11 +56,12 @@
           &= document.author.name
         (${document.author.author_type.name|h})
 
-    %li
-      %i.fa.fa-tag
-      - for tag in document.tags:
-        %a(href=url_for('activity', tags=tag, analysis_nature_id=document.analysis_nature_id))
-          %span.label.label-info&= tag
+    - if document.tags:
+      %li
+        %i.fa.fa-tag
+        - for tag in document.tags:
+          %a(href=url_for('activity', tags=tag, analysis_nature_id=document.analysis_nature_id))
+            %span.label.label-info&= tag
 
 %section
   %p.article-summary

@@ -15,6 +15,21 @@
     - if form.user():
       added by ${form.user().short_name()|h}
 
+- if tag_summary:
+  %section
+    %ul.tag-summary.list-inline
+      %li
+        %i.fa.fa-fw.fa-tags
+      - for tag, count in tag_summary:
+        %li
+          - if not form.tags.data or tag not in form.tags.data:
+            %a(href="#", **{'data-tag': tag})
+              &= tag
+              %span.badge&= count
+          - else:
+            &= tag
+            %span.badge&= count
+
 %section#charts
   .row
     .col-sm-4
