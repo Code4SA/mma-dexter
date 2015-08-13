@@ -27,11 +27,11 @@ PyYAML==3.10
 SQLAlchemy==1.0.8
 SQLAlchemy-FullText-Search==0.2.3
 SQLAlchemy-ImageAttach==0.8.1
-SQLAlchemy-Utils==0.27.8
+SQLAlchemy-Utils==0.30.16
 Unidecode==0.04.16
-WTForms==1.0.5
-WTForms-Alchemy==0.13.0
-WTForms-Components==0.9.6
+WTForms==2.0.2
+WTForms-Alchemy==0.13.3
+WTForms-Components==0.9.7
 Wand==0.3.7
 WebHelpers==1.3
 Werkzeug==0.10.4
@@ -48,7 +48,7 @@ boto==2.29.1
 celery==3.1.13
 certifi==14.05.14
 cssselect==0.9.1
-decorator==3.4.0
+decorator==4.0.2
 ecdsa==0.11
 extras==0.0.3
 fixture==1.5
@@ -83,7 +83,7 @@ six==1.9.0
 tld==0.6.3
 tornado==4.0.1
 twill==0.9.1
-validators==0.7
+validators==0.8
 watchdog==0.8.3
 webassets==0.8
 wsgiref==0.1.2
