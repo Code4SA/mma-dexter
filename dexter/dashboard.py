@@ -239,12 +239,15 @@ class ActivityForm(Form):
     def __init__(self, *args, **kwargs):
         super(ActivityForm, self).__init__(*args, **kwargs)
 
+        from .models.document import DocumentTag
+
         self.user_id.choices = [['', '(any)'], ['-', '(none)']] + [
             [str(u.id), u.short_name()] for u in sorted(User.query.all(), key=lambda u: u.short_name())]
 
         self.medium_id.choices = [(str(m.id), m.name) for m in Medium.query.order_by(Medium.name).all()]
         self.analysis_nature_id.choices = [[str(n.id), n.name] for n in AnalysisNature.all()]
         self.natures = AnalysisNature.all()
+        self.tags.choices = [t[0] for t in db.session.query(DocumentTag.tag.distinct()).order_by(DocumentTag.tag)]
 
         # only admins can see all countries
         if current_user.admin:

@@ -103,7 +103,7 @@
           - person = form.source_person()
           - kwargs = {'data-text': person and person.name or ''}
           = vertical_field(form.source_person_id, **kwargs)
-          = vertical_field(form.tags)
+          = vertical_field(form.tags, class_='select2-tags', autocomplete='off', **{'data-choices': ','.join(form.tags.choices)})
 
     .panel-footer
       .row

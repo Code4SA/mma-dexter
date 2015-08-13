@@ -1,5 +1,5 @@
 from dexter.app import db
-from .document import Document, DocumentType
+from .document import Document, DocumentType, DocumentTag
 from .entity import DocumentEntity, Entity
 from .keyword import DocumentKeyword
 from .topic import Topic

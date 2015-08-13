@@ -332,7 +332,7 @@ class DocumentForm(Form):
 
         super(DocumentForm, self).__init__(*args, **kwargs)
 
-        from . import Medium, DocumentType, AnalysisNature, Country
+        from . import Medium, DocumentType, AnalysisNature, Country, DocumentTag
 
         self.medium_id.choices = [['', '(none)']] + Medium.for_select_widget()
         self.document_type_id.choices = [[str(t.id), t.name] for t in DocumentType.query.order_by(DocumentType.name).all()]
@@ -341,6 +341,7 @@ class DocumentForm(Form):
 
         if self.tags.data is not None and not isinstance(self.tags.data, basestring):
             self.tags.data = ','.join(self.tags.data)
+        self.tags.choices = [t[0] for t in db.session.query(DocumentTag.tag.distinct()).order_by(DocumentTag.tag)]
 
     def validate_tags(self, field):
         field.data = set(t for t in re.split(r'\s*,\s*', field.data) if t)
