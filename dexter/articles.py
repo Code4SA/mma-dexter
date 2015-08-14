@@ -9,6 +9,7 @@ from wand.exceptions import WandError
 from .app import app
 from .models import db, Document, Issue, DocumentPlace, DocumentAttachment, DocumentTag
 from .models.document import DocumentForm
+from .models.fairness import DocumentFairnessForm
 from .models.analysis_nature import AnalysisNature
 from .models.author import AuthorForm
 from .analysis.forms import DocumentSourceForm
@@ -26,8 +27,8 @@ def show_article(id):
     if request.args.get('format') == 'places-json':
         return jsonify(DocumentPlace.summary_for_docs([document]))
 
-    return render_template('articles/show.haml',
-            document=document)
+    return render_template('articles/show.haml', document=document)
+
 
 @app.route('/articles/<id>/delete', methods=['POST'])
 @roles_accepted('monitor')
@@ -44,7 +45,7 @@ def delete_article(id):
     flash('The document has been deleted.', 'info')
 
     return redirect(url_for('dashboard'))
- 
+
 
 @app.route('/articles/new', methods=['GET', 'POST'])
 @roles_accepted('monitor')
@@ -59,7 +60,7 @@ def new_article():
         doc = None
         proc = DocumentProcessor()
 
-        if url and not 'manual' in request.form:
+        if url and 'manual' not in request.form:
             # new document from url
             if not proc.valid_url(url):
                 flash("The URL isn't valid or we don't know how to process it.", 'error')
@@ -115,11 +116,11 @@ def new_article():
             db.session.commit()
             flash('Article added.')
             return redirect(url_for('edit_article_analysis', id=id))
-        
+
     return render_template('articles/new.haml',
-            url=url,
-            form=form,
-            author_form=author_form)
+                           url=url,
+                           form=form,
+                           author_form=author_form)
 
 
 @app.route('/articles/<id>/edit', methods=['GET', 'POST'])
@@ -151,9 +152,9 @@ def edit_article(id):
         author_form.person_gender_id.data = doc.author.person.gender.id if doc.author.person and doc.author.person.gender else None
 
     return render_template('articles/edit.haml',
-            document=doc,
-            form=form,
-            author_form=author_form)
+                           document=doc,
+                           form=form,
+                           author_form=author_form)
 
 
 @app.route('/articles/<id>/analysis', methods=['GET', 'POST'])
@@ -171,7 +172,6 @@ def edit_article_analysis(id):
 
     status = 200
     form = document.make_analysis_form()
-    nature = document.analysis_nature
 
     new_source_form = DocumentSourceForm(prefix='sources-new', csrf_enabled=False, document=document)
 
@@ -249,19 +249,21 @@ def edit_article_analysis(id):
 
     # only render if it's not an ajax request
     if not request.is_xhr:
-        resp = make_response(render_template('articles/edit_analysis.haml',
-            form=form,
-            new_source_form=new_source_form,
-            new_fairness_form=new_fairness_form,
-            fairness_forms=fairness_forms,
-            document=document,
-            natures=AnalysisNature.all()))
+        resp = make_response(
+            render_template('articles/edit_analysis.haml',
+                            form=form,
+                            new_source_form=new_source_form,
+                            new_fairness_form=new_fairness_form,
+                            fairness_forms=fairness_forms,
+                            document=document,
+                            natures=AnalysisNature.all()))
     else:
         resp = ''
 
     return (resp, status,
             # ensure the browser refreshes the page when Back is pressed
             {'Cache-Control': 'no-cache, no-store, must-revalidate'})
+
 
 @app.route('/articles/<id>/analysis/nature', methods=['POST'])
 @roles_accepted('monitor')
