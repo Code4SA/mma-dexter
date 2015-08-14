@@ -13,11 +13,21 @@
         .col-sm-3
           .form-group.analysis_nature(class_='hidden' if form.cluster_id.data else '')
             = form.analysis_nature_id.label(class_='control-label')
-            .btn-group(dataToggle='buttons')
-              - for fld in form.analysis_nature_id:
-                %label.btn.btn-default(class_='active' if fld.checked else '', title=fld.label.text)
-                  = fld()
-                  %i.fa(class_=AnalysisNature.ICONS.get(int(fld.data)))
+            %input(type="hidden", name=form.analysis_nature_id.name, value=form.analysis_nature_id.data)
+
+            .dropdown
+              %button.btn.btn-default.dropdown-toggle(type="button", dataToggle='dropdown')
+                %i.fa.fa-fw(class_=form.analysis_nature().icon())
+                &= form.analysis_nature().name
+                %span.caret
+              %ul.dropdown-menu
+                - for nature in form.natures:
+                  %li(class_ = 'disabled' if form.analysis_nature() == nature else '')
+                    %a(href="#", dataNature=nature.id)
+                      %i.fa.fa-fw(class_=nature.icon())
+                      &= nature.name
+                      - if form.analysis_nature() == nature:
+                        %i.fa.fa-check
 
           = form.cluster_id
           - if form.cluster_id.data:
@@ -53,7 +63,7 @@
 
       .row
         .col-sm-3
-          = vertical_field(form.country_id)
+          = vertical_field(form.country_id, class_='select2', placeholder='(any)')
           = vertical_field(form.user_id)
 
         .col-sm-3.problems
@@ -93,25 +103,27 @@
           - person = form.source_person()
           - kwargs = {'data-text': person and person.name or ''}
           = vertical_field(form.source_person_id, **kwargs)
+          = vertical_field(form.tags, class_='select2-tags', autocomplete='off', **{'data-choices': ','.join(form.tags.choices)})
 
-          .row.buttons
-            .col-sm-7
-              %input(type="hidden", name="format")
-              - if current_user.admin:
-                .dropdown
-                  %button.btn.btn-default.form-control.dropdown-toggle(type="button", dataToggle='dropdown')
-                    %i.fa.fa-download
-                    Download
-                    %span.caret
+    .panel-footer
+      .row
+        .col-sm-3.col-sm-offset-6
+          %input(type="hidden", name="format")
+          - if current_user.admin:
+            .dropdown
+              %button.btn.btn-default.form-control.dropdown-toggle(type="button", dataToggle='dropdown')
+                %i.fa.fa-download
+                Download
+                %span.caret
 
-                  %ul.dropdown-menu
-                    %li
-                      %a.download(href="#", dataFormat="xlsx") Raw data (.xlsx)
+              %ul.dropdown-menu
+                %li
+                  %a.download(href="#", dataFormat="xlsx") Raw data (.xlsx)
 
-                    %li(class_='disabled' if form.analysis_nature() != AnalysisNature.CHILDREN else '')
-                      %a.download(href="#", dataFormat="children-ratings.xlsx")
-                        %i.fa(class_=AnalysisNature.ICONS.get(AnalysisNature.CHILDREN))
-                        Children Ratings (.xlsx)
+                %li(class_='disabled' if form.analysis_nature().nature != AnalysisNature.CHILDREN else '')
+                  %a.download(href="#", dataFormat="children-ratings.xlsx")
+                    %i.fa(class_=AnalysisNature.ICONS[AnalysisNature.CHILDREN])
+                    Children Ratings (.xlsx)
 
-            .col-sm-5
-              %input.btn.btn-success.form-control(type='submit', value='Explore')
+        .col-sm-3
+          %input.btn.btn-success.form-control(type='submit', value='Explore')

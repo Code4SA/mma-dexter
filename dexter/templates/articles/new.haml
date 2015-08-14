@@ -34,7 +34,7 @@
                 = nature
                 - kwargs = {'for': nature.id}
                 %label(**kwargs)
-                  %i.fa(class_=AnalysisNature.ICONS.get(int(nature.data)))
+                  %i.fa(class_=AnalysisNature.query.get(nature.data).icon())
                   = nature.label.text
 
           %input.btn.btn-success(type='submit', value="Fetch and add article", dataDisableWith='Fetching...')

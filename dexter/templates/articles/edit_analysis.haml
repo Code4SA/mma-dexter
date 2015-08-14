@@ -29,8 +29,8 @@
         .panel-heading
           %h3.panel-title
             %i.fa(class_=document.analysis_nature.icon())
-            &= document.analysis_nature.name.title()
-            Analysis
+            &= document.analysis_nature.name
+            analysis
             - if document.checked_by:
               by
               &= document.checked_by.short_name()
@@ -71,17 +71,17 @@
                   .col-sm-10
                     .btn-group
                       %button.btn.btn-default.dropdown-toggle(type="button", dataToggle='dropdown')
-                        %i.fa(class_=document.analysis_nature.icon())
-                        &= document.analysis_nature.name.title()
+                        %i.fa.fa-fw(class_=document.analysis_nature.icon())
+                        &= document.analysis_nature.name
                         %span.caret
                       %ul.dropdown-menu
                         - for nature in natures:
                           %li(class_ = 'disabled' if document.analysis_nature == nature else '')
                             %a(href=url_for('edit_article_analysis_nature', id=document.id, nature=nature.name), dataMethod='post', dataConfirm='Change to %s analysis?' % nature.name)
+                              %i.fa.fa-fw(class_=nature.icon())
+                              &= nature.name
                               - if document.analysis_nature == nature:
                                 %i.fa.fa-check
-                              %i.fa(class_=nature.icon())
-                              &= nature.name.title()
 
                 = field(form.topic_id, class_='select2')
                 = field(form.origin_location_id, class_='select2')
@@ -111,7 +111,7 @@
                             = subfield.label()
                             %br
 
-              - if document.analysis_nature == AnalysisNature.CHILDREN:
+              - if document.analysis_nature.nature == AnalysisNature.CHILDREN:
                 %hr
                 %section
                   %h4&=form.child_focus.label.text
@@ -150,7 +150,7 @@
                           %span(title=form.principle_descriptions.get(support_field.label.text, ''))&= support_field.label.text
                         %td.violate= violate_field
 
-              - if document.analysis_nature == AnalysisNature.ELECTIONS:
+              - if document.analysis_nature.nature == AnalysisNature.ELECTIONS:
                 %hr
                 %section
                   %h4 Bias

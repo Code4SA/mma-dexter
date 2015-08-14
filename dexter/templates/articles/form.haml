@@ -11,7 +11,7 @@
         = nature
         - kwargs = {'for': nature.id}
         %label(**kwargs)
-          %i.fa(class_=AnalysisNature.ICONS.get(int(nature.data)))
+          %i.fa(class_=AnalysisNature.query.get(nature.data).icon())
           = nature.label.text
 
 .row
@@ -50,6 +50,9 @@
     = vertical_field(form.summary, placeholder='Summary', maxlength=1024, rows=2)
     = vertical_field(form.text, rows=25, placeholder='The text of the article')
   .col-sm-6
+    .form-group
+      = vertical_field(form.tags, class_='select2-tags', autocomplete='off', **{'data-choices': ','.join(form.tags.choices)})
+
     .form-group
       %label Attachments
 

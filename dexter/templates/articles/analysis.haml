@@ -6,7 +6,7 @@
     %h3.panel-title
       %i.fa(class_=document.analysis_nature.icon())
       &= document.analysis_nature.name.title()
-      Analysis
+      analysis
       - if document.checked_by:
         by
         &= document.checked_by.short_name()
@@ -42,7 +42,7 @@
 
             %%include(file="analysis_warnings.haml")
 
-            - if document.analysis_nature != AnalysisNature.ANCHOR:
+            - if document.analysis_nature.nature != AnalysisNature.ANCHOR:
               .row.topic-origin
                 .col-sm-7
                   %dl
@@ -111,7 +111,7 @@
                     %tr.quotation(dataOffsets=('%d:%d' % (q.offset, q.length) if q.offset else ''))
                       %td&= q.quote
 
-          - if document.analysis_nature == AnalysisNature.CHILDREN:
+          - if document.analysis_nature.nature == AnalysisNature.CHILDREN:
             %hr
             %section
               %h4 Child Focus
@@ -161,7 +161,7 @@
                   %h5 Principle clearly violated
                   &= document.principle_violated and document.principle_violated.name or '(none)'
 
-          - if document.analysis_nature == AnalysisNature.ELECTIONS:
+          - if document.analysis_nature.nature == AnalysisNature.ELECTIONS:
             %hr
             %section.issues
               %h4 Issues Raised
@@ -172,7 +172,7 @@
               - for issue in document.issues:
                 %span.label.label-info(title=issue.description, dataToggle="tooltip", dataContainer="body")&=issue.name
 
-          - if document.analysis_nature == AnalysisNature.ELECTIONS:
+          - if document.analysis_nature.nature == AnalysisNature.ELECTIONS:
             %hr
             %section.fairness
               %h4 Bias

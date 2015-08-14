@@ -2,6 +2,14 @@ $(function() {
   $('[title]').tooltip();
   $('.select2:visible').select2();
 
+  // tags
+  $('.select2-tags:visible').each(function(i, field) {
+    $(field).select2({
+      tags: ($(field).data('choices') || '').split(','),
+      tokenSeparators: [','],
+    });
+  });
+
   $('.use-datepicker').datepicker({
     format: 'yyyy/mm/dd',
     todayHighlight: true,

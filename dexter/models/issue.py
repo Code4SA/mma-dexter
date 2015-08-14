@@ -30,18 +30,18 @@ class Issue(db.Model):
     id          = Column(Integer, primary_key=True)
     name        = Column(String(50), index=True, nullable=False, unique=True)
     description = Column(String(100), index=True, nullable=False, unique=True)
+    # TODO: drop this column
     analysis_nature_id = Column(Integer, ForeignKey("analysis_natures.id"), nullable=True)
-    analysis_nature = relationship("AnalysisNature")
 
     def __repr__(self):
         return "<Issue name='%s'>" % (self.name.encode('utf-8'),)
 
+    def __str__(self):
+        return self.name.encode('utf-8')
+
     @classmethod
-    def for_nature(cls, nature):
-        return cls.query.filter(or_(
-            cls.analysis_nature == nature,
-            cls.analysis_nature_id == None,  # noqa
-            )).all()
+    def all(cls):
+        return cls.query.order_by(cls.name).all()
 
     @classmethod
     def create_defaults(self):
@@ -80,11 +80,16 @@ access to electricity
 access to justice
         """
 
+        from .analysis_nature import AnalysisNature
+        # these topics are linked to all analysis types
+        natures = AnalysisNature.all()
+
         issues = []
         for s in text.strip().split("\n"):
             i = Issue()
             i.name = s.strip()
             i.description = i.name
+            i.analysis_natures = natures
             issues.append(i)
 
         return issues

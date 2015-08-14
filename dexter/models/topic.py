@@ -14,11 +14,14 @@ class Topic(db.Model):
     id        = Column(Integer, primary_key=True)
     name      = Column(String(150), index=True, nullable=False, unique=True)
     group     = Column(String(100))
+    # TODO: delete this
     analysis_nature_id = Column(Integer, ForeignKey('analysis_natures.id'), index=True, nullable=True)
-    analysis_nature = relationship("AnalysisNature")
 
     def __repr__(self):
         return "<Topic name='%s'>" % (self.name.encode('utf-8'),)
+
+    def __str__(self):
+        return self.name.encode('utf-8')
 
     def sort_key(self):
         try:
@@ -38,10 +41,8 @@ class Topic(db.Model):
         return choices
 
     @classmethod
-    def for_nature(cls, nature):
-        # either the ones just for this nature, or the null ones
-        return cls.query.filter(cls.analysis_nature == nature).all()\
-            or cls.query.filter(cls.analysis_nature == None).all()   # noqa
+    def all(cls):
+        return sorted(cls.query.order_by(cls.name).all(), key=cls.sort_key)
 
     @classmethod
     def create_defaults(self):
@@ -140,12 +141,16 @@ class Topic(db.Model):
 2|31.1. Other- to be used as a last resort|31. Other
         """
 
+        from .analysis_nature import AnalysisNature
+
+        natures = {n.id: n for n in AnalysisNature.all()}
+
         topics = []
         for s in text.strip().split("\n"):
             parts = s.split("|")
 
             t = Topic()
-            t.analysis_nature_id = int(parts[0])
+            t.analysis_natures = [natures[int(parts[0])]]
             t.name = parts[1].strip()
 
             if len(parts) > 2:

@@ -1,15 +1,16 @@
 from flask.ext.admin import Admin, expose, AdminIndexView
 from flask.ext.admin.contrib.sqla import ModelView
 from flask.ext.admin.model.template import macro
-from wtforms.fields import SelectField, TextAreaField, TextField, HiddenField
+from wtforms.fields import SelectField, TextAreaField
 from flask import abort
-import flask_wtf
 from flask.ext.security import current_user
 
 from sqlalchemy import desc, func
 
-from dexter.models import *
+from dexter.models import *  # noqa
 from ..forms import Form
+import dexter.admin.widgets as widgets
+
 
 class MyModelView(ModelView):
     form_base_class = Form
@@ -184,22 +185,35 @@ class IssueView(MyModelView):
     column_list = (
         'name',
         'description',
+        'analysis_natures',
     )
     column_searchable_list = (
         'name',
     )
+    form_columns = (
+        'name',
+        'description',
+        'analysis_natures',
+    )
     page_size = 100
-    form_create_rules = ('name', 'description')
-    form_edit_rules = ('name', 'description')
+
 
 class TopicView(MyModelView):
+    column_list = (
+        'name',
+        'group',
+        'analysis_natures',
+    )
     column_searchable_list = ('name', 'group')
     column_sortable_list = (
         'name',
         'group',
-        ('analysis_nature', AnalysisNature.name),
-        )
-    column_filters = ['analysis_nature.name']
+    )
+    form_columns = (
+        'name',
+        'group',
+        'analysis_natures',
+    )
 
 
 class LocationView(MyModelView):
@@ -227,6 +241,7 @@ class CountryView(MyModelView):
         del form_class.mediums
         return form_class
 
+
 class UserView(MyModelView):
     column_list = (
         'first_name',
@@ -251,9 +266,36 @@ class UserView(MyModelView):
     ]
 
 
+class AnalysisNatureView(MyModelView):
+    column_default_sort = 'name'
+    form_columns = [
+        'name',
+        'nature',
+        'issues',
+        'topics',
+    ]
+    form_args = {
+        'issues': {
+            'widget': widgets.CheckboxSelectWidget(multiple=True)
+        },
+        'topics': {
+            'widget': widgets.CheckboxSelectWidget(multiple=True)
+        }
+    }
+    form_widget_args = {
+        'issues': {'class': 'checkbox-list-col-2'}
+    }
+
+    def on_form_prefill(self, form, id):
+        super(AnalysisNatureView, self).on_form_prefill(form, id)
+        form.issues.query = Issue.all()
+        form.topics.query = Topic.all()
+
+
 admin_instance = Admin(url='/admin', base_template='admin/custom_master.html', name="Dexter Admin", index_view=MyIndexView(), template_mode='bootstrap3')
 admin_instance.add_view(UserView(User, db.session, name="Users", endpoint='user'))
 admin_instance.add_view(CountryView(Country, db.session, name="Countries", endpoint='country'))
+admin_instance.add_view(AnalysisNatureView(AnalysisNature, db.session, name="Analyses", endpoint='analyses'))
 
 admin_instance.add_view(MediumView(Medium, db.session, name="Media", endpoint="medium", category='Article Information'))
 admin_instance.add_view(MyModelView(DocumentType, db.session, name="Types", endpoint="type", category='Article Information'))

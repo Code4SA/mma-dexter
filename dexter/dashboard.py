@@ -1,17 +1,18 @@
 from itertools import groupby
 from datetime import datetime, timedelta
+import re
 
 from dexter.app import app
 from flask import request, make_response, jsonify
 from flask.ext.mako import render_template
 from flask.ext.security import roles_accepted, current_user
-from sqlalchemy.sql import func, distinct, or_
+from sqlalchemy.sql import func, distinct, or_, desc
 from sqlalchemy.orm import joinedload
 from sqlalchemy_fulltext import FullTextSearch
 import sqlalchemy_fulltext.modes as FullTextMode
 
 from dexter.models import *  # noqa
-from dexter.models.document import DocumentAnalysisProblem
+from dexter.models.document import DocumentAnalysisProblem, DocumentTag
 from dexter.models.user import default_country_id
 
 from wtforms import validators, HiddenField, TextField, SelectMultipleField, BooleanField
@@ -138,10 +139,18 @@ def activity():
     for date, group in groupby(docs, lambda d: d.created_at.date()):
         doc_groups.append([date, list(group)])
 
+    # tags
+    tag_summary = db.session\
+        .query(DocumentTag.tag, func.count(1).label('count'))\
+        .group_by(DocumentTag.tag)\
+        .order_by(desc('count'), DocumentTag.tag)\
+        .all()
+
     return render_template('dashboard/activity.haml',
                            form=form,
                            pagination=pagination,
-                           doc_groups=doc_groups)
+                           doc_groups=doc_groups,
+                           tag_summary=tag_summary)
 
 
 @app.route('/activity/map')
@@ -220,10 +229,10 @@ def activity_topics_detail():
 
 class ActivityForm(Form):
     cluster_id      = HiddenField('Cluster')
-    analysis_nature_id = RadioField('Analysis', default=AnalysisNature.ANCHOR)
+    analysis_nature_id = SelectField('Analysis', default=AnalysisNature.ANCHOR_ID)
     user_id         = SelectField('User', [validators.Optional()], default='')
     medium_id       = SelectMultipleField('Medium', [validators.Optional()], default='')
-    country_id      = SelectField('Country', default=default_country_id)
+    country_id      = SelectMultipleField('Country', [validators.Optional()], default=default_country_id)
     created_at      = TextField('Added', [validators.Optional()])
     published_at    = TextField('Published', [validators.Optional()])
     problems        = MultiCheckboxField('Article problems', [validators.Optional()], choices=DocumentAnalysisProblem.for_select())
@@ -233,24 +242,27 @@ class ActivityForm(Form):
     format          = HiddenField('format', default='html')
     # free text search
     q               = TextField('Keyword search', [validators.Optional()])
+    tags            = TextField('Tags', [validators.Optional()])
 
     def __init__(self, *args, **kwargs):
         super(ActivityForm, self).__init__(*args, **kwargs)
+
+        from .models.document import DocumentTag
 
         self.user_id.choices = [['', '(any)'], ['-', '(none)']] + [
             [str(u.id), u.short_name()] for u in sorted(User.query.all(), key=lambda u: u.short_name())]
 
         self.medium_id.choices = [(str(m.id), m.name) for m in Medium.query.order_by(Medium.name).all()]
         self.analysis_nature_id.choices = [[str(n.id), n.name] for n in AnalysisNature.all()]
+        self.natures = AnalysisNature.all()
+        self.tags.choices = [t[0] for t in db.session.query(DocumentTag.tag.distinct()).order_by(DocumentTag.tag)]
 
         # only admins can see all countries
         if current_user.admin:
-            self.country_id.choices = [['', '(any)']]
             countries = Country.all()
         else:
-            self.country_id.choices = []
             countries = [current_user.country]
-        self.country_id.choices.extend([str(c.id), c.name] for c in countries)
+        self.country_id.choices = [[str(c.id), c.name] for c in countries]
 
         # override the analysis nature id if we have a cluster
         if self.cluster_id.data:
@@ -272,9 +284,9 @@ class ActivityForm(Form):
         else:
             return None
 
-    def country(self):
+    def countries(self):
         if self.country_id.data:
-            return Country.query.get(self.country_id.data)
+            return Country.query.filter(Country.id.in_(self.country_id.data))
         return None
 
     def analysis_nature(self):
@@ -347,7 +359,7 @@ class ActivityForm(Form):
                     Document.checked_by_user_id == self.user_id.data))
 
         if self.country_id.data:
-            query = query.filter(Document.country_id == self.country_id.data)
+            query = query.filter(Document.country_id.in_(self.country_id.data))
 
         if self.created_from:
             query = query.filter(Document.created_at >= self.created_from)
@@ -381,6 +393,11 @@ class ActivityForm(Form):
         if self.q.data:
             # full text search
             query = query.filter(FullTextSearch(self.q.data, Document, FullTextMode.NATURAL))
+
+        if self.tags.data:
+            tags = set(f for f in re.split('\s*,\s*', self.tags.data) if f)
+            for tag in tags:
+                query = query.filter(Document.tags.contains(tag))
 
         return query
 

@@ -81,7 +81,7 @@ class MineForm(Form):
     # free text search
     q = TextField('Search', [validators.Optional()])
 
-    nature_id = AnalysisNature.ANCHOR
+    nature_id = AnalysisNature.ANCHOR_ID
 
     def __init__(self, *args, **kwargs):
         super(MineForm, self).__init__(*args, **kwargs)
