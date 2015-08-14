@@ -18,7 +18,7 @@
   %input#doc_ids(type="hidden", value=','.join(all_doc_ids))
 
   .row
-    .col-sm-6
+    .col-sm-7
       - if pagination.pages > 1:
         %a.btn.btn-default.select-page(href="#")
           %i.fa.fa-check-square
@@ -32,7 +32,7 @@
         %i.fa.fa-square-o
         Select none
 
-    .col-sm-6.with-selection-tools
+    .col-sm-5.with-selection-tools
       %b
         With
         %span.count 0
