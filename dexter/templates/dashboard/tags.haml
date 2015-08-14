@@ -1,0 +1,45 @@
+- if tag_summary:
+  .panel.panel-default
+    .panel-body
+      %ul.tag-summary.list-inline
+        %li
+          %i.fa.fa-fw.fa-tags
+        - for tag, count in tag_summary:
+          %li
+            - if not form.tags.data or tag not in form.tags.data:
+              %a(href="#", **{'data-tag': tag})
+                &= tag
+                %span.badge&= count
+            - else:
+              &= tag
+              %span.badge&= count
+
+%section.selection-tools
+  %input#doc_ids(type="hidden", value=','.join(all_doc_ids))
+
+  .row
+    .col-sm-6
+      - if pagination.pages > 1:
+        %a.btn.btn-default.select-page(href="#")
+          %i.fa.fa-check-square
+          Select all ${len(pagination.items)} articles on this page
+
+      %a.btn.btn-default.select-all(href="#")
+        %i.fa.fa-check-square
+        Select all ${pagination.total} articles
+
+      %a.btn.btn-default.select-none(href="#")
+        %i.fa.fa-square-o
+        Select none
+
+    .col-sm-6.with-selection-tools
+      %b
+        With
+        %span.count 0
+        selected:
+      %a.btn.btn-default.selected-add-tag(href="#")
+        %i.fa.fa-plus
+        Add a tag
+      %a.btn.btn-default.selected-remove-tag(href="#")
+        %i.fa.fa-minus
+        Remove a tag

@@ -117,6 +117,7 @@ def activity():
     # setup pagination for doc ids
     query = db.session.query(Document.id).order_by(Document.created_at.desc())
     query = form.filter_query(query)
+    all_doc_ids = [str(d[0]) for d in query]
     pagination = paginate(query, page, per_page)
 
     doc_ids = [t.id for t in pagination.items]
@@ -150,7 +151,8 @@ def activity():
                            form=form,
                            pagination=pagination,
                            doc_groups=doc_groups,
-                           tag_summary=tag_summary)
+                           tag_summary=tag_summary,
+                           all_doc_ids=all_doc_ids)
 
 
 @app.route('/activity/map')

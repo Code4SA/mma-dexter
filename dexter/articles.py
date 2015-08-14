@@ -1,18 +1,14 @@
 import logging
-import os
 
 from flask import request, url_for, flash, redirect, make_response, jsonify
 from flask.ext.mako import render_template
 from flask.ext.security import roles_accepted, current_user
 
-from werkzeug.exceptions import Forbidden, NotAcceptable
 from wand.exceptions import WandError
 
 from .app import app
-from .models import db, Document, Issue, Person, DocumentPlace, DocumentAttachment
+from .models import db, Document, Issue, DocumentPlace, DocumentAttachment, DocumentTag
 from .models.document import DocumentForm
-from .models.source import DocumentSource
-from .models.fairness import DocumentFairness, DocumentFairnessForm
 from .models.analysis_nature import AnalysisNature
 from .models.author import AuthorForm
 from .analysis.forms import DocumentSourceForm
@@ -20,6 +16,7 @@ from .analysis.forms import DocumentSourceForm
 from .processing import DocumentProcessor, ProcessingError
 
 log = logging.getLogger(__name__)
+
 
 @app.route('/articles/<id>')
 @roles_accepted('monitor')
@@ -313,3 +310,33 @@ def create_article_attachment():
         raise ValueError("Need a file attachment")
     except ValueError as e:
         return (make_response(e.message), 400, [])
+
+
+@app.route('/articles/add-tag', methods=['POST'])
+@roles_accepted('monitor')
+def add_article_tags():
+    tags = DocumentTag.split(request.form.get('tag', '').strip())
+    doc_ids = DocumentTag.split(request.form.get('doc_ids', ''))
+    docs = Document.query.filter(Document.id.in_(doc_ids))
+
+    if tags and tags:
+        for doc in docs:
+            for tag in tags:
+                doc.tags.add(tag)
+    db.session.commit()
+    return '', 200
+
+
+@app.route('/articles/remove-tag', methods=['POST'])
+@roles_accepted('monitor')
+def remove_article_tags():
+    tags = DocumentTag.split(request.form.get('tag', '').strip())
+    doc_ids = DocumentTag.split(request.form.get('doc_ids', ''))
+    docs = Document.query.filter(Document.id.in_(doc_ids))
+
+    if tags and tags:
+        for doc in docs:
+            for tag in tags:
+                doc.tags.discard(tag)
+    db.session.commit()
+    return '', 200

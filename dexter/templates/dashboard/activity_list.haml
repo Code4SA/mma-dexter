@@ -1,3 +1,5 @@
+%%page(args="allow_selection=False")
+
 .activity-list
   - for date, group in doc_groups:
     %section
@@ -7,6 +9,8 @@
 
       %table.table.table-striped.table-condensed.activity-list
         %tr
+          - if allow_selection:
+            %th
           %th
           %th.user Added by
           %th
@@ -19,6 +23,9 @@
 
         - for doc in group:
           %tr
+            - if allow_selection:
+              %td
+                %input(type="checkbox", name="doc_id", value=doc.id)
             %td
               %i.fa(class_=doc.analysis_nature.icon(), title='%s analysis' % doc.analysis_nature.name)
 

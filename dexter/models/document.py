@@ -344,7 +344,7 @@ class DocumentForm(Form):
         self.tags.choices = [t[0] for t in db.session.query(DocumentTag.tag.distinct()).order_by(DocumentTag.tag)]
 
     def validate_tags(self, field):
-        field.data = set(t for t in re.split(r'\s*,\s*', field.data) if t)
+        field.data = set(t for t in DocumentTag.split(field.data) if t)
 
     def is_new(self):
         return self._obj is None
@@ -422,3 +422,7 @@ class DocumentTag(db.Model):
     def __init__(self, tag=None):
         if tag:
             self.tag = tag
+
+    @classmethod
+    def split(cls, tags):
+        return re.split('\s*,\s*', tags)
