@@ -356,15 +356,15 @@ def get_sources_feed(start_date, end_date, keys=None, group=None, source_type=No
 
     cols = [FIELDS[c] for c in FIELDS.viewkeys() & keys]
 
-    query = db.session.query(
-                func.count(DocumentSourcesView.c.document_id).label("record_count"),
-                *cols
-            )\
-            .join(DocumentsView, DocumentSourcesView.c.document_id == DocumentsView.c.document_id)\
-            .outerjoin(DocumentPlacesView, DocumentPlacesView.c.document_id == DocumentsView.c.document_id)\
-            .group_by(*cols)\
-            .filter(DocumentsView.c.published_at >= start_date)\
-            .filter(DocumentsView.c.published_at <= end_date)
+    # we're going to filter out anything with just 1 quotation
+    counts = func.count(DocumentSourcesView.c.document_id).label("record_count")
+    query = db.session.query(counts, *cols)\
+        .join(DocumentsView, DocumentSourcesView.c.document_id == DocumentsView.c.document_id)\
+        .outerjoin(DocumentPlacesView, DocumentPlacesView.c.document_id == DocumentsView.c.document_id)\
+        .group_by(*cols)\
+        .having(counts > 1)\
+        .filter(DocumentsView.c.published_at >= start_date)\
+        .filter(DocumentsView.c.published_at <= end_date)
 
     if source_type is not None:
         query = query.filter(DocumentSourcesView.c.source_type == source_type)
