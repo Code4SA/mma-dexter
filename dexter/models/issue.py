@@ -39,6 +39,9 @@ class Issue(db.Model):
     def __str__(self):
         return self.name.encode('utf-8')
 
+    def __unicode__(self):
+        return self.name
+
     @classmethod
     def all(cls):
         return cls.query.order_by(cls.name).all()
