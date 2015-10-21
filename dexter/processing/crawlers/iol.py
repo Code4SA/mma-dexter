@@ -43,7 +43,7 @@ class IOLCrawler(BaseCrawler):
         doc.title = unescape(info['title'])
         doc.summary = unescape(info.get('description'))
 
-        doc.text = '\n\n'.join(BeautifulSoup(p).text for p in info['paragraphs'])
+        doc.text = '\n\n'.join(BeautifulSoup(p).text.strip() for p in info['paragraphs'])
         doc.published_at = self.parse_timestamp(info['published'])
         doc.author = Author.get_or_create(info['byline'], AuthorType.journalist())
 
