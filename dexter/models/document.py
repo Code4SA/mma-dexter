@@ -20,6 +20,7 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import relationship, backref, deferred
 from sqlalchemy.ext.associationproxy import association_proxy
+from sqlalchemy.dialects.mysql import LONGTEXT
 from sqlalchemy_fulltext import FullText
 
 from ..forms import Form, IntegerField, SelectField, RadioField
@@ -53,7 +54,7 @@ class Document(FullText, db.Model):
 
     # the raw HTML for archive purposes. Marked as deferred so we only
     # load it when it's actually used
-    raw_html  = deferred(Column(Text))
+    raw_html  = deferred(Column(LONGTEXT))
 
     author_id         = Column(Integer, ForeignKey('authors.id'), index=True, nullable=False)
     medium_id         = Column(Integer, ForeignKey('mediums.id'), index=True, nullable=False)
