@@ -1,14 +1,24 @@
 from urlparse import urlparse, urlunparse
 import re
+import HTMLParser
 
 from bs4 import BeautifulSoup
 import requests
 
 from .base import BaseCrawler
-from ...models import Entity, Author, AuthorType
+from ...models import Author, AuthorType
+
+
+def unescape(html):
+    if html is None:
+        return None
+    return HTMLParser.HTMLParser().unescape(html)
+
 
 class IOLCrawler(BaseCrawler):
-    TL_RE = re.compile('(www\.)?iol.co.za')
+    # The IOL crawler uses the IOL news feed JSON API and needs
+    # an article ID at the end of the URL
+    TL_RE = re.compile('(www\.)?iol.co.za/.*\.\d+$')
 
     def offer(self, url):
         """ Can this crawler process this URL? """
@@ -27,22 +37,21 @@ class IOLCrawler(BaseCrawler):
         """ Extract text and other things from the raw_html for this document. """
         super(IOLCrawler, self).extract(doc, raw_html)
 
-        soup = BeautifulSoup(raw_html)
+        iol_id = doc.url.split('.')[-1]
+        info = self.fetch_json_info(iol_id)
 
-        doc.title = self.extract_plaintext(soup.select(".article-white h1.article_headers"))
-        doc.text = "\n\n".join(p.text for p in soup.select("#article_container p.arcticle_text"))
+        doc.title = unescape(info['title'])
+        doc.summary = unescape(info.get('description'))
 
-        parts = self.extract_plaintext(soup.select(".article-white p.byline")).split("By", 1)
-        if len(parts) > 1:
-            date, author = parts
-        else:
-            date = parts[0]
-            author = None
+        doc.text = '\n\n'.join(BeautifulSoup(p).text for p in info['paragraphs'])
+        doc.published_at = self.parse_timestamp(info['published'])
+        doc.author = Author.get_or_create(info['byline'], AuthorType.journalist())
 
-        doc.published_at = self.parse_timestamp(date)
-
-        if author:
-            author = author.strip()
-            doc.author = Author.get_or_create(author, AuthorType.journalist())
-        else:
-            doc.author = Author.unknown()
+    def fetch_json_info(self, iol_id):
+        """ Fetch document data in JSON from the IOL API """
+        url = 'http://beta.iol.co.za/feed/a/' + iol_id
+        self.log.info("Fetching URL: " + url)
+        r = requests.get(url, timeout=10)
+        # raise an HTTPError on badness
+        r.raise_for_status()
+        return r.json
