@@ -145,6 +145,13 @@ class AnchorAnalysisForm(DocumentAnalysisForm):
     topic_id = SelectField('Topic')
     origin_location_id = SelectField('Origin')
 
+    quality_basic_context = BooleanField('Basic context')
+    quality_causes        = BooleanField('Causes are mentioned')
+    quality_policies      = BooleanField('Relevant policies are mentioned')
+    quality_solutions     = BooleanField('Solutions are offered')
+    quality_consequences  = BooleanField('Consequences are mentioned')
+    quality_self_help     = BooleanField('Self-help offered')
+
     def __init__(self, *args, **kwargs):
         super(AnchorAnalysisForm, self).__init__(*args, **kwargs)
 
@@ -155,6 +162,17 @@ class AnchorAnalysisForm(DocumentAnalysisForm):
         nature = self._obj.analysis_nature
         self.issues.choices = sorted([(str(issue.id), issue.name) for issue in nature.issues], key=lambda i: i[1])
         self.topic_id.choices = [['', '(none)']] + Topic.for_select_widget(nature.topics)
+
+    @property
+    def quality_fields(self):
+        return [
+            self.quality_basic_context,
+            self.quality_causes,
+            self.quality_consequences,
+            self.quality_solutions,
+            self.quality_policies,
+            self.quality_self_help,
+        ]
 
 
 class ElectionsAnalysisForm(AnchorAnalysisForm):
@@ -169,13 +187,6 @@ class ChildrenAnalysisForm(ElectionsAnalysisForm):
     Analysis of a document from a children standpoint.
     """
     child_focus     = YesNoField('Children are a central focus?', [validators.Optional()])
-
-    quality_basic_context = BooleanField('Basic context')
-    quality_causes        = BooleanField('Causes are mentioned')
-    quality_policies      = BooleanField('Relevant policies are mentioned')
-    quality_solutions     = BooleanField('Solutions are offered')
-    quality_consequences  = BooleanField('Consequences are mentioned')
-    quality_self_help     = BooleanField('Self-help offered')
 
     abuse_source         = BooleanField('Child is a source')
     abuse_identified     = BooleanField("Child's identity is disclosed")
@@ -192,17 +203,6 @@ class ChildrenAnalysisForm(ElectionsAnalysisForm):
 
         self.principle_supported_id.choices = [['', '(none)']] + [(str(p.id), p.name) for p in principles]
         self.principle_violated_id.choices = self.principle_supported_id.choices
-
-    @property
-    def quality_fields(self):
-        return [
-            self.quality_basic_context,
-            self.quality_causes,
-            self.quality_consequences,
-            self.quality_solutions,
-            self.quality_policies,
-            self.quality_self_help,
-        ]
 
     @property
     def abuse_fields(self):

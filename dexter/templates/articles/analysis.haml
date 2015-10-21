@@ -111,31 +111,33 @@
                     %tr.quotation(dataOffsets=('%d:%d' % (q.offset, q.length) if q.offset else ''))
                       %td&= q.quote
 
+          - form = document.make_analysis_form()
+          - if hasattr(form, 'quality_fields'):
+            %section
+              %h4 Quality
+              %ul.fa-ul
+                - for f in form.quality_fields:
+                  %li
+                    - val = getattr(document, f.name)
+                    - if val:
+                      %i.fa-li.fa.fa-check-square-o
+                    - else:
+                      %i.fa-li.fa.fa-square-o
+                    &= f.label.text
+
           - if document.analysis_nature.nature == AnalysisNature.CHILDREN:
             %hr
             %section
-              %h4 Child Focus
-              %ul.fa-ul
-                %li
-                  - if document.child_focus:
-                    %i.fa-li.fa.fa-check-square-o
-                  - else:
-                    %i.fa-li.fa.fa-square-o
-                  Children are a central focus of this story
-
-            %section
               .row
                 .col-sm-6
-                  %h4 Quality
+                  %h4 Child Focus
                   %ul.fa-ul
-                    - for f in document.make_analysis_form().quality_fields:
-                      %li
-                        - val = getattr(document, f.name)
-                        - if val:
-                          %i.fa-li.fa.fa-check-square-o
-                        - else:
-                          %i.fa-li.fa.fa-square-o
-                        &= f.label.text
+                    %li
+                      - if document.child_focus:
+                        %i.fa-li.fa.fa-check-square-o
+                      - else:
+                        %i.fa-li.fa.fa-square-o
+                      Children are a central focus of this story
 
                 .col-sm-6
                   %h4 Secondary Victimisation

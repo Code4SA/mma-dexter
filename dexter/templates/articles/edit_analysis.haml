@@ -111,25 +111,26 @@
                             = subfield.label()
                             %br
 
+              - if hasattr(form, 'quality_fields'):
+                %hr
+                %section
+                  %h4 Quality
+                  - for f in form.quality_fields:
+                    = field_input(f)
+
               - if document.analysis_nature.nature == AnalysisNature.CHILDREN:
                 %hr
                 %section
-                  %h4&=form.child_focus.label.text
-                  .btn-group(dataToggle='buttons')
-                    - for fld in form.child_focus:
-                      %label.btn.btn-default(class_='active' if fld.checked else '')
-                        = fld()
-                        &= fld.label.text
+                  .row
+                    .col-sm-6
+                      %h4&=form.child_focus.label.text
+                      .btn-group(dataToggle='buttons')
+                        - for fld in form.child_focus:
+                          %label.btn.btn-default(class_='active' if fld.checked else '')
+                            = fld()
+                            &= fld.label.text
 
-                .row
-                  .col-sm-6
-                    %section
-                      %h4 Quality
-                      - for f in form.quality_fields:
-                        = field_input(f)
-
-                  .col-sm-6
-                    %section
+                    .col-sm-6
                       %h4 Secondary Victimisation
                       - for f in form.abuse_fields:
                         = field_input(f)
