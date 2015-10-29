@@ -162,7 +162,9 @@ class XLSXExportBuilder:
         rows = self.filter(db.session
                            .query(*self.merge_views(tables, ['document_id']))
                            .join(Document)
-                           .join(DocumentIssuesView)).all()
+                           .join(DocumentIssuesView))\
+                           .filter(DocumentIssuesView.c.issue != None)\
+                           .all()  # noqa
         self.write_table(ws, 'Issues', rows)
 
     def keywords_worksheet(self, wb):
