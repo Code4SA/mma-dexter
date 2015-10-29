@@ -55,6 +55,7 @@ class XLSXExportBuilder:
         self.utterances_worksheet(workbook)
         self.places_worksheet(workbook)
         self.keywords_worksheet(workbook)
+        self.issues_worksheet(workbook)
         self.everything_worksheet(workbook)
 
         workbook.close()
@@ -148,6 +149,21 @@ class XLSXExportBuilder:
 
         rows = self.filter(db.session.query(PersonUtterancesView).join(Document)).all()
         self.write_table(ws, 'Quotations', rows)
+
+    def issues_worksheet(self, wb):
+        from dexter.models.views import DocumentsView, DocumentIssuesView
+
+        ws = wb.add_worksheet('issues')
+
+        tables = OrderedDict()
+        tables['doc'] = DocumentsView
+        tables['issues'] = DocumentIssuesView
+
+        rows = self.filter(db.session
+                           .query(*self.merge_views(tables, ['document_id']))
+                           .join(Document)
+                           .join(DocumentIssuesView)).all()
+        self.write_table(ws, 'Issues', rows)
 
     def keywords_worksheet(self, wb):
         from dexter.models.views import DocumentKeywordsView
