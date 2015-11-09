@@ -2,7 +2,7 @@ import logging
 
 from flask import request, url_for, flash, redirect, make_response, jsonify
 from flask.ext.mako import render_template
-from flask.ext.security import roles_accepted, current_user
+from flask.ext.security import roles_accepted, current_user, login_required
 
 from wand.exceptions import WandError
 
@@ -20,6 +20,7 @@ log = logging.getLogger(__name__)
 
 
 @app.route('/articles/<id>')
+@login_required
 @roles_accepted('monitor')
 def show_article(id):
     document = Document.query.get_or_404(id)
@@ -31,6 +32,7 @@ def show_article(id):
 
 
 @app.route('/articles/<id>/delete', methods=['POST'])
+@login_required
 @roles_accepted('monitor')
 def delete_article(id):
     document = Document.query.get_or_404(id)
@@ -48,6 +50,7 @@ def delete_article(id):
 
 
 @app.route('/articles/new', methods=['GET', 'POST'])
+@login_required
 @roles_accepted('monitor')
 def new_article():
     form = DocumentForm()
@@ -124,6 +127,7 @@ def new_article():
 
 
 @app.route('/articles/<id>/edit', methods=['GET', 'POST'])
+@login_required
 @roles_accepted('monitor')
 def edit_article(id):
     doc = Document.query.get_or_404(id)
@@ -158,6 +162,7 @@ def edit_article(id):
 
 
 @app.route('/articles/<id>/analysis', methods=['GET', 'POST'])
+@login_required
 @roles_accepted('monitor')
 def edit_article_analysis(id):
     document = Document.query.get_or_404(id)
@@ -266,6 +271,7 @@ def edit_article_analysis(id):
 
 
 @app.route('/articles/<id>/analysis/nature', methods=['POST'])
+@login_required
 @roles_accepted('monitor')
 def edit_article_analysis_nature(id):
     document = Document.query.get_or_404(id)
@@ -289,6 +295,7 @@ def edit_article_analysis_nature(id):
 
 
 @app.route('/articles/attachments', methods=['POST'])
+@login_required
 @roles_accepted('monitor')
 def create_article_attachment():
     try:
@@ -315,6 +322,7 @@ def create_article_attachment():
 
 
 @app.route('/articles/add-tag', methods=['POST'])
+@login_required
 @roles_accepted('monitor')
 def add_article_tags():
     tags = DocumentTag.split(request.form.get('tag', '').strip())
@@ -330,6 +338,7 @@ def add_article_tags():
 
 
 @app.route('/articles/remove-tag', methods=['POST'])
+@login_required
 @roles_accepted('monitor')
 def remove_article_tags():
     tags = DocumentTag.split(request.form.get('tag', '').strip())

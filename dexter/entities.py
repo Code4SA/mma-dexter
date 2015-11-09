@@ -4,7 +4,7 @@ log = logging.getLogger(__name__)
 
 from flask import request, url_for, flash, redirect, make_response
 from flask.ext.mako import render_template
-from flask.ext.security import roles_accepted, current_user
+from flask.ext.security import roles_accepted, current_user, login_required
 from sqlalchemy.orm import subqueryload
 from sqlalchemy import distinct
 
@@ -20,6 +20,7 @@ import urllib
 
 
 @app.route('/entities/<string:group>/<string:name>/')
+@login_required
 @roles_accepted('monitor')
 def show_entity(group, name):
 
@@ -48,6 +49,7 @@ def show_entity(group, name):
 
 
 @app.route('/people/<int:id>/', methods=['GET', 'POST'])
+@login_required
 @roles_accepted('monitor')
 def show_person(id):
     person = Person.query.get(id)
@@ -111,6 +113,7 @@ def show_person(id):
         pagination=pagination)
 
 @app.route('/people/<int:id>/merge', methods=['POST'])
+@login_required
 @roles_accepted('monitor')
 def merge_person(id):
     if current_user.admin:
@@ -129,6 +132,7 @@ def merge_person(id):
     return redirect(url_for('show_person', id=id))
 
 @app.route('/people/new', methods=['POST'])
+@login_required
 @roles_accepted('monitor')
 def new_person():
     name = request.form.get('name', '')

@@ -4,7 +4,7 @@ from wtforms import validators, HiddenField, TextField
 
 from flask import request, jsonify
 from flask.ext.mako import render_template
-from flask.ext.security import roles_accepted, current_user
+from flask.ext.security import roles_accepted, current_user, login_required
 from sqlalchemy_fulltext import FullTextSearch
 import sqlalchemy_fulltext.modes as FullTextMode
 
@@ -16,6 +16,7 @@ from dexter.utils import client_cache_for
 
 
 @app.route('/mine/')
+@login_required
 @roles_accepted('monitor', 'miner')
 @client_cache_for(minutes=10)
 def mine_home():
@@ -35,6 +36,7 @@ def mine_home():
 
 
 @app.route('/mine/people/<id>')
+@login_required
 @roles_accepted('monitor', 'miner')
 @client_cache_for(minutes=10)
 def mine_person(id):
@@ -59,6 +61,7 @@ def mine_person(id):
 
 
 @app.route('/mine/people/')
+@login_required
 @roles_accepted('monitor', 'miner')
 @client_cache_for(minutes=10)
 def mine_people():

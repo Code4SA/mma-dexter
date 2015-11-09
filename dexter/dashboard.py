@@ -5,7 +5,7 @@ import re
 from dexter.app import app
 from flask import request, make_response, jsonify
 from flask.ext.mako import render_template
-from flask.ext.security import roles_accepted, current_user
+from flask.ext.security import roles_accepted, current_user, login_required
 from sqlalchemy.sql import func, distinct, or_, desc
 from sqlalchemy.orm import joinedload
 from sqlalchemy_fulltext import FullTextSearch
@@ -23,6 +23,7 @@ from utils import paginate
 
 
 @app.route('/dashboard')
+@login_required
 @roles_accepted('monitor')
 def dashboard():
     latest_docs = [x.id for x in Document.query.order_by(Document.created_at.desc()).limit(30)]
@@ -46,6 +47,7 @@ def dashboard():
 
 
 @app.route('/monitor-dashboard')
+@login_required
 @roles_accepted('monitor')
 def monitor_dashboard():
     docs = [x.id for x in Document.query
@@ -74,6 +76,7 @@ def monitor_dashboard():
 
 
 @app.route('/activity')
+@login_required
 @roles_accepted('monitor')
 def activity():
     per_page = 100
@@ -156,6 +159,7 @@ def activity():
 
 
 @app.route('/activity/map')
+@login_required
 @roles_accepted('monitor')
 def activity_map():
     form = ActivityForm(request.args)
@@ -172,6 +176,7 @@ def activity_map():
 
 
 @app.route('/activity/sources')
+@login_required
 @roles_accepted('monitor')
 def activity_sources():
     form = ActivityForm(request.args)
@@ -191,6 +196,7 @@ def activity_sources():
 
 
 @app.route('/activity/mentions')
+@login_required
 @roles_accepted('monitor')
 def activity_mentions():
     form = ActivityForm(request.args)
@@ -204,6 +210,7 @@ def activity_mentions():
 
 
 @app.route('/activity/topics')
+@login_required
 @roles_accepted('monitor')
 def activity_topics():
     # topics take a while to build, so this
@@ -216,6 +223,7 @@ def activity_topics():
 
 
 @app.route('/activity/topics/detail')
+@login_required
 @roles_accepted('monitor')
 def activity_topics_detail():
     form = ActivityForm(request.args)
