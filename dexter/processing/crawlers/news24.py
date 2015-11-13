@@ -2,11 +2,11 @@ from urlparse import urlparse, urlunparse
 import re
 
 from bs4 import BeautifulSoup
-import requests
 
 from .base import BaseCrawler
 from .generic import GenericCrawler
-from ...models import Entity, Author, AuthorType
+from ...models import Medium, Author, AuthorType
+
 
 class News24Crawler(BaseCrawler):
     TL_RE = re.compile('(www\.)?news24.com')
@@ -30,6 +30,10 @@ class News24Crawler(BaseCrawler):
 
         soup = BeautifulSoup(raw_html)
 
+        # handle City Press
+        if soup.select('.citypress-accreditation-block'):
+            doc.medium = Medium.query.filter(Medium.name == 'City Press').one()
+
         tags = soup.select('meta[property="twitter:description"]')
         if tags:
             doc.summary = tags[0].attrs.get('content')
@@ -45,7 +49,7 @@ class News24Crawler(BaseCrawler):
 
             doc.text = '\n\n'.join(text)
             if doc.summary:
-              doc.text = doc.summary + "\n\n" + doc.text
+                doc.text = doc.summary + "\n\n" + doc.text
 
             doc.published_at = self.parse_timestamp(self.extract_plaintext(soup.select(".article .datestamp")))
             author = self.extract_plaintext(soup.select("#_htmlAccreditationName")).strip('- ').strip()
@@ -55,7 +59,7 @@ class News24Crawler(BaseCrawler):
             doc.title = self.extract_plaintext(soup.select(".article-content article h1"))
             doc.text = "\n\n".join(p.text.replace("\n", " ") for p in soup.select(".article-content article > p"))
             if doc.summary:
-              doc.text = doc.summary + "\n\n" + doc.text
+                doc.text = doc.summary + "\n\n" + doc.text
             doc.published_at = self.parse_timestamp(self.extract_plaintext(soup.select(".article-content article .datestamp")))
             author = self.extract_plaintext(soup.select("#accreditationName")).strip('- ').strip()
 
