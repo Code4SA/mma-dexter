@@ -133,3 +133,25 @@ class TestAlchemyExtractor(unittest.TestCase):
         u = self.doc.utterances[0]
         self.assertEqual(17, u.offset)
         self.assertEqual(27, u.length)
+
+    def test_extract_taxonomy(self):
+        taxonomy = [{
+            "label": "/law, govt and politics/law enforcement/police",
+            "score": "0.538782"
+        }, {
+            "confident": "no",
+            "label": "/law, govt and politics",
+            "score": "0.380401"
+        }, {
+            "confident": "no",
+            "label": "/technology and computing/internet technology/social network",
+            "score": "0.135708"
+        }]
+
+        self.ex.extract_taxonomy(self.doc, taxonomy)
+
+        tx = self.doc.taxonomies[0]
+        self.assertEqual('/law, govt and politics/law enforcement/police', tx.label)
+        self.assertEqual(0.538782, tx.score)
+
+        self.assertEqual(1, len(self.doc.taxonomies))

@@ -20,6 +20,7 @@ class TestNewArticle(UserSessionTestCase):
 
         AlchemyExtractor.fetch_entities = MagicMock(return_value=[])
         AlchemyExtractor.fetch_keywords = MagicMock(return_value=[])
+        AlchemyExtractor.fetch_taxonomy = MagicMock(return_value=[])
         CalaisExtractor.fetch_data = MagicMock(return_value={})
   
     def test_new_article_path(self):

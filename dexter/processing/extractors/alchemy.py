@@ -1,12 +1,11 @@
-import re
-
 from .base import BaseExtractor
 from .alchemy_api import AlchemyAPI
 from ...processing import ProcessingError
-from ...models import DocumentKeyword, DocumentEntity, Entity, Utterance
+from ...models import DocumentKeyword, DocumentEntity, Entity, Utterance, DocumentTaxonomy
 
 import logging
 log = logging.getLogger(__name__)
+
 
 class AlchemyExtractor(BaseExtractor):
     """ Use the Alchemy API to extract entities and other
@@ -25,6 +24,7 @@ class AlchemyExtractor(BaseExtractor):
             try:
                 self.fetch_extract_entities(doc)
                 self.fetch_extract_keywords(doc)
+                self.fetch_extract_taxonomy(doc)
             except ProcessingError as e:
                 if e.message == 'unsupported-text-language':
                     log.info('Ignoring processing error: %s' % e.message)
@@ -34,7 +34,6 @@ class AlchemyExtractor(BaseExtractor):
     def fetch_extract_entities(self, doc):
         log.info("Extracting entities for %s" % doc)
         self.extract_entities(doc, self.fetch_entities(doc) or [])
-
 
     def extract_entities(self, doc, entities):
         log.debug("Raw extracted entities: %s" % entities)
@@ -66,7 +65,7 @@ class AlchemyExtractor(BaseExtractor):
                 u = Utterance()
                 u.quote = quote['quotation'].strip()
                 u.entity = e
-                
+
                 # lame effort to find quote offset - alchemy often puts ... at the end
                 needle = u.quote.strip(' .')
                 offset = doc.text.find(needle)
@@ -79,11 +78,13 @@ class AlchemyExtractor(BaseExtractor):
 
         log.info("Added %d entities and %d utterances for %s" % (entities_added, utterances_added, doc))
 
-
     def fetch_extract_keywords(self, doc):
         log.info("Extracting keywords for %s" % doc)
         self.extract_keywords(doc, self.fetch_keywords(doc) or [])
 
+    def fetch_extract_taxonomy(self, doc):
+        log.info("Extracting taxonomy for %s" % doc)
+        self.extract_taxonomy(doc, self.fetch_taxonomy(doc) or [])
 
     def extract_keywords(self, doc, keywords):
         entity_names = set(de.entity.name for de in doc.entities)
@@ -106,6 +107,23 @@ class AlchemyExtractor(BaseExtractor):
 
         log.info("Added %d keywords for %s" % (keywords_added, doc))
 
+    def extract_taxonomy(self, doc, taxonomy):
+        added = 0
+
+        log.debug("Raw extracted taxonomy: %s" % taxonomy)
+
+        for tx in taxonomy:
+            # skip taxonomies that alchemyapi isn't confident about, they're generally bad
+            if tx.get('confident') == 'no':
+                continue
+
+            dt = DocumentTaxonomy()
+            dt.document = doc
+            dt.label = tx['label']
+            dt.score = float(tx['score'])
+            added += 1
+
+        log.info("Added %d taxonomy for %s" % (added, doc))
 
     def fetch_entities(self, doc):
         res = self.check_cache(doc.url, 'alchemy-entities')
@@ -115,13 +133,12 @@ class AlchemyExtractor(BaseExtractor):
                 'quotations': 1,
                 'linkedData': 0,
                 'sentiment': 0,
-                })
+            })
             if res['status'] == 'ERROR':
                 raise ProcessingError(res['statusInfo'])
             self.update_cache(doc.url, 'alchemy-entities', res)
 
         return res['entities']
-
 
     def fetch_keywords(self, doc):
         res = self.check_cache(doc.url, 'alchemy-keywords')
@@ -133,6 +150,17 @@ class AlchemyExtractor(BaseExtractor):
             self.update_cache(doc.url, 'alchemy-keywords', res)
 
         return res['keywords']
+
+    def fetch_taxonomy(self, doc):
+        res = self.check_cache(doc.url, 'alchemy-taxonomy')
+
+        if not res:
+            res = self.alchemy.taxonomy('text', doc.text.encode('utf-8'))
+            if res['status'] == 'ERROR':
+                raise ProcessingError(res['statusInfo'])
+            self.update_cache(doc.url, 'alchemy-taxonomy', res)
+
+        return res['taxonomy']
 
     def all_offsets(self, text, needle):
         needle_len = len(needle)
@@ -147,4 +175,3 @@ class AlchemyExtractor(BaseExtractor):
             start += needle_len
 
         return ' '.join('%d:%d' % p for p in offsets[:100])
-

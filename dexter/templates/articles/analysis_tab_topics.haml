@@ -1,0 +1,18 @@
+#topics-tab.tab-pane
+  %h4 Topics
+
+  - if not document.taxonomies:
+    %p
+      %i None available.
+
+    - if document.can_user_edit(current_user):
+      %p
+        %a.btn.btn-default(href=url_for('reprocess_article_analysis', id=document.id, aspect='taxonomy'), dataMethod='POST')
+          Find topics for this article.
+
+  - else:
+    %table.table.table-striped.table-condensed.offsets.entities
+      - for tx in document.taxonomies:
+        %tr
+          %td&= tx.friendly_label
+          %td&= tx.score
