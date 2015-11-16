@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from sqlalchemy import Column, ForeignKey, Integer, String, Float
 
 from itertools import groupby
@@ -174,6 +176,10 @@ class DocumentTaxonomy(db.Model):
     label     = Column(String(200), index=True, nullable=False)
     score = Column(Float, index=True, nullable=False)
 
+    @property
+    def friendly_label(self):
+        return u' ❯ '.join(self.label.split('/')[1:])
+
     def __repr__(self):
         return "<DocumentTaxonomy label='%s', score=%f, doc=%s>" % (
-                self.label.encode('utf-8'), self.score, self.document)
+            self.label.encode('utf-8'), self.score, self.document)

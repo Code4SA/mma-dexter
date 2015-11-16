@@ -1,6 +1,6 @@
 import logging
 
-from flask import request, url_for, flash, redirect, make_response, jsonify
+from flask import request, url_for, flash, redirect, make_response, jsonify, abort
 from flask.ext.mako import render_template
 from flask.ext.security import roles_accepted, current_user, login_required
 
@@ -15,6 +15,7 @@ from .models.author import AuthorForm
 from .analysis.forms import DocumentSourceForm
 
 from .processing import DocumentProcessor, ProcessingError
+from .processing.extractors.alchemy import AlchemyExtractor
 
 log = logging.getLogger(__name__)
 
@@ -290,6 +291,34 @@ def edit_article_analysis_nature(id):
             current_user.default_analysis_nature = nature
 
         db.session.commit()
+
+    return redirect(url_for('edit_article_analysis', id=id))
+
+
+@app.route('/articles/<id>/analysis/reprocess', methods=['POST'])
+@login_required
+@roles_accepted('monitor')
+def reprocess_article_analysis(id):
+    """ Trigger a reprocessing of some aspect of the article's
+    analysis, provided as the +aspect+ parameter.
+    """
+    document = Document.query.get_or_404(id)
+
+    # can this user do this?
+    if not document.can_user_edit(current_user):
+        flash("You're not allowed to edit this article.", 'error')
+        return redirect(url_for('show_article', id=id))
+
+    aspect = request.args.get('aspect')
+    if aspect == 'taxonomy':
+        document.taxonomies = []
+        db.session.flush()
+        ax = AlchemyExtractor()
+        ax.fetch_extract_taxonomy(document)
+        db.session.commit()
+        flash('Topics updated')
+    else:
+        abort(400, "Must supply a valid aspect parameter")
 
     return redirect(url_for('edit_article_analysis', id=id))
 
