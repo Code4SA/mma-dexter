@@ -8,7 +8,7 @@
     - if document.can_user_edit(current_user):
       %p
         %a.btn.btn-default(href=url_for('reprocess_article_analysis', id=document.id, aspect='taxonomy'), dataMethod='POST')
-          Find topics for this article.
+          Find topics for this article
 
   - else:
     %table.table.table-striped.table-condensed.offsets.entities
