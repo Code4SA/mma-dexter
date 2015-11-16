@@ -2,7 +2,7 @@ from dexter.app import db
 from .document import Document, DocumentType, DocumentTag
 from .entity import DocumentEntity, Entity
 from .keyword import DocumentKeyword
-from .topic import Topic
+from .topic import Topic, DocumentTaxonomy
 from .utterance import Utterance
 from .medium import Medium
 from .source import DocumentSource, SourceFunction

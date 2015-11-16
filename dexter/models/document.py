@@ -107,6 +107,7 @@ class Document(FullText, db.Model):
     fairness    = relationship("DocumentFairness", backref=backref('document'), cascade='all, delete-orphan', passive_deletes=True)
     places      = relationship("DocumentPlace", backref=backref('document'), cascade='all, delete-orphan', passive_deletes=True)
     issues      = relationship("Issue", secondary='document_issues', passive_deletes=True)
+    taxonomies  = relationship("DocumentTaxonomy", backref=backref('document'), cascade='all', passive_deletes=True, order_by="desc(DocumentTaxonomy.score)")
     medium      = relationship("Medium")
     topic       = relationship("Topic")
     document_type = relationship("DocumentType")

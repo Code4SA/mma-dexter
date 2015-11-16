@@ -1,7 +1,7 @@
 from .base import BaseExtractor
 from .alchemy_api import AlchemyAPI
 from ...processing import ProcessingError
-from ...models import DocumentKeyword, DocumentEntity, Entity, Utterance
+from ...models import DocumentKeyword, DocumentEntity, Entity, Utterance, DocumentTaxonomy
 
 import logging
 log = logging.getLogger(__name__)
@@ -24,6 +24,7 @@ class AlchemyExtractor(BaseExtractor):
             try:
                 self.fetch_extract_entities(doc)
                 self.fetch_extract_keywords(doc)
+                self.fetch_extract_taxonomy(doc)
             except ProcessingError as e:
                 if e.message == 'unsupported-text-language':
                     log.info('Ignoring processing error: %s' % e.message)
@@ -81,6 +82,10 @@ class AlchemyExtractor(BaseExtractor):
         log.info("Extracting keywords for %s" % doc)
         self.extract_keywords(doc, self.fetch_keywords(doc) or [])
 
+    def fetch_extract_taxonomy(self, doc):
+        log.info("Extracting taxonomy for %s" % doc)
+        self.extract_taxonomy(doc, self.fetch_taxonomy(doc) or [])
+
     def extract_keywords(self, doc, keywords):
         entity_names = set(de.entity.name for de in doc.entities)
         keywords_added = 0
@@ -101,6 +106,24 @@ class AlchemyExtractor(BaseExtractor):
                 keywords_added += 1
 
         log.info("Added %d keywords for %s" % (keywords_added, doc))
+
+    def extract_taxonomy(self, doc, taxonomy):
+        added = 0
+
+        log.debug("Raw extracted taxonomy: %s" % taxonomy)
+
+        for tx in taxonomy:
+            # skip taxonomies that alchemyapi isn't confident about, they're generally bad
+            if tx.get('confident') == 'no':
+                continue
+
+            dt = DocumentTaxonomy()
+            dt.document = doc
+            dt.label = tx['label']
+            dt.score = float(tx['score'])
+            added += 1
+
+        log.info("Added %d taxonomy for %s" % (added, doc))
 
     def fetch_entities(self, doc):
         res = self.check_cache(doc.url, 'alchemy-entities')
@@ -127,6 +150,17 @@ class AlchemyExtractor(BaseExtractor):
             self.update_cache(doc.url, 'alchemy-keywords', res)
 
         return res['keywords']
+
+    def fetch_taxonomy(self, doc):
+        res = self.check_cache(doc.url, 'alchemy-taxonomy')
+
+        if not res:
+            res = self.alchemy.taxonomy('text', doc.text.encode('utf-8'))
+            if res['status'] == 'ERROR':
+                raise ProcessingError(res['statusInfo'])
+            self.update_cache(doc.url, 'alchemy-taxonomy', res)
+
+        return res['taxonomy']
 
     def all_offsets(self, text, needle):
         needle_len = len(needle)

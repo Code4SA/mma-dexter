@@ -1,5 +1,4 @@
-from sqlalchemy import Column, ForeignKey, Integer, String
-from sqlalchemy.orm import relationship
+from sqlalchemy import Column, ForeignKey, Integer, String, Float
 
 from itertools import groupby
 from ..app import db
@@ -162,3 +161,19 @@ class Topic(db.Model):
             topics.append(t)
 
         return topics
+
+
+class DocumentTaxonomy(db.Model):
+    """
+    Taxonomy classification for documents, from AlchemyAPI.
+    """
+    __tablename__ = "document_taxonomies"
+
+    id        = Column(Integer, primary_key=True)
+    doc_id    = Column(Integer, ForeignKey('documents.id', ondelete='CASCADE'), index=True)
+    label     = Column(String(200), index=True, nullable=False)
+    score = Column(Float, index=True, nullable=False)
+
+    def __repr__(self):
+        return "<DocumentTaxonomy label='%s', score=%f, doc=%s>" % (
+                self.label.encode('utf-8'), self.score, self.document)
