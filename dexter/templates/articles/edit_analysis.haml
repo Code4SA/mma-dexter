@@ -48,8 +48,8 @@
                 Mentions
                 %span.badge&= len(document.people()) + len(document.organisations())
             %li
-              %a(href="#topics-tab", dataToggle="tab")
-                Topics
+              %a(href="#taxonomies-tab", dataToggle="tab")
+                Taxonomies
                 %span.badge&= len(document.taxonomies)
             %li
               %a(href="#keywords-tab", dataToggle="tab")
@@ -190,4 +190,4 @@
             %%include(file='analysis_tab_mentions.haml')
             %%include(file='analysis_tab_places.haml')
             %%include(file='analysis_tab_keywords.haml')
-            %%include(file='analysis_tab_topics.haml')
+            %%include(file='analysis_tab_taxonomies.haml')
