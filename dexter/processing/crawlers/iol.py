@@ -18,12 +18,13 @@ def unescape(html):
 class IOLCrawler(BaseCrawler):
     # The IOL crawler uses the IOL news feed JSON API and needs
     # an article ID at the end of the URL
-    TL_RE = re.compile('(www\.)?iol.co.za/.*\.\d+$')
+    TL_RE = re.compile('((www|beta)\.)?iol.co.za')
+    NUMBER_RE = re.compile('\d+$')
 
     def offer(self, url):
         """ Can this crawler process this URL? """
         parts = urlparse(url)
-        return bool(self.TL_RE.match(parts.netloc))
+        return bool(self.TL_RE.match(parts.netloc) and self.NUMBER_RE.search(parts.path))
 
     def canonicalise_url(self, url):
         """ Strip anchors, etc. """
@@ -31,13 +32,14 @@ class IOLCrawler(BaseCrawler):
         parts = urlparse(url)
 
         # force http, www, remove trailing slash, anchors
-        return urlunparse(['http', 'www.iol.co.za', parts.path.rstrip('/'), parts.params, None, None])
+        return urlunparse(['http', parts.netloc, parts.path.rstrip('/'), parts.params, None, None])
 
     def extract(self, doc, raw_html):
         """ Extract text and other things from the raw_html for this document. """
         super(IOLCrawler, self).extract(doc, raw_html)
 
-        iol_id = doc.url.split('.')[-1]
+        parts = urlparse(doc.url)
+        iol_id = self.NUMBER_RE.findall(parts.path)[0]
         info = self.fetch_json_info(iol_id)
 
         doc.title = unescape(info['title'])
@@ -54,4 +56,4 @@ class IOLCrawler(BaseCrawler):
         r = requests.get(url, timeout=10)
         # raise an HTTPError on badness
         r.raise_for_status()
-        return r.json
+        return r.json()
