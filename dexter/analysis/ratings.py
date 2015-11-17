@@ -924,6 +924,14 @@ class MediaDiversityRatingExport(ChildrenRatingExport):
     ratings = [[1.0, 'Final rating', [
         [0.500, 'Topic', [
             [0.333, 'Diversity of Topics']]],
+        [0.500, 'Sources', [
+            [0.333, 'Gender Ratio'],
+            [0.333, 'No of sources', [
+                [0.067, 'Percent 1 Sources'],
+                [0.133, 'Percent 2 Sources'],
+                [0.200, 'Percent 3 Sources'],
+                [0.267, 'Percent 4 Sources'],
+                [0.333, 'Percent >4 Sources']]]]],
     ]]]
 
     def build_scores_worksheet(self):
@@ -934,31 +942,7 @@ class MediaDiversityRatingExport(ChildrenRatingExport):
         row = 4
         row = self.totals(row) + 2
         row = self.taxonomy_scores(row) + 2
-
-    def totals(self, row):
-        """ Counts of articles and sources """
-        self.scores_ws.write(row, 0, 'Articles')
-        rows = self.filter(
-            db.session.query(
-                Medium.name,
-                func.count(1).label('freq'))
-            .join(Document)
-            .group_by(Medium.name)
-        ).all()
-        self.write_simple_score_row('Total articles', rows, row)
-
-        row += 2
-
-        self.scores_ws.write(row, 0, 'Sources')
-        rows = self.filter(
-            db.session.query(
-                Medium.name,
-                func.count(1).label('freq'))
-            .join(Document)
-            .join(DocumentSource)
-            .group_by(Medium.name)
-        ).all()
-        self.write_simple_score_row('Total sources', rows, row)
+        row = self.sources_scores(row) + 2
 
         return row
 
@@ -985,5 +969,41 @@ class MediaDiversityRatingExport(ChildrenRatingExport):
         row = self.write_score_table(taxonomies, rows, row) + 1
         self.write_simple_score_row('Diversity of Topics', self.entropy(rows), row)
         row += 1
+
+        return row
+
+    def sources_scores(self, row):
+        """ Counts of genders of sources """
+        from dexter.models.views import DocumentSourcesView
+        self.scores_ws.write(row, 0, 'Sources')
+
+        rows = self.filter(
+            db.session.query(
+                Medium.name,
+                DocumentSourcesView.c.gender,
+                func.count(1).label('freq'))
+            .select_from(DocumentSourcesView)
+            .join(Document, DocumentSourcesView.c.document_id == Document.id)
+            .join(Medium)
+            .group_by(Medium.name, DocumentSourcesView.c.gender)
+            .order_by(Medium.name)
+        ).all()
+
+        rows = [[m, g or 'Unknown', c] for m, g, c in rows]
+        genders = set(r[1] for r in rows)
+        genders.update(['Male', 'Female'])
+        genders = list(genders)
+        genders.sort()
+
+        row = self.write_score_table(genders, rows, row) + 1
+
+        # male / female ratio
+        male, female = self.score_row['Male'], self.score_row['Female']
+        formula = '=IF({col}%s>0,{col}%s/{col}%s,0)' % (male + 1, female + 1, male + 1)
+        self.write_formula_score_row('Male to female', formula, row)
+        row = row + 1
+        formula = '=IF({col}%s>1,1/{col}%s,{col}%s)' % (row, row, row)
+        self.write_formula_score_row('Gender Ratio', formula, row)
+        row = row + 1
 
         return row
