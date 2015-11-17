@@ -126,39 +126,27 @@ class AlchemyExtractor(BaseExtractor):
         log.info("Added %d taxonomy for %s" % (added, doc))
 
     def fetch_entities(self, doc):
-        res = self.check_cache(doc.url, 'alchemy-entities')
-
-        if not res:
-            res = self.alchemy.entities('text', doc.text.encode('utf-8'), {
-                'quotations': 1,
-                'linkedData': 0,
-                'sentiment': 0,
-            })
-            if res['status'] == 'ERROR':
-                raise ProcessingError(res['statusInfo'])
-            self.update_cache(doc.url, 'alchemy-entities', res)
+        res = self.alchemy.entities('text', doc.text.encode('utf-8'), {
+            'quotations': 1,
+            'linkedData': 0,
+            'sentiment': 0,
+        })
+        if res['status'] == 'ERROR':
+            raise ProcessingError(res['statusInfo'])
 
         return res['entities']
 
     def fetch_keywords(self, doc):
-        res = self.check_cache(doc.url, 'alchemy-keywords')
-
-        if not res:
-            res = self.alchemy.keywords('text', doc.text.encode('utf-8'))
-            if res['status'] == 'ERROR':
-                raise ProcessingError(res['statusInfo'])
-            self.update_cache(doc.url, 'alchemy-keywords', res)
+        res = self.alchemy.keywords('text', doc.text.encode('utf-8'))
+        if res['status'] == 'ERROR':
+            raise ProcessingError(res['statusInfo'])
 
         return res['keywords']
 
     def fetch_taxonomy(self, doc):
-        res = self.check_cache(doc.url, 'alchemy-taxonomy')
-
-        if not res:
-            res = self.alchemy.taxonomy('text', doc.text.encode('utf-8'))
-            if res['status'] == 'ERROR':
-                raise ProcessingError(res['statusInfo'])
-            self.update_cache(doc.url, 'alchemy-taxonomy', res)
+        res = self.alchemy.taxonomy('text', doc.text.encode('utf-8'))
+        if res['status'] == 'ERROR':
+            raise ProcessingError(res['statusInfo'])
 
         return res['taxonomy']
 

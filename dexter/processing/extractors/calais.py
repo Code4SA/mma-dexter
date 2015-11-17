@@ -1,12 +1,11 @@
-import re
 import requests
 
 from .base import BaseExtractor
-from ...processing import ProcessingError
 from ...models import DocumentEntity, Entity, Utterance
 
 import logging
 log = logging.getLogger(__name__)
+
 
 class CalaisExtractor(BaseExtractor):
     """ Use the OpenCalais API to extract entities and other
@@ -28,7 +27,6 @@ class CalaisExtractor(BaseExtractor):
             self.extract_entities(doc, calais)
             self.extract_utterances(doc, calais)
 
-
     def extract_entities(self, doc, calais):
         entities_added = 0
 
@@ -36,7 +34,7 @@ class CalaisExtractor(BaseExtractor):
             group = self.normalise_name(group)
 
             for ent in group_ents.itervalues():
-                if not 'name' in ent or len(ent['name']) < 2:
+                if 'name' not in ent or len(ent['name']) < 2:
                     continue
 
                 e = Entity.get_or_create(group, ent['name'])
@@ -53,7 +51,6 @@ class CalaisExtractor(BaseExtractor):
 
         log.info("Added %d entities for %s" % (entities_added, doc))
 
-
     def extract_utterances(self, doc, calais):
         utterances_added = 0
 
@@ -67,46 +64,37 @@ class CalaisExtractor(BaseExtractor):
 
             # uttering entity
             u.entity = Entity.get_or_create(
-                    self.normalise_name(quote['speaker']['_type']),
-                    quote['speaker']['name'])
+                self.normalise_name(quote['speaker']['_type']),
+                quote['speaker']['name'])
 
             if doc.add_utterance(u):
                 utterances_added += 1
 
         log.info("Added %d utterances for %s" % (utterances_added, doc))
 
-
     def fetch_data(self, doc):
-        # First check for the (legacy) nicely formatted OpenCalais JSON.
-        # We now prefer to cache the original result.
-        res = self.check_cache(doc.url, 'calais-normalised')
-        if not res:
-            # check for regular json
-            res = self.check_cache(doc.url, 'calais')
-            if not res:
-                # fetch it
-                # NOTE: set the ENV variable CALAIS_API_KEY before running the process
-                if not self.API_KEY:
-                    raise ValueError('%s.%s.API_KEY must be defined.' % (self.__module__, self.__class__.__name__))
+        # fetch it
+        # NOTE: set the ENV variable CALAIS_API_KEY before running the process
+        if not self.API_KEY:
+            raise ValueError('%s.%s.API_KEY must be defined.' % (self.__module__, self.__class__.__name__))
 
-                res = requests.post('https://api.thomsonreuters.com/permid/calais', doc.text.encode('utf-8'),
-                    headers={
-                        'x-ag-access-token': self.API_KEY,
-                        'Content-Type': 'text/raw',
-                        'outputFormat': 'application/json',
-                        })
-                if res.status_code != 200:
-                    log.error(res.text)
-                    res.raise_for_status()
+        res = requests.post(
+            'https://api.thomsonreuters.com/permid/calais',
+            doc.text.encode('utf-8'),
+            headers={
+                'x-ag-access-token': self.API_KEY,
+                'Content-Type': 'text/raw',
+                'outputFormat': 'application/json',
+            })
+        if res.status_code != 200:
+            log.error(res.text)
+            res.raise_for_status()
 
-                res = res.json()
-                self.update_cache(doc.url, 'calais', res)
-
-            # make the JSON decent and usable
-            res = self.normalise(res)
+        res = res.json()
+        # make the JSON decent and usable
+        res = self.normalise(res)
 
         return res
-
 
     def normalise(self, js):
         """ Change the JSON OpenCalais gives back into
@@ -132,7 +120,6 @@ class CalaisExtractor(BaseExtractor):
         #     Person: [ ... ]
         #   relations:
         #     Quotation: [ ... ]
-
 
         for key, val in js.iteritems():
             grp = val.get('_typeGroup')
