@@ -4,6 +4,7 @@ from dexter.models import Document, db
 from dexter.models.seeds import seed_db
 from dexter.processing.extractors import AlchemyExtractor
 
+
 class TestAlchemyExtractor(unittest.TestCase):
     def setUp(self):
         self.db = db
@@ -103,7 +104,7 @@ class TestAlchemyExtractor(unittest.TestCase):
                 "count": "4",
                 "text": "Adam Welkom"
             },
-            ]
+        ]
 
         self.ex.extract_entities(self.doc, entities)
 
@@ -155,3 +156,26 @@ class TestAlchemyExtractor(unittest.TestCase):
         self.assertEqual(0.538782, tx.score)
 
         self.assertEqual(1, len(self.doc.taxonomies))
+
+    def test_extract_taxonomy_no_confident(self):
+        taxonomy = [{
+            "confident": "no",
+            "label": "/law, govt and politics/law enforcement/police",
+            "score": "0.538782"
+        }, {
+            "confident": "no",
+            "label": "/law, govt and politics",
+            "score": "0.380401"
+        }, {
+            "confident": "no",
+            "label": "/technology and computing/internet technology/social network",
+            "score": "0.135708"
+        }]
+
+        self.ex.extract_taxonomy(self.doc, taxonomy)
+
+        tx = self.doc.taxonomies[0]
+        self.assertEqual('/law, govt and politics/law enforcement/police', tx.label)
+        self.assertEqual(0.538782, tx.score)
+
+        self.assertEqual(3, len(self.doc.taxonomies))

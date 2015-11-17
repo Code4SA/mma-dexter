@@ -112,9 +112,13 @@ class AlchemyExtractor(BaseExtractor):
 
         log.debug("Raw extracted taxonomy: %s" % taxonomy)
 
+        # If we have good taxonomies, skip those that alchemyapi isn't
+        # confident about, they're generally bad. If we only have unconfident
+        # ones, then use those (they're better than nothing).
+        skip_not_confident = any(tx.get('confident') != 'no' for tx in taxonomy)
+
         for tx in taxonomy:
-            # skip taxonomies that alchemyapi isn't confident about, they're generally bad
-            if tx.get('confident') == 'no':
+            if skip_not_confident and tx.get('confident') == 'no':
                 continue
 
             dt = DocumentTaxonomy()
