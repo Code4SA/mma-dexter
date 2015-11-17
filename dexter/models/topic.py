@@ -192,5 +192,6 @@ class DocumentTaxonomy(db.Model):
             cls.label,
             func.count(1).label('freq'))\
             .filter(cls.doc_id.in_(doc_ids))\
+            .group_by(cls.label)\
             .order_by(desc('freq'), cls.label)\
             .all()
