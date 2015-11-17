@@ -17,7 +17,7 @@ from dexter.models.user import default_country_id
 
 from wtforms import validators, HiddenField, TextField, SelectMultipleField, BooleanField
 from .forms import Form, SelectField, MultiCheckboxField, RadioField
-from .analysis import SourceAnalyser, TopicAnalyser, XLSXExportBuilder, ChildrenRatingExport
+from .analysis import SourceAnalyser, TopicAnalyser, XLSXExportBuilder, ChildrenRatingExport, MediaDiversityRatingExport
 
 from utils import paginate
 
@@ -111,6 +111,15 @@ def activity():
     elif form.format.data == 'children-ratings.xlsx' and current_user.admin:
         # excel spreadsheet
         excel = ChildrenRatingExport(form.document_ids()).build()
+
+        response = make_response(excel)
+        response.headers["Content-Disposition"] = "attachment; filename=%s" % form.filename()
+        response.headers["Content-Type"] = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        return response
+
+    elif form.format.data == 'media-diversity-ratings.xlsx' and current_user.admin:
+        # excel spreadsheet
+        excel = MediaDiversityRatingExport(form.document_ids()).build()
 
         response = make_response(excel)
         response.headers["Content-Disposition"] = "attachment; filename=%s" % form.filename()
@@ -425,6 +434,9 @@ class ActivityForm(Form):
 
         if self.format.data == 'children-ratings.xlsx':
             filename.insert(0, 'children-ratings')
+            ext = 'xlsx'
+        elif self.format.data == 'media-diversity-ratings.xlsx':
+            filename.insert(0, 'media-diversity-ratings')
             ext = 'xlsx'
         else:
             ext = self.format.data

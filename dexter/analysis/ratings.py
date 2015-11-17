@@ -51,13 +51,7 @@ class ChildrenRatingExport:
     analysis of all the documents for a medium.
     """
 
-    def __init__(self, doc_ids):
-        # we use these to filter our queries, rather than trying to pull
-        # complex filter logic into our view queries
-        self.doc_ids = doc_ids
-        self.formats = {}
-
-        self.ratings = [[1.0, 'Final rating', [
+    ratings = [[1.0, 'Final rating', [
             [0.500, 'Are Childrens Rights Respected', [
                 [0.123, 'Diversity of Roles'],
                 [0.326, 'Percent Rights respected'],
@@ -118,6 +112,12 @@ class ChildrenRatingExport:
                 [0.126, 'Diversity of Ages'],
                 [0.126, 'Diversity of Races']]],
         ]]]
+
+    def __init__(self, doc_ids):
+        # we use these to filter our queries, rather than trying to pull
+        # complex filter logic into our view queries
+        self.doc_ids = doc_ids
+        self.formats = {}
 
         # map from a score name to its row in the score sheet
         self.score_row = {}
@@ -904,3 +904,105 @@ class ChildrenRatingExport:
     def filter(self, query):
         return query.filter(Document.id.in_(self.doc_ids))
 
+
+class MediaDiversityRatingExport(ChildrenRatingExport):
+    """ This class generates an XLSX export of per-media ratings.
+    The produced spreadsheet contais both the final ratings
+    and the raw data used to calculate the ratings. This means that
+    users can dig into a rating to understand its context.
+    The spreadsheet is also live, in that it contains live
+    formulas so that a user can customise the ratings if
+    required.
+
+    The produced XLSX file has two worksheets:
+
+    Rating: contains weighted per-media ratings across a number
+            of different factors.
+    Scores: the raw scores for each media used to calculate the
+            overall rating.
+
+    Ratings are weighted and can be composed of other ratings.
+    For example, consider the rating
+
+        0,500: Are Childrens Rights Respected
+            0,100: Diversity of Roles
+            0,200: Rights Respected
+            0,700: Information Points
+                0,500: Self-help
+                0,500: Child's best interest
+
+    In this case the "Are Childrens Rights Respected" rating
+    has a weight of 0.500 and is composed of three sub-ratings,
+    each with their own weights. The last rating, "Information Points",
+    is in turn made up of weighted sub-ratings.
+
+    A score for each rating is calculated based on the content and
+    analysis of all the documents for a medium.
+    """
+
+    ratings = [[1.0, 'Final rating', [
+        [0.500, 'Topic', [
+            [0.333, 'Diversity of Topics']]],
+    ]]]
+
+    def build_scores_worksheet(self):
+        """ Build up the scores worksheet. """
+        for i, medium in enumerate(self.media):
+            self.scores_ws.write(1, self.score_col(i), medium.name)
+
+        row = 4
+        row = self.totals(row) + 2
+        row = self.taxonomy_scores(row) + 2
+
+    def totals(self, row):
+        """ Counts of articles and sources """
+        self.scores_ws.write(row, 0, 'Articles')
+        rows = self.filter(db.session
+                .query(
+                    Medium.name,
+                    func.count(1).label('freq'))
+                .join(Document)
+                .group_by(Medium.name)
+            ).all()
+        self.write_simple_score_row('Total articles', rows, row)
+
+        row += 2
+
+        self.scores_ws.write(row, 0, 'Sources')
+        rows = self.filter(db.session
+                .query(
+                    Medium.name,
+                    func.count(1).label('freq'))
+                .join(Document)
+                .join(DocumentSource)
+                .group_by(Medium.name)
+            ).all()
+        self.write_simple_score_row('Total sources', rows, row)
+
+        return row
+
+    def taxonomy_scores(self, row):
+        """ Counts of document taxonomies per medium, and their entropy. """
+        from dexter.models.views import DocumentTaxonomiesView
+
+        self.scores_ws.write(row, 0, 'Topic')
+
+        rows = self.filter(
+            db.session.query(
+                Medium.name,
+                DocumentTaxonomiesView.c.label,
+                func.count(DocumentTaxonomiesView.c.document_id).label('freq')
+            )
+            .select_from(DocumentTaxonomiesView)
+            .join(Document)
+            .join(Medium)
+            .group_by(Medium.name, 'label')
+        ).all()
+        taxonomies = list(set(r[1] for r in rows))
+        taxonomies.sort()
+
+        row = self.write_score_table(taxonomies, rows, row) + 1
+        self.write_simple_score_row('Diversity of Topics', self.entropy(rows), row)
+        row += 1
+
+        return row
