@@ -123,6 +123,9 @@ class AlchemyExtractor(BaseExtractor):
             dt.score = float(tx['score'])
             added += 1
 
+        if added == 0:
+            log.info("No taxonomies were useful, we tried: %s" % taxonomy)
+
         log.info("Added %d taxonomy for %s" % (added, doc))
 
     def fetch_entities(self, doc):
