@@ -191,12 +191,14 @@ class DocumentProcessor:
             # only add a document if it has sources or utterances
             if doc.sources or doc.utterances:
                 db.session.add(doc)
+                db.session.commit()
+                self.log.info("Successfully processed feed item: %s as document %d" % (url, doc.id))
+                return doc
             else:
+                db.session.rollback()
                 self.log.info("Document has no sources or utterances, ignoring: %s" % url)
+                return None
 
-            db.session.commit()
-            self.log.info("Successfully processed feed item: %s" % url)
-            return doc
         except:
             db.session.rollback()
             raise
