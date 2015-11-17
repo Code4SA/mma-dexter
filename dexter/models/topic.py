@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from sqlalchemy import Column, ForeignKey, Integer, String, Float
+from sqlalchemy import Column, ForeignKey, Integer, String, Float, func, desc
 
 from itertools import groupby
 from ..app import db
@@ -183,3 +183,14 @@ class DocumentTaxonomy(db.Model):
     def __repr__(self):
         return "<DocumentTaxonomy label='%s', score=%f, doc=%s>" % (
             self.label.encode('utf-8'), self.score, self.document)
+
+    @classmethod
+    def summary_for_docs(cls, doc_ids):
+        """ Summary of document taxonomies.
+        """
+        return db.session.query(
+            cls.label,
+            func.count(1).label('freq'))\
+            .filter(cls.doc_id.in_(doc_ids))\
+            .order_by(desc('freq'), cls.label)\
+            .all()

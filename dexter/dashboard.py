@@ -247,6 +247,18 @@ def activity_topics_detail():
                            topic_analyser=ta)
 
 
+@app.route('/activity/taxonomies')
+@login_required
+@roles_accepted('monitor')
+def activity_taxonomies():
+    form = ActivityForm(request.args)
+    taxonomies = DocumentTaxonomy.summary_for_docs(form.document_ids())
+
+    return render_template('dashboard/taxonomies.haml',
+                           taxonomies=taxonomies,
+                           form=form)
+
+
 class ActivityForm(Form):
     cluster_id      = HiddenField('Cluster')
     analysis_nature_id = SelectField('Analysis', default=AnalysisNature.ANCHOR_ID)

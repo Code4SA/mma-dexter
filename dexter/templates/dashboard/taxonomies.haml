@@ -1,0 +1,14 @@
+%%inherit(file="layout.haml")
+%%namespace(file="helpers.haml", **{'import': '*'})
+
+%%block(name='title')
+  Taxonomies
+
+%section
+  %h3 Taxonomies
+
+  %table.table.table-striped.table-condensed.taxonomies
+    - for label, freq in taxonomies:
+      %tr
+        %td&= u' ❯ '.join(label.split('/')[1:])
+        %td&= freq
