@@ -15,7 +15,7 @@ class NewstoolsCrawler(BaseCrawler):
         if m is None:
             return False
 
-        parts = urlparse(url)
+        parts = urlparse(url.lower())
 
         # ignore citizen AFP articles
         if parts.path.startswith('/afp_feed_article'):
@@ -31,7 +31,7 @@ class NewstoolsCrawler(BaseCrawler):
                 if parts.path.startswith(prefix):
                     return False
 
-        # ignore IOL world articles
+        # ignore news24, IOL world articles
         if parts.path.startswith('/news/world/') or parts.path.startswith('/world/'):
             return False
 
