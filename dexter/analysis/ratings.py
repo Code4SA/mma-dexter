@@ -888,37 +888,6 @@ class ChildrenRatingExport:
 
 class MediaDiversityRatingExport(ChildrenRatingExport):
     """ This class generates an XLSX export of per-media ratings.
-    The produced spreadsheet contais both the final ratings
-    and the raw data used to calculate the ratings. This means that
-    users can dig into a rating to understand its context.
-    The spreadsheet is also live, in that it contains live
-    formulas so that a user can customise the ratings if
-    required.
-
-    The produced XLSX file has two worksheets:
-
-    Rating: contains weighted per-media ratings across a number
-            of different factors.
-    Scores: the raw scores for each media used to calculate the
-            overall rating.
-
-    Ratings are weighted and can be composed of other ratings.
-    For example, consider the rating
-
-        0,500: Are Childrens Rights Respected
-            0,100: Diversity of Roles
-            0,200: Rights Respected
-            0,700: Information Points
-                0,500: Self-help
-                0,500: Child's best interest
-
-    In this case the "Are Childrens Rights Respected" rating
-    has a weight of 0.500 and is composed of three sub-ratings,
-    each with their own weights. The last rating, "Information Points",
-    is in turn made up of weighted sub-ratings.
-
-    A score for each rating is calculated based on the content and
-    analysis of all the documents for a medium.
     """
 
     ratings = [[1.0, 'Final rating', [
