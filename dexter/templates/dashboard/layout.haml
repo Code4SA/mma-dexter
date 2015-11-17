@@ -22,6 +22,9 @@
       %li(class_=('active' if request.url_rule.endpoint == 'activity_topics' else ''))
         %a(href=url_for('activity_topics', **request.args)) Topics
 
+      %li(class_=('active' if request.url_rule.endpoint == 'activity_taxonomies' else ''))
+        %a(href=url_for('activity_taxonomies', **request.args)) Taxonomies
+
       %li(class_=('active' if request.url_rule.endpoint == 'activity_map' else ''))
         %a(href=url_for('activity_map', **request.args)) Map
 
