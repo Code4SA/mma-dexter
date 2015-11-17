@@ -240,7 +240,9 @@ class ChildrenRatingExport:
         ).all()
 
         rows = [[m, g or 'Unknown', c] for m, g, c in rows]
-        genders = list(set(r[1] for r in rows))
+        genders = set(r[1] for r in rows)
+        genders.update(['Male', 'Female'])
+        genders = list(genders)
         genders.sort()
 
         row = self.write_score_table(genders, rows, row) + 1
@@ -271,7 +273,9 @@ class ChildrenRatingExport:
         ).all()
 
         rows = [[m, g or 'Unknown', c] for m, g, c in rows]
-        genders = list(set(r[1] for r in rows))
+        genders = set(r[1] for r in rows)
+        genders.update(['Male', 'Female'])
+        genders = list(genders)
         genders.sort()
 
         row = self.write_score_table(genders, rows, row) + 1
