@@ -1,18 +1,13 @@
-from collections import OrderedDict, defaultdict
-from itertools import groupby
-from functools import partial
+from collections import defaultdict
 
 import xlsxwriter
 from xlsxwriter.utility import xl_rowcol_to_cell, xl_col_to_name
 import StringIO
-from datetime import datetime
-from dateutil.parser import parse
 
 from sqlalchemy.sql import func
-from sqlalchemy.types import Integer
 
 from .utils import calculate_entropy
-from ..models import *
+from ..models import *  # noqa
 
 
 class ChildrenRatingExport:
@@ -52,66 +47,66 @@ class ChildrenRatingExport:
     """
 
     ratings = [[1.0, 'Final rating', [
-            [0.500, 'Are Childrens Rights Respected', [
-                [0.123, 'Diversity of Roles'],
-                [0.326, 'Percent Rights respected'],
-                [0.369, 'Access Codes', [
-                    [0.833, 'Percent Abused sources'],
-                    [0.167, 'Percent Non-abused sources']]],
-                [0.181, 'Information Points', [
-                    [0.500, 'Percent Self Help'],
-                    [0.500, 'Percent S. Child\'s best interest']]]]],
+        [0.500, 'Are Childrens Rights Respected', [
+            [0.123, 'Diversity of Roles'],
+            [0.326, 'Percent Rights respected'],
+            [0.369, 'Access Codes', [
+                [0.833, 'Percent Abused sources'],
+                [0.167, 'Percent Non-abused sources']]],
+            [0.181, 'Information Points', [
+                [0.500, 'Percent Self Help'],
+                [0.500, 'Percent S. Child\'s best interest']]]]],
 
-            [0.249, 'Are Childrens Voices Heard?', [
-                [0.083, 'Quoted Gender Ratio'],
-                [0.418, 'Percent Quoted child sources'],
-                [0.091, 'Diversity of Quoted Origins'],
-                [0.178, 'No of Children Sources', [
-                    [0.067, 'Percent 1 Child Sources'],
-                    [0.133, 'Percent 2 Child Sources'],
-                    [0.200, 'Percent 3 Child Sources'],
-                    [0.267, 'Percent 4 Child Sources'],
-                    [0.333, 'Percent >4 Child Sources']]],
-                [0.230, 'Percent Child sources']]],
+        [0.249, 'Are Childrens Voices Heard?', [
+            [0.083, 'Quoted Gender Ratio'],
+            [0.418, 'Percent Quoted child sources'],
+            [0.091, 'Diversity of Quoted Origins'],
+            [0.178, 'No of Children Sources', [
+                [0.067, 'Percent 1 Child Sources'],
+                [0.133, 'Percent 2 Child Sources'],
+                [0.200, 'Percent 3 Child Sources'],
+                [0.267, 'Percent 4 Child Sources'],
+                [0.333, 'Percent >4 Child Sources']]],
+            [0.230, 'Percent Child sources']]],
 
-            [0.125, 'Are Childrens Issued covered in Depth', [
-                [0.053, 'Diversity of Topics'],
-                [0.157, 'Percent Child Abuse'],
-                [0.053, 'Diversity of Origins'],
-                [0.105, 'Percent Focus origins'],
-                [0.263, 'Information Points', [
-                    [0.084, 'Percent Basic Context'],
-                    [0.166, 'Percent Causes'],
-                    [0.166, 'Percent Consequences'],
-                    [0.166, 'Percent Solutions'],
-                    [0.166, 'Percent Policies'],
-                    [0.252, 'Percent Self Help']]],
-                [0.263, 'Principles', [
-                    [0.200, 'Percent Rights respected'],
-                    [0.800, 'Inv. Percent Principles violated']]],
-                [0.053, 'Sources', [
-                    [0.067, 'Percent 1 Sources'],
-                    [0.133, 'Percent 2 Sources'],
-                    [0.200, 'Percent 3 Sources'],
-                    [0.267, 'Percent 4 Sources'],
-                    [0.333, 'Percent >4 Sources']]],
-                [0.053, 'Percent Focus types'],
-                ]],
+        [0.125, 'Are Childrens Issued covered in Depth', [
+            [0.053, 'Diversity of Topics'],
+            [0.157, 'Percent Child Abuse'],
+            [0.053, 'Diversity of Origins'],
+            [0.105, 'Percent Focus origins'],
+            [0.263, 'Information Points', [
+                [0.084, 'Percent Basic Context'],
+                [0.166, 'Percent Causes'],
+                [0.166, 'Percent Consequences'],
+                [0.166, 'Percent Solutions'],
+                [0.166, 'Percent Policies'],
+                [0.252, 'Percent Self Help']]],
+            [0.263, 'Principles', [
+                [0.200, 'Percent Rights respected'],
+                [0.800, 'Inv. Percent Principles violated']]],
+            [0.053, 'Sources', [
+                [0.067, 'Percent 1 Sources'],
+                [0.133, 'Percent 2 Sources'],
+                [0.200, 'Percent 3 Sources'],
+                [0.267, 'Percent 4 Sources'],
+                [0.333, 'Percent >4 Sources']]],
+            [0.053, 'Percent Focus types'],
+        ]],
 
-            [0.125, 'Is there Diversity in the Media', [
-                [0.318, 'Roles', [
-                    [0.500, 'Percent Positive Roles'],
-                    [0.50, 'Percent Negative Roles']]],
-                [0.134, 'Diversity of Roles'],
-                [0.295, 'Sex', [
-                    [0.157, 'Diversity of Gender'],
-                    [0.249, 'Gender Ratio'],
-                    [0.594, 'Role', [
-                        [0.667, 'Gender score Positive Roles'],
-                        [0.333, 'Gender score Negative Roles']]]]],
-                [0.126, 'Diversity of Ages'],
-                [0.126, 'Diversity of Races']]],
-        ]]]
+        [0.125, 'Is there Diversity in the Media', [
+            [0.318, 'Roles', [
+                [0.500, 'Percent Positive Roles'],
+                [0.50, 'Percent Negative Roles']]],
+            [0.134, 'Diversity of Roles'],
+            [0.295, 'Sex', [
+                [0.157, 'Diversity of Gender'],
+                [0.249, 'Gender Ratio'],
+                [0.594, 'Role', [
+                    [0.667, 'Gender score Positive Roles'],
+                    [0.333, 'Gender score Negative Roles']]]]],
+            [0.126, 'Diversity of Ages'],
+            [0.126, 'Diversity of Races']]],
+    ]]]
 
     def __init__(self, doc_ids):
         # we use these to filter our queries, rather than trying to pull
@@ -126,9 +121,9 @@ class ChildrenRatingExport:
         # collect media headings
         medium_ids = self.filter(db.session.query(func.distinct(Document.medium_id)))
         self.media = Medium.query\
-                .filter(Medium.id.in_(medium_ids))\
-                .order_by(Medium.name)\
-                .all()
+            .filter(Medium.id.in_(medium_ids))\
+            .order_by(Medium.name)\
+            .all()
 
         self.n_columns = len(self.media)
         self.score_col_start = 3
@@ -139,11 +134,10 @@ class ChildrenRatingExport:
                 if len(rating) < 3:
                     yield deep
                 else:
-                    yield max(depth(rating[2], deep+1))
+                    yield max(depth(rating[2], deep + 1))
 
         # the column at which the ratings for each medium starts
-        self.rating_col_start = (max(depth(self.ratings))-1) * 2
-
+        self.rating_col_start = (max(depth(self.ratings)) - 1) * 2
 
     def build(self):
         """
@@ -187,30 +181,29 @@ class ChildrenRatingExport:
         row = self.topic_scores(row) + 2
         row = self.type_scores(row) + 2
 
-
     def totals(self, row):
         """ Counts of articles and sources """
         self.scores_ws.write(row, 0, 'Articles')
-        rows = self.filter(db.session
-                .query(
-                    Medium.name,
-                    func.count(1).label('freq'))
-                .join(Document)
-                .group_by(Medium.name)
-            ).all()
+        rows = self.filter(
+            db.session.query(
+                Medium.name,
+                func.count(1).label('freq'))
+            .join(Document)
+            .group_by(Medium.name)
+        ).all()
         self.write_simple_score_row('Total articles', rows, row)
 
         row += 2
 
         self.scores_ws.write(row, 0, 'Sources')
-        rows = self.filter(db.session
-                .query(
-                    Medium.name,
-                    func.count(1).label('freq'))
-                .join(Document)
-                .join(DocumentSource)
-                .group_by(Medium.name)
-            ).all()
+        rows = self.filter(
+            db.session.query(
+                Medium.name,
+                func.count(1).label('freq'))
+            .join(Document)
+            .join(DocumentSource)
+            .group_by(Medium.name)
+        ).all()
         self.write_simple_score_row('Total sources', rows, row)
 
         row += 2
@@ -225,7 +218,6 @@ class ChildrenRatingExport:
 
         return row
 
-
     def child_gender_scores(self, row):
         """ Counts of genders of child sources """
         from dexter.models.views import DocumentSourcesView
@@ -233,19 +225,19 @@ class ChildrenRatingExport:
         # QUOTED child genders
         self.scores_ws.write(row, 0, 'Quoted Child Genders')
 
-        rows = self.filter(db.session
-                .query(
-                    Medium.name,
-                    DocumentSourcesView.c.gender,
-                    func.count(1).label('freq'))
-                .select_from(DocumentSourcesView)
-                .join(Document, DocumentSourcesView.c.document_id == Document.id)
-                .join(Medium)
-                .filter(DocumentSourcesView.c.source_type == 'child')
-                .filter(DocumentSourcesView.c.quoted == 'quoted')
-                .group_by(Medium.name, DocumentSourcesView.c.gender)
-                .order_by(Medium.name)
-            ).all()
+        rows = self.filter(
+            db.session.query(
+                Medium.name,
+                DocumentSourcesView.c.gender,
+                func.count(1).label('freq'))
+            .select_from(DocumentSourcesView)
+            .join(Document, DocumentSourcesView.c.document_id == Document.id)
+            .join(Medium)
+            .filter(DocumentSourcesView.c.source_type == 'child')
+            .filter(DocumentSourcesView.c.quoted == 'quoted')
+            .group_by(Medium.name, DocumentSourcesView.c.gender)
+            .order_by(Medium.name)
+        ).all()
 
         rows = [[m, g or 'Unknown', c] for m, g, c in rows]
         genders = list(set(r[1] for r in rows))
@@ -255,7 +247,7 @@ class ChildrenRatingExport:
 
         # male / female ratio
         male, female = self.score_row['Male'], self.score_row['Female']
-        formula = '=IF({col}%s>0,{col}%s/{col}%s,0)' % (male+1, female+1, male+1)
+        formula = '=IF({col}%s>0,{col}%s/{col}%s,0)' % (male + 1, female + 1, male + 1)
         self.write_formula_score_row('Quoted Boys to girls', formula, row)
         row = row + 1
         formula = '=IF({col}%s>1,1/{col}%s,{col}%s)' % (row, row, row)
@@ -265,18 +257,18 @@ class ChildrenRatingExport:
         # ALL child genders
         self.scores_ws.write(row, 0, 'All Child Genders')
 
-        rows = self.filter(db.session
-                .query(
-                    Medium.name,
-                    DocumentSourcesView.c.gender,
-                    func.count(1).label('freq'))
-                .select_from(DocumentSourcesView)
-                .join(Document, DocumentSourcesView.c.document_id == Document.id)
-                .join(Medium)
-                .filter(DocumentSourcesView.c.source_type == 'child')
-                .group_by(Medium.name, DocumentSourcesView.c.gender)
-                .order_by(Medium.name)
-            ).all()
+        rows = self.filter(
+            db.session.query(
+                Medium.name,
+                DocumentSourcesView.c.gender,
+                func.count(1).label('freq'))
+            .select_from(DocumentSourcesView)
+            .join(Document, DocumentSourcesView.c.document_id == Document.id)
+            .join(Medium)
+            .filter(DocumentSourcesView.c.source_type == 'child')
+            .group_by(Medium.name, DocumentSourcesView.c.gender)
+            .order_by(Medium.name)
+        ).all()
 
         rows = [[m, g or 'Unknown', c] for m, g, c in rows]
         genders = list(set(r[1] for r in rows))
@@ -286,7 +278,7 @@ class ChildrenRatingExport:
 
         # male / female ratio
         male, female = self.score_row['Male'], self.score_row['Female']
-        formula = '=IF({col}%s>0,{col}%s/{col}%s,0)' % (male+1, female+1, male+1)
+        formula = '=IF({col}%s>0,{col}%s/{col}%s,0)' % (male + 1, female + 1, male + 1)
         self.write_formula_score_row('Boys to girls', formula, row)
         row = row + 1
         formula = '=IF({col}%s>1,1/{col}%s,{col}%s)' % (row, row, row)
@@ -299,44 +291,41 @@ class ChildrenRatingExport:
 
         return row
 
-
     def child_source_scores(self, row):
         """ Counts of children sources, how many speak, etc. """
-        from dexter.models.views import DocumentSourcesView
-
         self.scores_ws.write(row, 0, 'Child Sources')
 
         # all child sources
-        rows = self.filter(db.session
-                .query(
-                    Medium.name,
-                    func.count(1).label('freq'))
-                .join(Document)
-                .join(DocumentSource)
-                .filter(DocumentSource.source_type == 'child')
-                .group_by(Medium.name)
-            ).all()
+        rows = self.filter(
+            db.session.query(
+                Medium.name,
+                func.count(1).label('freq'))
+            .join(Document)
+            .join(DocumentSource)
+            .filter(DocumentSource.source_type == 'child')
+            .group_by(Medium.name)
+        ).all()
         self.write_simple_score_row('Total child sources', rows, row)
         row += 1
-        self.write_percent_row('Child sources', self.score_row['Total sources'], row-1, row)
+        self.write_percent_row('Child sources', self.score_row['Total sources'], row - 1, row)
         row += 1
 
         # quoted child sources
-        rows = self.filter(db.session
-                .query(
-                    Medium.name,
-                    func.count(1).label('freq'))
-                .join(Document)
-                .join(DocumentSource)
-                .filter(DocumentSource.source_type == 'child')
-                .filter(DocumentSource.quoted == True)
-                .group_by(Medium.name)
-            ).all()
-        self.write_simple_score_row('Quoted child sources', rows, row) 
+        rows = self.filter(
+            db.session.query(
+                Medium.name,
+                func.count(1).label('freq'))
+            .join(Document)
+            .join(DocumentSource)
+            .filter(DocumentSource.source_type == 'child')
+            .filter(DocumentSource.quoted == True)
+            .group_by(Medium.name)
+        ).all()  # noqa
+        self.write_simple_score_row('Quoted child sources', rows, row)
         row += 1
 
         # percent of all sources
-        self.write_percent_row('Quoted child sources', self.score_row['Total sources'], row-1, row)
+        self.write_percent_row('Quoted child sources', self.score_row['Total sources'], row - 1, row)
         row += 1
 
         # source counts per document
@@ -350,18 +339,18 @@ class ChildrenRatingExport:
 
         # origin of documents with quoted children
         self.scores_ws.write(row, 0, 'Origins of Quoted Children')
-        rows = self.filter(db.session
-                .query(
-                    Medium.name,
-                    Location.name,
-                    func.count(func.distinct(Document.id)).label('freq'))
-                .join(Document)
-                .join(DocumentSource)
-                .join(Location)
-                .filter(DocumentSource.source_type == 'child')
-                .filter(DocumentSource.quoted == True)
-                .group_by(Medium.name)
-            ).all()
+        rows = self.filter(
+            db.session.query(
+                Medium.name,
+                Location.name,
+                func.count(func.distinct(Document.id)).label('freq'))
+            .join(Document)
+            .join(DocumentSource)
+            .join(Location)
+            .filter(DocumentSource.source_type == 'child')
+            .filter(DocumentSource.quoted == True)
+            .group_by(Medium.name)  # noqa
+        ).all()
         origins = list(set(r[1] for r in rows))
         row = self.write_score_table(origins, rows, row)
         # entropy
@@ -370,23 +359,22 @@ class ChildrenRatingExport:
 
         return row
 
-
     def roles_scores(self, row):
         """ Counts of source roles per medium, and their entropy. """
         self.scores_ws.write(row, 0, 'Child Roles')
 
-        rows = self.filter(db.session
-                .query(
-                    Medium.name,
-                    SourceRole.name,
-                    func.count(1).label('freq'))
-                .join(Document)
-                .join(DocumentSource)
-                .join(SourceRole)
-                .filter(DocumentSource.source_type == 'child')
-                .group_by(Medium.name, SourceRole.name)
-                .order_by(Medium.name)
-            ).all()
+        rows = self.filter(
+            db.session.query(
+                Medium.name,
+                SourceRole.name,
+                func.count(1).label('freq'))
+            .join(Document)
+            .join(DocumentSource)
+            .join(SourceRole)
+            .filter(DocumentSource.source_type == 'child')
+            .group_by(Medium.name, SourceRole.name)
+            .order_by(Medium.name)
+        ).all()
 
         roles = list(set(r[1] for r in rows))
         roles.sort()
@@ -403,25 +391,25 @@ class ChildrenRatingExport:
             title = indication.capitalize() + ' Roles'
             self.scores_ws.write(row, 0, title)
 
-            rows = self.filter(db.session
-                    .query(
-                        Medium.name,
-                        SourceRole.name,
-                        func.count(1).label('freq'))
-                    .join(Document)
-                    .join(DocumentSource)
-                    .join(SourceRole)
-                    .filter(SourceRole.indication == indication)
-                    .filter(DocumentSource.source_type == 'child')
-                    .group_by(Medium.name, SourceRole.name)
-                ).all()
+            rows = self.filter(
+                db.session.query(
+                    Medium.name,
+                    SourceRole.name,
+                    func.count(1).label('freq'))
+                .join(Document)
+                .join(DocumentSource)
+                .join(SourceRole)
+                .filter(SourceRole.indication == indication)
+                .filter(DocumentSource.source_type == 'child')
+                .group_by(Medium.name, SourceRole.name)
+            ).all()
 
             row = self.write_score_table(roles, rows, row) + 1
-            formula = '=SUM({col}%s:{col}%s)' % (row-len(roles), row-1)
+            formula = '=SUM({col}%s:{col}%s)' % (row - len(roles), row - 1)
             self.write_formula_score_row('Total ' + title, formula, row)
             row += 1
             # percent of all child sources
-            self.write_percent_row(title, self.score_row['Total child sources'], row-1, row)
+            self.write_percent_row(title, self.score_row['Total child sources'], row - 1, row)
             row += 2
 
             # male vs female
@@ -429,30 +417,30 @@ class ChildrenRatingExport:
             for gender in ['Male', 'Female']:
                 self.scores_ws.write(row, 0, gender + ' ' + title)
 
-                rows = self.filter(db.session
-                        .query(
-                            Medium.name,
-                            SourceRole.name,
-                            func.count(1).label('freq'))
-                        .join(Document)
-                        .join(DocumentSource)
-                        .join(SourceRole)
-                        .join(Gender)
-                        .filter(SourceRole.indication == indication)
-                        .filter(DocumentSource.source_type == 'child')
-                        .filter(Gender.name == gender)
-                        .group_by(Medium.name, SourceRole.name)
-                    ).all()
+                rows = self.filter(
+                    db.session.query(
+                        Medium.name,
+                        SourceRole.name,
+                        func.count(1).label('freq'))
+                    .join(Document)
+                    .join(DocumentSource)
+                    .join(SourceRole)
+                    .join(Gender)
+                    .filter(SourceRole.indication == indication)
+                    .filter(DocumentSource.source_type == 'child')
+                    .filter(Gender.name == gender)
+                    .group_by(Medium.name, SourceRole.name)
+                ).all()
 
                 row = self.write_score_table(roles, rows, row) + 1
-                formula = '=SUM({col}%s:{col}%s)' % (row-len(roles), row-1)
+                formula = '=SUM({col}%s:{col}%s)' % (row - len(roles), row - 1)
                 self.write_formula_score_row('Total %s %s' % (gender, title), formula, row)
                 score_rows.append(row)
                 row += 2
 
             # now do the ratio between the two
             male, female = score_rows
-            formula = '=IF({col}%s>0,{col}%s/{col}%s,0)' % (male+1, female+1, male+1)
+            formula = '=IF({col}%s>0,{col}%s/{col}%s,0)' % (male + 1, female + 1, male + 1)
             self.write_formula_score_row('Gender ratio %s' % title, formula, row)
             row += 1
             formula = '=IF({col}%s>1,1/{col}%s,{col}%s)' % (row, row, row)
@@ -461,23 +449,22 @@ class ChildrenRatingExport:
 
         return row
 
-
     def age_scores(self, row):
         """ Counts of source ages per medium, and their entropy. """
         self.scores_ws.write(row, 0, 'Child Ages')
 
-        rows = self.filter(db.session
-                .query(
-                    Medium.name,
-                    SourceAge.name,
-                    func.count(1).label('freq'))
-                .join(Document)
-                .join(DocumentSource)
-                .join(SourceAge)
-                .filter(DocumentSource.source_type == 'child')
-                .group_by(Medium.name, SourceAge.name)
-                .order_by(Medium.name)
-            ).all()
+        rows = self.filter(
+            db.session.query(
+                Medium.name,
+                SourceAge.name,
+                func.count(1).label('freq'))
+            .join(Document)
+            .join(DocumentSource)
+            .join(SourceAge)
+            .filter(DocumentSource.source_type == 'child')
+            .group_by(Medium.name, SourceAge.name)
+            .order_by(Medium.name)
+        ).all()
 
         ages = list(set(r[1] for r in rows))
         ages.sort()
@@ -487,23 +474,22 @@ class ChildrenRatingExport:
 
         return row
 
-
     def race_scores(self, row):
         """ Counts of source races per medium, and their entropy. """
         self.scores_ws.write(row, 0, 'Races')
 
-        rows = self.filter(db.session
-                .query(
-                    Medium.name,
-                    Race.name,
-                    func.count(1).label('freq'))
-                .join(Document)
-                .join(DocumentSource)
-                .join(Race)
-                .filter(DocumentSource.source_type == 'child')
-                .group_by(Medium.name, Race.name)
-                .order_by(Medium.name)
-            ).all()
+        rows = self.filter(
+            db.session.query(
+                Medium.name,
+                Race.name,
+                func.count(1).label('freq'))
+            .join(Document)
+            .join(DocumentSource)
+            .join(Race)
+            .filter(DocumentSource.source_type == 'child')
+            .group_by(Medium.name, Race.name)
+            .order_by(Medium.name)
+        ).all()
 
         races = list(set(r[1] for r in rows))
         races.sort()
@@ -513,20 +499,19 @@ class ChildrenRatingExport:
 
         return row
 
-
     def topic_scores(self, row):
         """ Counts of document topics per medium, and their entropy. """
         self.scores_ws.write(row, 0, 'Topics')
 
-        rows = self.filter(db.session
-                .query(
-                    Medium.name,
-                    Topic.name,
-                    func.count(1).label('freq'))
-                .join(Document)
-                .join(Topic)
-                .group_by(Medium.name, Topic.name)
-            ).all()
+        rows = self.filter(
+            db.session.query(
+                Medium.name,
+                Topic.name,
+                func.count(1).label('freq'))
+            .join(Document)
+            .join(Topic)
+            .group_by(Medium.name, Topic.name)
+        ).all()
         roles = list(set(r[1] for r in rows))
         roles.sort()
 
@@ -535,49 +520,47 @@ class ChildrenRatingExport:
         row += 1
 
         # 2. Child Abuse
-        rows = self.filter(db.session
-                .query(
-                    Medium.name,
-                    func.count(1).label('freq'))
-                .join(Document)
-                .join(Topic)
-                .filter(Topic.group == '2. Child Abuse')
-                .group_by(Medium.name, Topic.name)
-            ).all()
+        rows = self.filter(
+            db.session.query(
+                Medium.name,
+                func.count(1).label('freq'))
+            .join(Document)
+            .join(Topic)
+            .filter(Topic.group == '2. Child Abuse')
+            .group_by(Medium.name, Topic.name)
+        ).all()
 
         self.write_simple_score_row('Child Abuse', rows, row)
         row += 1
-        self.write_percent_row('Child Abuse', self.score_row['Total articles'], row-1, row)
+        self.write_percent_row('Child Abuse', self.score_row['Total articles'], row - 1, row)
 
         return row
-
 
     def type_scores(self, row):
         """ Counts of document types per medium """
         self.scores_ws.write(row, 0, 'Types')
- 
+
         # feature these types
         types = ['News story', 'Editorial', 'Opinion piece', 'Feature/news analysis', 'Business', 'Sport']
         types.sort()
 
-        rows = self.filter(db.session
-                .query(
-                    Medium.name,
-                    DocumentType.name,
-                    func.count(1).label('freq'))
-                .join(Document)
-                .join(DocumentType)
-                .filter(DocumentType.name.in_(types))
-                .group_by(Medium.name, DocumentType.name)
-            ).all()
+        rows = self.filter(
+            db.session.query(
+                Medium.name,
+                DocumentType.name,
+                func.count(1).label('freq'))
+            .join(Document)
+            .join(DocumentType)
+            .filter(DocumentType.name.in_(types))
+            .group_by(Medium.name, DocumentType.name)
+        ).all()
 
-        starting_row = row
         row = self.write_score_table(types, rows, row) + 1
 
-        formula = '=SUM({col}%s:{col}%s)' % (row-len(types), row-1)
+        formula = '=SUM({col}%s:{col}%s)' % (row - len(types), row - 1)
         self.write_formula_score_row('Focus types', formula, row)
         row += 1
-        self.write_percent_row('Focus types', self.score_row['Total articles'], row-1, row)
+        self.write_percent_row('Focus types', self.score_row['Total articles'], row - 1, row)
 
         return row
 
@@ -585,15 +568,15 @@ class ChildrenRatingExport:
         """ Counts of document origins per medium, and their entropy. """
         self.scores_ws.write(row, 0, 'Origins')
 
-        rows = self.filter(db.session
-                .query(
-                    Medium.name,
-                    Location.name,
-                    func.count(1).label('freq'))
-                .join(Document)
-                .join(Location)
-                .group_by(Medium.name, Location.name)
-            ).all()
+        rows = self.filter(
+            db.session.query(
+                Medium.name,
+                Location.name,
+                func.count(1).label('freq'))
+            .join(Document)
+            .join(Location)
+            .group_by(Medium.name, Location.name)
+        ).all()
         origins = list(set(r[1] for r in rows))
         origins.sort()
 
@@ -607,7 +590,7 @@ class ChildrenRatingExport:
         row = self.write_score_table(origins, rows, row) + 1
 
         starting_row = row
-        formula = '=SUM({col}%s:{col}%s)' % (row-len(origins), row-1)
+        formula = '=SUM({col}%s:{col}%s)' % (row - len(origins), row - 1)
         self.write_formula_score_row('Focus origins', formula, row)
         row += 1
         self.write_percent_row('Focus origins', self.score_row['Total articles'], starting_row, row)
@@ -626,29 +609,31 @@ class ChildrenRatingExport:
 
         rows = []
         names = []
-        indicators = ['quality_self_help',
-                     'quality_consequences',
-                     'quality_solutions',
-                     'quality_policies',
-                     'quality_causes',
-                     'quality_basic_context']
+        indicators = [
+            'quality_self_help',
+            'quality_consequences',
+            'quality_solutions',
+            'quality_policies',
+            'quality_causes',
+            'quality_basic_context',
+        ]
 
         for attr in indicators:
             # count documents with this quality
             name = attr.replace('quality_', '').replace('_', ' ').title()
             names.append(name)
-            for medium, count in self.filter(db.session
-                    .query(
-                        Medium.name,
-                        func.count(1).label('freq'))
-                    .join(Document)
-                    .filter(getattr(Document, attr) == True)
-                    .group_by(Medium.name)
-                    .order_by(Medium.name)
-                    ).all():
+            for medium, count in self.filter(
+                db.session.query(
+                    Medium.name,
+                    func.count(1).label('freq'))
+                .join(Document)
+                .filter(getattr(Document, attr) == True)
+                .group_by(Medium.name)
+                .order_by(Medium.name)
+                ).all():  # noqa
 
                 rows.append([medium, name, count])
-  
+
         starting_row = row
         row = self.write_score_table(names, rows, row) + 1
         row = self.write_percent_table(names, self.score_row['Total articles'], starting_row, row)
@@ -662,10 +647,9 @@ class ChildrenRatingExport:
     def write_percent_table(self, names, denom_row, starting_row, row):
         """ Write a table of percentages. +denom_row+ is the row of
         the denominator, +starting_row+ is the first row of numerators. """
-        formula = lambda r, c: '=IF({col}{denom}>0,{col}{row}/{col}{denom},0)'.format(denom=denom_row+1, row=r-row+starting_row, col=c)
+        formula = lambda r, c: '=IF({col}{denom}>0,{col}{row}/{col}{denom},0)'.format(denom=denom_row + 1, row=r - row + starting_row, col=c)
         names = ['Percent ' + n for n in names]
         return self.write_formula_table(names, formula, row)
-
 
     def victim_scores(self, row):
         """ Counts of secondary victimisation per medium """
@@ -673,22 +657,22 @@ class ChildrenRatingExport:
 
         # number of documents with both a child source, and an
         # abuse victim (secondary victimisation)
-        rows = self.filter(db.session
-                .query(
-                    Medium.name,
-                    func.count(1).label('freq'))
-                .join(Document)
-                .filter(Document.abuse_victim == True)
-                .filter(Document.abuse_source == True)
-                .group_by(Medium.name)
-                .order_by(Medium.name)
-            ).all()
+        rows = self.filter(
+            db.session.query(
+                Medium.name,
+                func.count(1).label('freq'))
+            .join(Document)
+            .filter(Document.abuse_victim == True)
+            .filter(Document.abuse_source == True)
+            .group_by(Medium.name)
+            .order_by(Medium.name)
+        ).all()  # noqa
 
         self.write_simple_score_row('Abused sources', rows, row)
         row += 1
 
         total_row = self.score_row['Total child sources']
-        formula = '=IF({col}%s>0,{col}%s/{col}%s,0)' % (total_row+1, row, total_row+1)
+        formula = '=IF({col}%s>0,{col}%s/{col}%s,0)' % (total_row + 1, row, total_row + 1)
         self.write_formula_score_row('Percent Abused sources', formula, row)
         row += 1
 
@@ -702,58 +686,57 @@ class ChildrenRatingExport:
         principles = Principle.query.all()
 
         self.scores_ws.write(row, 0, 'Principles supported')
-        rows = self.filter(db.session
-                .query(
-                    Medium.name,
-                    Principle.name,
-                    func.count(1).label('freq'))
-                .join(Document)
-                .join(Principle, Document.principle_supported_id == Principle.id)
-                .group_by(Medium.name, Principle.name)
-            ).all()
+        rows = self.filter(
+            db.session.query(
+                Medium.name,
+                Principle.name,
+                func.count(1).label('freq'))
+            .join(Document)
+            .join(Principle, Document.principle_supported_id == Principle.id)
+            .group_by(Medium.name, Principle.name)
+        ).all()
         rows = [[r[0], 'S. ' + r[1], r[2]] for r in rows]
         names = ['S. ' + p.name for p in principles]
         row = self.write_score_table(names, rows, row) + 1
 
         # count of docs with any supported principle
-        formula = '=SUM({col}%s:{col}%s)' % (row-len(principles), row-1)
+        formula = '=SUM({col}%s:{col}%s)' % (row - len(principles), row - 1)
         self.write_formula_score_row('Rights respected', formula, row)
         row += 1
 
         # rights respected is the percent of stories that have a supported principle
         total_row = self.score_row['Total articles']
-        self.write_percent_row('Rights respected', total_row, row-1, row)
+        self.write_percent_row('Rights respected', total_row, row - 1, row)
         row = row + 2
 
         # percent of documents with each right violated
-        formula = lambda r, c: '=IF({col}{tot}>0,{col}{row}/{col}{tot},0)'.format(tot=total_row+1, row=r-len(names)-4, col=c)
+        formula = lambda r, c: '=IF({col}{tot}>0,{col}{row}/{col}{tot},0)'.format(tot=total_row + 1, row=r - len(names) - 4, col=c)
         names = ['Percent ' + n for n in names]
         row = self.write_formula_table(names, formula, row) + 1
 
         self.scores_ws.write(row, 0, 'Principles violated')
-        rows = self.filter(db.session
-                .query(
-                    Medium.name,
-                    Principle.name,
-                    func.count(1).label('freq'))
-                .join(Document)
-                .join(Principle, Document.principle_violated_id == Principle.id)
-                .group_by(Medium.name, Principle.name)
-            ).all()
+        rows = self.filter(
+            db.session.query(
+                Medium.name,
+                Principle.name,
+                func.count(1).label('freq'))
+            .join(Document)
+            .join(Principle, Document.principle_violated_id == Principle.id)
+            .group_by(Medium.name, Principle.name)
+        ).all()
         rows = [[r[0], 'V. ' + r[1], r[2]] for r in rows]
         names = ['V. ' + p.name for p in principles]
         row = self.write_score_table(names, rows, row)
 
         # count of docs with any violated principle
-        formula = '=SUM({col}%s:{col}%s)' % (row-len(principles)+1, row)
+        formula = '=SUM({col}%s:{col}%s)' % (row - len(principles) + 1, row)
         self.write_formula_score_row('Principles violated', formula, row)
         row += 1
-        self.write_percent_row('Principles violated', total_row, row-1, row)
+        self.write_percent_row('Principles violated', total_row, row - 1, row)
         row += 1
         self.write_formula_score_row('Inv. Percent Principles violated', '=1-{col}%s' % row, row)
 
         return row
-
 
     def write_simple_score_row(self, name, data, row):
         """ Write a single value as a score row, where +data+ is a map from medium name to that value. """
@@ -765,7 +748,6 @@ class ChildrenRatingExport:
         for i, medium in enumerate(self.media):
             medium_col = self.score_col(i)
             self.scores_ws.write(row, medium_col, data.get(medium.name, 0))
-
 
     def write_formula_score_row(self, name, formula, row):
         """ Write a single formula as a score row, where +formula+ is a string
@@ -782,7 +764,7 @@ class ChildrenRatingExport:
         for i, medium in enumerate(self.media):
             medium_col = self.score_col(i)
             col_name = xl_col_to_name(medium_col)
-            self.scores_ws.write_formula(row, medium_col, formula(row+1, col_name))
+            self.scores_ws.write_formula(row, medium_col, formula(row + 1, col_name))
 
     def write_score_table(self, row_names, rows, row):
         """ Convert all the rows in +rows+ into a table and write it as scores,
@@ -800,10 +782,9 @@ class ChildrenRatingExport:
 
         for name in row_names:
             self.write_simple_score_row(name, data.get(name, {}), row)
-            row = row+1
+            row = row + 1
 
         return row
-
 
     def write_formula_table(self, row_names, formula, row):
         """ Write a table of formulas, where the row names are in +row_names+
@@ -814,16 +795,14 @@ class ChildrenRatingExport:
         """
         for name in row_names:
             self.write_formula_score_row(name, formula, row)
-            row = row+1
+            row = row + 1
 
         return row
-
 
     def set_score_row(self, name, row):
         """ The row containing the score named +name+ is in +row+. """
         self.score_row[name] = row
         self.scores_ws.write(row, 1, name)
-
 
     def build_rating_worksheet(self):
         """ Build up the rating worksheet. """
@@ -833,7 +812,6 @@ class ChildrenRatingExport:
 
         self.add_nested_ratings(self.ratings, row=3, col=0)
 
-    
     def add_nested_ratings(self, ratings, row, col):
         rating_rows = []
 
@@ -841,19 +819,19 @@ class ChildrenRatingExport:
             weight, rating = info[0:2]
 
             rating_rows.append(row)
-            self.rating_ws.write(row, col  , weight)
-            self.rating_ws.write(row, col+1, rating)
+            self.rating_ws.write(row, col, weight)
+            self.rating_ws.write(row, col + 1, rating)
 
             if len(info) > 2:
                 # add sub-ratings
-                rows, last_row = self.add_nested_ratings(info[2], row+1, col+1)
+                rows, last_row = self.add_nested_ratings(info[2], row + 1, col + 1)
 
                 # now set this rating's score to the product of the children
-                col_name = xl_col_to_name(col+1)
+                col_name = xl_col_to_name(col + 1)
                 for i in xrange(self.n_columns):
                     rating_col_name = xl_col_to_name(self.rating_col(i))
                     # weight * score
-                    formula = '+'.join('%s%s*%s%s' % (col_name, r+1, rating_col_name, r+1) for r in rows)
+                    formula = '+'.join('%s%s*%s%s' % (col_name, r + 1, rating_col_name, r + 1) for r in rows)
                     self.rating_ws.write_formula(row, self.rating_col(i), formula)
 
                 row = last_row
@@ -871,12 +849,12 @@ class ChildrenRatingExport:
     def source_counts(self, children=False, limit=4):
         # source counts per document
         subq = db.session\
-                .query(
-                    Medium.name.label('medium'),
-                    func.count(1).label('n_sources'))\
-                .join(Document)\
-                .join(DocumentSource)\
-                .group_by(Medium.name, DocumentSource.doc_id)
+            .query(
+                Medium.name.label('medium'),
+                func.count(1).label('n_sources'))\
+            .join(Document)\
+            .join(DocumentSource)\
+            .group_by(Medium.name, DocumentSource.doc_id)
 
         if children:
             subq = subq.filter(DocumentSource.source_type == 'child')
@@ -884,13 +862,13 @@ class ChildrenRatingExport:
         subq = self.filter(subq).subquery()
 
         return db.session\
-                .query(
-                    subq.c.medium,
-                    func.if_(subq.c.n_sources > limit, ">%s"%limit, subq.c.n_sources).label('bucket'),
-                    func.count(1))\
-                .select_from(subq)\
-                .group_by(subq.c.medium, 'bucket')\
-                .all()
+            .query(
+                subq.c.medium,
+                func.if_(subq.c.n_sources > limit, ">%s" % limit, subq.c.n_sources).label('bucket'),
+                func.count(1))\
+            .select_from(subq)\
+            .group_by(subq.c.medium, 'bucket')\
+            .all()
 
     def score_col(self, i):
         """ The index of the score for the i-th medium """
@@ -899,7 +877,6 @@ class ChildrenRatingExport:
     def rating_col(self, i):
         """ The index of the rating for the i-th medium """
         return self.rating_col_start + i
-
 
     def filter(self, query):
         return query.filter(Document.id.in_(self.doc_ids))
@@ -957,26 +934,26 @@ class MediaDiversityRatingExport(ChildrenRatingExport):
     def totals(self, row):
         """ Counts of articles and sources """
         self.scores_ws.write(row, 0, 'Articles')
-        rows = self.filter(db.session
-                .query(
-                    Medium.name,
-                    func.count(1).label('freq'))
-                .join(Document)
-                .group_by(Medium.name)
-            ).all()
+        rows = self.filter(
+            db.session.query(
+                Medium.name,
+                func.count(1).label('freq'))
+            .join(Document)
+            .group_by(Medium.name)
+        ).all()
         self.write_simple_score_row('Total articles', rows, row)
 
         row += 2
 
         self.scores_ws.write(row, 0, 'Sources')
-        rows = self.filter(db.session
-                .query(
-                    Medium.name,
-                    func.count(1).label('freq'))
-                .join(Document)
-                .join(DocumentSource)
-                .group_by(Medium.name)
-            ).all()
+        rows = self.filter(
+            db.session.query(
+                Medium.name,
+                func.count(1).label('freq'))
+            .join(Document)
+            .join(DocumentSource)
+            .group_by(Medium.name)
+        ).all()
         self.write_simple_score_row('Total sources', rows, row)
 
         return row
