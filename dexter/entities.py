@@ -63,7 +63,9 @@ def show_person(id):
 
     if request.method == 'POST':
         if form.validate():
-            form.populate_obj(person)
+            # update document -- no_autoflush seems to be required with wtforms alchemy
+            with db.session.no_autoflush:
+                form.populate_obj(person)
 
             if person.gender_id == '':
                 person.gender_id = None
