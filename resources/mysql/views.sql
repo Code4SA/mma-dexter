@@ -219,3 +219,19 @@ from
   documents d
   left join document_keywords dk on dk.doc_id = d.id
 ;
+
+-- documents_taxonomies_view:
+--   taxonomies for all documents (there can be multiple taxonomies for the same document)
+create or replace view documents_taxonomies_view as
+select
+  d.id as `document_id`,
+  dt.label as `taxonomy`,
+  substring(substring_index(dt.label, '/', 2), 2) as `level_1`,
+  substring(substring_index(substring(dt.label, locate('/', dt.label, 2)), '/', 2), 2) as `level_2`,
+  substring_index(substring_index(concat(dt.label, '/'), '/', 4), '/', -1) as `level_3`,
+  substring_index(dt.label, '/', -1) as `label`,
+  dt.score
+from
+  documents d
+  left join document_taxonomies dt on dt.doc_id = d.id
+;

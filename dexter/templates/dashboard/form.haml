@@ -120,6 +120,9 @@
                 %li
                   %a.download(href="#", dataFormat="xlsx") Raw data (.xlsx)
 
+                %li
+                  %a.download(href="#", dataFormat="media-diversity-ratings.xlsx") Media Diversity Ratings (.xlsx)
+
                 %li(class_='disabled' if form.analysis_nature().nature != AnalysisNature.CHILDREN else '')
                   %a.download(href="#", dataFormat="children-ratings.xlsx")
                     %i.fa(class_=AnalysisNature.ICONS[AnalysisNature.CHILDREN])

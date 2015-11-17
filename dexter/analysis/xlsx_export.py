@@ -56,6 +56,7 @@ class XLSXExportBuilder:
         self.places_worksheet(workbook)
         self.keywords_worksheet(workbook)
         self.issues_worksheet(workbook)
+        self.taxonomies_worksheet(workbook)
         self.everything_worksheet(workbook)
 
         workbook.close()
@@ -187,6 +188,23 @@ class XLSXExportBuilder:
             .all()
 
         self.write_table(ws, 'Keywords', rows)
+
+    def taxonomies_worksheet(self, wb):
+        from dexter.models.views import DocumentTaxonomiesView, DocumentsView
+
+        ws = wb.add_worksheet('raw_taxonomies')
+
+        tables = OrderedDict()
+        tables['doc'] = DocumentsView
+        tables['taxonomies'] = DocumentTaxonomiesView
+
+        rows = self.filter(db.session
+                           .query(*self.merge_views(tables, ['document_id']))
+                           .join(Document)
+                           .join(DocumentTaxonomiesView)
+                           .filter(DocumentTaxonomiesView.c.label != None))\
+                           .all()  # noqa
+        self.write_table(ws, 'Taxonomies', rows)
 
     def fairness_worksheet(self, wb):
         from dexter.models.views import DocumentsView, DocumentFairnessView

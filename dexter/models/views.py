@@ -53,3 +53,8 @@ DocumentChildrenView = Table("documents_children_view", db.metadata,
 DocumentIssuesView = Table("documents_issues_view", db.metadata,
         Column("document_id", Integer, ForeignKey("documents.id")),
         autoload=True, autoload_with=db.engine)
+
+# helper across documents for taxonomy analysis
+DocumentTaxonomiesView = Table("documents_taxonomies_view", db.metadata,
+        Column("document_id", Integer, ForeignKey("documents.id")),
+        autoload=True, autoload_with=db.engine)
