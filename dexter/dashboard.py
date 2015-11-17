@@ -146,6 +146,7 @@ def activity():
     # tags
     tag_summary = db.session\
         .query(DocumentTag.tag, func.count(1).label('count'))\
+        .filter(DocumentTag.doc_id.in_(doc_ids))\
         .group_by(DocumentTag.tag)\
         .order_by(desc('count'), DocumentTag.tag)\
         .all()
