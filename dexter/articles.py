@@ -319,7 +319,7 @@ def reprocess_article_analysis(id):
         ax.fetch_extract_taxonomy(document)
 
         cx = CalaisExtractor()
-        calais = cx.fetch_data(document).get('extractions', {})
+        calais = cx.fetch_data(document)
         cx.extract_topics(document, calais)
 
         db.session.commit()

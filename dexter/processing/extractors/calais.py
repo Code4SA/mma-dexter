@@ -20,7 +20,7 @@ class CalaisExtractor(BaseExtractor):
         if doc.text:
             log.info("Extracting things for %s" % doc)
 
-            calais = self.fetch_data(doc).get('extractions', {})
+            calais = self.fetch_data(doc)
 
             log.debug("Raw calais extractions: %s" % calais)
 
@@ -108,7 +108,7 @@ class CalaisExtractor(BaseExtractor):
         # make the JSON decent and usable
         res = self.normalise(res)
 
-        return res
+        return res.get('extractions', {})
 
     def normalise(self, js):
         """ Change the JSON OpenCalais gives back into
