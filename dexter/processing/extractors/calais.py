@@ -1,7 +1,7 @@
 import requests
 
 from .base import BaseExtractor
-from ...models import DocumentEntity, Entity, Utterance
+from ...models import DocumentEntity, Entity, Utterance, DocumentTaxonomy
 
 import logging
 log = logging.getLogger(__name__)
@@ -26,6 +26,7 @@ class CalaisExtractor(BaseExtractor):
 
             self.extract_entities(doc, calais)
             self.extract_utterances(doc, calais)
+            self.extract_topics(doc, calais)
 
     def extract_entities(self, doc, calais):
         entities_added = 0
@@ -71,6 +72,19 @@ class CalaisExtractor(BaseExtractor):
                 utterances_added += 1
 
         log.info("Added %d utterances for %s" % (utterances_added, doc))
+
+    def extract_topics(self, doc, calais):
+        added = 0
+
+        for topicpairs in calais.get('topics', {}).itervalues():
+            for topic in topicpairs.itervalues():
+                dt = DocumentTaxonomy()
+                dt.document = doc
+                dt.label = topic['name'].replace('_', ' ')
+                dt.score = topic['score']
+                added += 1
+
+        log.info("Added %d topics for %s" % (added, doc))
 
     def fetch_data(self, doc):
         # fetch it
