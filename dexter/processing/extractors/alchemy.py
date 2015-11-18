@@ -62,6 +62,10 @@ class AlchemyExtractor(BaseExtractor):
 
             # utterances
             for quote in entity.get('quotations', []):
+                # sometimes calais gives us odd things
+                if 'quotation' not in quote:
+                    continue
+
                 u = Utterance()
                 u.quote = quote['quotation'].strip()
                 u.entity = e
