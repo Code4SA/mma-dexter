@@ -42,7 +42,9 @@ class NewstoolsCrawler(BaseCrawler):
         return True
 
     def crawl(self, item):
-        """ Crawl this newstools feed item and return a document. """
+        """ Create a document from this newstools feed item.
+        This doesn't actually fetch the text, we prefer to do that ourselves.
+        """
         doc = Document()
         doc.url = item['url']
         doc.title = item['title']
@@ -52,8 +54,6 @@ class NewstoolsCrawler(BaseCrawler):
             doc.author = Author.get_or_create(item['author'], AuthorType.journalist())
         else:
             doc.author = Author.unknown()
-
-        doc.text = self.fetch_text(item['text_url'])
 
         # medium and country
         self.extract(doc, None)

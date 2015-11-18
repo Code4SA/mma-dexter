@@ -6,10 +6,11 @@ from mock import MagicMock
 
 from datetime import date
 
-from dexter.models import Document, db
+from dexter.models import db
 from dexter.models.seeds import seed_db
 from dexter.processing import DocumentProcessor
 from dexter.processing.extractors import AlchemyExtractor
+
 
 class TestDocumentProcessor(unittest.TestCase):
     def setUp(self):
@@ -71,13 +72,15 @@ class TestDocumentProcessor(unittest.TestCase):
         self.assertEqual(items, [
             {'url': 'http://mg.co.za/article/2014-05-22-kitchen-cabinet-helps-jz-to-rule', 'text_url': 'http://www.newstools.co.za/data/texts/SFM-5TC9PUI3J6XGJC4Q7WAR.txt', 'author': 'Political Team', 'publishdate': '2014-05-23 00:00:00', 'title': "'Kitchen cabinet' helps Jacob Zuma rule"},
             {'url': 'http://mg.co.za/article/2014-05-22-dont-miss-this-eat-listen-watch', 'text_url': 'http://www.newstools.co.za/data/texts/SFM-9VNENUOQNCNT503VVLYE.txt', 'author': 'M&G Reporters', 'publishdate': '2014-05-23 00:00:00', 'title': "DON'T MISS THIS: Oliver 'Tuku' Mtukudzi, the DStv Delicious Festival and City Hall Sessions"},
-            ])
-
+        ])
 
     def test_process_feed_item_bad_text(self):
         item = {'url': 'http://mg.co.za/article/2014-05-22-dont-miss-this-eat-listen-watch', 'text_url': 'http://www.newstools.co.za/data/texts/SFM-9VNENUOQNCNT503VVLYE.txt', 'author': 'M&G Reporters', 'publishdate': '2014-05-23 00:00:00', 'title': "DON'T MISS THIS: Oliver 'Tuku' Mtukudzi, the DStv Delicious Festival and City Hall Sessions"}
 
-        self.dp.newstools_crawler.fetch_text = MagicMock(return_value='ba')
+        def crawl(doc):
+            doc.text = 'ba'
+
+        self.dp.crawl = MagicMock(side_effect=crawl)
 
         doc = self.dp.process_feed_item(item)
         self.assertIsNone(doc)

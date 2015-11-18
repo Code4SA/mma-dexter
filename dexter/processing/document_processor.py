@@ -1,14 +1,13 @@
-from itertools import chain
-
-from ..models import Document, Entity, db, Gender, Person, DocumentType, DocumentFairness, Fairness, AnalysisNature
+from ..models import Document, db, DocumentType, DocumentFairness, Fairness, AnalysisNature
 from ..processing import ProcessingError
 
-from .crawlers import *
+from .crawlers import *  # noqa
 from .extractors import AlchemyExtractor, CalaisExtractor, SourcesExtractor, PlacesExtractor
 
 import requests
 from requests.exceptions import HTTPError
 import logging
+
 
 class DocumentProcessor:
     log = logging.getLogger(__name__)
@@ -21,32 +20,30 @@ class DocumentProcessor:
         self.newstools_crawler = NewstoolsCrawler()
 
         self.crawlers = [
-                MGCrawler(),
-                TimesLiveCrawler(),
-                CitizenCrawler(),
-                DailysunCrawler(),
-                News24Crawler(),
-                IOLCrawler(),
-                NamibianCrawler(),
-                ZambiaDailyNationCrawler(),
-                LusakaTimesCrawler(),
-                ZambianWatchdogCrawler(),
-                ZambiaDailyMailCrawler(),
-                PostZambiaCrawler(),
-                TimesZambiaCrawler(),
-                # must come last
-                GenericCrawler()]
+            MGCrawler(),
+            TimesLiveCrawler(),
+            CitizenCrawler(),
+            DailysunCrawler(),
+            News24Crawler(),
+            IOLCrawler(),
+            NamibianCrawler(),
+            ZambiaDailyNationCrawler(),
+            LusakaTimesCrawler(),
+            ZambianWatchdogCrawler(),
+            ZambiaDailyMailCrawler(),
+            PostZambiaCrawler(),
+            TimesZambiaCrawler(),
+            # must come last
+            GenericCrawler()]
         self.extractors = [
-                AlchemyExtractor(),
-                CalaisExtractor(),
-                SourcesExtractor(),
-                PlacesExtractor()]
-
+            AlchemyExtractor(),
+            CalaisExtractor(),
+            SourcesExtractor(),
+            PlacesExtractor()]
 
     def valid_url(self, url):
         """ Is this a URL we can process? """
         return any(c.offer(url) for c in self.crawlers)
-
 
     def canonicalise_url(self, url):
         """ Try to canonicalise this url. Strip anchors, etc. """
@@ -55,7 +52,6 @@ class DocumentProcessor:
                 return crawler.canonicalise_url(url)
 
         return url
-
 
     def process_url(self, url):
         """ Download and process an article at +url+ and return
@@ -77,12 +73,10 @@ class DocumentProcessor:
 
         return doc
 
-
     def process_document(self, doc):
         """ Process an existing document. """
         self.normalise(doc)
         self.extract(doc)
-
 
     def normalise(self, doc):
         """ Run some normalisations on the document. """
@@ -96,7 +90,6 @@ class DocumentProcessor:
             df.fairness = Fairness.query.filter(Fairness.name == 'Fair').one()
             doc.fairness.append(df)
 
-
     def crawl(self, doc):
         """ Run crawlers against a document's URL to fetch its
         content, updating any existing content. """
@@ -105,12 +98,10 @@ class DocumentProcessor:
                 crawler.crawl(doc)
                 return
 
-
     def extract(self, doc):
         """ Run extraction routines on a document. """
         for extractor in self.extractors:
             extractor.extract(doc)
-
 
     def get_or_set_entity(self, entities, entity):
         key = (entity.group.lower(), entity.name.lower())
@@ -119,7 +110,6 @@ class DocumentProcessor:
 
         entities[key] = entity
         return entity
-
 
     def fetch_daily_feed_items(self, day):
         """ Fetch the feed for +day+ and yields the items. """
@@ -142,14 +132,13 @@ class DocumentProcessor:
             # </item>
 
             item = {
-                    'url': item.find('url').text,
-                    'publishdate': item.find('publishdate').text,
-                    'title': item.find('title').text,
-                    'author': item.find('author').text,
-                    'text_url': item.find('text').text,
+                'url': item.find('url').text,
+                'publishdate': item.find('publishdate').text,
+                'title': item.find('title').text,
+                'author': item.find('author').text,
+                'text_url': item.find('text').text,
             }
             yield item
-
 
     def process_feed_item(self, item):
         """ Process an item pulled from an RSS feed.
@@ -173,14 +162,18 @@ class DocumentProcessor:
                 self.log.info("No medium for URL, ignoring: %s" % url)
                 return
 
+            # this sets up basic info
+            doc = self.newstools_crawler.crawl(item)
             try:
-                doc = self.newstools_crawler.crawl(item)
+                # get the raw details
+                self.crawl(doc)
             except HTTPError as e:
                 self.log.error("Error fetching document: %s" % e, exc_info=e)
                 raise ProcessingError("Error fetching document: %s" % (e,))
 
             # is it sane?
-            if not doc.text or not 'the' in doc.text:
+            # TODO: this breaks for isolezwe and other non-english media
+            if not doc.text or 'the' not in doc.text:
                 self.log.info("Document %s doesn't have reasonable-looking text, ignoring: %s..." % (url, doc.text[0:100]))
                 db.session.rollback()
                 return None
@@ -203,7 +196,6 @@ class DocumentProcessor:
             db.session.rollback()
             raise
 
-
     def fetch_daily_feeds(self, day):
         """ Fetch the feed for +day+ and returns an ElementTree instance. """
         import xml.etree.ElementTree as ET
@@ -211,10 +203,10 @@ class DocumentProcessor:
         if self.FEED_PASSWORD is None:
             raise ValueError("%s.FEED_PASSWORD must be set." % self.__class__.__name__)
 
-        r =  requests.get(self.FEED_URL % day.strftime('%d-%m-%Y'),
-                          auth=(self.FEED_USER, self.FEED_PASSWORD),
-                          verify=False,
-                          timeout=60)
+        r = requests.get(self.FEED_URL % day.strftime('%d-%m-%Y'),
+                         auth=(self.FEED_USER, self.FEED_PASSWORD),
+                         verify=False,
+                         timeout=60)
         r.raise_for_status()
 
         return ET.fromstring(r.text)
