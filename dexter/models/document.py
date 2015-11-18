@@ -55,6 +55,8 @@ class Document(FullText, db.Model):
     # the raw HTML for archive purposes. Marked as deferred so we only
     # load it when it's actually used
     raw_html  = deferred(Column(LONGTEXT))
+    # Raw results from the OpenCalais API, as json
+    raw_calais = deferred(Column(LONGTEXT))
 
     author_id         = Column(Integer, ForeignKey('authors.id'), index=True, nullable=False)
     medium_id         = Column(Integer, ForeignKey('mediums.id'), index=True, nullable=False)

@@ -1,12 +1,15 @@
-from ..models import Document, db, DocumentType, DocumentFairness, Fairness, AnalysisNature
+import time
+import logging
+
+import requests
+from requests.exceptions import HTTPError
+from sqlalchemy.sql import desc
+
+from ..models import Document, db, DocumentType, DocumentFairness, Fairness, AnalysisNature, DocumentTaxonomy
 from ..processing import ProcessingError
 
 from .crawlers import *  # noqa
 from .extractors import AlchemyExtractor, CalaisExtractor, SourcesExtractor, PlacesExtractor
-
-import requests
-from requests.exceptions import HTTPError
-import logging
 
 
 class DocumentProcessor:
@@ -210,3 +213,51 @@ class DocumentProcessor:
         r.raise_for_status()
 
         return ET.fromstring(r.text)
+
+    def backfill_taxonomies(self):
+        """ Backfill taxonomies for articles.
+        """
+        doc_ids = (db.session
+                   .query(Document.id)
+                   .join(DocumentTaxonomy, isouter=True)
+                   .filter(DocumentTaxonomy.doc_id == None)
+                   .filter(Document.raw_calais == None)
+                   .order_by(desc(Document.published_at))
+                   .all()
+        )  # noqa
+
+        count = 0
+        self.log.info("Starting taxonomy backfill for %s documents" % len(doc_ids))
+
+        try:
+            for doc_id in doc_ids:
+                doc = Document.query.get(doc_id)
+                try:
+                    self.backfill_taxonomies_for_document(doc)
+                    count += 1
+                except HTTPError as e:
+                    if 'requests per day' in e.message:
+                        # we're done for the day
+                        self.log.info("Exceeded OpenCalais quota for the day, stopping: %s" % e.message)
+                        break
+
+                    elif e.status_code == 429:
+                        # per-minute quota exceeded, try again later
+                        self.log.info("Temporary failure for %s: %s" % (doc, e.message))
+                        time.sleep(60)
+                        continue
+
+                    else:
+                        raise e
+
+        finally:
+            self.log.info("Backfilled %d documents" % count)
+
+    def backfill_taxonomies_for_document(self, doc):
+        self.log.info("Backfilling taxonomies for %s" % doc)
+
+        cx = CalaisExtractor()
+        calais = cx.fetch_data(doc)
+        cx.extract_topics(doc, calais)
+
+        db.session.commit()

@@ -1,4 +1,5 @@
 import requests
+import json
 
 from .base import BaseExtractor
 from ...models import DocumentEntity, Entity, Utterance, DocumentTaxonomy
@@ -87,27 +88,32 @@ class CalaisExtractor(BaseExtractor):
         log.info("Added %d topics for %s" % (added, doc))
 
     def fetch_data(self, doc):
-        # fetch it
-        # NOTE: set the ENV variable CALAIS_API_KEY before running the process
-        if not self.API_KEY:
-            raise ValueError('%s.%s.API_KEY must be defined.' % (self.__module__, self.__class__.__name__))
+        if not doc.raw_calais:
+            # fetch it
+            # NOTE: set the ENV variable CALAIS_API_KEY before running the process
+            if not self.API_KEY:
+                raise ValueError('%s.%s.API_KEY must be defined.' % (self.__module__, self.__class__.__name__))
 
-        res = requests.post(
-            'https://api.thomsonreuters.com/permid/calais',
-            doc.text.encode('utf-8'),
-            headers={
-                'x-ag-access-token': self.API_KEY,
-                'Content-Type': 'text/raw',
-                'outputFormat': 'application/json',
-            })
-        if res.status_code != 200:
-            log.error(res.text)
-            res.raise_for_status()
+            res = requests.post(
+                'https://api.thomsonreuters.com/permid/calais',
+                doc.text.encode('utf-8'),
+                headers={
+                    'x-ag-access-token': self.API_KEY,
+                    'Content-Type': 'text/raw',
+                    'outputFormat': 'application/json',
+                })
+            if res.status_code != 200:
+                log.error(res.text)
+                res.raise_for_status()
 
-        res = res.json()
+            res = res.json()
+            doc.raw_calais = json.dumps(res)
+        else:
+            log.info("Using cached Calais data")
+            res = json.loads(doc.raw_calais)
+
         # make the JSON decent and usable
         res = self.normalise(res)
-
         return res.get('extractions', {})
 
     def normalise(self, js):

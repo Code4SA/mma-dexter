@@ -54,3 +54,13 @@ def get_feed_item(self, item):
     except Exception as e:
         log.error("Error processing feed item: %s" % item, exc_info=e)
         self.retry()
+
+
+@app.task
+def backfill_taxonomies():
+    """ Enqueue a task to backfill taxonomies """
+    try:
+        dp = DocumentProcessor()
+        dp.backfill_taxonomies()
+    except Exception as e:
+        log.error("Error backfilling taxonomies: %s" % e.message, exc_info=e)
