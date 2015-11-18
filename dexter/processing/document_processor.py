@@ -241,7 +241,7 @@ class DocumentProcessor:
                         self.log.info("Exceeded OpenCalais quota for the day, stopping: %s" % e.message)
                         break
 
-                    elif e.status_code == 429:
+                    elif e.response.status_code == 429:
                         # per-minute quota exceeded, try again later
                         self.log.info("Temporary failure for %s: %s" % (doc, e.message))
                         time.sleep(60)
