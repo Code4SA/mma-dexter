@@ -8,6 +8,19 @@ from ...models import Author, AuthorType, Medium, Document
 
 
 class NewstoolsCrawler(BaseCrawler):
+    # ignore URLs that start with these paths
+    ignore_paths = [
+        # ignore citizen AFP articles
+        '/afp_feed_article',
+        '/sports/',
+        '/sport/',
+        # ignore news24, IOL world articles
+        '/news/world/',
+        '/world/',
+        # iol intl business
+        '/business/international/',
+    ]
+
     def offer(self, url):
         """ Can this crawler process this URL?
         We only allow urls we have a medium for. """
@@ -17,12 +30,7 @@ class NewstoolsCrawler(BaseCrawler):
 
         parts = urlparse(url.lower())
 
-        # ignore citizen AFP articles
-        if parts.path.startswith('/afp_feed_article'):
-            return False
-
-        # ignore sports
-        if parts.path.startswith('/sports/') or parts.path.startswith('/sport/'):
+        if any(parts.path.startswith(p) for p in self.ignore_paths):
             return False
 
         # ignore citypress non-articles
@@ -30,10 +38,6 @@ class NewstoolsCrawler(BaseCrawler):
             for prefix in ['/category/', '/author/', '/entertainment/', '/lifestyle/']:
                 if parts.path.startswith(prefix):
                     return False
-
-        # ignore news24, IOL world articles
-        if parts.path.startswith('/news/world/') or parts.path.startswith('/world/'):
-            return False
 
         return True
 
