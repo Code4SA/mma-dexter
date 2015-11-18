@@ -19,6 +19,8 @@ class NewstoolsCrawler(BaseCrawler):
         '/world/',
         # iol intl business
         '/business/international/',
+        # these aren't in English
+        '/isolezwe/',
     ]
 
     def offer(self, url):
