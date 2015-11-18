@@ -16,4 +16,8 @@ CELERYBEAT_SCHEDULE = {
         'schedule': crontab(hour=3, minute=0),
         'task': 'dexter.tasks.fetch_yesterdays_feeds',
     },
+    'backfill-taxonomies': {
+        'schedule': crontab(hour=15, minute=0),
+        'task': 'dexter.tasks.baxfill_taxonomies',
+    },
 }
