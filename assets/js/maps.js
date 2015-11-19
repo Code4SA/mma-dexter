@@ -39,6 +39,7 @@
         url = url + "?";
       } else {
         url = url + "&";
+        url = url.replace(/format=[^&]*&/, '');
       }
 
       return url + "format=places-json";
