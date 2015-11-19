@@ -893,9 +893,11 @@ class MediaDiversityRatingExport(ChildrenRatingExport):
     """
 
     ratings = [[1.0, 'Final rating', [
-        [0.500, 'Topic', [
-            [0.333, 'Diversity of Topics']]],
-        [0.500, 'Sources', [
+        [0.333, 'Topic', [
+            [1.000, 'Diversity of Topics']]],
+        [0.333, 'Region', [
+            [1.000, 'Diversity of Regions']]],
+        [0.333, 'Sources', [
             [0.333, 'Diversity of Affiliations'],
             [0.333, 'Gender Ratio'],
             [0.333, 'Avg sources']]],
@@ -909,6 +911,7 @@ class MediaDiversityRatingExport(ChildrenRatingExport):
         row = 4
         row = self.totals(row) + 2
         row = self.taxonomy_scores(row) + 2
+        row = self.region_scores(row) + 2
         row = self.sources_scores(row) + 2
 
         return row
@@ -935,6 +938,32 @@ class MediaDiversityRatingExport(ChildrenRatingExport):
 
         row = self.write_score_table(taxonomies, rows, row) + 1
         self.write_simple_score_row('Diversity of Topics', self.entropy(rows), row)
+        row += 1
+
+        return row
+
+    def region_scores(self, row):
+        """ Counts of document regions per medium, and their entropy. """
+        from dexter.models.views import DocumentPlacesView
+
+        self.scores_ws.write(row, 0, 'Region')
+
+        rows = self.filter(
+            db.session.query(
+                Medium.name,
+                DocumentPlacesView.c.province_name,
+                func.count(1).label('freq')
+            )
+            .select_from(DocumentPlacesView)
+            .join(Document)
+            .join(Medium)
+            .group_by(Medium.name, DocumentPlacesView.c.province_name)
+        ).all()
+        regions = list(set(r[1] for r in rows))
+        regions.sort()
+
+        row = self.write_score_table(regions, rows, row) + 1
+        self.write_simple_score_row('Diversity of Regions', self.entropy(rows), row)
         row += 1
 
         return row
