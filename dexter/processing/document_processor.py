@@ -249,10 +249,9 @@ class DocumentProcessor:
                         # per-minute quota exceeded, try again later
                         self.log.info("Temporary failure for %s: %s" % (doc, e.message))
                         time.sleep(60)
-                        continue
 
                     else:
-                        raise e
+                        self.log.info("Error backfilling for %s: %s" % (doc, e.message), exc_info=e)
 
         finally:
             self.log.info("Backfilled %d documents" % count)
