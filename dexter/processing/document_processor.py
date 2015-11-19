@@ -222,6 +222,7 @@ class DocumentProcessor:
                    .join(DocumentTaxonomy, isouter=True)
                    .filter(DocumentTaxonomy.doc_id == None)
                    .filter(Document.raw_calais == None)
+                   .filter(Document.text != None, Document.text != '')
                    .order_by(desc(Document.published_at))
                    .all()
         )  # noqa
@@ -232,6 +233,9 @@ class DocumentProcessor:
         try:
             for doc_id in doc_ids:
                 doc = Document.query.get(doc_id)
+                if not doc.text.strip():
+                    continue
+
                 try:
                     self.backfill_taxonomies_for_document(doc)
                     count += 1
