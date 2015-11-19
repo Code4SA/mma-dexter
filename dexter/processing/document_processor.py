@@ -236,7 +236,7 @@ class DocumentProcessor:
                     self.backfill_taxonomies_for_document(doc)
                     count += 1
                 except HTTPError as e:
-                    if 'requests per day' in e.message:
+                    if 'requests per day' in e.response.text:
                         # we're done for the day
                         self.log.info("Exceeded OpenCalais quota for the day, stopping: %s" % e.message)
                         break
