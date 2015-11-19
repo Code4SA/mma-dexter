@@ -896,6 +896,7 @@ class MediaDiversityRatingExport(ChildrenRatingExport):
         [0.500, 'Topic', [
             [0.333, 'Diversity of Topics']]],
         [0.500, 'Sources', [
+            [0.333, 'Diversity of Affiliations'],
             [0.333, 'Gender Ratio'],
             [0.333, 'Avg sources']]],
     ]]]
@@ -943,6 +944,28 @@ class MediaDiversityRatingExport(ChildrenRatingExport):
         from dexter.models.views import DocumentSourcesView
         self.scores_ws.write(row, 0, 'Sources')
 
+        # source affiliations
+        rows = self.filter(
+            db.session.query(
+                Medium.name,
+                DocumentSourcesView.c.affiliation_group.label('affiliation'),
+                func.count(1).label('freq'))
+            .select_from(DocumentSourcesView)
+            .join(Document)
+            .join(Medium)
+            .group_by(Medium.name, 'affiliation')
+            .order_by(Medium.name)
+        ).all()
+
+        affiliations = list(set(r[1] for r in rows))
+        affiliations.sort()
+
+        row = self.write_score_table(affiliations, rows, row) + 1
+        self.write_simple_score_row('Diversity of Affiliations', self.entropy(rows), row)
+
+        row += 2
+
+        # gender diversity
         rows = self.filter(
             db.session.query(
                 Medium.name,
