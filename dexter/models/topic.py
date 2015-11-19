@@ -176,13 +176,6 @@ class DocumentTaxonomy(db.Model):
     label     = Column(String(200), index=True, nullable=False)
     score = Column(Float, index=True, nullable=False)
 
-    @property
-    def friendly_label(self):
-        if '/' in self.label:
-            return u' ❯ '.join(self.label.split('/')[1:])
-        else:
-            return self.label
-
     def __repr__(self):
         return "<DocumentTaxonomy label='%s', score=%f, doc=%s>" % (
             self.label.encode('utf-8'), self.score, self.document)

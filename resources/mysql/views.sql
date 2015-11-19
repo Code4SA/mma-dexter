@@ -225,11 +225,7 @@ from
 create or replace view documents_taxonomies_view as
 select
   d.id as `document_id`,
-  dt.label as `taxonomy`,
-  substring(substring_index(dt.label, '/', 2), 2) as `level_1`,
-  substring(substring_index(substring(dt.label, locate('/', dt.label, 2)), '/', 2), 2) as `level_2`,
-  substring_index(substring_index(concat(dt.label, '/'), '/', 4), '/', -1) as `level_3`,
-  substring_index(dt.label, '/', -1) as `label`,
+  dt.label as `label`,
   dt.score
 from
   documents d

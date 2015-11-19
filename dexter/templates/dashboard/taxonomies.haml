@@ -10,9 +10,5 @@
   %table.table.table-striped.table-condensed.taxonomies
     - for label, freq in taxonomies:
       %tr
-        %td
-          - if '/' in label:
-            &= u' ❯ '.join(label.split('/')[1:])
-          - else:
-            &= label
+        %td&= label
         %td&= freq
