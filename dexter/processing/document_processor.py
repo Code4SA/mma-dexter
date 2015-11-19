@@ -254,6 +254,7 @@ class DocumentProcessor:
             self.log.info("Backfilled %d documents" % count)
 
     def backfill_taxonomies_for_document(self, doc):
+        from dexter.app import app
         self.log.info("Backfilling taxonomies for %s" % doc)
 
         cx = CalaisExtractor()
