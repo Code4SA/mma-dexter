@@ -15,7 +15,6 @@ from .models.author import AuthorForm
 from .analysis.forms import DocumentSourceForm
 
 from .processing import DocumentProcessor, ProcessingError
-from .processing.extractors.alchemy import AlchemyExtractor
 from .processing.extractors.calais import CalaisExtractor
 
 log = logging.getLogger(__name__)
@@ -314,9 +313,6 @@ def reprocess_article_analysis(id):
     if aspect == 'taxonomy':
         document.taxonomies = []
         db.session.flush()
-
-        ax = AlchemyExtractor()
-        ax.fetch_extract_taxonomy(document)
 
         cx = CalaisExtractor()
         calais = cx.fetch_data(document)

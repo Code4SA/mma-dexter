@@ -24,7 +24,7 @@ class AlchemyExtractor(BaseExtractor):
             try:
                 self.fetch_extract_entities(doc)
                 self.fetch_extract_keywords(doc)
-                self.fetch_extract_taxonomy(doc)
+                # self.fetch_extract_taxonomy(doc)
             except ProcessingError as e:
                 if e.message == 'unsupported-text-language':
                     log.info('Ignoring processing error: %s' % e.message)
