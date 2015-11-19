@@ -169,6 +169,7 @@ class ChildrenRatingExport:
 
         row = 4
         row = self.totals(row) + 2
+        row = self.source_totals(row) + 2
         row = self.race_scores(row) + 2
         row = self.age_scores(row) + 2
         row = self.quality_scores(row) + 2
@@ -206,8 +207,9 @@ class ChildrenRatingExport:
         ).all()
         self.write_simple_score_row('Total sources', rows, row)
 
-        row += 2
+        return row
 
+    def source_totals(self, row):
         # source counts per document
         rows = self.source_counts(children=False, limit=4)
         rows = [[m, c + ' Sources', v] for m, c, v in rows]
@@ -891,16 +893,14 @@ class MediaDiversityRatingExport(ChildrenRatingExport):
     """
 
     ratings = [[1.0, 'Final rating', [
-        [0.500, 'Topic', [
-            [0.333, 'Diversity of Topics']]],
-        [0.500, 'Sources', [
+        [0.333, 'Topic', [
+            [1.000, 'Diversity of Topics']]],
+        [0.333, 'Region', [
+            [1.000, 'Diversity of Regions']]],
+        [0.333, 'Sources', [
+            [0.333, 'Diversity of Affiliations'],
             [0.333, 'Gender Ratio'],
-            [0.333, 'No of sources', [
-                [0.067, 'Percent 1 Sources'],
-                [0.133, 'Percent 2 Sources'],
-                [0.200, 'Percent 3 Sources'],
-                [0.267, 'Percent 4 Sources'],
-                [0.333, 'Percent >4 Sources']]]]],
+            [0.333, 'Avg sources']]],
     ]]]
 
     def build_scores_worksheet(self):
@@ -911,6 +911,7 @@ class MediaDiversityRatingExport(ChildrenRatingExport):
         row = 4
         row = self.totals(row) + 2
         row = self.taxonomy_scores(row) + 2
+        row = self.region_scores(row) + 2
         row = self.sources_scores(row) + 2
 
         return row
@@ -941,11 +942,59 @@ class MediaDiversityRatingExport(ChildrenRatingExport):
 
         return row
 
+    def region_scores(self, row):
+        """ Counts of document regions per medium, and their entropy. """
+        from dexter.models.views import DocumentPlacesView
+
+        self.scores_ws.write(row, 0, 'Region')
+
+        rows = self.filter(
+            db.session.query(
+                Medium.name,
+                DocumentPlacesView.c.province_name,
+                func.count(1).label('freq')
+            )
+            .select_from(DocumentPlacesView)
+            .join(Document)
+            .join(Medium)
+            .group_by(Medium.name, DocumentPlacesView.c.province_name)
+        ).all()
+        regions = list(set(r[1] for r in rows))
+        regions.sort()
+
+        row = self.write_score_table(regions, rows, row) + 1
+        self.write_simple_score_row('Diversity of Regions', self.entropy(rows), row)
+        row += 1
+
+        return row
+
     def sources_scores(self, row):
         """ Counts of genders of sources """
         from dexter.models.views import DocumentSourcesView
         self.scores_ws.write(row, 0, 'Sources')
 
+        # source affiliations
+        rows = self.filter(
+            db.session.query(
+                Medium.name,
+                DocumentSourcesView.c.affiliation_group.label('affiliation'),
+                func.count(1).label('freq'))
+            .select_from(DocumentSourcesView)
+            .join(Document)
+            .join(Medium)
+            .group_by(Medium.name, 'affiliation')
+            .order_by(Medium.name)
+        ).all()
+
+        affiliations = list(set(r[1] for r in rows))
+        affiliations.sort()
+
+        row = self.write_score_table(affiliations, rows, row) + 1
+        self.write_simple_score_row('Diversity of Affiliations', self.entropy(rows), row)
+
+        row += 2
+
+        # gender diversity
         rows = self.filter(
             db.session.query(
                 Medium.name,
@@ -970,9 +1019,34 @@ class MediaDiversityRatingExport(ChildrenRatingExport):
         male, female = self.score_row['Male'], self.score_row['Female']
         formula = '=IF({col}%s>0,{col}%s/{col}%s,0)' % (male + 1, female + 1, male + 1)
         self.write_formula_score_row('Male to female', formula, row)
-        row = row + 1
+        row += 1
         formula = '=IF({col}%s>1,1/{col}%s,{col}%s)' % (row, row, row)
         self.write_formula_score_row('Gender Ratio', formula, row)
-        row = row + 1
+        row += 2
+
+        # avg sources per medium
+        doc_counts = self.filter(
+            db.session.query(
+                Document.medium_id,
+                func.count(1).label('doc_count'))
+            .group_by(Document.medium_id)).subquery()
+
+        source_counts = self.filter(
+            db.session.query(
+                Document.medium_id,
+                func.count(1).label('source_count'))
+            .select_from(DocumentSource)
+            .join(Document)
+            .group_by(Document.medium_id)).subquery()
+
+        rows = db.session.query(
+            Medium.name,
+            source_counts.c.source_count / doc_counts.c.doc_count)\
+            .join(source_counts, Medium.id == source_counts.c.medium_id)\
+            .join(doc_counts, Medium.id == doc_counts.c.medium_id)\
+            .all()
+
+        self.write_simple_score_row('Avg sources', rows, row)
+        row += 2
 
         return row
