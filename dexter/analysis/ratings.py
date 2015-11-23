@@ -898,9 +898,10 @@ class MediaDiversityRatingExport(ChildrenRatingExport):
         [0.333, 'Region', [
             [1.000, 'Diversity of Regions']]],
         [0.333, 'Sources', [
-            [0.333, 'Diversity of Affiliations'],
-            [0.333, 'Gender Ratio'],
-            [0.333, 'Avg sources']]],
+            [0.250, 'Diversity of Affiliations'],
+            [0.250, 'Percent Marginalised Voices'],
+            [0.250, 'Gender Ratio'],
+            [0.250, 'Avg sources']]],
     ]]]
 
     def build_scores_worksheet(self):
@@ -982,7 +983,7 @@ class MediaDiversityRatingExport(ChildrenRatingExport):
             .select_from(DocumentSourcesView)
             .join(Document)
             .join(Medium)
-            .group_by(Medium.name, 'affiliation')
+            .group_by(Medium.name, DocumentSourcesView.c.affiliation_group)
             .order_by(Medium.name)
         ).all()
 
@@ -991,6 +992,32 @@ class MediaDiversityRatingExport(ChildrenRatingExport):
 
         row = self.write_score_table(affiliations, rows, row) + 1
         self.write_simple_score_row('Diversity of Affiliations', self.entropy(rows), row)
+
+        row += 2
+
+        # marginalised voices
+        focus_groups = ['Citizens', 'Academics / Experts / Researchers', 'NGOs / CBOs / FBOs', 'Unions', 'Justice System']
+        rows = self.filter(
+            db.session.query(
+                Medium.name,
+                DocumentSourcesView.c.affiliation_group.label('affiliation'),
+                func.count(1).label('freq'))
+            .select_from(DocumentSourcesView)
+            .join(Document)
+            .join(Medium)
+            .filter(DocumentSourcesView.c.affiliation_group.in_(focus_groups))
+            .group_by(Medium.name, DocumentSourcesView.c.affiliation_group)
+            .order_by(Medium.name)
+        ).all()
+
+        affiliations = list(set(r[1] for r in rows))
+        affiliations.sort()
+
+        row = self.write_score_table(affiliations, rows, row) + 1
+        formula = '=SUM({col}%s:{col}%s)' % (row - len(affiliations), row - 1)
+        self.write_formula_score_row('Marginalised Voices', formula, row)
+        row += 1
+        self.write_percent_row('Marginalised Voices', self.score_row['Total sources'], row - 1, row)
 
         row += 2
 
