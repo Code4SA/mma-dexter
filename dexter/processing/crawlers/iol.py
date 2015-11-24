@@ -47,7 +47,8 @@ class IOLCrawler(BaseCrawler):
 
         doc.text = '\n\n'.join(BeautifulSoup(p).text.strip() for p in info['paragraphs'])
         doc.published_at = self.parse_timestamp(info['published'])
-        doc.author = Author.get_or_create(info['byline'], AuthorType.journalist())
+        if 'byline' in info:
+            doc.author = Author.get_or_create(info['byline'], AuthorType.journalist())
 
     def fetch_json_info(self, iol_id):
         """ Fetch document data in JSON from the IOL API """
