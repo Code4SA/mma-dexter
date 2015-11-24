@@ -7,8 +7,16 @@
 %section
   %h3 Taxonomies
 
-  %table.table.table-striped.table-condensed.taxonomies
-    - for label, freq in taxonomies:
-      %tr
-        %td&= label
-        %td&= freq
+  - if taxonomies:
+    .row
+      .col-sm-6
+        %table.table.table-striped.table-condensed.taxonomies
+          - top = taxonomies[0][1]
+          - for label, freq in taxonomies:
+            %tr
+              %td&= label
+              %td.bar-col
+                .bar(style="width: %s%%" % (freq * 100.0 / top))
+              %td&= freq
+  - else:
+    %i None

@@ -130,3 +130,14 @@ div.sparkline {
 .tag-summary {
   margin-bottom: 0px;
 }
+
+table.taxonomies {
+  .bar-col {
+    width: 50%;
+  }
+  .bar {
+    background-color: #7cb5ec;
+    height: 1em;
+    margin-top: 4px;
+  }
+}
