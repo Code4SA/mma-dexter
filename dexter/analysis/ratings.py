@@ -894,7 +894,8 @@ class MediaDiversityRatingExport(ChildrenRatingExport):
 
     ratings = [[1.0, 'Final rating', [
         [0.333, 'Topic', [
-            [1.000, 'Diversity of Topics']]],
+            [0.500, 'Diversity of Topics'],
+            [0.500, 'Percent Social Justice Focus']]],
         [0.333, 'Region', [
             [1.000, 'Diversity of Regions']]],
         [0.333, 'Sources', [
@@ -939,6 +940,32 @@ class MediaDiversityRatingExport(ChildrenRatingExport):
 
         row = self.write_score_table(taxonomies, rows, row) + 1
         self.write_simple_score_row('Diversity of Topics', self.entropy(rows), row)
+        row += 2
+
+        # social justice focus bonus
+        focus = ['Education', 'Environment', 'Health', 'Labour', 'Social Issues']
+        rows = self.filter(
+            db.session.query(
+                Medium.name,
+                DocumentTaxonomiesView.c.label,
+                func.count(DocumentTaxonomiesView.c.document_id).label('freq')
+            )
+            .select_from(DocumentTaxonomiesView)
+            .join(Document)
+            .join(Medium)
+            .filter(DocumentTaxonomiesView.c.label.in_(focus))
+            .group_by(Medium.name, 'label')
+        ).all()
+
+        taxonomies = list(set(r[1] for r in rows))
+        taxonomies.sort()
+
+        row = self.write_score_table(taxonomies, rows, row) + 1
+        formula = '=SUM({col}%s:{col}%s)' % (row - len(taxonomies), row - 1)
+        self.write_formula_score_row('Social Justice Focus', formula, row)
+        row += 1
+        self.write_percent_row('Social Justice Focus', self.score_row['Total articles'], row - 1, row)
+
         row += 1
 
         return row
@@ -996,7 +1023,7 @@ class MediaDiversityRatingExport(ChildrenRatingExport):
         row += 2
 
         # marginalised voices
-        focus_groups = ['Citizens', 'Academics / Experts / Researchers', 'NGOs / CBOs / FBOs', 'Unions', 'Justice System']
+        focus_groups = ['Citizens', 'Academics / Experts / Researchers', 'NGOs / CBOs / FBOs', 'Unions']
         rows = self.filter(
             db.session.query(
                 Medium.name,
