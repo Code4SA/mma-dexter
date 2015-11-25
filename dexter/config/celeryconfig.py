@@ -18,6 +18,6 @@ CELERYBEAT_SCHEDULE = {
     },
     'backfill-taxonomies': {
         'schedule': crontab(hour=15, minute=0),
-        'task': 'dexter.tasks.baxfill_taxonomies',
+        'task': 'dexter.tasks.backfill_taxonomies',
     },
 }
