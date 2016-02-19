@@ -2,10 +2,10 @@ from urlparse import urlparse, urlunparse
 import re
 
 from bs4 import BeautifulSoup
-import requests
 
 from .base import BaseCrawler
-from ...models import Entity, Author, AuthorType
+from ...models import Author, AuthorType
+
 
 class CitizenCrawler(BaseCrawler):
     TL_RE = re.compile('(www\.)?citizen.co.za')
@@ -18,7 +18,7 @@ class CitizenCrawler(BaseCrawler):
     def canonicalise_url(self, url):
         """ Strip anchors, etc. """
         url = super(CitizenCrawler, self).canonicalise_url(url)
-        
+
         parts = urlparse(url)
 
         # force http, strip www, enforce trailing slash
@@ -34,12 +34,12 @@ class CitizenCrawler(BaseCrawler):
 
         soup = BeautifulSoup(raw_html)
 
-        doc.title = self.extract_plaintext(soup.select("h1.article-headline"))
-        doc.summary = self.extract_plaintext(soup.select(".article-excerpt"))
-        doc.text = doc.summary + "\n\n" + "\n\n".join(p.text for p in soup.select(".article-content > p"))
-        doc.published_at = self.parse_timestamp(self.extract_plaintext(soup.select(".page-lead-datetime")))
+        doc.title = self.extract_plaintext(soup.select(".post h1"))
+        doc.summary = self.extract_plaintext(soup.select(".post .single-excerpt"))
+        doc.text = doc.summary + "\n\n" + "\n\n".join(p.text for p in soup.select(".post .single-content > p"))
+        doc.published_at = self.parse_timestamp(self.extract_plaintext(soup.select(".post .single-date")))
 
-        author = self.extract_plaintext(soup.select(".article-byline"))
+        author = self.extract_plaintext(soup.select(".post .single-byline"))
 
         if author:
             doc.author = Author.get_or_create(author, AuthorType.journalist())
