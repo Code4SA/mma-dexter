@@ -227,12 +227,15 @@ class LocationView(MyModelView):
 
 
 class SourceRoleView(MyModelView):
+    column_list = (
+        'name',
+        'indication',
+        'analysis_natures',
+    )
     column_sortable_list = (
         ('name', SourceRole.name),
         'indication',
-        ('analysis_nature', AnalysisNature.name),
     )
-    column_filters = ['analysis_nature.name']
 
 
 class CountryView(MyModelView):

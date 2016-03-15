@@ -42,7 +42,7 @@ class AnalysisNature(db.Model):
     nature      = Column(Enum(ANCHOR, ELECTIONS, CHILDREN), nullable=False)
 
     # associations
-    roles       = relationship("SourceRole", backref="analysis_nature", order_by="SourceRole.name")
+    roles       = relationship("SourceRole", secondary="analysis_nature_source_roles", lazy=True, backref="analysis_natures", order_by="SourceRole.name")
     issues      = relationship("Issue", secondary="analysis_nature_issues", lazy=True, backref='analysis_natures')
     topics      = relationship("Topic", secondary="analysis_nature_topics", lazy=True, backref='analysis_natures')
 
@@ -117,3 +117,9 @@ analysis_nature_topics = db.Table(
     'analysis_nature_topics',
     db.Column('analysis_nature_id', db.Integer(), db.ForeignKey('analysis_natures.id', ondelete='CASCADE')),
     db.Column('topic_id', db.Integer(), db.ForeignKey('topics.id', ondelete='CASCADE')))
+
+
+analysis_nature_source_roles = db.Table(
+    'analysis_nature_source_roles',
+    db.Column('analysis_nature_id', db.Integer(), db.ForeignKey('analysis_natures.id', ondelete='CASCADE')),
+    db.Column('source_role_id', db.Integer(), db.ForeignKey('source_roles.id', ondelete='CASCADE')))

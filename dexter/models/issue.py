@@ -30,8 +30,6 @@ class Issue(db.Model):
     id          = Column(Integer, primary_key=True)
     name        = Column(String(50), index=True, nullable=False, unique=True)
     description = Column(String(100), index=True, nullable=False, unique=True)
-    # TODO: drop this column
-    analysis_nature_id = Column(Integer, ForeignKey("analysis_natures.id"), nullable=True)
 
     def __repr__(self):
         return "<Issue name='%s'>" % (self.name.encode('utf-8'),)
