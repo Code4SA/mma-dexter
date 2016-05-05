@@ -143,7 +143,7 @@ This will autogenerate a change. Double check that it make sense. To apply it on
 
 To deploy it remotely, ensure it is committeed and pushed, then run:
 
-    fab production deploy migrate restart
+    fab prod deploy migrate restart
 
 ## Database
 
