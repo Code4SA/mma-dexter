@@ -170,18 +170,3 @@ class TestDocument(unittest.TestCase):
         doc.keywords = [dk1, dk2, dk3]
 
         self.assertAlmostEqual(doc.keyword_relevance_threshold(), 0.5, 3)
-
-    def test_word_count(self):
-        d = Document()
-
-        d.text = "    test \n  \t one"
-        self.assertEqual(d.word_count, 2)
-
-        d.text = "    test \n  \t"
-        self.assertEqual(d.word_count, 1)
-
-        d.text = ""
-        self.assertEqual(d.word_count, 0)
-
-        d.text = None
-        self.assertIsNone(d.word_count)

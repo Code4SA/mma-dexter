@@ -10,18 +10,12 @@
         %a(href=url_for('activity', user_id=document.created_by.id))&= document.created_by.short_name()
       on ${document.created_at.strftime('%Y-%m-%d')}
 
-    .row
-      .col-sm-6
-        - if document.url:
-          - import urllib
-          %li
-            %i.fa.fa-flask
-            %a(href="http://newstools.co.za/index.php/churnalismresults/get?search_url=%s" % urllib.quote(document.url), target="_blank")
-              Check for Churnalism
-      .col-sm-6
-        - if document.word_count is not None:
-          %i.fa.fa-pencil
-          ${document.word_count} words
+    - if document.url:
+      - import urllib
+      %li
+        %i.fa.fa-flask
+        %a(href="http://newstools.co.za/index.php/churnalismresults/get?search_url=%s" % urllib.quote(document.url), target="_blank")
+          Check for Churnalism
 
     %li
       .row

@@ -17,7 +17,6 @@ from sqlalchemy import (
     Text,
     func,
     Boolean,
-    event,
 )
 from sqlalchemy.orm import relationship, backref, deferred
 from sqlalchemy.ext.associationproxy import association_proxy
@@ -34,7 +33,6 @@ import logging
 
 universal_newline_re = re.compile(R"\r\n|\n|\r")  # All types of newline.
 newlines_re = re.compile(R"\n+")
-whitespace_re = re.compile(R"\s+")
 
 
 class Document(FullText, db.Model):
@@ -51,7 +49,6 @@ class Document(FullText, db.Model):
     title     = Column(String(1024))
     summary   = Column(String(1024))
     text      = Column(Text)
-    word_count = Column(Integer)
     section   = Column(String(100), index=True)
     item_num  = Column(Integer)
 
@@ -307,21 +304,6 @@ class Document(FullText, db.Model):
 
     def __repr__(self):
         return "<Document id=%s, url=%s>" % (self.id, self.url)
-
-
-@event.listens_for(Document.text, 'set')
-def document_text_set(target, value, oldvalue, initiator):
-    target.word_count = count_words(value)
-
-
-def count_words(s):
-    """ Count number of words in s """
-    if s is None:
-        return None
-    elif s:
-        return sum(1 for x in whitespace_re.finditer(s.strip())) + 1
-    else:
-        return 0
 
 
 # This is actually a full text index creating during a migration.

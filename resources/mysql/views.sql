@@ -92,7 +92,6 @@ create or replace view documents_view as select
   dt.name as `document_type`,
   if (a.person_id is null, a.name, ap.name) as `author_name`,
   at.name as `author_type`,
-  d.word_count as `word_count`,
   case d.quality_basic_context when 1 then 'basic-context' when 0 then 'no-basic-context' end as `basic_context`,
   case d.quality_causes when 1 then 'causes-mentioned' when 0 then 'no-causes-mentioned' end as `causes_mentioned`,
   case d.quality_consequences when 1 then 'consequences-mentioned' when 0 then 'no-consequences-mentioned' end as `consequences_mentioned`,
