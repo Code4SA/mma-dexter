@@ -12,7 +12,7 @@
           - if allow_selection:
             %th
           %th
-          %th.user Added by
+          %th.user Analysis by
           %th
           %th
           %th.title Title
@@ -30,7 +30,9 @@
               %i.fa(class_=doc.analysis_nature.icon(), title='%s analysis' % doc.analysis_nature.name)
 
             %td.user
-              - if doc.created_by:
+              - if doc.checked_by:
+                &= doc.checked_by.short_name()
+              - elif doc.created_by:
                 &= doc.created_by.short_name()
 
             %td
