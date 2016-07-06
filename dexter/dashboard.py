@@ -503,7 +503,7 @@ class ActivityChartHelper:
 
     def users_chart(self):
         query = db.session.query(
-            Document.created_by_user_id,
+            func.ifnull(Document.checked_by_user_id, Document.created_by_user_id),
             func.count(Document.id),
         ).group_by(Document.created_by_user_id)
         rows = self.filter(query).all()
