@@ -80,5 +80,5 @@
   %%include(file='tags.haml')
   %%include(file='activity_list.haml', args='allow_selection=True')
 
-  - args = request.args.to_dict(True)
+  - args = request.args.to_dict(False)
   = paginator('activity', pagination, **args)
