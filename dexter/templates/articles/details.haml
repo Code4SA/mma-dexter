@@ -16,7 +16,7 @@
           - import urllib
           %li
             %i.fa.fa-flask
-            %a(href="http://newstools.co.za/index.php/churnalismresults/get?search_url=%s" % urllib.quote(document.url), target="_blank")
+            %a(href="http://newstools.co.za/index.php/churnalismresults/get?search_url=%s" % urllib.quote(document.url.encode('utf-8')), target="_blank")
               Check for Churnalism
       .col-sm-6
         - if document.word_count is not None:
