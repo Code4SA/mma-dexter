@@ -206,7 +206,7 @@ from
   documents d
   inner join analysis_natures an on d.analysis_nature_id = an.id
 where
-  an.name = 'children'
+  an.nature = 'children'
 ;
 
 -- documents_keywords_view:
