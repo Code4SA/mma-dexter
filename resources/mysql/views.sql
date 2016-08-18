@@ -201,7 +201,13 @@ select
   -- all three abuse settings are true
   if(d.abuse_source = 1 AND
      d.abuse_identified = 1 AND
-     d.abuse_victim = 1, 'secondary-victim-source-identified-abused', NULL) as `secondary_victim_source_identified_abused`
+     d.abuse_victim = 1, 'secondary-victim-source-identified-abused', NULL) as `secondary_victim_source_identified_abused`,
+  case d.quality_basic_context when 1 then 'basic-context' when 0 then 'no-basic-context' end as `basic_context`,
+  case d.quality_causes when 1 then 'causes-mentioned' when 0 then 'no-causes-mentioned' end as `causes_mentioned`,
+  case d.quality_consequences when 1 then 'consequences-mentioned' when 0 then 'no-consequences-mentioned' end as `consequences_mentioned`,
+  case d.quality_solutions when 1 then 'solutions-offered' when 0 then 'no-solutions-offered' end as `solutions_offered`,
+  case d.quality_policies when 1 then 'relevant-policies' when 0 then 'no-relevant-policies' end as `relevant_policies`,
+  case d.quality_self_help when 1 then 'self-help-offered' when 0 then 'no-self-help-offered' end as `self_help_offered`
 from
   documents d
   inner join analysis_natures an on d.analysis_nature_id = an.id
