@@ -23,7 +23,7 @@ mysql> exit;
 ```
 
 ```python
-from dexter.models.support import db
+from dexter.models import db
 from dexter.models.seeds import seed_db
 db.create_all()
 seed_db(db)
