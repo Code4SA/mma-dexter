@@ -1,5 +1,4 @@
 BeautifulSoup==3.2.1
-Fabric==1.8.3
 Flask==0.10.1
 Flask-Admin==1.1.0
 Flask-Assets==0.8
