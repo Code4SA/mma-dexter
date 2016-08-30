@@ -68,7 +68,6 @@ htauth.HTAuth(app)
 from .attachments import setup_attachments
 setup_attachments(app)
 
-
 # celery tasks
 from celery import Celery
 celery_app = Celery('dexter', include=['dexter.tasks', 'dexter.app'])
