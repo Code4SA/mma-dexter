@@ -70,7 +70,7 @@ numpy==1.11.1
 paramiko==1.12.4
 passlib==1.6.2
 pathtools==0.1.2
-pbr==0.10.0
+pbr==1.10.0
 pyScss==1.2.0.post3
 pycrypto==2.6.1
 python-dateutil==1.5
