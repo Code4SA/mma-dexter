@@ -13,7 +13,7 @@ Please read the wiki for a [full overview of how Dexter works](https://github.co
 * clone the repo
 * install a virtual env and activate it: `virtualenv --no-site-packages env; source env/bin/activate`
 * install requirements: `pip install -r requirements.txt`
-* setup the database:
+* setup the MySQL database (minimum version 5.6.21)
 
 ```bash
 mysql -u root
@@ -68,13 +68,28 @@ Then use [nose](https://nose.readthedocs.org/en/latest/) to run tests:
 
 ## Production
 
-Note: if you're on Ubuntu 12.04 you will need to manually [install mysql 5.6](https://rtcamp.com/tutorials/mysql/mysql-5-6-ubuntu-12-04/)
+Dexter runs using [Dokku](http://dokku.viewdocs.io/dokku/), a Docker-based container infrastructure very similar to [Heroku](https://www.heroku.com/)
 
-Deploy the code using Fabric:
+To deploy your changes, simply `git push dokku` to push to your dokku remote.
 
-```
-fab prod provision deploy
-```
+To setup a new dokku container:
+
+* Create the app: `dokku app create mma-dexter`
+* Configure the app: 
+
+    dokku config:set mma-dexter \
+        SQLALCHEMY_DATABASE_URI="mysql://user:pass@host/database?charset=utf8&use_unicode=0" \
+        FLASK_ENV=production
+        NEW_RELIC_CONFIG_FILE='/app/dexter/config/newrelic.ini'
+        NEWSTOOLS_FEED_PASSWORD=newstools-password \
+        SENDGRID_API_KEY=sendgrid-api-key \
+        ALCHEMY_API_KEY=api-key \
+        AWS_ACCESS_KEY_ID=aws-access-key \
+        AWS_SECRET_ACCESS_KEY=aws-secret-access-key \
+        CALAIS_API_KEY2=calais-api-key-1 \
+        CALAIS_API_KEY=calais-api-key-2
+
+* Deploy your code: `git push dokku`
 
 ### Database
 
@@ -86,46 +101,6 @@ GRANT ALL ON mma.* TO 'mma'@'localhost' identified by 'PASSWORD';
 ```
 
 * restore the database from a backup, if available.
-* copy the ssl cert key into /home/mma/mma-dexter/resources/mysql/server-key.pem
-* edit my.cnf:
-
-```
-default_time_zone = +02:00
-...
-ssl-ca=/home/mma/mma-dexter/resources/mysql/ca-cert.pem
-ssl-cert=/home/mma/mma-dexter/resources/mysql/server-cert.pem
-ssl-key=/home/mma/mma-dexter/resources/mysql/server-key.pem
-```
-
-### Configuration
-
-Create a file for sensitive configuration settings called `production-settings.sh` and the appropriate
-configuration entries.
-
-```bash
-export SQLALCHEMY_DATABASE_URI=mysql://mma:PASSWORD@localhost/mma
-export ALCHEMY_API_KEY=thekey
-export CALAIS_API_KEY=anotherkey
-export AWS_ACCESS_KEY_ID=access-key
-export AWS_SECRET_ACCESS_KEY=secret
-export NEWSTOOLS_FEED_PASSWORD=password
-```
-
-**Note:** DO NOT commit `production-settings.sh` into source control!
-
-### Logging
-
-nginx's production logs are in ``~mma/log/access.log``
-
-The dexter application logs are in ``~mma/log/dexter.log``
-
-
-### Deploying changes
-
-To deploy changes to the service,
-
-* make the changes elsewhere, commit to git and push to github
-* `fab prod deploy`
 
 ### Deploying database changes
 
@@ -138,10 +113,6 @@ To add a new model or make changes, update the SQLAlchemy definitions in `dexter
 This will autogenerate a change. Double check that it make sense. To apply it on your machine, run
 
     python app.py db upgrade head
-
-To deploy it remotely, ensure it is committeed and pushed, then run:
-
-    fab prod deploy migrate restart
 
 ## Database
 

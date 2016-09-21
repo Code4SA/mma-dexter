@@ -8,7 +8,7 @@
     var self = this;
 
     self.init = function() {
-      self.all_doc_ids = $('#doc_ids').val().split(',');
+      self.all_doc_ids = ($('#doc_ids').val() || "").split(',');
       self.selected = [];
       self.$boxes = $('.activity-list input[type="checkbox"]');
       self.$boxes.on('click', self.updateSelection);

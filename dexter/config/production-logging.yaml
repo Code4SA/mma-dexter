@@ -1,9 +1,8 @@
 version: 1
 handlers:
-  file:
-    class: logging.FileHandler
+  console:
+    class: logging.StreamHandler
     formatter: normal
-    filename: 'log/dexter.log'
     filters: [userid]
 filters:
   userid:
@@ -18,5 +17,5 @@ loggers:
   sqlalchemy.engine:
     level: WARN
 root:
-  handlers: [file]
+  handlers: [console]
   level: INFO

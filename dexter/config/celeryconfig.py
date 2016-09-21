@@ -1,13 +1,21 @@
 from celery.schedules import crontab
-from datetime import timedelta
 
-BROKER_URL = 'amqp://guest:guest@localhost:5672'
+
+# uses AWS creds from the AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY env variables
+BROKER_URL = 'sqs://'
+BROKER_TRANSPORT_OPTIONS = {
+    'region': 'eu-west-1',
+    'polling_interval': 60 * 10,
+    'queue_name_prefix': 'mma-dexter-',
+    'visibility_timeout': 3600,
+}
+
 
 # all our tasks can by retried if the worker fails
 CELERY_ACKS_LATE = True
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
-CELERY_ACCEPT_CONTENT=['json']
+CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TIMEZONE = 'Africa/Johannesburg'
 CELERY_ENABLE_UTC = True
 
