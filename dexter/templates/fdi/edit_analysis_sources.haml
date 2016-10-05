@@ -1,0 +1,150 @@
+%%namespace(file="../helpers/bootstrap_wtf.haml", **{'import': '*'})
+
+- from dexter.models import AnalysisNature
+- from dexter.helpers import source_icon
+
+-# helper template to show a source form
+%%def(name="show_source_form(f)")
+  = f.id
+  = f.deleted
+  = f.person_id
+
+  .pull-right
+    - if not f.is_new() and f.source.manual:
+      %i.fa.fa-check-circle(title='Added manually by a monitor')
+
+    %a.btn.btn-link.delete(href="#", title='delete this source')
+      %i.fa.fa-times-circle
+    - if not f.is_new():
+      %a.btn.btn-link.undo-delete(href="#", title='re-add this source') undo
+
+  - if not f.is_new():
+    -# source exists, it's not new
+    %input(type="hidden", name=f.source_type.name, value=f.source_type.data)
+    %input(type="hidden", name=f.name.name, value=f.name.data)
+    %input(type="hidden", name=f.named.name, value=f.named.data)
+
+    .core
+      %i.text-muted.fa(class_=source_icon(ds.source_type))
+
+      - if f.source.person:
+        %a(href=url_for('show_person', id=f.source.person.id))&=f.source.person.name
+      - else:
+        &= f.source.friendly_name()
+
+      %span.text-muted
+        - if f.source.gender:
+          •
+          %span(title=f.source.gender.name)&= f.source.gender.abbr()
+        - if f.source.race:
+          •
+          %span(title=f.source.race.name)&= f.source.race.abbr()
+
+  - else:
+    -# it's a new source
+    .source-type
+      .btn-group(dataToggle='buttons')
+        - for fld in f.source_type:
+          %label.btn.btn-default(class_='active' if fld.checked else '')
+            = fld()
+            %i.fa(class_=source_icon(fld.data))
+            &= fld.label.text
+
+  .source-details
+    - if f.is_new():
+      .named
+        = field_input(f.named)
+
+      .name
+        = vertical_field(f.name)
+
+    .row
+      .col-sm-5.gender
+        .form-group
+          %label.control-label Gender
+          .btn-group(dataToggle='buttons')
+            - for fld in f.gender:
+              %label.btn.btn-default(class_='active' if fld.checked else '', title=fld.label.text)
+                = fld()
+                &= fld.label.text[0:2]
+      .col-sm-7.race
+        .form-group
+          %label.control-label Race
+          .btn-group(dataToggle='buttons')
+            - for fld in f.race:
+              %label.btn.btn-default(class_='active' if fld.checked else '', title=fld.label.text)
+                = fld()
+                &= fld.label.text[0:2]
+
+    .row.affiliation.function
+      .col-sm-5
+        = vertical_field(f.function, class_='select2')
+      .col-sm-7
+        = vertical_field(f.affiliation, class_='select2')
+
+    .row.role.age
+      .col-sm-5
+        = vertical_field(f.age, class_='select2')
+      .col-sm-7
+        = vertical_field(f.role, class_='select2')
+
+    .row
+      .col-sm-5
+        .quoted
+          -# don't allow editing of directly quoted sources
+          - if f.source and ds.utterances():
+            %input(type='hidden', name=f.quoted.name, value=f.quoted.data)
+            &= 'quoted' if f.source.quoted else 'not quoted'
+            - if len(ds.utterances()) > 0:
+              %span.badge&= len(ds.utterances())
+          - else:
+            &= field_input(f.quoted)
+
+      .col-sm-7
+        .photographed
+          &= field_input(f.photographed)
+
+
+%table.table.table-striped.table-condensed.offsets.sources
+  %tbody
+    - for source_form in form.non_new_sources:
+      - ds = source_form.source
+      - class_ = 'source-%s' % ds.source_type
+      - class_ = class_ + (' deleted' if source_form.deleted.data == '1' else '')
+
+      %tr.source(dataOffsets=ds.offset_list, dataSourceId=ds.id, class_=class_)
+        %td
+          - show_source_form(source_form)
+      - for q in ds.utterances():
+        %tr.quotation(dataOffsets=('%d:%d' % (q.offset, q.length) if q.offset else ''))
+          %td(colspan="3")&= q.quote
+
+%table.table.table-condensed.sources.new-sources
+  %tbody
+    - for f in form.new_sources:
+      %tr.source.new
+        %td
+          .source-owner
+            - show_source_form(f)
+
+    %tr.source.template
+      %td
+        .source-owner
+          - show_source_form(new_source_form)
+
+.buttons
+  %a.btn.btn-default.add-source(href="#")
+    %i.fa.fa-plus
+    Add new source
+
+- suggestions = document.suggested_sources()
+- if suggestions:
+  .suggested-sources
+    %h5 Suggested sources
+    %ul.offsets
+      - for src in suggestions:
+        %li(dataOffsets=(src.offset_list if src.person else src.entity.offset_list) or '0:0')
+          %a.source(href="#", dataName=src.friendly_name(), dataRace=src.race.name if src.race else '', dataGender=src.gender.name if src.gender else '', dataQuoted='1' if src.utterances() else '', dataAffiliation=src.person.affiliation.full_name if src.person and src.person.affiliation else '')
+            &= src.friendly_name()
+            - if src.utterances():
+              %i.fa.fa-comment

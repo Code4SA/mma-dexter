@@ -1,0 +1,12 @@
+%%inherit(file="../layout.haml")
+
+%%block(name='extra_javascript')
+  - for url in webassets('dashboard'):
+    %script(src=url)
+
+%article#activity
+  %section
+    %%include(file='form.haml')
+
+  %section.tab-content
+    ${next.body()}

@@ -1,0 +1,32 @@
+%%page(args="editing")
+
+.article-attachments
+  .attachment-viewer
+    #attachment-slippy
+
+  - if editing or document.attachments:
+    %ul.attachment-list.well
+      - if not editing:
+        %li
+          .show-text.thumbnail
+            %i.fa.fa-file-text.fa-2x
+            Text
+
+      %li.template
+        %a.download(target="_blank", title='download')
+          %i.fa.fa-cloud-download.fa-lg
+        %a.delete(href="#", title='delete')
+          %i.fa.fa-minus-circle
+        %img.thumbnail.attachment
+
+      - if document:
+        - for attachment in document.attachments:
+          %li
+            %a.download(href=attachment.download_url, target="_blank", title='download')
+              %i.fa.fa-cloud-download.fa-lg
+            %a.delete(href="#", title='delete')
+              %i.fa.fa-minus-circle.fa-lg
+            %img.thumbnail.attachment(src=attachment.thumbnail_url, dataUrl=attachment.preview_url, dataSize=attachment.size_str())
+
+            - if editing:
+              %input(type='hidden', name='attachments', value=attachment.id)

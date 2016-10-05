@@ -1,0 +1,80 @@
+- from dexter.helpers import format_paragraphs
+
+%section
+  %ul.list-unstyled
+    %li
+      %i.fa.fa-plus-circle
+      Added
+      - if document.created_by:
+        by
+        %a(href=url_for('activity', user_id=document.created_by.id))&= document.created_by.short_name()
+      on ${document.created_at.strftime('%Y-%m-%d')}
+
+    .row
+      .col-sm-6
+        - if document.url:
+          - import urllib
+          %li
+            %i.fa.fa-flask
+            %a(href="http://newstools.co.za/index.php/churnalismresults/get?search_url=%s" % urllib.quote(document.url.encode('utf-8')), target="_blank")
+              Check for Churnalism
+      .col-sm-6
+        - if document.word_count is not None:
+          %i.fa.fa-pencil
+          ${document.word_count} words
+
+    %li
+      .row
+        .col-sm-6
+          .timestamp
+            %i.fa.fa-calendar
+            - if document.published_at:
+              %a(href=url_for('activity', published_at=document.published_at.strftime('%Y-%m-%d')))
+                - if document.published_at.hour == 0 and document.published_at.minute == 0:
+                  &= document.published_at.strftime('%Y-%m-%d')
+                - else:
+                  &= document.published_at.strftime('%Y-%m-%d %H:%M')
+        .col-sm-6
+          .medium
+            %i.fa.fa-building-o
+            - if document.medium:
+              %a(href=url_for('activity', medium_id=document.medium.id))&= document.medium.name
+    %li
+      .row
+        .col-sm-6
+          .document-type
+            %i.fa.fa-folder
+            - if document.document_type:
+              &= document.document_type.name
+        .col-sm-6
+          - if document.item_num is not None:
+            %i.fa.fa-list-ul
+            Item
+            &= document.item_num
+
+    %li.author
+      %i.fa.fa-user
+      - if document.author:
+        - if document.author.person:
+          %a(href=url_for('show_person', id=document.author.person.id))
+            &= document.author.person.name
+        - else:
+          &= document.author.name
+        (${document.author.author_type.name|h})
+
+    - if document.tags:
+      %li
+        %i.fa.fa-tag
+        - for tag in document.tags:
+          %a(href=url_for('activity', tags=tag, analysis_nature_id=document.analysis_nature_id))
+            %span.label.label-info&= tag
+
+%section
+  %p.article-summary
+    %em&= document.summary
+
+  .article-content(class_='with-attachments' if document.attachments else 'without-attachments')
+    .article-text(dataOriginal=document.text.replace("\r", "\n"))
+      = format_paragraphs(document.text)
+
+    %%include(file="attachments.haml", args="editing=False")

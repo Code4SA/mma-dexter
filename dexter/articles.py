@@ -7,12 +7,15 @@ from flask.ext.security import roles_accepted, current_user, login_required
 from wand.exceptions import WandError
 
 from .app import app
-from .models import db, Document, Issue, DocumentPlace, DocumentAttachment, DocumentTag
+from .models import db, Document, Issue, DocumentPlace, DocumentAttachment, DocumentTag, Investment, Phases, Sectors, \
+    InvestmentOrigins, InvestmentType, Currencies
 from .models.document import DocumentForm
 from .models.fairness import DocumentFairnessForm
 from .models.analysis_nature import AnalysisNature
 from .models.author import AuthorForm
-from .analysis.forms import DocumentSourceForm
+from .analysis.forms import DocumentSourceForm, FDIAnalysisForm
+
+from sqlalchemy.orm.util import has_identity
 
 from .processing import DocumentProcessor, ProcessingError
 from .processing.extractors.calais import CalaisExtractor
@@ -22,12 +25,43 @@ log = logging.getLogger(__name__)
 
 @app.route('/articles/<id>')
 @login_required
-@roles_accepted('monitor')
+@roles_accepted('monitor', 'fdi')
 def show_article(id):
     document = Document.query.get_or_404(id)
-
     if request.args.get('format') == 'places-json':
         return jsonify(DocumentPlace.summary_for_docs([document]))
+
+    if current_user.has_role('fdi'):
+
+        exists = Investment.query.filter_by(doc_id=id).first() is not None
+        if not exists:
+            investment = Investment()
+            investment.name = 'unspecified'
+            investment.value = 0
+            investment.temp_opps = 0
+            investment.perm_opps = 0
+            investment.government = 'unspecified'
+            investment.company = 'unspecified'
+            investment.additional_place = 'unspecified'
+            investment.currency_id = 165
+            investment.invest_type_id = 6
+            investment.phase_id = 6
+            investment.invest_origin_id = 194
+            investment.sector_id = 90
+            investment.doc_id = id
+            db.session.add(investment)
+            db.session.commit()
+
+        investment = Investment.query.filter_by(doc_id=id).first()
+        phase = Phases.query.filter_by(id=investment.phase_id).first()
+        sector = Sectors.query.filter_by(id=investment.sector_id).first()
+        inv_origin = InvestmentOrigins.query.filter_by(id=investment.invest_origin_id).first()
+        inv_type = InvestmentType.query.filter_by(id=investment.invest_type_id).first()
+        currency = Currencies.query.filter_by(id=investment.currency_id).first()
+
+        return render_template('fdi/show.haml', investment=investment, document=document, phase=phase.name,
+                               sector=sector.name, inv_origin=inv_origin.name, inv_type=inv_type.name,
+                               currency=currency.name)
 
     return render_template('articles/show.haml', document=document)
 
@@ -164,9 +198,32 @@ def edit_article(id):
 
 @app.route('/articles/<id>/analysis', methods=['GET', 'POST'])
 @login_required
-@roles_accepted('monitor')
+@roles_accepted('monitor', 'fdi')
 def edit_article_analysis(id):
     document = Document.query.get_or_404(id)
+
+    if current_user.has_role('fdi'):
+        exists = Investment.query.filter_by(doc_id=id).first() is not None
+        if not exists:
+            investment = Investment()
+            investment.name = 'unspecified'
+            investment.value = 0
+            investment.temp_opps = 0
+            investment.perm_opps = 0
+            investment.government = 'unspecified'
+            investment.company = 'unspecified'
+            investment.currency_id = 165
+            investment.invest_type_id = 6
+            investment.phase_id = 6
+            investment.invest_origin_id = 194
+            investment.sector_id = 90
+            investment.doc_id = id
+            db.session.add(investment)
+            db.session.commit()
+
+        investment = Investment.query.filter_by(doc_id=id).first()
+
+        fdi_form = FDIAnalysisForm(prefix='fdi-new', csrf_enabled=True, obj=investment)
 
     # can this user do this?
     if not document.can_user_edit(current_user):
@@ -192,58 +249,87 @@ def edit_article_analysis(id):
         fairness_forms.append(f)
 
     if request.method == 'POST':
-        form.sources.entries = [e for e in form.sources.entries
-                                if not e.form.is_deleted() and not e.form.is_empty()]
 
-        # new fairness
-        for key in sorted(set('-'.join(key.split('-', 3)[0:2]) for key in request.form.keys() if key.startswith('fairness-new['))):
-            frm = DocumentFairnessForm(prefix=key)
-            # skip new fairness that have an empty bias
-            if frm.fairness_id.data != '':
-                fairness_forms.append(frm)
+        if current_user.has_role('fdi'):
 
-        forms = [form] + fairness_forms
-        if all(f.validate() for f in forms):
-            # convert issue id's to Issue objects
-            form.issues.data = [Issue.query.get_or_404(i) for i in form.issues.data]
+            forms = [fdi_form]
+            if all(f.validate() for f in forms):
 
-            # update document -- no_autoflush seems to be required with wtforms alchemy
-            with db.session.no_autoflush:
-                form.populate_obj(document)
-                document.dedup_sources()
+                with db.session.no_autoflush:
+                    fdi_form.populate_obj(investment)
 
-            # update and delete fairness
-            for frm in fairness_forms:
-                frm.create_or_update(document)
+                if current_user.is_authenticated() and not document.checked_by:
+                    document.checked_by = current_user
 
-            # link to user
-            if current_user.is_authenticated() and not document.checked_by:
-                document.checked_by = current_user
+                log.info("Updated analysis by %s for %s" % (current_user, document))
+                db.session.commit()
 
-            log.info("Updated analysis by %s for %s" % (current_user, document))
+                flash('Analysis updated.')
 
-            db.session.commit()
+                if not request.is_xhr:
+                    return redirect(url_for('edit_article_analysis', id=id))
 
-            # XXX - the document analysis forms only update the *_id attributes,
-            # no the association attribute, but we need that updated for the functionality
-            # below. So, run it after the commit. It sucks that we don't do this all
-            # in one transaction. We should use a different form mechanism
-            # that updates everything
-            document.relearn_source_affiliations()
-            db.session.commit()
-
-            flash('Analysis updated.')
-
-            # if it's an ajax request, we're just going to return a 200
-            if not request.is_xhr:
-                return redirect(url_for('edit_article_analysis', id=id))
-
-            status = 200
-        else:
-            if request.is_xhr:
-                status = 412
+                status = 200
             else:
-                flash('Please correct the problems below and try again.', 'warning')
+                if request.is_xhr:
+                    status = 412
+                else:
+                    flash('Please correct the problems below and try again.', 'warning')
+
+        else:
+            form.sources.entries = [e for e in form.sources.entries
+                                    if not e.form.is_deleted() and not e.form.is_empty()]
+
+            # new fairness
+            for key in sorted(set('-'.join(key.split('-', 3)[0:2]) for key in request.form.keys() if key.startswith('fairness-new['))):
+                frm = DocumentFairnessForm(prefix=key)
+                # skip new fairness that have an empty bias
+                if frm.fairness_id.data != '':
+                    fairness_forms.append(frm)
+
+            forms = [form] + fairness_forms
+
+            if all(f.validate() for f in forms):
+                # convert issue id's to Issue objects
+                form.issues.data = [Issue.query.get_or_404(i) for i in form.issues.data]
+
+                # update document -- no_autoflush seems to be required with wtforms alchemy
+                with db.session.no_autoflush:
+                    form.populate_obj(document)
+                    document.dedup_sources()
+
+                # update and delete fairness
+                for frm in fairness_forms:
+                    frm.create_or_update(document)
+
+                # link to user
+                if current_user.is_authenticated() and not document.checked_by:
+                    document.checked_by = current_user
+
+                log.info("Updated analysis by %s for %s" % (current_user, document))
+
+                db.session.commit()
+
+                # XXX - the document analysis forms only update the *_id attributes,
+                # no the association attribute, but we need that updated for the functionality
+                # below. So, run it after the commit. It sucks that we don't do this all
+                # in one transaction. We should use a different form mechanism
+                # that updates everything
+                document.relearn_source_affiliations()
+                db.session.commit()
+
+                flash('Analysis updated.')
+
+                # if it's an ajax request, we're just going to return a 200
+                if not request.is_xhr:
+                    return redirect(url_for('edit_article_analysis', id=id))
+
+                status = 200
+            else:
+                if request.is_xhr:
+                    status = 412
+                else:
+                    flash('Please correct the problems below and try again.', 'warning')
     else:
         # wtforms turns None values into None, which sucks
         if form.topic_id.data == 'None':
@@ -255,14 +341,22 @@ def edit_article_analysis(id):
 
     # only render if it's not an ajax request
     if not request.is_xhr:
-        resp = make_response(
-            render_template('articles/edit_analysis.haml',
-                            form=form,
-                            new_source_form=new_source_form,
-                            new_fairness_form=new_fairness_form,
-                            fairness_forms=fairness_forms,
-                            document=document,
-                            natures=AnalysisNature.all()))
+        if current_user.has_role('fdi'):
+            resp = make_response(
+                render_template('fdi/edit_analysis.haml',
+                                fdi_form=fdi_form,
+                                document=document,
+                                investment=investment,
+                                natures=AnalysisNature.all()))
+        else:
+            resp = make_response(
+                render_template('articles/edit_analysis.haml',
+                                form=form,
+                                new_source_form=new_source_form,
+                                new_fairness_form=new_fairness_form,
+                                fairness_forms=fairness_forms,
+                                document=document,
+                                natures=AnalysisNature.all()))
     else:
         resp = ''
 

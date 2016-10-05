@@ -1,0 +1,147 @@
+%%inherit(file="layout_article.haml")
+%%namespace(file="../helpers/bootstrap_wtf.haml", **{'import': '*'})
+
+- from itertools import izip
+- from dexter.models import AnalysisNature
+
+%%block(name="title")
+  &= document.title
+
+%%block(name="article_header_controls")
+  %a.btn.btn-default(href=url_for('edit_article', id=document.id))
+    %i.fa.fa-pencil
+    Edit article
+  %button.btn.btn-success.submit(type='button', dataDisableWith='Saving...')
+    %i.fa.fa-tasks
+    Save analysis
+  %br
+  %a.btn.btn-link(href=url_for('show_article', id=document.id)) Cancel
+
+.row
+  .col-sm-5
+    %%include(file="details.haml")
+
+  .col-sm-7
+    %form.safedirty.edit-analysis(action=url_for('edit_article_analysis', id=document.id), method='POST', dataRemote='true')
+      = fdi_form.csrf_token
+      -#= form.csrf_token
+
+      .panel.panel-default.analysis
+        .panel-heading
+          %h3.panel-title
+            %i.fa(class_='fa-money')
+            FDI analysis
+            - if document.checked_by:
+              by
+              &= document.checked_by.short_name()
+
+      .panel-body
+        %section
+          .row
+            .col-sm-6
+              .form-group
+                = fdi_form.name.label()
+            .col-sm-6
+              .input-group
+              = field_input(fdi_form.name, maxlength=200)
+          .row
+            .col-sm-6
+              .form-group
+                = fdi_form.investment_begin.label()
+            .col-sm-6
+              .input-group
+                = fdi_form.investment_begin(class_='form-control use-datepicker')
+                %span.input-group-btn
+                  %button.btn.btn-default(dataClear='input-group')
+                    %i.fa.fa-times
+          .row
+            .col-sm-6
+              .form-group
+                = fdi_form.investment_end.label()
+            .col-sm-6
+              .input-group
+                = fdi_form.investment_end(class_='form-control use-datepicker')
+                %span.input-group-btn
+                  %button.btn.btn-default(dataClear='input-group')
+                    %i.fa.fa-times
+          .row
+            .col-sm-6
+              .form-group
+                = fdi_form.value.label()
+            .col-sm-6
+              .input-group
+              = field_input(fdi_form.value)
+          .row
+            .col-sm-6
+              .form-group
+                = fdi_form.temp_opps.label()
+            .col-sm-6
+              .input-group
+              = field_input(fdi_form.temp_opps)
+          .row
+            .col-sm-6
+              .form-group
+                = fdi_form.perm_opps.label()
+            .col-sm-6
+              .input-group
+              = field_input(fdi_form.perm_opps)
+          .row
+            .col-sm-6
+              .form-group
+                = fdi_form.government.label()
+            .col-sm-6
+              .input-group
+              = field_input(fdi_form.government)
+          .row
+            .col-sm-6
+              .form-group
+                = fdi_form.company.label()
+            .col-sm-6
+              .input-group
+              = field_input(fdi_form.company)
+          .row
+            .col-sm-6
+              .form-group
+                = fdi_form.additional_place.label()
+            .col-sm-6
+              .input-group
+              = field_input(fdi_form.additional_place)
+          .row
+            .col-sm-6
+              .form-group
+                = fdi_form.currency_id.label()
+            .col-sm-6
+              .input-group
+              = field_input(fdi_form.currency_id, class_='select2')
+          .row
+            .col-sm-6
+              .form-group
+                = fdi_form.invest_type_id.label()
+            .col-sm-6
+              .input-group
+              = field_input(fdi_form.invest_type_id, class_='select2')
+          .row
+            .col-sm-6
+              .form-group
+                = fdi_form.phase_id.label()
+            .col-sm-6
+              .input-group
+              = field_input(fdi_form.phase_id, class_='select2')
+          .row
+            .col-sm-2
+              .form-group
+                = fdi_form.invest_origin_id.label()
+            .col-sm-10
+              .input-group
+              = field_input(fdi_form.invest_origin_id, class_='select2')
+          .row
+            .col-sm-2
+              .form-group
+                = fdi_form.sector_id.label()
+            .col-sm-10
+              .input-group
+              = field_input(fdi_form.sector_id, class_='select2')
+          -#%hr
+          -#%section.sources
+          -#  %label.control-label Sources:
+          -#  %%include(file='edit_analysis_sources.haml')

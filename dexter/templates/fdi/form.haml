@@ -1,0 +1,73 @@
+%%namespace(file="../helpers/bootstrap_wtf.haml", **{'import': '*'})
+- from dexter.models import AnalysisNature
+
+%form.activity-refine(action=url_for(request.url_rule.endpoint), method='GET')
+
+  .panel.panel-default
+    .panel-heading
+      %h3.panel-title
+        Explore articles
+
+    .panel-body
+
+      .form-group.analysis_nature(class_='hidden' if form.cluster_id.data else '')
+        = form.analysis_nature_id.label(class_='control-label')
+        %input(type="hidden", name=form.analysis_nature_id.name, value=form.analysis_nature_id.data)
+
+        .dropdown
+          %button.btn.btn-default.dropdown-toggle(type="button", dataToggle='dropdown')
+            %i.fa.fa-fw(class_=form.analysis_nature().icon())
+            &= form.analysis_nature().name
+
+      = form.cluster_id
+      - if form.cluster_id.data:
+        .form-group.cluster
+          %label.control-label
+            Topic
+          %div
+            %code
+              &= form.cluster().fingerprint[0:8]
+              %a.remove-cluster(href='#')
+                %i.fa.fa-times
+
+
+      .form-group
+        = form.published_at.label()
+        .input-group
+          = form.published_at(class_='form-control use-daterangepicker')
+          %span.input-group-btn
+            %button.btn.btn-default(dataClear='input-group')
+              %i.fa.fa-times
+
+
+
+      = vertical_field(form.country_id, class_='select2', placeholder='(any)')
+
+
+      = vertical_field(form.q)
+
+    .panel-footer
+      .row
+        .col-sm-3.col-sm-offset-6
+          %input(type="hidden", name="format")
+          - if current_user.admin:
+            .dropdown
+              %button.btn.btn-default.form-control.dropdown-toggle(type="button", dataToggle='dropdown')
+                %i.fa.fa-download
+                Download
+                %span.caret
+
+              %ul.dropdown-menu
+                %li
+                  %a.download(href="#", dataFormat="xlsx") Raw data (.xlsx)
+
+                %li
+                  %a.download(href="#", dataFormat="media-diversity-ratings.xlsx") Media Diversity Ratings (.xlsx)
+
+                %li(class_='disabled' if form.analysis_nature().nature != AnalysisNature.CHILDREN else '')
+                  %a.download(href="#", dataFormat="children-ratings.xlsx")
+                    %i.fa(class_=AnalysisNature.ICONS[AnalysisNature.CHILDREN])
+                    Children Ratings (.xlsx)
+
+        .col-sm-3
+          %input.btn.btn-success.form-control(type='submit', value='Submit')
