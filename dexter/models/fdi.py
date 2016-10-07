@@ -51,12 +51,6 @@ class Investment(db.Model):
     investment_type = relationship("InvestmentType")
     investment_origin = relationship("InvestmentOrigins")
 
-    # governments = relationship("Government", backref=backref('investment'), cascade='all', passive_deletes=True)
-    # companies = relationship("Companies", backref=backref('investment'), cascade='all', passive_deletes=True)
-    # finances = relationship("FinancePartners", backref=backref('investment'), cascade='all', passive_deletes=True)
-    # investment_location = relationship("InvestmentLocations", backref=backref('investment'),
-    #                                    cascade='all', passive_deletes=True)
-
     def add_gov(self, government):
         """ Add a new government involvement, but only if it's not already there. """
         for k in self.governments:
@@ -180,6 +174,7 @@ class InvestmentType(db.Model):
         Expansion
         Upgrading
         Disinvestment
+        unspecified
         """
 
         investment_type = []
@@ -299,6 +294,7 @@ class Sectors(db.Model):
         Activities of households as employers of domestic personnel
         Undifferentiated goods- and services-producing activities of private households for own use
         Activities of extraterritorial organizations and bodies, not economically active, people, unemployed people etc.
+        unspecified
         """
 
         sectors = []
@@ -334,6 +330,7 @@ class Phases(db.Model):
         Feasibility
         Construction
         Complete
+        unspecified
         """
 
         phases = []
@@ -528,6 +525,7 @@ class Currencies(db.Model):
         YER
         ZMK
         ZWL
+        unspecified
         """
 
         currencies = []
@@ -751,6 +749,7 @@ class InvestmentOrigins(db.Model):
             Yemen
             Zambia
             Zimbabwe
+            unspecified
             """
 
         countries = []

@@ -190,8 +190,8 @@ class FDIAnalysisForm(ModelForm):
                                                                                 message='Please enter an integer')])
     perm_opps = IntegerField('Permanent opportunities', [validators.NumberRange(min=0, max=1000000,
                                                                                 message='Please enter an integer')])
-    investment_begin = DateField('Investment start date', format='%Y/%m/%d')
-    investment_end = DateField('Investment end date', format='%Y/%m/%d')
+    investment_begin = DateField('Investment start date', [validators.Optional()], format='%Y/%m/%d',)
+    investment_end = DateField('Investment end date', [validators.Optional()], format='%Y/%m/%d')
     currency_id = SelectField('Currency')
     phase_id = SelectField('Phase')
     sector_id = SelectField('Sector')

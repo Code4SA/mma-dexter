@@ -114,201 +114,201 @@ def fdi_home():
                            tag_summary=tag_summary,
                            all_doc_ids=all_doc_ids)
 
-# class FDI(Form):
-#     cluster_id      = HiddenField('Cluster')
-#     analysis_nature_id = SelectField('Analysis', default=AnalysisNature.ANCHOR_ID)
-#     user_id         = SelectField('User', [validators.Optional()], default='')
-#     medium_id       = SelectMultipleField('Medium', [validators.Optional()], default='')
-#     country_id      = SelectMultipleField('Country', [validators.Optional()], default=default_country_id)
-#     created_at      = TextField('Added', [validators.Optional()])
-#     published_at    = TextField('Published', [validators.Optional()])
-#     problems        = MultiCheckboxField('Article problems', [validators.Optional()], choices=DocumentAnalysisProblem.for_select())
-#     flagged         = BooleanField('flagged')
-#     has_url         = RadioField('hasurl', [validators.Optional()], choices=[('1', 'with URL'), ('0', 'without URL')])
-#     source_person_id = TextField('With source', [validators.Optional()])
-#     format          = HiddenField('format', default='html')
-#     # free text search
-#     q               = TextField('Keyword search', [validators.Optional()])
-#     tags            = TextField('Tags', [validators.Optional()])
-#
-#     def __init__(self, *args, **kwargs):
-#         super(FDI, self).__init__(*args, **kwargs)
-#
-#         from .models.document import DocumentTag
-#
-#         self.user_id.choices = [['', '(any)'], ['-', '(none)']] + [
-#             [str(u.id), u.short_name()] for u in sorted(User.query.all(), key=lambda u: u.short_name())]
-#
-#         self.medium_id.choices = [(str(m.id), m.name) for m in Medium.query.order_by(Medium.name).all()]
-#         self.analysis_nature_id.choices = [[str(n.id), n.name] for n in AnalysisNature.all()]
-#         self.natures = AnalysisNature.all()
-#         self.tags.choices = [t[0] for t in db.session.query(DocumentTag.tag.distinct()).order_by(DocumentTag.tag)]
-#
-#         # only admins can see all countries
-#         if current_user.admin:
-#             countries = Country.all()
-#         else:
-#             countries = [current_user.country]
-#         self.country_id.choices = [[str(c.id), c.name] for c in countries]
-#
-#         # override the analysis nature id if we have a cluster
-#         if self.cluster_id.data:
-#             self.analysis_nature_id.data = str(self.cluster().members[0].document.analysis_nature_id)
-#
-#         # at least one of these must be set
-#         oneof = [self.created_at, self.published_at, self.user_id, self.medium_id, self.cluster_id]
-#         if not any(x.data for x in oneof):
-#             self.published_at.data = ' - '.join(d.strftime("%Y/%m/%d") for d in [datetime.utcnow() - timedelta(days=14), datetime.utcnow()])
-#
-#     def user(self):
-#         if self.user_id.data and self.user_id.data != '-':
-#             return User.query.get(self.user_id.data)
-#         return None
-#
-#     def media(self):
-#         if self.medium_id.data:
-#             return Medium.query.filter(Medium.id.in_(self.medium_id.data))
-#         else:
-#             return None
-#
-#     def countries(self):
-#         if self.country_id.data:
-#             return Country.query.filter(Country.id.in_(self.country_id.data))
-#         return None
-#
-#     def analysis_nature(self):
-#         if self.analysis_nature_id.data:
-#             return AnalysisNature.query.get(self.analysis_nature_id.data)
-#         return None
-#
-#     def cluster(self):
-#         if self.cluster_id.data:
-#             return Cluster.query.get(self.cluster_id.data)
-#         return None
-#
-#     def source_person(self):
-#         if self.source_person_id.data:
-#             return Person.query.get(self.source_person_id.data)
-#         return None
-#
-#     def get_problems(self):
-#         return [DocumentAnalysisProblem.lookup(code) for code in self.problems.data]
-#
-#     @property
-#     def created_from(self):
-#         if self.created_at.data:
-#             return self.created_at.data.split(' - ')[0].strip()
-#         else:
-#             return None
-#
-#     @property
-#     def created_to(self):
-#         if self.created_at.data and ' - ' in self.created_at.data:
-#             return self.created_at.data.split(' - ')[1].strip() + ' 23:59:59'
-#         else:
-#             return self.created_from
-#
-#     @property
-#     def published_from(self):
-#         if self.published_at.data:
-#             return self.published_at.data.split(' - ')[0].strip()
-#         else:
-#             return None
-#
-#     @property
-#     def published_to(self):
-#         if self.published_at.data and ' - ' in self.published_at.data:
-#             return self.published_at.data.split(' - ')[1].strip() + ' 23:59:59'
-#         else:
-#             return self.published_from
-#
-#     def document_ids(self):
-#         return [d[0] for d in self.filter_query(db.session.query(Document.id)).all()]
-#
-#     def filter_query(self, query):
-#         query = query.filter(Document.analysis_nature_id == self.analysis_nature_id.data)
-#
-#         if self.cluster_id.data:
-#             query = query.join(ClusteredDocument)\
-#                          .filter(ClusteredDocument.cluster_id == self.cluster_id.data)
-#
-#         if self.medium_id.data:
-#             query = query.filter(Document.medium_id.in_(self.medium_id.data))
-#
-#         if self.user_id.data:
-#             if self.user_id.data == '-':
-#                 query = query.filter(or_(
-#                     Document.created_by_user_id == None,  # noqa
-#                     Document.checked_by_user_id == None))
-#             else:
-#                 query = query.filter(or_(
-#                     Document.created_by_user_id == self.user_id.data,
-#                     Document.checked_by_user_id == self.user_id.data))
-#
-#         if self.country_id.data:
-#             query = query.filter(Document.country_id.in_(self.country_id.data))
-#
-#         if self.created_from:
-#             query = query.filter(Document.created_at >= self.created_from)
-#
-#         if self.created_to:
-#             query = query.filter(Document.created_at <= self.created_to)
-#
-#         if self.published_from:
-#             query = query.filter(Document.published_at >= self.published_from)
-#
-#         if self.published_to:
-#             query = query.filter(Document.published_at <= self.published_to)
-#
-#         if self.source_person_id.data:
-#             query = query\
-#                 .join(DocumentSource)\
-#                 .filter(DocumentSource.person_id == self.source_person_id.data)
-#
-#         if self.problems.data:
-#             for code in self.problems.data:
-#                 query = DocumentAnalysisProblem.lookup(code).filter_query(query)
-#
-#         if self.flagged.data:
-#             query = query.filter(Document.flagged == True)  # noqa
-#
-#         if self.has_url.data == '1':
-#             query = query.filter(Document.url != None, Document.url != '')  # noqa
-#         elif self.has_url.data == '0':
-#             query = query.filter(or_(Document.url == None, Document.url == ''))  # noqa
-#
-#         if self.q.data:
-#             # full text search
-#             query = query.filter(FullTextSearch(self.q.data, Document, FullTextMode.NATURAL))
-#
-#         if self.tags.data:
-#             tags = set(f for f in re.split('\s*,\s*', self.tags.data) if f)
-#             for tag in tags:
-#                 query = query.filter(Document.tags.contains(tag))
-#
-#         return query
-#
-#     def filename(self):
-#         filename = ['documents']
-#
-#         if self.created_at.data:
-#             filename.append('added')
-#             filename.append(self.created_at.data.replace(' ', ''))
-#
-#         if self.published_at.data:
-#             filename.append('published')
-#             filename.append(self.published_at.data.replace(' ', ''))
-#
-#         if self.format.data == 'children-ratings.xlsx':
-#             filename.insert(0, 'children-ratings')
-#             ext = 'xlsx'
-#         elif self.format.data == 'media-diversity-ratings.xlsx':
-#             filename.insert(0, 'media-diversity-ratings')
-#             ext = 'xlsx'
-#         else:
-#             ext = self.format.data
-#
-#         return "%s.%s" % ('-'.join(filename), ext)
+class FDI(Form):
+    cluster_id      = HiddenField('Cluster')
+    analysis_nature_id = SelectField('Analysis', default=AnalysisNature.ANCHOR_ID)
+    user_id         = SelectField('User', [validators.Optional()], default='')
+    medium_id       = SelectMultipleField('Medium', [validators.Optional()], default='')
+    country_id      = SelectMultipleField('Country', [validators.Optional()], default=default_country_id)
+    created_at      = TextField('Added', [validators.Optional()])
+    published_at    = TextField('Published', [validators.Optional()])
+    problems        = MultiCheckboxField('Article problems', [validators.Optional()], choices=DocumentAnalysisProblem.for_select())
+    flagged         = BooleanField('flagged')
+    has_url         = RadioField('hasurl', [validators.Optional()], choices=[('1', 'with URL'), ('0', 'without URL')])
+    source_person_id = TextField('With source', [validators.Optional()])
+    format          = HiddenField('format', default='html')
+    # free text search
+    q               = TextField('Keyword search', [validators.Optional()])
+    tags            = TextField('Tags', [validators.Optional()])
+
+    def __init__(self, *args, **kwargs):
+        super(FDI, self).__init__(*args, **kwargs)
+
+        from .models.document import DocumentTag
+
+        self.user_id.choices = [['', '(any)'], ['-', '(none)']] + [
+            [str(u.id), u.short_name()] for u in sorted(User.query.all(), key=lambda u: u.short_name())]
+
+        self.medium_id.choices = [(str(m.id), m.name) for m in Medium.query.order_by(Medium.name).all()]
+        self.analysis_nature_id.choices = [[str(n.id), n.name] for n in AnalysisNature.all()]
+        self.natures = AnalysisNature.all()
+        self.tags.choices = [t[0] for t in db.session.query(DocumentTag.tag.distinct()).order_by(DocumentTag.tag)]
+
+        # only admins can see all countries
+        if current_user.admin:
+            countries = Country.all()
+        else:
+            countries = [current_user.country]
+        self.country_id.choices = [[str(c.id), c.name] for c in countries]
+
+        # override the analysis nature id if we have a cluster
+        if self.cluster_id.data:
+            self.analysis_nature_id.data = str(self.cluster().members[0].document.analysis_nature_id)
+
+        # at least one of these must be set
+        oneof = [self.created_at, self.published_at, self.user_id, self.medium_id, self.cluster_id]
+        if not any(x.data for x in oneof):
+            self.published_at.data = ' - '.join(d.strftime("%Y/%m/%d") for d in [datetime.utcnow() - timedelta(days=14), datetime.utcnow()])
+
+    def user(self):
+        if self.user_id.data and self.user_id.data != '-':
+            return User.query.get(self.user_id.data)
+        return None
+
+    def media(self):
+        if self.medium_id.data:
+            return Medium.query.filter(Medium.id.in_(self.medium_id.data))
+        else:
+            return None
+
+    def countries(self):
+        if self.country_id.data:
+            return Country.query.filter(Country.id.in_(self.country_id.data))
+        return None
+
+    def analysis_nature(self):
+        if self.analysis_nature_id.data:
+            return AnalysisNature.query.get(self.analysis_nature_id.data)
+        return None
+
+    def cluster(self):
+        if self.cluster_id.data:
+            return Cluster.query.get(self.cluster_id.data)
+        return None
+
+    def source_person(self):
+        if self.source_person_id.data:
+            return Person.query.get(self.source_person_id.data)
+        return None
+
+    def get_problems(self):
+        return [DocumentAnalysisProblem.lookup(code) for code in self.problems.data]
+
+    @property
+    def created_from(self):
+        if self.created_at.data:
+            return self.created_at.data.split(' - ')[0].strip()
+        else:
+            return None
+
+    @property
+    def created_to(self):
+        if self.created_at.data and ' - ' in self.created_at.data:
+            return self.created_at.data.split(' - ')[1].strip() + ' 23:59:59'
+        else:
+            return self.created_from
+
+    @property
+    def published_from(self):
+        if self.published_at.data:
+            return self.published_at.data.split(' - ')[0].strip()
+        else:
+            return None
+
+    @property
+    def published_to(self):
+        if self.published_at.data and ' - ' in self.published_at.data:
+            return self.published_at.data.split(' - ')[1].strip() + ' 23:59:59'
+        else:
+            return self.published_from
+
+    def document_ids(self):
+        return [d[0] for d in self.filter_query(db.session.query(Document.id)).all()]
+
+    def filter_query(self, query):
+        query = query.filter(Document.analysis_nature_id == self.analysis_nature_id.data)
+
+        if self.cluster_id.data:
+            query = query.join(ClusteredDocument)\
+                         .filter(ClusteredDocument.cluster_id == self.cluster_id.data)
+
+        if self.medium_id.data:
+            query = query.filter(Document.medium_id.in_(self.medium_id.data))
+
+        if self.user_id.data:
+            if self.user_id.data == '-':
+                query = query.filter(or_(
+                    Document.created_by_user_id == None,  # noqa
+                    Document.checked_by_user_id == None))
+            else:
+                query = query.filter(or_(
+                    Document.created_by_user_id == self.user_id.data,
+                    Document.checked_by_user_id == self.user_id.data))
+
+        if self.country_id.data:
+            query = query.filter(Document.country_id.in_(self.country_id.data))
+
+        if self.created_from:
+            query = query.filter(Document.created_at >= self.created_from)
+
+        if self.created_to:
+            query = query.filter(Document.created_at <= self.created_to)
+
+        if self.published_from:
+            query = query.filter(Document.published_at >= self.published_from)
+
+        if self.published_to:
+            query = query.filter(Document.published_at <= self.published_to)
+
+        if self.source_person_id.data:
+            query = query\
+                .join(DocumentSource)\
+                .filter(DocumentSource.person_id == self.source_person_id.data)
+
+        if self.problems.data:
+            for code in self.problems.data:
+                query = DocumentAnalysisProblem.lookup(code).filter_query(query)
+
+        if self.flagged.data:
+            query = query.filter(Document.flagged == True)  # noqa
+
+        if self.has_url.data == '1':
+            query = query.filter(Document.url != None, Document.url != '')  # noqa
+        elif self.has_url.data == '0':
+            query = query.filter(or_(Document.url == None, Document.url == ''))  # noqa
+
+        if self.q.data:
+            # full text search
+            query = query.filter(FullTextSearch(self.q.data, Document, FullTextMode.NATURAL))
+
+        if self.tags.data:
+            tags = set(f for f in re.split('\s*,\s*', self.tags.data) if f)
+            for tag in tags:
+                query = query.filter(Document.tags.contains(tag))
+
+        return query
+
+    def filename(self):
+        filename = ['documents']
+
+        if self.created_at.data:
+            filename.append('added')
+            filename.append(self.created_at.data.replace(' ', ''))
+
+        if self.published_at.data:
+            filename.append('published')
+            filename.append(self.published_at.data.replace(' ', ''))
+
+        if self.format.data == 'children-ratings.xlsx':
+            filename.insert(0, 'children-ratings')
+            ext = 'xlsx'
+        elif self.format.data == 'media-diversity-ratings.xlsx':
+            filename.insert(0, 'media-diversity-ratings')
+            ext = 'xlsx'
+        else:
+            ext = self.format.data
+
+        return "%s.%s" % ('-'.join(filename), ext)
 
 class ActivityChartHelper:
     def __init__(self, form):
