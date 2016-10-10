@@ -1,6 +1,7 @@
 from functools import partial
 
-from wtforms import BooleanField, validators, HiddenField, widgets
+from wtforms import BooleanField, validators, HiddenField, widgets, StringField, DateField
+from wtforms import SelectField as SelectFieldW
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
 from wtforms_alchemy import ModelFieldList
 
@@ -173,6 +174,48 @@ class AnchorAnalysisForm(DocumentAnalysisForm):
             self.quality_policies,
             self.quality_self_help,
         ]
+
+
+class FDIAnalysisForm(ModelForm):
+    class Meta:
+        model = Investment
+    """
+    FDI (Manual) analysis of a document
+    """
+
+    name = StringField('Project name', [validators.Length(max=200)])
+    value = IntegerField('Investment value', [validators.NumberRange(min=0, max=100000000000,
+                                                                     message= 'Please enter an integer, round up if necessary')])
+    temp_opps = IntegerField('Temporary opportunities', [validators.NumberRange(min=0, max=1000000,
+                                                                                message='Please enter an integer')])
+    perm_opps = IntegerField('Permanent opportunities', [validators.NumberRange(min=0, max=1000000,
+                                                                                message='Please enter an integer')])
+    investment_begin = DateField('Investment start date', [validators.Optional()], format='%Y/%m/%d',)
+    investment_end = DateField('Investment end date', [validators.Optional()], format='%Y/%m/%d')
+    currency_id = SelectField('Currency')
+    phase_id = SelectField('Phase')
+    sector_id = SelectField('Sector')
+    invest_origin_id = SelectField('Origin')
+    invest_type_id = SelectField('Type')
+    company = StringField('Company')
+    government = StringField('Government involvement')
+    additional_place = StringField('Additional place')
+
+    def __init__(self, *args, **kwargs):
+        super(FDIAnalysisForm, self).__init__(*args, **kwargs)
+
+        self.currency_id.choices = [[str(c.id), c.name] for c in Currencies.all()]
+        self.invest_origin_id.choices = [[str(c.id), c.name] for c in InvestmentOrigins.all()]
+        self.phase_id.choices = [[str(c.id), c.name] for c in Phases.all()]
+        self.sector_id.choices = [[str(c.id), c.name] for c in Sectors.all()]
+        self.invest_type_id.choices = [[str(c.id), c.name] for c in InvestmentType.all()]
+
+
+    def validate(self):
+        return super(FDIAnalysisForm, self).validate()
+
+    def populate_obj(self, obj):
+        super(FDIAnalysisForm, self).populate_obj(obj)
 
 
 class ElectionsAnalysisForm(AnchorAnalysisForm):

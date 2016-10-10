@@ -1,0 +1,8 @@
+- problems = document.analysis_problems()
+- if problems:
+  %section.problems
+    .alert.alert-warning
+      %h4 There are problems with the analysis
+      %ul.list-unstyled
+        - for p in problems:
+          %li&= p.long_desc

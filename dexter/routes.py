@@ -12,6 +12,7 @@ import dexter.api
 import dexter.dashboard
 import dexter.mine
 import dexter.search
+import dexter.fdi
 
 @app.route('/')
 def home():
@@ -24,6 +25,9 @@ def home():
 
         if current_user.has_role('miner'):
             return redirect(url_for('mine_home'))
+
+        if current_user.has_role('fdi'):
+            return redirect(url_for('fdi_home'))
 
         return render_template('noperms.haml')
     else:

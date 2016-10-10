@@ -1,0 +1,61 @@
+%%page(args="allow_selection=False")
+
+.activity-list
+  - for date, group in doc_groups:
+    %section
+      %h4
+        &= date.strftime('%e %B %Y')
+        %span.badge.badge-default&= len(group)
+
+      %table.table.table-striped.table-condensed.activity-list
+        %tr
+          - if allow_selection:
+            %th
+          %th
+          %th.user Analysis by
+          %th
+          %th
+          %th.title Title
+          %th.published_at Published on
+          %th
+            %i(title='sources').fa.fa-user
+          %th.medium Medium
+
+        - for doc in group:
+          %tr
+            - if allow_selection:
+              %td
+                %input(type="checkbox", name="doc_id", value=doc.id)
+            %td
+              %i.fa(class_=doc.analysis_nature.icon(), title='%s analysis' % doc.analysis_nature.name)
+
+            %td.user
+              - if doc.checked_by:
+                &= doc.checked_by.short_name()
+              - elif doc.created_by:
+                &= doc.created_by.short_name()
+
+            %td
+              - problems = doc.analysis_problems()
+              - if problems:
+                %i.text-danger.fa.fa-warning(title=' '.join([p.long_desc for p in problems]))
+              - elif doc.checked_by:
+                %i.fa.fa-check-circle(title='Checked by %s' % doc.checked_by.short_name())
+
+            %td
+              - if doc.url:
+                %a(href=doc.url, title='View original article', target='_blank')
+                  %i.fa.fa-link
+
+            %td.title
+              %a(href=url_for('show_article', id=doc.id))
+                %strong&= doc.title or '(none)'
+              - if doc.flagged:
+                %i.article-flag.fa.fa-flag.flag-set(title=doc.notes or 'Article has been flagged')
+            %td.published_at
+              &=doc.published_at.strftime('%e %B %Y')
+            %td
+              - if len(doc.sources) > 0:
+                %span(title='sources')&=len(doc.sources)
+            %td.medium
+              %span.label.label-default&=doc.medium.name

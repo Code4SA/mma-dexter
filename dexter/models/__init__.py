@@ -19,3 +19,5 @@ from .principle import Principle
 from .attachment import DocumentAttachment, AttachmentImage
 from .country import Country
 from .cluster import Cluster, ClusteredDocument
+from .fdi import Investment, InvestmentType, \
+    Sectors, Phases, Currencies, InvestmentOrigins, InvestmentLocations

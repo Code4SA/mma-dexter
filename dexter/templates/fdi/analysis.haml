@@ -1,0 +1,161 @@
+- from dexter.models import AnalysisNature
+- from dexter.helpers import source_icon
+
+.panel.panel-default.analysis
+  .panel-heading .text-center
+    %h3.panel-title
+      %i.fa(class_='fa-money')
+      FDI analysis
+      - if document.checked_by:
+        by
+        &= document.checked_by.short_name()
+
+  .panel-body
+    %section
+      .row
+        .form-group
+          %label.control-label.col-sm-6 Project name:
+          .col-sm-6
+            =investment.name
+
+      .row
+        .form-group
+          %label.control-label.col-sm-6 Investment start date:
+          .col-sm-6
+            =investment.investment_begin
+      .row
+        .form-group
+          %label.control-label.col-sm-6 Investment end date:
+          .col-sm-6
+            =investment.investment_end
+      .row
+        .form-group
+          %label.control-label.col-sm-6 Investment value:
+          .col-sm-6
+            =investment.value
+      .row
+        .form-group
+          %label.control-label.col-sm-6 Currency:
+          .col-sm-6
+            =currency
+      .row
+        .form-group
+          %label.control-label.col-sm-6 Temporary opportunities:
+          .col-sm-6
+            =investment.temp_opps
+      .row
+        .form-group
+          %label.control-label.col-sm-6 Permanent opportunities:
+          .col-sm-6
+            =investment.perm_opps
+      .row
+        .form-group
+          %label.control-label.col-sm-6 Government involvement:
+          .col-sm-6
+            =investment.government
+      .row
+        .form-group
+          %label.control-label.col-sm-6 Company:
+          .col-sm-6
+            =investment.company
+      .row
+        .form-group
+          %label.control-label.col-sm-6 Type:
+          .col-sm-6
+            =inv_type
+      .row
+        .form-group
+          %label.control-label.col-sm-6 Phase:
+          .col-sm-6
+            =phase
+      .row
+        .form-group
+          %label.control-label.col-sm-6 Origin of investment:
+          .col-sm-6
+            =inv_origin
+      .row
+        .form-group
+          %label.control-label.col-sm-6 Sector:
+          .col-sm-6
+            =sector
+      .row
+        .form-group
+          %label.control-label.col-sm-6 Additional place:
+          .col-sm-6
+            =investment.additional_place
+
+      %label.control-label Places:
+
+      #slippy-map
+
+      %table.table.table-striped.table-condensed.offsets.entities
+        - for p in document.places:
+          %tr(class_='text-muted' if not p.relevant else '', dataOffsets=p.offset_list)
+            %td&= p.place.full_name
+            %td&= p.relevance
+
+
+    %section
+      %label.control-label Sources:
+      %table.table.table-striped.table-condensed.offsets.sources
+        %tbody
+          - sources = sorted(document.sources, key=lambda s: s.sort_key())
+          - for ds in sources:
+            %tr(dataOffsets=ds.offset_list, class_='source-%s' % ds.source_type)
+              %td
+                .row
+                  .col-sm-4.core
+                    %i.text-muted.fa(class_=source_icon(ds.source_type), title='%s source' % ds.source_type)
+
+                    - if not ds.person:
+                      &= ds.friendly_name()
+                    - else:
+                      -# it's a proper person
+                      %a(href=url_for('show_person', id=ds.person.id))&=ds.person.name
+
+                    - if ds.manual:
+                      %i.fa.fa-check-circle(title='Added manually by a monitor')
+
+                    %span.text-muted
+                      - if ds.gender:
+                        •
+                        %span(title=ds.gender.name)&= ds.gender.abbr()
+                      - if ds.race:
+                        •
+                        %span(title=ds.race.name)&= ds.race.abbr()
+
+                  .col-sm-2
+                    - if ds.quoted:
+                      %i.fa.fa-comment(title='quoted')
+                      - if len(ds.utterances()) > 0:
+                        %span.badge&= len(ds.utterances())
+
+                    - if ds.photographed:
+                      %i.fa.fa-camera(title='photographed')
+
+                  .col-sm-3.function
+                    - if ds.function:
+                      &=ds.function.name
+
+                  .col-sm-3.affiliation
+                    - if ds.affiliation:
+                      &=ds.affiliation.full_name
+
+                  .col-sm-3.age
+                    &= ('%s years' % ds.age.name) if ds.age else ''
+
+                  .col-sm-3.role
+                    &= ds.role and ds.role.name or ''
+
+      %%include(file="analysis_warnings.haml")
+
+      - if document.analysis_nature.nature != AnalysisNature.ANCHOR:
+        .row.topic-origin
+          .col-sm-7
+            %dl
+              %dt Topic
+              %dd&= document.topic.name if document.topic else '(none)'
+          .col-sm-5
+            %dl
+              %dt Origin
+              %dd&= document.origin.name if document.origin else '(none)'

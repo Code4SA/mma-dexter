@@ -1,0 +1,35 @@
+%%inherit(file="../layout.haml")
+
+%%block(name="extra_header_tags")
+  - for url in webassets('maps-css'):
+    %link(rel="stylesheet", href=url)
+
+%%block(name='extra_javascript')
+  - for url in webassets('documents'):
+    %script(src=url)
+
+%%block(name='pre_content')
+  - from dexter.helpers import country_flag
+  .fixed-header
+    .container
+      .row
+        .col-sm-8
+          %h3
+            - if document.flagged:
+              %i.article-flag.fa.fa-flag.flag-set(title=document.notes or 'Article has been flagged', dataPlacement='bottom')
+            &= document.title
+          .url
+            = country_flag(document.country)
+            - if document.url:
+              %i.fa.fa-link
+              %a(href=document.url, target='_blank')&= document.url
+            - else:
+              %em no URL
+
+        .col-sm-4.text-right
+          %%block(name="article_header_controls")
+
+%article.document-container
+  %p#error-box.alert.alert-danger
+
+  ${next.body()}
