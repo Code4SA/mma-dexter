@@ -71,6 +71,15 @@
             .col-sm-6
               .input-group
               = field_input(fdi_form.value)
+
+          .row
+            .col-sm-6
+              .form-group
+                = fdi_form.currency_id.label()
+            .col-sm-6
+              .input-group
+              = field_input(fdi_form.currency_id, class_='select2')
+
           .row
             .col-sm-6
               .form-group
@@ -106,13 +115,6 @@
             .col-sm-6
               .input-group
               = field_input(fdi_form.additional_place)
-          .row
-            .col-sm-6
-              .form-group
-                = fdi_form.currency_id.label()
-            .col-sm-6
-              .input-group
-              = field_input(fdi_form.currency_id, class_='select2')
           .row
             .col-sm-6
               .form-group
