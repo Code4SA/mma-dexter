@@ -42,7 +42,7 @@ class Investment(db.Model):
     phase_id = Column(Integer, ForeignKey('phases.id'), index=True)
     invest_origin_id = Column(Integer, ForeignKey('investment_origins.id'), index=True)
     invest_loc_id = Column(Integer, ForeignKey('investment_locations.id'), index=True)
-    invest_type_id = Column(Integer, ForeignKey('investment_type.id'), index=True)
+    invest_type_id = Column(Integer, ForeignKey('investment_types.id'), index=True)
     sector_id = Column(Integer, ForeignKey('sectors.id'), index=True)
 
     currency = relationship("Currencies")
@@ -158,7 +158,7 @@ class InvestmentType(db.Model):
     """
     The type of investment being made.
     """
-    __tablename__ = "investment_type"
+    __tablename__ = "investment_types"
 
     id = Column(Integer, primary_key=True)
     name = Column(String(50), index=True, nullable=False, unique=True)
