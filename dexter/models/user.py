@@ -115,6 +115,7 @@ class Role(db.Model, RoleMixin):
         return [
                 Role(name='monitor', description='user can add and edit documents'),
                 Role(name='miner', description='user can use the Dexter Mine feature'),
+                Role(name='fdi', description='user can use the FDI Analysis feature')
                 ]
 
 

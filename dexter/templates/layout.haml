@@ -28,27 +28,7 @@
           .navbar-header
             %a.navbar-brand(href="/") Dexter
 
-          - if current_user.is_authenticated():
-            .navbar-nav.navbar-btn
-              %a.btn.btn-primary(href=url_for('new_article'))
-                %i.fa.fa-plus
-                Add article
-
-            %ul.nav.navbar-nav
-              %li(class_=('active' if request.url_rule.endpoint == 'activity' else ''))
-                %a.btn.btn-link(href=url_for('activity')) Reports
-
-              %li(class_=('active' if request.url_rule.endpoint == 'monitor_dashboard' else ''))
-                %a.btn.btn-link(href=url_for('monitor_dashboard')) My Dashboard
-
-              - if current_user.has_role('miner') or current_user.has_role('monitor'):
-                %li
-                  %a.btn.btn-link(href=url_for('mine_home')) Dexter Mine
-
-              - if current_user.admin:
-                %li
-                  %a.btn.btn-link(href='/admin/') Dexter Admin
-
+          - if current_user.has_role('fdi'):
             %ul.nav.navbar-nav.navbar-right
               %li
                 %a.dropdown-toggle(href="#", dataToggle='dropdown')
@@ -57,13 +37,46 @@
                   %b.caret
                 %ul.dropdown-menu
                   %li
-                    %a(href=url_for('monitor_dashboard')) My Dashboard
-                  %li
                     %a(href=url_for('security.logout')) Logout
 
-            %form.navbar-form.navbar-right(action=url_for('search'))
-              .form-group
-                %input.form-control.allow-enter(type='text', name='q', placeholder='Find people')
+          - else:
+
+            - if current_user.is_authenticated():
+              .navbar-nav.navbar-btn
+                %a.btn.btn-primary(href=url_for('new_article'))
+                  %i.fa.fa-plus
+                  Add article
+
+              %ul.nav.navbar-nav
+                %li(class_=('active' if request.url_rule.endpoint == 'activity' else ''))
+                  %a.btn.btn-link(href=url_for('activity')) Reports
+
+                %li(class_=('active' if request.url_rule.endpoint == 'monitor_dashboard' else ''))
+                  %a.btn.btn-link(href=url_for('monitor_dashboard')) My Dashboard
+
+                - if current_user.has_role('miner') or current_user.has_role('monitor'):
+                  %li
+                    %a.btn.btn-link(href=url_for('mine_home')) Dexter Mine
+
+                - if current_user.admin:
+                  %li
+                    %a.btn.btn-link(href='/admin/') Dexter Admin
+
+              %ul.nav.navbar-nav.navbar-right
+                %li
+                  %a.dropdown-toggle(href="#", dataToggle='dropdown')
+                    = country_flag(current_user.country, **{"data-placement": 'bottom'})
+                    &= current_user.full_name()
+                    %b.caret
+                  %ul.dropdown-menu
+                    %li
+                      %a(href=url_for('monitor_dashboard')) My Dashboard
+                    %li
+                      %a(href=url_for('security.logout')) Logout
+
+              %form.navbar-form.navbar-right(action=url_for('search'))
+                .form-group
+                  %input.form-control.allow-enter(type='text', name='q', placeholder='Find people')
 
     %%block(name='pre_content')
 
