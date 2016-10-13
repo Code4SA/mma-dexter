@@ -7,7 +7,7 @@ from flask import request, make_response, jsonify
 from flask.ext.mako import render_template
 from flask.ext.security import roles_accepted, current_user, login_required
 from sqlalchemy.sql import func, distinct, or_, desc
-from sqlalchemy.orm import joinedload
+from sqlalchemy.orm import joinedload, lazyload
 from sqlalchemy_fulltext import FullTextSearch
 import sqlalchemy_fulltext.modes as FullTextMode
 
@@ -138,10 +138,8 @@ def activity():
     docs = Document.query\
         .options(joinedload(Document.created_by),
                  joinedload(Document.medium),
-                 joinedload(Document.topic),
-                 joinedload(Document.origin),
-                 joinedload(Document.fairness),
-                 joinedload(Document.sources).lazyload('*')
+                 joinedload(Document.sources).lazyload('*'),
+                 lazyload(Document.raw_tags),
                  )\
         .filter(Document.id.in_(doc_ids))\
         .order_by(Document.created_at.desc())\
