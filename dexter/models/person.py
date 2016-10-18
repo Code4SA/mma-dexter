@@ -138,6 +138,8 @@ class Person(db.Model):
                 .order_by(Document.published_at)\
                 .all()
 
+        self.log.debug("Relearning affiliations from %d occurrences since %s" % (len(sources), days_ago))
+
         weights = {}
 
         # exponential decay. An affiliation from today is worth
