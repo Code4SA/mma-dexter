@@ -15,11 +15,7 @@ loggers:
   requests:
     level: INFO
   sqlalchemy.engine:
-    level: INFO
-  dexter.models.person:
-    level: DEBUG
-  dexter.models.document:
-    level: DEBUG
+    level: WARN
 root:
   handlers: [console]
   level: INFO
