@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from itertools import groupby
 from datetime import datetime, timedelta
 import logging
 
@@ -13,13 +12,14 @@ from sqlalchemy import (
     func,
     desc,
     )
-from sqlalchemy.orm import relationship, subqueryload
-from wtforms import StringField, validators, SelectField, HiddenField, BooleanField
+from sqlalchemy.orm import relationship, joinedload, lazyload
+from wtforms import SelectField, BooleanField
 from flask.ext.login import current_user
 
 from ..app import db
 from ..forms import Form, MultiCheckboxField
 from ..utils import levenshtein
+
 
 class Person(db.Model):
     """
@@ -47,8 +47,6 @@ class Person(db.Model):
     def entity(self):
         """ Get an entity that is linked to this person. Because many entities can be linked, we
         try find the one with an exact name match before just returning any old one. """
-        from . import Entity
-
         last = None
 
         # get all the entities and try to find the one that has an exact
@@ -130,10 +128,14 @@ class Person(db.Model):
         days_ago = now - timedelta(days=7)
 
         sources = DocumentSource.query\
-                .options(subqueryload(DocumentSource.document))\
-                .options(subqueryload(DocumentSource.affiliation))\
+                .join(Document, Document.id == DocumentSource.doc_id)\
+                .options(
+                    lazyload('*'),
+                    joinedload(DocumentSource.affiliation),
+                    joinedload(DocumentSource.document).load_only("published_at"),
+                )\
                 .filter(Document.published_at >= days_ago)\
-                .filter(DocumentSource.person == self)\
+                .filter(DocumentSource.person_id == self.id)\
                 .filter(DocumentSource.affiliation != None)\
                 .order_by(Document.published_at)\
                 .all()
