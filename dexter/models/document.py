@@ -235,6 +235,8 @@ class Document(FullText, db.Model):
         """ Update the default affiilations for people sources linked to this
         document.
         """
+        self.log.info("Relearning source affiliations %s" % self)
+
         people = set()
         for source in (s for s in self.sources if s.person):
             if source.affiliation is not None and source.affiliation != source.person.affiliation:
@@ -244,6 +246,8 @@ class Document(FullText, db.Model):
 
         for person in people:
             person.relearn_affiliation()
+
+        self.log.info("Source affiliation relearning done")
 
     def analysis_problems(self):
         """ A list of problems (possibly empty) for critical things
