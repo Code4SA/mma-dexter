@@ -15,7 +15,8 @@ from .extractors import AlchemyExtractor, CalaisExtractor, SourcesExtractor, Pla
 class DocumentProcessor:
     log = logging.getLogger(__name__)
 
-    FEED_URL = 'https://www.newstools.co.za/newstoolspider/index.php/dexter/articles/%s'
+    # FEED_URL = 'https://www.newstools.co.za/newstoolspider/index.php/dexter/articles/%s'
+    FEED_URL = 'http://newstools.co.za/dexter/articles/%s'
     FEED_USER = 'dexter'
     FEED_PASSWORD = None
 
