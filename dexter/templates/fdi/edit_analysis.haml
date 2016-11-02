@@ -97,10 +97,10 @@
           .row
             .col-sm-6
               .form-group
-                = fdi_form.government.label()
+                = fdi_form.involvemnt_id.label()
             .col-sm-6
               .input-group
-              = field_input(fdi_form.government)
+              = field_input(fdi_form.involvement_id, class_='select2')
           .row
             .col-sm-6
               .form-group
@@ -143,6 +143,13 @@
             .col-sm-10
               .input-group
               = field_input(fdi_form.sector_id, class_='select2')
+          .row
+            .col-sm-2
+              .form-group
+                = fdi_form.industry_id.label()
+            .col-sm-10
+              .input-group
+              = field_input(fdi_form.industry_id, class_='select2')
           -#%hr
           -#%section.sources
           -#  %label.control-label Sources:

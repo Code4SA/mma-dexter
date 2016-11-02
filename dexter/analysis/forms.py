@@ -188,17 +188,18 @@ class FDIAnalysisForm(ModelForm):
                                                                      message= 'Please enter an integer, round up if necessary')])
     temp_opps = IntegerField('Temporary opportunities', [validators.NumberRange(min=0, max=1000000,
                                                                                 message='Please enter an integer')])
-    perm_opps = IntegerField('Permanent opportunities', [validators.NumberRange(min=0, max=1000000,
+    perm_opps = IntegerField('Job opportunities', [validators.NumberRange(min=0, max=1000000,
                                                                                 message='Please enter an integer')])
     investment_begin = DateField('Investment start date', [validators.Optional()], format='%Y/%m/%d',)
     investment_end = DateField('Investment end date', [validators.Optional()], format='%Y/%m/%d')
     currency_id = SelectField('Currency')
     phase_id = SelectField('Phase')
     sector_id = SelectField('Sector')
+    involvement_id = SelectField('Government involvement')
+    industry_id = SelectField('Industry')
     invest_origin_id = SelectField('Origin')
     invest_type_id = SelectField('Type')
     company = StringField('Company')
-    government = StringField('Government involvement')
     additional_place = StringField('Additional place')
 
     def __init__(self, *args, **kwargs):
