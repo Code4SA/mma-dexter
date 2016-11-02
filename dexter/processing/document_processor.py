@@ -207,10 +207,18 @@ class DocumentProcessor:
         if self.FEED_PASSWORD is None:
             raise ValueError("%s.FEED_PASSWORD must be set." % self.__class__.__name__)
 
+        # r = requests.get(self.FEED_URL % day.strftime('%d-%m-%Y'),
+        #                  auth=(self.FEED_USER, self.FEED_PASSWORD),
+        #                  verify=False,
+        #                  timeout=60)
+
+        payload = {'PHP_AUTH_USER': self.FEED_USER, 'PHP_AUTH_PW': self.FEED_PASSWORD}
+
         r = requests.get(self.FEED_URL % day.strftime('%d-%m-%Y'),
-                         auth=(self.FEED_USER, self.FEED_PASSWORD),
+                         headers=payload,
                          verify=False,
                          timeout=60)
+
         r.raise_for_status()
 
         return ET.fromstring(r.text)
