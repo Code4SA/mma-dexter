@@ -202,7 +202,10 @@ class DocumentProcessor:
 
     def fetch_daily_feeds(self, day):
         """ Fetch the feed for +day+ and returns an ElementTree instance. """
-        import xml.etree.ElementTree as ET
+        # import xml.etree.ElementTree as ET
+
+        from xml.etree import ElementTree
+        from htmlentitydefs import name2codepoint
 
         if self.FEED_PASSWORD is None:
             raise ValueError("%s.FEED_PASSWORD must be set." % self.__class__.__name__)
@@ -221,7 +224,12 @@ class DocumentProcessor:
 
         r.raise_for_status()
 
-        return ET.fromstring(r.text)
+        parser = ElementTree.XMLParser()
+        parser.parser.UseForeignDTD(True)
+        parser.entity.update((x, unichr(i)) for x, i in name2codepoint.iteritems())
+        etree = ElementTree
+
+        return etree.fromstring(r.text.encode('utf-8'), parser=parser)
 
     def backfill_taxonomies(self):
         """ Backfill taxonomies for articles.
