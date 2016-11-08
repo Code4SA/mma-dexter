@@ -114,6 +114,7 @@ def fdi_home():
                            tag_summary=tag_summary,
                            all_doc_ids=all_doc_ids)
 
+
 class FDI(Form):
     cluster_id      = HiddenField('Cluster')
     analysis_nature_id = SelectField('Analysis', default=AnalysisNature.ANCHOR_ID)
@@ -309,6 +310,7 @@ class FDI(Form):
             ext = self.format.data
 
         return "%s.%s" % ('-'.join(filename), ext)
+
 
 class ActivityChartHelper:
     def __init__(self, form):

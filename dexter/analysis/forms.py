@@ -5,7 +5,7 @@ from wtforms import SelectField as SelectFieldW
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
 from wtforms_alchemy import ModelFieldList
 
-from dexter.forms import ModelForm, FormField, MultiCheckboxField, IntegerField, SelectField, RadioField, YesNoField
+from dexter.forms import ModelForm, FormField, MultiCheckboxField, IntegerField, SelectField, RadioField, YesNoField, FloatField
 from dexter.models import *  # noqa
 
 
@@ -184,8 +184,7 @@ class FDIAnalysisForm(ModelForm):
     """
 
     name = StringField('Project name', [validators.Length(max=200)])
-    value = IntegerField('Investment value', [validators.NumberRange(min=0, max=100000000000,
-                                                                     message= 'Please enter an integer, round up if necessary')])
+    value = FloatField('Investment value', [validators.NumberRange(min=0, max=10000)])
     temp_opps = IntegerField('Temporary opportunities', [validators.NumberRange(min=0, max=1000000,
                                                                                 message='Please enter an integer')])
     perm_opps = IntegerField('Job opportunities', [validators.NumberRange(min=0, max=1000000,
@@ -201,6 +200,8 @@ class FDIAnalysisForm(ModelForm):
     invest_type_id = SelectField('Type')
     company = StringField('Company')
     additional_place = StringField('Additional place')
+    fdi_notes = StringField('Notes')
+    value_unit_id = SelectField('Unit')
 
     def __init__(self, *args, **kwargs):
         super(FDIAnalysisForm, self).__init__(*args, **kwargs)
@@ -210,7 +211,9 @@ class FDIAnalysisForm(ModelForm):
         self.phase_id.choices = [[str(c.id), c.name] for c in Phases.all()]
         self.sector_id.choices = [[str(c.id), c.name] for c in Sectors.all()]
         self.invest_type_id.choices = [[str(c.id), c.name] for c in InvestmentType.all()]
-
+        self.value_unit_id.choices = [[str(c.id), c.name] for c in ValueUnits.all()]
+        self.involvement_id.choices = [[str(c.id), c.name] for c in Involvements.all()]
+        self.industry_id.choices = [[str(c.id), c.name] for c in Industries.all()]
 
     def validate(self):
         return super(FDIAnalysisForm, self).validate()

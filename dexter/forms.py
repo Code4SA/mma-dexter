@@ -1,5 +1,5 @@
 from flask_wtf import Form as BaseForm
-from wtforms import SelectMultipleField, widgets, SelectField as WTFSelectField, RadioField as WTFRadioField, FormField as WTFFormField
+from wtforms import SelectMultipleField, widgets, SelectField as WTFSelectField, RadioField as WTFRadioField, FormField as WTFFormField, FloatField as WTFFloatField
 from wtforms.fields.html5 import IntegerField as WTFIntegerField
 from wtforms.widgets import HTMLString, html_params
 from wtforms.widgets import Select as SelectWidget
@@ -53,6 +53,19 @@ class IntegerField(WTFIntegerField):
             except ValueError:
                 self.data = None
                 raise ValueError(self.gettext('Not a valid integer value'))
+
+
+class FloatField(WTFFloatField):
+    def process_formdata(self, valuelist):
+        if valuelist:
+            try:
+                if valuelist[0]:
+                    self.data = float(valuelist[0])
+                else:
+                    self.data = None
+            except ValueError:
+                self.data = None
+                raise ValueError(self.gettext('Not a valid float value'))
 
 
 # ---------------

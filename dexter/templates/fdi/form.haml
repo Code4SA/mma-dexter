@@ -43,8 +43,9 @@
 
       = vertical_field(form.country_id, class_='select2', placeholder='(any)')
 
-
       = vertical_field(form.q)
+
+      = vertical_field(form.tags, class_='select2-tags', autocomplete='off', **{'data-choices': ','.join(form.tags.choices)})
 
     .panel-footer
       .row
