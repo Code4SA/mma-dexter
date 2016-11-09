@@ -68,9 +68,12 @@
             .col-sm-6
               .form-group
                 = fdi_form.value.label()
-            .col-sm-6
+            .col-sm-3
               .input-group
               = field_input(fdi_form.value)
+            .col-sm-3
+              .input-group
+              = field_input(fdi_form.value_unit_id, class_='select2')
 
           .row
             .col-sm-6
@@ -97,14 +100,15 @@
           .row
             .col-sm-6
               .form-group
-                = fdi_form.government.label()
+                = fdi_form.involvement_id.label()
             .col-sm-6
               .input-group
-              = field_input(fdi_form.government)
+              = field_input(fdi_form.involvement_id, class_='select2')
           .row
             .col-sm-6
               .form-group
                 = fdi_form.company.label()
+                [separate multiple with ";"]
             .col-sm-6
               .input-group
               = field_input(fdi_form.company)
@@ -143,6 +147,20 @@
             .col-sm-10
               .input-group
               = field_input(fdi_form.sector_id, class_='select2')
+          .row
+            .col-sm-2
+              .form-group
+                = fdi_form.industry_id.label()
+            .col-sm-10
+              .input-group
+              = field_input(fdi_form.industry_id, class_='select2')
+          .row
+            .col-sm-2
+              .form-group
+                = fdi_form.fdi_notes.label()
+            .col-sm-10
+              .input-group
+              = area_input(fdi_form.fdi_notes)
           -#%hr
           -#%section.sources
           -#  %label.control-label Sources:

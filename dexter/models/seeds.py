@@ -62,6 +62,15 @@ def seed_db(db):
         for x in Currencies.create_defaults():
             db.session.add(x)
 
+        for x in Industries.create_defaults():
+            db.session.add(x)
+
+        for x in Involvements.create_defaults():
+            db.session.add(x)
+
+        for x in ValueUnits.create_defaults():
+            db.session.add(x)
+
         db.session.flush()
 
         for x in Principle.create_defaults():

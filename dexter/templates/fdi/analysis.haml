@@ -33,6 +33,7 @@
           %label.control-label.col-sm-6 Investment value:
           .col-sm-6
             =investment.value
+            =value_unit
       .row
         .form-group
           %label.control-label.col-sm-6 Currency:
@@ -45,14 +46,14 @@
             =investment.temp_opps
       .row
         .form-group
-          %label.control-label.col-sm-6 Permanent opportunities:
+          %label.control-label.col-sm-6 Job opportunities:
           .col-sm-6
             =investment.perm_opps
       .row
         .form-group
           %label.control-label.col-sm-6 Government involvement:
           .col-sm-6
-            =investment.government
+            =involvement
       .row
         .form-group
           %label.control-label.col-sm-6 Company:
@@ -80,9 +81,19 @@
             =sector
       .row
         .form-group
+          %label.control-label.col-sm-6 Industry:
+          .col-sm-6
+            =industry
+      .row
+        .form-group
           %label.control-label.col-sm-6 Additional place:
           .col-sm-6
             =investment.additional_place
+      .row
+        .form-group
+          %label.control-label.col-sm-6 Notes:
+          .col-sm-6.row-fluid
+            =investment.fdi_notes
 
       %label.control-label Places:
 

@@ -644,3 +644,7 @@ html[dir="rtl"] .select2-search-choice-close {
         background-position: 100% -21px !important;
     }
 }
+
+.row-fluid {
+    word-wrap: break-word;
+}

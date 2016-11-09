@@ -8,18 +8,16 @@
   - for url in webassets('maps-css'):
     %link(rel="stylesheet", href=url)
 
-- if pagination.total != 0:
+%section
+  %h3
+    &= pagination.total
+    Article${'' if pagination.total == 1 else 's'}
+    - if form.user():
+      added by ${form.user().short_name()|h}
 
-  %section
-    %h3
-      &= pagination.total
-      Article${'' if pagination.total == 1 else 's'}
-      - if form.user():
-        added by ${form.user().short_name()|h}
+%section
+  %%include(file='tags.haml')
+  %%include(file='activity_list.haml', args='allow_selection=True')
 
-  %section
-    %%include(file='tags.haml')
-    %%include(file='activity_list.haml', args='allow_selection=True')
-
-    - args = request.args.to_dict(False)
-    = paginator('activity', pagination, **args)
+  - args = request.args.to_dict(False)
+  = paginator('fdi_home', pagination, **args)

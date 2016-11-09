@@ -28,28 +28,34 @@ class Investment(db.Model):
     id = Column(Integer, primary_key=True)
     doc_id = Column(Integer, ForeignKey('documents.id', ondelete='CASCADE'), index=True, nullable=False)
     name = Column(String(200), index=True, nullable=True)
-    value = Column(Integer)
+    value = Column(Float)
     temp_opps = Column(Integer)
     perm_opps = Column(Integer)
     company = Column(String(1024))
-    government = Column(String(1024))
     additional_place = Column(String(1024))
+    fdi_notes = Column(String(1024))
 
     investment_begin = Column(Date, index=True, unique=False)
     investment_end = Column(Date, index=True, unique=False)
 
+    value_unit_id = Column(Integer, ForeignKey('value_units.id'), index=True)
     currency_id = Column(Integer, ForeignKey('currencies.id'), index=True)
     phase_id = Column(Integer, ForeignKey('phases.id'), index=True)
     invest_origin_id = Column(Integer, ForeignKey('investment_origins.id'), index=True)
     invest_loc_id = Column(Integer, ForeignKey('investment_locations.id'), index=True)
     invest_type_id = Column(Integer, ForeignKey('investment_types.id'), index=True)
     sector_id = Column(Integer, ForeignKey('sectors.id'), index=True)
+    involvement_id = Column(Integer, ForeignKey('involvements.id'), index=True)
+    industry_id = Column(Integer, ForeignKey('industries.id'), index=True)
 
     currency = relationship("Currencies")
     phase = relationship("Phases")
     sector = relationship("Sectors")
+    industry = relationship("Industries")
+    involvement = relationship("Involvements")
     investment_type = relationship("InvestmentType")
     investment_origin = relationship("InvestmentOrigins")
+    value_unit = relationship("ValueUnits")
 
     def add_gov(self, government):
         """ Add a new government involvement, but only if it's not already there. """
@@ -776,3 +782,122 @@ class InvestmentLocations(db.Model):
 
     def __repr__(self):
         return "<Investment location='%s'>" % (self.name)
+
+
+class Involvements(db.Model):
+    """
+    The phase of the investment.
+    """
+    __tablename__ = "involvements"
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String(50), index=True, nullable=False, unique=True)
+
+    def __repr__(self):
+        return "<Involvements='%s'>" % (self.name)
+
+    @classmethod
+    def create_defaults(self):
+        text = """
+        Department of Trade and Industry
+        Economic Development Department
+        Department of Small Business Development
+        National Treasury
+        Investment Promotion Agency
+        Provincial Government or Agency
+        Municipal Government or Agency
+        Special Economic Zone
+        State Owned Enterprises
+        Sectoral Regulator or Agency
+        Other
+        None
+        unspecified
+        """
+
+        involvements = []
+        for s in text.strip().split("\n"):
+            i = Involvements()
+            i.name = s.strip()
+            involvements.append(i)
+
+        return involvements
+
+    @classmethod
+    def all(cls):
+        return cls.query.order_by(Involvements.name).all()
+
+
+class Industries(db.Model):
+    """
+    The phase of the investment.
+    """
+    __tablename__ = "industries"
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String(50), index=True, nullable=False, unique=True)
+
+    def __repr__(self):
+        return "<Industry='%s'>" % (self.name)
+
+    @classmethod
+    def create_defaults(self):
+        text = """
+        Agriculture
+        Mining
+        Manufacturing
+        Utilities
+        Construction
+        Trade
+        Transport
+        Finance
+        Community and social services
+        Private households
+        Other
+        unspecified
+        """
+
+        industries = []
+        for s in text.strip().split("\n"):
+            i = Industries()
+            i.name = s.strip()
+            industries.append(i)
+
+        return industries
+
+    @classmethod
+    def all(cls):
+        return cls.query.order_by(Industries.name).all()
+
+
+class ValueUnits(db.Model):
+    """
+        The phase of the investment.
+    """
+    __tablename__ = "value_units"
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String(50), index=True, nullable=False, unique=True)
+
+    def __repr__(self):
+        return "<Value unit='%s'>" % (self.name)
+
+    @classmethod
+    def create_defaults(self):
+        text = """
+            Million
+            Billion
+            unspecified
+            """
+
+        value_units = []
+        for s in text.strip().split("\n"):
+            i = ValueUnits()
+            i.name = s.strip()
+            value_units.append(i)
+
+        return value_units
+
+    @classmethod
+    def all(cls):
+        return cls.query.order_by(ValueUnits.name).all()
+

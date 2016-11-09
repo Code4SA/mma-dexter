@@ -8,7 +8,7 @@ from wand.exceptions import WandError
 
 from .app import app
 from .models import db, Document, Issue, DocumentPlace, DocumentAttachment, DocumentTag, Investment, Phases, Sectors, \
-    InvestmentOrigins, InvestmentType, Currencies
+    InvestmentOrigins, InvestmentType, Currencies, Industries, Involvements, ValueUnits
 from .models.document import DocumentForm
 from .models.fairness import DocumentFairnessForm
 from .models.analysis_nature import AnalysisNature
@@ -48,20 +48,27 @@ def show_article(id):
             investment.phase_id = 6
             investment.invest_origin_id = 194
             investment.sector_id = 90
+            investment.industry_id = 12
+            investment.involvement_id = 13
             investment.doc_id = id
+            investment.value_unit_id = 3
             db.session.add(investment)
             db.session.commit()
 
         investment = Investment.query.filter_by(doc_id=id).first()
         phase = Phases.query.filter_by(id=investment.phase_id).first()
         sector = Sectors.query.filter_by(id=investment.sector_id).first()
+        involvement = Involvements.query.filter_by(id=investment.involvement_id).first()
+        industry = Industries.query.filter_by(id=investment.industry_id).first()
         inv_origin = InvestmentOrigins.query.filter_by(id=investment.invest_origin_id).first()
         inv_type = InvestmentType.query.filter_by(id=investment.invest_type_id).first()
         currency = Currencies.query.filter_by(id=investment.currency_id).first()
+        value_unit = ValueUnits.query.filter_by(id=investment.value_unit_id).first()
 
         return render_template('fdi/show.haml', investment=investment, document=document, phase=phase.name,
                                sector=sector.name, inv_origin=inv_origin.name, inv_type=inv_type.name,
-                               currency=currency.name)
+                               currency=currency.name, involvement=involvement.name, industry=industry.name,
+                               value_unit=value_unit.name)
 
     return render_template('articles/show.haml', document=document)
 
@@ -163,7 +170,7 @@ def new_article():
 
 @app.route('/articles/<id>/edit', methods=['GET', 'POST'])
 @login_required
-@roles_accepted('monitor')
+@roles_accepted('monitor', 'fdi')
 def edit_article(id):
     doc = Document.query.get_or_404(id)
     if not doc.can_user_edit(current_user):
@@ -210,13 +217,14 @@ def edit_article_analysis(id):
             investment.value = 0
             investment.temp_opps = 0
             investment.perm_opps = 0
-            investment.government = 'unspecified'
             investment.company = 'unspecified'
             investment.currency_id = 165
             investment.invest_type_id = 6
             investment.phase_id = 6
             investment.invest_origin_id = 194
             investment.sector_id = 90
+            investment.industry_id = 10
+            investment.involvement_id = 13
             investment.doc_id = id
             db.session.add(investment)
             db.session.commit()
@@ -449,7 +457,7 @@ def create_article_attachment():
 
 @app.route('/articles/add-tag', methods=['POST'])
 @login_required
-@roles_accepted('monitor')
+@roles_accepted('monitor', 'fdi')
 def add_article_tags():
     tags = DocumentTag.split(request.form.get('tag', '').strip())
     doc_ids = DocumentTag.split(request.form.get('doc_ids', ''))
@@ -465,7 +473,7 @@ def add_article_tags():
 
 @app.route('/articles/remove-tag', methods=['POST'])
 @login_required
-@roles_accepted('monitor')
+@roles_accepted('monitor', 'fdi')
 def remove_article_tags():
     tags = DocumentTag.split(request.form.get('tag', '').strip())
     doc_ids = DocumentTag.split(request.form.get('doc_ids', ''))

@@ -1,11 +1,11 @@
 from functools import partial
 
-from wtforms import BooleanField, validators, HiddenField, widgets, StringField, DateField
+from wtforms import BooleanField, validators, HiddenField, widgets, StringField, DateField, TextAreaField
 from wtforms import SelectField as SelectFieldW
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
 from wtforms_alchemy import ModelFieldList
 
-from dexter.forms import ModelForm, FormField, MultiCheckboxField, IntegerField, SelectField, RadioField, YesNoField
+from dexter.forms import ModelForm, FormField, MultiCheckboxField, IntegerField, SelectField, RadioField, YesNoField, FloatField
 from dexter.models import *  # noqa
 
 
@@ -184,22 +184,24 @@ class FDIAnalysisForm(ModelForm):
     """
 
     name = StringField('Project name', [validators.Length(max=200)])
-    value = IntegerField('Investment value', [validators.NumberRange(min=0, max=100000000000,
-                                                                     message= 'Please enter an integer, round up if necessary')])
+    value = FloatField('Investment value', [validators.NumberRange(min=0, max=10000)])
     temp_opps = IntegerField('Temporary opportunities', [validators.NumberRange(min=0, max=1000000,
                                                                                 message='Please enter an integer')])
-    perm_opps = IntegerField('Permanent opportunities', [validators.NumberRange(min=0, max=1000000,
+    perm_opps = IntegerField('Job opportunities', [validators.NumberRange(min=0, max=1000000,
                                                                                 message='Please enter an integer')])
     investment_begin = DateField('Investment start date', [validators.Optional()], format='%Y/%m/%d',)
     investment_end = DateField('Investment end date', [validators.Optional()], format='%Y/%m/%d')
     currency_id = SelectField('Currency')
     phase_id = SelectField('Phase')
     sector_id = SelectField('Sector')
+    involvement_id = SelectField('Government involvement')
+    industry_id = SelectField('Industry')
     invest_origin_id = SelectField('Origin')
     invest_type_id = SelectField('Type')
     company = StringField('Company')
-    government = StringField('Government involvement')
     additional_place = StringField('Additional place')
+    fdi_notes = TextAreaField('Notes')
+    value_unit_id = SelectField('Unit')
 
     def __init__(self, *args, **kwargs):
         super(FDIAnalysisForm, self).__init__(*args, **kwargs)
@@ -209,7 +211,9 @@ class FDIAnalysisForm(ModelForm):
         self.phase_id.choices = [[str(c.id), c.name] for c in Phases.all()]
         self.sector_id.choices = [[str(c.id), c.name] for c in Sectors.all()]
         self.invest_type_id.choices = [[str(c.id), c.name] for c in InvestmentType.all()]
-
+        self.value_unit_id.choices = [[str(c.id), c.name] for c in ValueUnits.all()]
+        self.involvement_id.choices = [[str(c.id), c.name] for c in Involvements.all()]
+        self.industry_id.choices = [[str(c.id), c.name] for c in Industries.all()]
 
     def validate(self):
         return super(FDIAnalysisForm, self).validate()
