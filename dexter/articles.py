@@ -56,6 +56,19 @@ def show_article(id):
             db.session.commit()
 
         investment = Investment.query.filter_by(doc_id=id).first()
+
+        if Involvements.query.filter_by(id=investment.involvement_id).first() is None:
+            investment.involvement_id = 13
+            db.session.commit()
+
+        if Industries.query.filter_by(id=investment.industry_id).first() is None:
+            investment.industry_id = 12
+            db.session.commit()
+
+        if ValueUnits.query.filter_by(id=investment.value_unit_id).first() is None:
+            investment.value_unit_id = 3
+            db.session.commit()
+
         phase = Phases.query.filter_by(id=investment.phase_id).first()
         sector = Sectors.query.filter_by(id=investment.sector_id).first()
         involvement = Involvements.query.filter_by(id=investment.involvement_id).first()
