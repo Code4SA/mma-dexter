@@ -108,7 +108,7 @@
             .col-sm-6
               .form-group
                 = fdi_form.company.label()
-                -#[separate with ;]
+                [separate multiple with ";"]
             .col-sm-6
               .input-group
               = field_input(fdi_form.company)
@@ -155,12 +155,12 @@
               .input-group
               = field_input(fdi_form.industry_id, class_='select2')
           .row
-            .col-sm-6
+            .col-sm-2
               .form-group
                 = fdi_form.fdi_notes.label()
-            .col-sm-6
+            .col-sm-10
               .input-group
-              = field_input(fdi_form.fdi_notes)
+              = area_input(fdi_form.fdi_notes)
           -#%hr
           -#%section.sources
           -#  %label.control-label Sources:

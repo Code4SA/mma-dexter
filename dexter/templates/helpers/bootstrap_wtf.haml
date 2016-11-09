@@ -40,4 +40,20 @@
           %p.help-block
             - for err in fld.errors:
               &= err
-                  
+
+%%def(name="area_input(fld, **kwargs)")
+  - from wtforms.widgets import TextArea
+  - if 'required' in kwargs and not kwargs['required']:
+    - del kwargs['required']
+  - kwargs['class_'] = kwargs.get('class_', '')
+  - kwargs['class_'] = kwargs['class_'] + ' form-control'
+  - kwargs['rows'] = 6
+
+  %span(class_=('has-error' if fld.errors else ''))
+    .checkbox
+      = fld(**kwargs)
+      - if fld.errors:
+        %p.help-block
+          - for err in fld.errors:
+            &= err
+

@@ -1,6 +1,6 @@
 from functools import partial
 
-from wtforms import BooleanField, validators, HiddenField, widgets, StringField, DateField
+from wtforms import BooleanField, validators, HiddenField, widgets, StringField, DateField, TextAreaField
 from wtforms import SelectField as SelectFieldW
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
 from wtforms_alchemy import ModelFieldList
@@ -200,7 +200,7 @@ class FDIAnalysisForm(ModelForm):
     invest_type_id = SelectField('Type')
     company = StringField('Company')
     additional_place = StringField('Additional place')
-    fdi_notes = StringField('Notes')
+    fdi_notes = TextAreaField('Notes')
     value_unit_id = SelectField('Unit')
 
     def __init__(self, *args, **kwargs):
