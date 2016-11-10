@@ -1,5 +1,5 @@
 from dexter.app import app
-from flask import request, url_for, flash, redirect
+from flask import request, url_for, flash, redirect, session
 from flask.ext.mako import render_template
 from flask.ext.security import current_user
 from sqlalchemy.sql import func
@@ -17,6 +17,9 @@ import dexter.fdi
 @app.route('/')
 def home():
     if current_user.is_authenticated():
+
+        session[str(current_user.id)] = {'search': []}
+
         if current_user.admin:
             return redirect(url_for('dashboard'))
 

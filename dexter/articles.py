@@ -1,6 +1,6 @@
 import logging
 
-from flask import request, url_for, flash, redirect, make_response, jsonify, abort
+from flask import request, url_for, flash, redirect, make_response, jsonify, abort, session
 from flask.ext.mako import render_template
 from flask.ext.security import roles_accepted, current_user, login_required
 
@@ -30,6 +30,8 @@ def show_article(id):
     document = Document.query.get_or_404(id)
     if request.args.get('format') == 'places-json':
         return jsonify(DocumentPlace.summary_for_docs([document]))
+
+    URL = session[str(current_user.id)]['search']
 
     if current_user.has_role('fdi'):
 
@@ -81,9 +83,9 @@ def show_article(id):
         return render_template('fdi/show.haml', investment=investment, document=document, phase=phase.name,
                                sector=sector.name, inv_origin=inv_origin.name, inv_type=inv_type.name,
                                currency=currency.name, involvement=involvement.name, industry=industry.name,
-                               value_unit=value_unit.name)
+                               value_unit=value_unit.name, URL=URL)
 
-    return render_template('articles/show.haml', document=document)
+    return render_template('articles/show.haml', document=document, URL=URL)
 
 
 @app.route('/articles/<id>/delete', methods=['POST'])
@@ -221,7 +223,7 @@ def edit_article(id):
 @roles_accepted('monitor', 'fdi')
 def edit_article_analysis(id):
     document = Document.query.get_or_404(id)
-
+    URL = session[str(current_user.id)]['search']
     if current_user.has_role('fdi'):
         exists = Investment.query.filter_by(doc_id=id).first() is not None
         if not exists:
@@ -368,7 +370,8 @@ def edit_article_analysis(id):
                                 fdi_form=fdi_form,
                                 document=document,
                                 investment=investment,
-                                natures=AnalysisNature.all()))
+                                natures=AnalysisNature.all(),
+                                URL=URL))
         else:
             resp = make_response(
                 render_template('articles/edit_analysis.haml',
@@ -377,7 +380,8 @@ def edit_article_analysis(id):
                                 new_fairness_form=new_fairness_form,
                                 fairness_forms=fairness_forms,
                                 document=document,
-                                natures=AnalysisNature.all()))
+                                natures=AnalysisNature.all(),
+                                URL=URL))
     else:
         resp = ''
 

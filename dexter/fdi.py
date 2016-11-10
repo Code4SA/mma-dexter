@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 import re
 
 from dexter.app import app
-from flask import request, make_response, jsonify
+from flask import request, make_response, jsonify, session
 from flask.ext.mako import render_template
 from flask.ext.security import roles_accepted, current_user, login_required
 from sqlalchemy.sql import func, distinct, or_, desc
@@ -107,12 +107,15 @@ def fdi_home():
         .order_by(desc('count'), DocumentTag.tag) \
         .all()
 
+    session[str(current_user.id)]['search'] = request.url
+
     return render_template('fdi/activity.haml',
                            form=form,
                            pagination=pagination,
                            doc_groups=doc_groups,
                            tag_summary=tag_summary,
-                           all_doc_ids=all_doc_ids)
+                           all_doc_ids=all_doc_ids,
+                           )
 
 
 class FDI(Form):
