@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 import re
 
 from dexter.app import app
-from flask import request, make_response, jsonify
+from flask import request, make_response, jsonify, session
 from flask.ext.mako import render_template
 from flask.ext.security import roles_accepted, current_user, login_required
 from sqlalchemy.sql import func, distinct, or_, desc
@@ -157,6 +157,8 @@ def activity():
         .group_by(DocumentTag.tag)\
         .order_by(desc('count'), DocumentTag.tag)\
         .all()
+
+    session[str(current_user.id)]['search'] = request.url
 
     return render_template('dashboard/activity.haml',
                            form=form,
