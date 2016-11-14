@@ -184,24 +184,27 @@ class FDIAnalysisForm(ModelForm):
     """
 
     name = StringField('Project name', [validators.Length(max=200)])
-    value = FloatField('Investment value', [validators.NumberRange(min=0, max=10000)])
+    value = FloatField('Investment value (Forex)', [validators.NumberRange(min=0, max=10000)])
+    value2 = FloatField('Investment value (Rands)', [validators.NumberRange(min=0, max=10000)])
     temp_opps = IntegerField('Temporary opportunities', [validators.NumberRange(min=0, max=1000000,
                                                                                 message='Please enter an integer')])
     perm_opps = IntegerField('Job opportunities', [validators.NumberRange(min=0, max=1000000,
                                                                                 message='Please enter an integer')])
-    investment_begin = DateField('Investment start date', [validators.Optional()], format='%Y/%m/%d',)
+    investment_begin = DateField('Investment start date', [validators.Optional()], format='%Y/%m/%d')
     investment_end = DateField('Investment end date', [validators.Optional()], format='%Y/%m/%d')
     currency_id = SelectField('Currency')
     phase_id = SelectField('Phase')
     sector_id = SelectField('Sector')
     involvement_id = SelectField('Government involvement')
     industry_id = SelectField('Industry')
-    invest_origin_id = SelectField('Origin')
+    invest_origin_id = SelectField('Origin of investment (country)')
+    invest_origin_city = StringField('Origin of investment (city)')
     invest_type_id = SelectField('Type')
     company = StringField('Company')
     additional_place = StringField('Additional place')
     fdi_notes = TextAreaField('Notes')
     value_unit_id = SelectField('Unit')
+    value_unit_id2 = SelectField('Unit 2', [validators.Optional()])
 
     def __init__(self, *args, **kwargs):
         super(FDIAnalysisForm, self).__init__(*args, **kwargs)
@@ -212,6 +215,7 @@ class FDIAnalysisForm(ModelForm):
         self.sector_id.choices = [[str(c.id), c.name] for c in Sectors.all()]
         self.invest_type_id.choices = [[str(c.id), c.name] for c in InvestmentType.all()]
         self.value_unit_id.choices = [[str(c.id), c.name] for c in ValueUnits.all()]
+        self.value_unit_id2.choices = [[str(c.id), c.name] for c in ValueUnits.all()]
         self.involvement_id.choices = [[str(c.id), c.name] for c in Involvements.all()]
         self.industry_id.choices = [[str(c.id), c.name] for c in Industries.all()]
 

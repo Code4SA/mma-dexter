@@ -30,7 +30,13 @@
             =investment.investment_end
       .row
         .form-group
-          %label.control-label.col-sm-6 Investment value:
+          %label.control-label.col-sm-6 Investment value (Rands):
+          .col-sm-6
+            =investment.value2
+            =value_unit2
+      .row
+        .form-group
+          %label.control-label.col-sm-6 Investment value (Forex):
           .col-sm-6
             =investment.value
             =value_unit
@@ -71,9 +77,14 @@
             =phase
       .row
         .form-group
-          %label.control-label.col-sm-6 Origin of investment:
+          %label.control-label.col-sm-6 Origin of investment (country):
           .col-sm-6
             =inv_origin
+      .row
+        .form-group
+          %label.control-label.col-sm-6 Origin of investment (city):
+          .col-sm-6
+            =investment.invest_origin_city
       .row
         .form-group
           %label.control-label.col-sm-6 Sector:

@@ -29,16 +29,19 @@ class Investment(db.Model):
     doc_id = Column(Integer, ForeignKey('documents.id', ondelete='CASCADE'), index=True, nullable=False)
     name = Column(String(200), index=True, nullable=True)
     value = Column(Float)
+    value2 = Column(Float)
     temp_opps = Column(Integer)
     perm_opps = Column(Integer)
     company = Column(String(1024))
     additional_place = Column(String(1024))
     fdi_notes = Column(String(1024))
+    invest_origin_city = Column(String(50))
 
     investment_begin = Column(Date, index=True, unique=False)
     investment_end = Column(Date, index=True, unique=False)
 
     value_unit_id = Column(Integer, ForeignKey('value_units.id'), index=True)
+    value_unit_id2 = Column(Integer, ForeignKey('value_units.id'), index=True)
     currency_id = Column(Integer, ForeignKey('currencies.id'), index=True)
     phase_id = Column(Integer, ForeignKey('phases.id'), index=True)
     invest_origin_id = Column(Integer, ForeignKey('investment_origins.id'), index=True)
@@ -55,7 +58,8 @@ class Investment(db.Model):
     involvement = relationship("Involvements")
     investment_type = relationship("InvestmentType")
     investment_origin = relationship("InvestmentOrigins")
-    value_unit = relationship("ValueUnits")
+    value_unit = relationship("ValueUnits", foreign_keys=[value_unit_id])
+    value_unit2 = relationship("ValueUnits", foreign_keys=[value_unit_id2])
 
     def add_gov(self, government):
         """ Add a new government involvement, but only if it's not already there. """
@@ -92,72 +96,6 @@ class Investment(db.Model):
 
     def __repr__(self):
         return "<Investment id=%s, Document id=%s>" % (self.id, self.doc_id)
-
-
-# Note-type fields
-
-# class Government(db.Model, WithOffsets):
-#     """
-#     Government involvement on investments.
-#     """
-#     __tablename__ = "government"
-#
-#     id = Column(Integer, primary_key=True)
-#     inv_id = Column(Integer, ForeignKey('investments.id', ondelete='CASCADE'), index=True)
-#     gov = Column(String(200), index=True, nullable=False)
-#
-#     # offsets in the document, a space-separated list of offset:length pairs.
-#     offset_list = Column(String(1024))
-#
-#     def __repr__(self):
-#         return "<Government='%s', inv=%s>" % (
-#             self.gov.encode('utf-8'), self.investment)
-#
-#
-# Index('inv_gov_inv_id_gov_ix', Government.inv_id, Government.gov, unique=True)
-#
-#
-# class Companies(db.Model, WithOffsets):
-#     """
-#     The company investing.
-#     """
-#     __tablename__ = "companies"
-#
-#     id = Column(Integer, primary_key=True)
-#     inv_id = Column(Integer, ForeignKey('investments.id', ondelete='CASCADE'), index=True)
-#     name = Column(String(50), index=True, nullable=False)
-#
-#     # offsets in the document, a space-separated list of offset:length pairs.
-#     offset_list = Column(String(1024))
-#
-#     def __repr__(self):
-#         return "<Company='%s', inv=%s>" % (
-#             self.name.encode('utf-8'), self.investment)
-#
-# Index('inv_comp_inv_id_comp_ix', Companies.inv_id, Companies.name, unique=True)
-#
-#
-# class FinancePartners(db.Model, WithOffsets):
-#     """
-#     The finance partners.
-#     """
-#     __tablename__ = "finance"
-#
-#     id = Column(Integer, primary_key=True)
-#     inv_id = Column(Integer, ForeignKey('investments.id', ondelete='CASCADE'), index=True)
-#     name = Column(String(200), index=True, nullable=False, unique=True)
-#
-#     # offsets in the document, a space-separated list of offset:length pairs.
-#     offset_list = Column(String(1024))
-#
-#     def __repr__(self):
-#         return "<FinancePartner='%s', inv=%s>" % (
-#             self.name.encode('utf-8'), self.investment)
-#
-# Index('inv_fin_inv_id_fin_ix', FinancePartners.inv_id, FinancePartners.name, unique=True)
-
-
-# Fixed-list fields
 
 
 class InvestmentType(db.Model):

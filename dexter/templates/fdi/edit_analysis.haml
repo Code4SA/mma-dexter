@@ -70,6 +70,16 @@
           .row
             .col-sm-6
               .form-group
+                = fdi_form.value2.label()
+            .col-sm-3
+              .input-group
+              = field_input(fdi_form.value2)
+            .col-sm-3
+              .input-group
+              = field_input(fdi_form.value_unit_id2, class_='select2')
+          .row
+            .col-sm-6
+              .form-group
                 = fdi_form.value.label()
             .col-sm-3
               .input-group
@@ -77,7 +87,6 @@
             .col-sm-3
               .input-group
               = field_input(fdi_form.value_unit_id, class_='select2')
-
           .row
             .col-sm-6
               .form-group
@@ -143,6 +152,13 @@
             .col-sm-10
               .input-group
               = field_input(fdi_form.invest_origin_id, class_='select2')
+          .row
+            .col-sm-2
+              .form-group
+                = fdi_form.invest_origin_city.label()
+            .col-sm-10
+              .input-group
+              = field_input(fdi_form.invest_origin_city)
           .row
             .col-sm-2
               .form-group
