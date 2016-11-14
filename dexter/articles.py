@@ -40,6 +40,7 @@ def show_article(id):
             investment = Investment()
             investment.name = 'unspecified'
             investment.value = 0
+            investment.value2 = 0
             investment.temp_opps = 0
             investment.perm_opps = 0
             investment.government = 'unspecified'
@@ -49,11 +50,13 @@ def show_article(id):
             investment.invest_type_id = 6
             investment.phase_id = 6
             investment.invest_origin_id = 194
+            investment.invest_origin_city = 'unspecified'
             investment.sector_id = 90
             investment.industry_id = 12
             investment.involvement_id = 13
             investment.doc_id = id
             investment.value_unit_id = 3
+            investment.value_unit_id2 = 3
             db.session.add(investment)
             db.session.commit()
 
@@ -71,6 +74,10 @@ def show_article(id):
             investment.value_unit_id = 3
             db.session.commit()
 
+        if ValueUnits.query.filter_by(id=investment.value_unit_id2).first() is None:
+            investment.value_unit_id2 = 3
+            db.session.commit()
+
         phase = Phases.query.filter_by(id=investment.phase_id).first()
         sector = Sectors.query.filter_by(id=investment.sector_id).first()
         involvement = Involvements.query.filter_by(id=investment.involvement_id).first()
@@ -79,11 +86,12 @@ def show_article(id):
         inv_type = InvestmentType.query.filter_by(id=investment.invest_type_id).first()
         currency = Currencies.query.filter_by(id=investment.currency_id).first()
         value_unit = ValueUnits.query.filter_by(id=investment.value_unit_id).first()
+        value_unit2 = ValueUnits.query.filter_by(id=investment.value_unit_id2).first()
 
         return render_template('fdi/show.haml', investment=investment, document=document, phase=phase.name,
                                sector=sector.name, inv_origin=inv_origin.name, inv_type=inv_type.name,
                                currency=currency.name, involvement=involvement.name, industry=industry.name,
-                               value_unit=value_unit.name, URL=URL)
+                               value_unit=value_unit.name, value_unit2=value_unit2.name, URL=URL)
 
     return render_template('articles/show.haml', document=document, URL=URL)
 
@@ -230,17 +238,23 @@ def edit_article_analysis(id):
             investment = Investment()
             investment.name = 'unspecified'
             investment.value = 0
+            investment.value2 = 0
             investment.temp_opps = 0
             investment.perm_opps = 0
+            investment.government = 'unspecified'
             investment.company = 'unspecified'
+            investment.additional_place = 'unspecified'
             investment.currency_id = 165
             investment.invest_type_id = 6
             investment.phase_id = 6
             investment.invest_origin_id = 194
+            investment.invest_origin_city = 'unspecified'
             investment.sector_id = 90
-            investment.industry_id = 10
+            investment.industry_id = 12
             investment.involvement_id = 13
             investment.doc_id = id
+            investment.value_unit_id = 3
+            investment.value_unit_id2 = 3
             db.session.add(investment)
             db.session.commit()
 
