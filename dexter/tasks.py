@@ -64,3 +64,10 @@ def backfill_taxonomies():
         dp.backfill_taxonomies()
     except Exception as e:
         log.error("Error backfilling taxonomies: %s" % e.message, exc_info=e)
+
+
+@app.task
+def fetch_missing_feeds():
+    """ Enqueue a task to fetch yesterday's feeds. """
+    yesterday = date.today() - timedelta(days=26)
+    fetch_daily_feeds.delay(yesterday.isoformat())
