@@ -69,5 +69,5 @@ def backfill_taxonomies():
 @app.task
 def fetch_missing_feeds():
     """ Enqueue a task to fetch yesterday's feeds. """
-    yesterday = date.today() - timedelta(days=26)
+    yesterday = date.today() - timedelta(days=27)
     fetch_daily_feeds.delay(yesterday.isoformat())
