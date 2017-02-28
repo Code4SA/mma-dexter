@@ -20,6 +20,9 @@ def home():
 
         session[str(current_user.id)] = {'search': []}
 
+        if current_user.has_role('fdi'):
+            return redirect(url_for('fdi_home'))
+
         if current_user.admin:
             return redirect(url_for('dashboard'))
 
@@ -28,9 +31,6 @@ def home():
 
         if current_user.has_role('miner'):
             return redirect(url_for('mine_home'))
-
-        if current_user.has_role('fdi'):
-            return redirect(url_for('fdi_home'))
 
         return render_template('noperms.haml')
     else:

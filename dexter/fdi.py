@@ -17,7 +17,8 @@ from dexter.models.user import default_country_id
 
 from wtforms import validators, HiddenField, TextField, SelectMultipleField, BooleanField
 from .forms import Form, SelectField, MultiCheckboxField, RadioField
-from .analysis import SourceAnalyser, TopicAnalyser, XLSXExportBuilder, ChildrenRatingExport, MediaDiversityRatingExport
+from .analysis import SourceAnalyser, TopicAnalyser, XLSXExportBuilder, ChildrenRatingExport, \
+    MediaDiversityRatingExport, FDIExportBuilder
 
 from utils import paginate
 from dexter.utils import client_cache_for
@@ -35,38 +36,13 @@ def fdi_home():
     except ValueError:
         page = 1
 
-    if form.format.data == 'chart-json':
-        # chart data in json format
-        return jsonify(ActivityChartHelper(form).chart_data())
-
-    elif form.format.data == 'places-json':
-        # places in json format
-        query = Document.query.options(joinedload('places').joinedload('place'))
-        query = form.filter_query(query)
-
-        return jsonify(DocumentPlace.summary_for_docs(query.all()))
-
-    elif form.format.data == 'xlsx' and current_user.admin:
+    if form.format.data == 'xlsx':
         # excel spreadsheet
-        excel = XLSXExportBuilder(form).build()
 
-        response = make_response(excel)
-        response.headers["Content-Disposition"] = "attachment; filename=%s" % form.filename()
-        response.headers["Content-Type"] = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-        return response
+        print 'Built!'
+        raw_input('...')
 
-    elif form.format.data == 'children-ratings.xlsx' and current_user.admin:
-        # excel spreadsheet
-        excel = ChildrenRatingExport(form.document_ids()).build()
-
-        response = make_response(excel)
-        response.headers["Content-Disposition"] = "attachment; filename=%s" % form.filename()
-        response.headers["Content-Type"] = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-        return response
-
-    elif form.format.data == 'media-diversity-ratings.xlsx' and current_user.admin:
-        # excel spreadsheet
-        excel = MediaDiversityRatingExport(form.document_ids()).build()
+        excel = FDIExportBuilder(form).build()
 
         response = make_response(excel)
         response.headers["Content-Disposition"] = "attachment; filename=%s" % form.filename()

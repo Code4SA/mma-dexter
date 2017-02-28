@@ -51,7 +51,6 @@
       .row
         .col-sm-3.col-sm-offset-6
           %input(type="hidden", name="format")
-          - if current_user.admin:
             .dropdown
               %button.btn.btn-default.form-control.dropdown-toggle(type="button", dataToggle='dropdown')
                 %i.fa.fa-download
@@ -61,14 +60,6 @@
               %ul.dropdown-menu
                 %li
                   %a.download(href="#", dataFormat="xlsx") Raw data (.xlsx)
-
-                %li
-                  %a.download(href="#", dataFormat="media-diversity-ratings.xlsx") Media Diversity Ratings (.xlsx)
-
-                %li(class_='disabled' if form.analysis_nature().nature != AnalysisNature.CHILDREN else '')
-                  %a.download(href="#", dataFormat="children-ratings.xlsx")
-                    %i.fa(class_=AnalysisNature.ICONS[AnalysisNature.CHILDREN])
-                    Children Ratings (.xlsx)
 
         .col-sm-3
           %input.btn.btn-success.form-control(type='submit', value='Submit')
