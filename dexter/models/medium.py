@@ -139,6 +139,7 @@ Post Zambia|online|postzambia.com||zm
 Times of Zambia|online|times.co.zm||zm
 The Chronicle|online|chronicle.co.zw||zw
 NewsDay Zimbabwe|online|newsday.co.zw||zw
+The Citizen Tanzania|online|thecitizen.co.tz||tz
             """
 
         mediums = []
