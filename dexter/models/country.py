@@ -46,6 +46,7 @@ Lesotho|ls
 Zambia|zm
 Namibia|na
 Zimbabwe|zw
+Tanzania|tz
             """
 
         countries = []
