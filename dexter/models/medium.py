@@ -137,6 +137,7 @@ Zambian Watchdog|online|zambianwatchdog.com||zm
 Zambia Daily Mail|online|daily-mail.co.zm||zm
 Post Zambia|online|postzambia.com||zm
 Times of Zambia|online|times.co.zm||zm
+The Chronicle|online|chronicle.co.zw||zw
             """
 
         mediums = []
