@@ -47,6 +47,7 @@ Zambia|zm
 Namibia|na
 Zimbabwe|zw
 Tanzania|tz
+Germany|de
             """
 
         countries = []
