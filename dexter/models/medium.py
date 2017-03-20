@@ -167,6 +167,7 @@ The Chronicle|online|chronicle.co.zw||zw
 NewsDay Zimbabwe|online|newsday.co.zw||zw
 The Citizen Tanzania|online|thecitizen.co.tz||tz
 Deutsche Welle|online|dw.com||de
+BBC|online|bbc.com||gb
             """
 
         mediums = []

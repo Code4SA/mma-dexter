@@ -48,6 +48,7 @@ Namibia|na
 Zimbabwe|zw
 Tanzania|tz
 Germany|de
+United Kingdom (Great Britain)|gb
             """
 
         countries = []
