@@ -37,10 +37,11 @@ class DocumentProcessor:
             ZambiaDailyMailCrawler(),
             PostZambiaCrawler(),
             TimesZambiaCrawler(),
+            NationKECrawler(),
             # must come last
             GenericCrawler()]
         self.extractors = [
-            AlchemyExtractor(),
+            # AlchemyExtractor(),
             CalaisExtractor(),
             SourcesExtractor(),
             PlacesExtractor()]
