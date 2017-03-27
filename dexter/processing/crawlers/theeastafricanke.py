@@ -25,7 +25,8 @@ class TheEastAfricanKECrawler(BaseCrawler):
         doc.title = self.extract_plaintext(soup.select("#articlebody h1"))
 
         #gather publish date
-        published_text = soup.find(attrs={"name":"pubdate"})['content']
+        self.log.info(self.extract_plaintext(soup.select("#articlemeta")))
+        published_text = self.extract_plaintext(soup.select("#articlemeta")).split("Posted",1)[1].strip("\n").replace(u'\xa0', ' ')
         doc.published_at = self.parse_timestamp(published_text)
         
         #gather text and summary
@@ -35,7 +36,7 @@ class TheEastAfricanKECrawler(BaseCrawler):
         doc.text = "\n\n".join(p.text.strip() for p in nodes)
 
         # gather author 
-        author = self.extract_plaintext(soup.find(attrs={"property":"og:author"})['content']).strip()
+        author = soup.find(attrs={"property":"og:author"})['content'].rstrip(", ")
         if author:
             doc.author = Author.get_or_create(author.strip(), AuthorType.journalist())
         else:
