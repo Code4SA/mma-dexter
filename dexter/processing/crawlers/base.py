@@ -18,7 +18,6 @@ class BaseCrawler(object):
         """ Strip anchors, etc."""
 
         # Needed to handle urls being recieved without protocol (http[s]://), check if it can be parsed first, then handle and re parse if there is no netloc found
-        # Also checking for any www. to handle these in particular. otherwise it should still fail (perhaps need to handle other outliers in future)
         if '//' not in url:
             url = '%s%s' % ('http://', url)
 
