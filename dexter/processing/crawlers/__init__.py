@@ -10,3 +10,4 @@ from .newstools import NewstoolsCrawler
 from .zambia import ZambiaDailyNationCrawler, LusakaTimesCrawler, ZambianWatchdogCrawler, ZambiaDailyMailCrawler, PostZambiaCrawler, TimesZambiaCrawler
 from .nationke import NationKECrawler
 from .standardmedia import StandardMediaCrawler
+from .thestarke import TheStarKECrawler
