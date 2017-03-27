@@ -169,6 +169,7 @@ The Citizen Tanzania|online|thecitizen.co.tz||tz
 Deutsche Welle|online|dw.com||de
 BBC|online|bbc.com||gb
 Daily Nation (Kenya)|online|nation.co.ke||ke
+Standard Digital|online|standardmedia.co.ke||ke
             """
 
         mediums = []
