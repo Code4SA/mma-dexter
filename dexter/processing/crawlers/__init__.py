@@ -11,3 +11,4 @@ from .zambia import ZambiaDailyNationCrawler, LusakaTimesCrawler, ZambianWatchdo
 from .nationke import NationKECrawler
 from .standardmedia import StandardMediaCrawler
 from .thestarke import TheStarKECrawler
+from .theeastafricanke import TheEastAfricanKECrawler

@@ -40,6 +40,7 @@ class DocumentProcessor:
             NationKECrawler(),
             StandardMediaCrawler(),
             TheStarKECrawler(),
+            TheEastAfricanKECrawler(),
             # must come last
             GenericCrawler()]
         self.extractors = [
