@@ -171,6 +171,7 @@ BBC|online|bbc.com||gb
 Daily Nation (Kenya)|online|nation.co.ke||ke
 Standard Digital|online|standardmedia.co.ke||ke
 The Star (Kenya)|online|the-star.co.ke||ke
+The East African|online|theeastafrican.co.ke||ke
             """
 
         mediums = []
