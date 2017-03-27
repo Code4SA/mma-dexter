@@ -7,8 +7,10 @@ import requests
 from .base import BaseCrawler
 from ...models import Entity, Author, AuthorType
 
+import time
+
 class TheStarKECrawler(BaseCrawler):
-    TSKE_RE = re.compile('(www\.)?standardmedia.co.ke')
+    TSKE_RE = re.compile('(www\.)?the-star.co.ke')
 
     def offer(self, url):
         """ Can this crawler process this URL? """
@@ -17,7 +19,7 @@ class TheStarKECrawler(BaseCrawler):
 
     def extract(self, doc, raw_html):
         """ Extract text and other things from the raw_html for this document. """
-        super(StandardMediaCrawler, self).extract(doc, raw_html)
+        super(TheStarKECrawler, self).extract(doc, raw_html)
 
         soup = BeautifulSoup(raw_html)
 
@@ -25,7 +27,7 @@ class TheStarKECrawler(BaseCrawler):
         doc.title = self.extract_plaintext(soup.select(".l-region--title .pane-page-title h1"))
 
         #gather publish date
-        published_text = soup.find(attrs={"property":"og:updated_time"})['content']
+        published_text = soup.find(attrs={"property":"og:updated_time"})['content'][:-6] # remove timezone, throwing exceptions since parse() not handling it well enough
         doc.published_at = self.parse_timestamp(published_text)
         
         #gather text and summary
