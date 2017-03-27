@@ -30,7 +30,6 @@ class NationKECrawler(BaseCrawler):
     
         nodes = soup.select(".container .main .story-view .article .body-copy > div > p")
         doc.text = "\n\n".join(p.getText().strip() for p in nodes)
-        self.log.info(doc.text)
 
         published_text = self.extract_plaintext(soup.select(".container .main .story-view header h5"))
         doc.published_at = self.parse_timestamp(published_text)
