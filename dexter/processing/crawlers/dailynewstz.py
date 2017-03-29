@@ -25,10 +25,11 @@ class DilyNewsTZCrawler(BaseCrawler):
         doc.title = self.extract_plaintext(soup.select(".article-main .article-header .article-title"))
 
         #gather publish date
-        doc.published_at = self.extract_plaintext(soup.select(".article-main .article-aside .published time"))
+        date = self.extract_plaintext(soup.select(".article-main .article-aside .published time"))
+        doc.published_at = self.parse_timestamp(date)
         
         #gather text and summary
-        doc.summary = soup.select(".article-main .article-full .article-content-main .article-intro p")
+        doc.summary = self.extract_plaintext(soup.select(".article-main .article-full .article-content-main .article-intro p"))
         nodes = soup.select(".article-main .article-full .article-content-main .article-content p")
         doc.text = "\n\n".join(p.text.strip() for p in nodes)
 

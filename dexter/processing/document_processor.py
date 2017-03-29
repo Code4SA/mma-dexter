@@ -45,7 +45,7 @@ class DocumentProcessor:
             # must come last
             GenericCrawler()]
         self.extractors = [
-            AlchemyExtractor(),
+            # AlchemyExtractor(),
             CalaisExtractor(),
             SourcesExtractor(),
             PlacesExtractor()]
