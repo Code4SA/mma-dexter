@@ -43,6 +43,7 @@ class DocumentProcessor:
             TheEastAfricanKECrawler(),
             DailyNewsTZCrawler(),
             DailyNewsZWCrawler(),
+            TheCitizenTZCrawler(),
             # must come last
             GenericCrawler()]
         self.extractors = [
