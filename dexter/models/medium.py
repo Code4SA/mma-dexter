@@ -172,6 +172,8 @@ Daily Nation (Kenya)|online|nation.co.ke||ke
 Standard Digital|online|standardmedia.co.ke||ke
 The Star (Kenya)|online|the-star.co.ke||ke
 The East African|online|theeastafrican.co.ke||ke
+Daily News (Tanzania)|online|dailynews.co.tz||tz
+Daily News (Zimbabwe)|online|dailynews.co.zw||tz
             """
 
         mediums = []
