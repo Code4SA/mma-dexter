@@ -25,7 +25,6 @@ class TheEastAfricanKECrawler(BaseCrawler):
         doc.title = self.extract_plaintext(soup.select("#articlebody h1"))
 
         #gather publish date
-        self.log.info(self.extract_plaintext(soup.select("#articlemeta")))
         published_text = self.extract_plaintext(soup.select("#articlemeta")).split("Posted",1)[1].strip("\n").replace(u'\xa0', ' ')
         doc.published_at = self.parse_timestamp(published_text)
         
