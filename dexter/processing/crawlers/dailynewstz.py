@@ -7,7 +7,7 @@ import requests
 from .base import BaseCrawler
 from ...models import Entity, Author, AuthorType
 
-class DilyNewsTZCrawler(BaseCrawler):
+class DailyNewsTZCrawler(BaseCrawler):
     DNTZ_RE = re.compile('(www\.)?dailynews.co.tz')
 
     def offer(self, url):
@@ -17,7 +17,7 @@ class DilyNewsTZCrawler(BaseCrawler):
 
     def extract(self, doc, raw_html):
         """ Extract text and other things from the raw_html for this document. """
-        super(DilyNewsTZCrawler, self).extract(doc, raw_html)
+        super(DailyNewsTZCrawler, self).extract(doc, raw_html)
 
         soup = BeautifulSoup(raw_html)
 

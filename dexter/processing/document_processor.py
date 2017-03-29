@@ -41,7 +41,8 @@ class DocumentProcessor:
             StandardMediaCrawler(),
             TheStarKECrawler(),
             TheEastAfricanKECrawler(),
-            DilyNewsTZCrawler(),
+            DailyNewsTZCrawler(),
+            DailyNewsZWCrawler(),
             # must come last
             GenericCrawler()]
         self.extractors = [
