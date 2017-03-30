@@ -15,3 +15,4 @@ from .theeastafricanke import TheEastAfricanKECrawler
 from .dailynewstz import DailyNewsTZCrawler
 from .dailynewszw import DailyNewsZWCrawler
 from .thecitizentz import TheCitizenTZCrawler
+from .newsdayzw import NewsDayZWCrawler
