@@ -18,3 +18,4 @@ from .thecitizentz import TheCitizenTZCrawler
 from .newsdayzw import NewsDayZWCrawler
 from .dwcom import DWCrawler
 from .chroniclezw import ChronicleZWCrawler
+from .bbc import BBCCrawler

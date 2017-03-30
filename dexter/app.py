@@ -69,7 +69,7 @@ from .attachments import setup_attachments
 setup_attachments(app)
 
 # celery tasks
-if env == 'production':
+if env == 'development':
     from celery import Celery
     celery_app = Celery('dexter', include=['dexter.tasks', 'dexter.app'])
     celery_app.config_from_object('dexter.config.celeryconfig')

@@ -47,6 +47,7 @@ class DocumentProcessor:
             NewsDayZWCrawler(),
             DWCrawler(),
             ChronicleZWCrawler(),
+            BBCCrawler(),
             # must come last
             GenericCrawler()]
         self.extractors = [
