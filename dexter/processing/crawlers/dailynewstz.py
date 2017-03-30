@@ -15,6 +15,7 @@ class DailyNewsTZCrawler(BaseCrawler):
         parts = urlparse(url)
         return bool(self.DNTZ_RE.match(parts.netloc))
 
+
     def extract(self, doc, raw_html):
         """ Extract text and other things from the raw_html for this document. """
         super(DailyNewsTZCrawler, self).extract(doc, raw_html)

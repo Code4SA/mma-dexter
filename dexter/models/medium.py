@@ -39,7 +39,8 @@ class Medium(db.Model):
         calls fail to recognise urls (eg: .co.tz fials...)
         """
         url_exceptions = [
-            'thecitizen.co.tz'
+            'thecitizen.co.tz',
+            'dailynews.co.tz'
         ]
         for ex in url_exceptions: 
             # check if it exists in the url add buffer for [https://www.] characters at start

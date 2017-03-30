@@ -17,6 +17,7 @@ class TheCitizenTZCrawler(BaseCrawler):
         parts = urlparse(url)
         return bool(self.TCTZ.match(parts.netloc))
 
+
     def extract(self, doc, raw_html):
         """ Extract text and other things from the raw_html for this document. """
         super(TheCitizenTZCrawler, self).extract(doc, raw_html)
