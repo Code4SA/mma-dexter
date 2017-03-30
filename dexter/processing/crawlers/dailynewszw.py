@@ -37,7 +37,7 @@ class DailyNewsZWCrawler(BaseCrawler):
         doc.text = "\n\n".join(p.text.strip() for p in nodes[1:])
 
         # gather author 
-        author = date = self.extract_plaintext(soup.select(".wrapper .content .left #article .byline")).replace(u'\xa0', ' ').split(u'\u2022')[0]
+        author = self.extract_plaintext(soup.select(".wrapper .content .left #article .byline")).replace(u'\xa0', ' ').split(u'\u2022')[0]
         if author:
             doc.author = Author.get_or_create(author.strip(), AuthorType.journalist())
         else:
