@@ -39,9 +39,6 @@ def fdi_home():
     if form.format.data == 'xlsx':
         # excel spreadsheet
 
-        print 'Built!'
-        raw_input('...')
-
         excel = FDIExportBuilder(form).build()
 
         response = make_response(excel)

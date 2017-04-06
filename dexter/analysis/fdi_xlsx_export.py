@@ -40,19 +40,20 @@ class FDIExportBuilder:
         return output.read()
 
     def investments_worksheet(self, wb):
-        from dexter.models.views import DocumentsView, DocumentInvestmentView
+        from dexter.models.views import InvestmentsView, DocumentsView
 
-        ws = wb.add_worksheet('raw_sources')
+        ws = wb.add_worksheet('investments')
 
         tables = OrderedDict()
         tables['doc'] = DocumentsView
-        tables['investment'] = DocumentInvestmentView
+        tables['invest'] = InvestmentsView
 
         rows = self.filter(db.session
                            .query(*self.merge_views(tables, ['document_id']))
                            .join(Document)
-                           .join(DocumentInvestmentView)).all()
-        self.write_table(ws, 'Sources', rows)
+                           .join(InvestmentsView)).all()
+
+        self.write_table(ws, 'Investments', rows)
 
     def write_summed_table(self, ws, name, query, rownum=0):
         """

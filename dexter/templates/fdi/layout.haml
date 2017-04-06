@@ -1,7 +1,7 @@
 %%inherit(file="../layout.haml")
 
 %%block(name='extra_javascript')
-  - for url in webassets('dashboard'):
+  - for url in webassets('fdi'):
     %script(src=url)
 
 %article#activity

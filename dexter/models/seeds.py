@@ -79,5 +79,4 @@ def seed_db(db):
         for x in Role.create_defaults():
             db.session.add(x)
 
-
         db.session.commit()
