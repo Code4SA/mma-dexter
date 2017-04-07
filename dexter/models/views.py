@@ -58,3 +58,9 @@ DocumentIssuesView = Table("documents_issues_view", db.metadata,
 DocumentTaxonomiesView = Table("documents_taxonomies_view", db.metadata,
         Column("document_id", Integer, ForeignKey("documents.id")),
         autoload=True, autoload_with=db.engine)
+
+# helper view across investments
+InvestmentsView = Table("investments_view", db.metadata,
+        Column("investment_id", Integer, ForeignKey("investments.id")),
+        Column("document_id", Integer, ForeignKey("documents.id")),
+        autoload=True, autoload_with=db.engine)

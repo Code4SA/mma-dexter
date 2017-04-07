@@ -36,29 +36,10 @@ def show_article(id):
     if current_user.has_role('fdi'):
 
         exists = Investment.query.filter_by(doc_id=id).first() is not None
+
         if not exists:
-            investment = Investment()
-            investment.name = 'unspecified'
-            investment.value = 0
-            investment.value2 = 0
-            investment.temp_opps = 0
-            investment.perm_opps = 0
-            investment.government = 'unspecified'
-            investment.company = 'unspecified'
-            investment.additional_place = 'unspecified'
-            investment.currency_id = 165
-            investment.invest_type_id = 6
-            investment.phase_id = 6
-            investment.invest_origin_id = 194
-            investment.invest_origin_city = 'unspecified'
-            investment.sector_id = 90
-            investment.industry_id = 12
-            investment.involvement_id = 13
-            investment.doc_id = id
-            investment.value_unit_id = 3
-            investment.value_unit_id2 = 3
-            db.session.add(investment)
-            db.session.commit()
+            return render_template('fdi/edit_analysis.haml', create=0, document=document, natures=AnalysisNature.all(),
+                                   URL=URL)
 
         investment = Investment.query.filter_by(doc_id=id).first()
 
@@ -163,7 +144,7 @@ def new_article():
                     try:
                         proc.process_document(doc)
                     except ProcessingError as e:
-                        log.error("Error processing raw document: %s" % (e, ), exc_info=e)
+                        log.error("Error processing raw document: %s" % (e,), exc_info=e)
                         flash("Something went wrong processing the document: %s" % (e,), 'error')
                         doc = None
 
@@ -226,37 +207,46 @@ def edit_article(id):
                            author_form=author_form)
 
 
+@app.route('/articles/<id>/fdi_create')
+@login_required
+@roles_accepted('monitor', 'fdi')
+def fdi_create(id):
+    exists = Investment.query.filter_by(doc_id=id).first() is not None
+    if not exists:
+        investment = Investment()
+        investment.name = 'unspecified'
+        investment.value = 0
+        investment.value2 = 0
+        investment.temp_opps = 0
+        investment.perm_opps = 0
+        investment.government = 'unspecified'
+        investment.company = 'unspecified'
+        investment.additional_place = 'unspecified'
+        investment.currency_id = 165
+        investment.invest_type_id = 6
+        investment.phase_id = 6
+        investment.invest_origin_id = 194
+        investment.invest_origin_city = 'unspecified'
+        investment.sector_id = 90
+        investment.industry_id = 12
+        investment.involvement_id = 13
+        investment.doc_id = id
+        investment.value_unit_id = 3
+        investment.value_unit_id2 = 3
+        db.session.add(investment)
+        db.session.commit()
+
+    return redirect(url_for('edit_article_analysis', id=id))
+
+
 @app.route('/articles/<id>/analysis', methods=['GET', 'POST'])
 @login_required
 @roles_accepted('monitor', 'fdi')
 def edit_article_analysis(id):
     document = Document.query.get_or_404(id)
     URL = session[str(current_user.id)]['search']
+
     if current_user.has_role('fdi'):
-        exists = Investment.query.filter_by(doc_id=id).first() is not None
-        if not exists:
-            investment = Investment()
-            investment.name = 'unspecified'
-            investment.value = 0
-            investment.value2 = 0
-            investment.temp_opps = 0
-            investment.perm_opps = 0
-            investment.government = 'unspecified'
-            investment.company = 'unspecified'
-            investment.additional_place = 'unspecified'
-            investment.currency_id = 165
-            investment.invest_type_id = 6
-            investment.phase_id = 6
-            investment.invest_origin_id = 194
-            investment.invest_origin_city = 'unspecified'
-            investment.sector_id = 90
-            investment.industry_id = 12
-            investment.involvement_id = 13
-            investment.doc_id = id
-            investment.value_unit_id = 3
-            investment.value_unit_id2 = 3
-            db.session.add(investment)
-            db.session.commit()
 
         investment = Investment.query.filter_by(doc_id=id).first()
 
@@ -318,7 +308,8 @@ def edit_article_analysis(id):
                                     if not e.form.is_deleted() and not e.form.is_empty()]
 
             # new fairness
-            for key in sorted(set('-'.join(key.split('-', 3)[0:2]) for key in request.form.keys() if key.startswith('fairness-new['))):
+            for key in sorted(set('-'.join(key.split('-', 3)[0:2]) for key in request.form.keys() if
+                                  key.startswith('fairness-new['))):
                 frm = DocumentFairnessForm(prefix=key)
                 # skip new fairness that have an empty bias
                 if frm.fairness_id.data != '':
@@ -473,7 +464,8 @@ def create_article_attachment():
             try:
                 attachment = DocumentAttachment.from_upload(upload, current_user)
             except WandError as e:
-                log.warn("Couldn't process attachment: %s, %s: %s" % (upload.mimetype, upload.filename, e.message), exc_info=e)
+                log.warn("Couldn't process attachment: %s, %s: %s" % (upload.mimetype, upload.filename, e.message),
+                         exc_info=e)
                 raise ValueError('Only image and PDF attachments are supported')
 
             db.session.add(attachment)

@@ -89,6 +89,13 @@ assets.register('dashboard',
         'js/dashboard/*.js',
         output='js/dashboard.%(version)s.js'))
 
+assets.register('fdi',
+    Bundle(
+        maps,
+        charts,
+        'js/fdi/*.js',
+        output='js/dashboard.%(version)s.js'))
+
 assets.register('documents',
     Bundle(
         maps,

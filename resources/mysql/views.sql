@@ -1,3 +1,4 @@
+-- noinspection SqlDialectInspectionForFile
 -- These views provide a simpler interface for viewing Dexter data.
 
 -- document_sources_view:
@@ -239,4 +240,38 @@ select
 from
   documents d
   left join document_taxonomies dt on dt.doc_id = d.id
+;
+
+-- investments_view:
+--   aggregate scalar information for all investments
+create or replace view investments_view as select
+  d.name as investment_name,
+  date_format(d.investment_begin, '%Y/%m/%d') as `start_date`,
+  date_format(d.investment_end, '%Y/%m/%d') as `end_date`,
+  concat(d.value,' ',vu.name,' ',cu.name) as `value`,
+  concat('R', d.value2, ' ', vu2.name) as value_rand,
+  d.perm_opps,
+  d.temp_opps,
+  inv.name,
+  d.company,
+  type.name as type,
+  p.name as phase,
+  o.name as origin_of_investment,
+  d.invest_origin_city as investment_origin_city,
+  s.name as sector_name,
+  loc.name as location,
+  d.fdi_notes as notes,
+  d.doc_id as `document_id`,
+  d.id as `investment_id`
+from
+  investments d
+  left join involvements inv on d.involvement_id = inv.id
+  left join value_units vu on d.value_unit_id = vu.id
+  left join value_units vu2 on d.value_unit_id2 = vu2.id
+  left join currencies cu on d.currency_id = cu.id
+  left join investment_types type on d.invest_type_id = type.id
+  left join phases p on d.phase_id = p.id
+  left join investment_origins o on d.invest_origin_id = o.id
+  left join sectors s on d.sector_id = s.id
+  left join locations loc on d.invest_loc_id = loc.id
 ;
