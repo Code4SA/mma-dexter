@@ -10,7 +10,7 @@ from sqlalchemy.sql import func
 from sqlalchemy.types import Integer
 
 from ..analysis import BiasCalculator
-from ..models import Document, AnalysisNature, db
+from ..models import Document, AnalysisNature, db, Investment
 
 
 class FDIExportBuilder:
@@ -20,7 +20,8 @@ class FDIExportBuilder:
 
         # we use these to filter our queries, rather than trying to pull
         # complex filter logic into our view queries
-        self.doc_ids = form.document_ids()
+        query = db.session.query(Investment.doc_id).all()
+        self.doc_ids = [int(i[0]) for i in query]
 
     def build(self):
         """
