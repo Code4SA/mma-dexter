@@ -33,8 +33,33 @@ class Medium(db.Model):
         return self.medium_group or self.name
 
     @classmethod
+    def is_tld_exception(cls, url):
+        """ Test if the url falls within one of the exceptions, 
+        this is intended to handle instances where get_tld() 
+        calls fail to recognise urls (eg: .co.tz fials...)
+        """
+        url_exceptions = [
+            'thecitizen.co.tz',
+            'dailynews.co.tz'
+        ]
+        for ex in url_exceptions: 
+            # check if it exists in the url add buffer for [https://www.] characters at start
+            if ex in url[:len(ex)+12]:
+                return ex
+        
+        return None
+
+    @classmethod
     def for_url(cls, url):
-        domain = get_tld(url)
+        domain = get_tld(url, fail_silently=True)
+        # fail silently
+        
+        if domain is None:
+            domain = cls.is_tld_exception(url)
+        
+        if domain is None:
+            return None
+
         parts = urlparse(url)
 
         # iol.co.za/isolezwe
@@ -44,7 +69,9 @@ class Medium(db.Model):
         for medium in sorted(Medium.query.all(), key=lambda m: len(m.domain or ''), reverse=True):
             if medium.domain and domain.startswith(medium.domain):
                 return medium
+
         return None
+
 
     @classmethod
     def for_select_widget(cls):
@@ -137,6 +164,17 @@ Zambian Watchdog|online|zambianwatchdog.com||zm
 Zambia Daily Mail|online|daily-mail.co.zm||zm
 Post Zambia|online|postzambia.com||zm
 Times of Zambia|online|times.co.zm||zm
+The Chronicle|online|chronicle.co.zw||zw
+NewsDay Zimbabwe|online|newsday.co.zw||zw
+The Citizen Tanzania|online|thecitizen.co.tz||tz
+Deutsche Welle|online|dw.com||de
+BBC|online|bbc.com||gb
+Daily Nation (Kenya)|online|nation.co.ke||ke
+Standard Digital|online|standardmedia.co.ke||ke
+The Star (Kenya)|online|the-star.co.ke||ke
+The East African|online|theeastafrican.co.ke||ke
+Daily News (Tanzania)|online|dailynews.co.tz||tz
+Daily News (Zimbabwe)|online|dailynews.co.zw||tz
             """
 
         mediums = []

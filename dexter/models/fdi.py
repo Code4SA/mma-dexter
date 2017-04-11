@@ -492,7 +492,7 @@ class InvestmentOrigins(db.Model):
     __tablename__ = "investment_origins"
 
     id = Column(Integer, primary_key=True)
-    name = Column(String(50), index=True, nullable=False, unique=True)
+    name = Column(String(55), index=True, nullable=False, unique=True)
 
     def __repr__(self):
         return "<Investment origin='%s'>" % (self.name)

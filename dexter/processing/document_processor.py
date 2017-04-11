@@ -37,6 +37,17 @@ class DocumentProcessor:
             ZambiaDailyMailCrawler(),
             PostZambiaCrawler(),
             TimesZambiaCrawler(),
+            NationKECrawler(),
+            StandardMediaCrawler(),
+            TheStarKECrawler(),
+            TheEastAfricanKECrawler(),
+            DailyNewsTZCrawler(),
+            DailyNewsZWCrawler(),
+            TheCitizenTZCrawler(),
+            NewsDayZWCrawler(),
+            DWCrawler(),
+            ChronicleZWCrawler(),
+            BBCCrawler(),
             # must come last
             GenericCrawler()]
         self.extractors = [
@@ -156,6 +167,9 @@ class DocumentProcessor:
         try:
             self.log.info("Processing feed item: %s" % item)
             url = item['url'] = self.canonicalise_url(item['url'])
+            if not url:
+                self.log.info("URL could not be parsed, ignoring: %s" % url)
+                return None
 
             existing = Document.query.filter(Document.url == url).first()
             if existing:

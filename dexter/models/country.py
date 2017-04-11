@@ -45,6 +45,11 @@ South Africa|za
 Lesotho|ls
 Zambia|zm
 Namibia|na
+Zimbabwe|zw
+Tanzania|tz
+Germany|de
+United Kingdom (Great Britain)|gb
+Kenya|ke
             """
 
         countries = []
