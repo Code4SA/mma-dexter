@@ -5,7 +5,7 @@ from datetime import date, timedelta
 from dateutil.parser import parse
 
 from dexter.app import celery_app as app
-from dexter.processing import DocumentProcessor
+from dexter.processing import DocumentProcessor, DocumentProcessorNT
 
 # force configs for API keys to be set
 import dexter.core
@@ -30,7 +30,7 @@ def fetch_daily_feeds(self, day):
     try:
         day = parse(day)
 
-        dp = DocumentProcessor()
+        dp = DocumentProcessorNT()
         count = 0
         for item in dp.fetch_daily_feed_items(day):
             get_feed_item.delay(item)
@@ -49,7 +49,7 @@ def fetch_daily_feeds(self, day):
 def get_feed_item(self, item):
     """ Fetch and process a document feed item. """
     try:
-        dp = DocumentProcessor()
+        dp = DocumentProcessorNT()
         dp.process_feed_item(item)
     except Exception as e:
         log.error("Error processing feed item: %s" % item, exc_info=e)
@@ -60,7 +60,7 @@ def get_feed_item(self, item):
 def backfill_taxonomies():
     """ Enqueue a task to backfill taxonomies """
     try:
-        dp = DocumentProcessor()
+        dp = DocumentProcessorNT()
         dp.backfill_taxonomies()
     except Exception as e:
         log.error("Error backfilling taxonomies: %s" % e.message, exc_info=e)
