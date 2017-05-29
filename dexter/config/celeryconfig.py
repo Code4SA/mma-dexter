@@ -5,7 +5,7 @@ from celery.schedules import crontab
 BROKER_URL = 'sqs://'
 BROKER_TRANSPORT_OPTIONS = {
     'region': 'eu-west-1',
-    'polling_interval': 60 * 10,
+    'polling_interval': 60 * 1,
     'queue_name_prefix': 'mma-dexter-',
     'visibility_timeout': 3600,
 }
