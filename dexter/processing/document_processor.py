@@ -304,7 +304,7 @@ class DocumentProcessorNT:
 
     FEED_URL = 'http://newstools.co.za/dexter/articles/%s'
     FEED_USER = 'dexter'
-    FEED_PASSWORD = None
+    FEED_PASSWORD = '3p7~gnSJNgrjR=x'
 
     def __init__(self):
         self.newstools_crawler = NewstoolsCrawlerNT()
