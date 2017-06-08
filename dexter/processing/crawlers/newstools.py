@@ -128,7 +128,8 @@ class NewstoolsCrawlerNT(BaseCrawler):
         """
         doc = Document()
         doc.url = item['url']
-        doc.title = str(unidecode.unidecode(HTMLParser.HTMLParser().unescape(item['title'])))
+        title = str(unidecode.unidecode(HTMLParser.HTMLParser().unescape(item['title'])))
+        doc.title = title.replace("aEUR(tm)", "'").replace("aEUR~", "'").replace('aEUR"', '-').replace('aEURs', ',')
         doc.published_at = parse(item['publishdate'])
 
         if item['author'] and item['author'].lower() != 'unknown':
