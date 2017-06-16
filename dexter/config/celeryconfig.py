@@ -5,7 +5,7 @@ from celery.schedules import crontab
 BROKER_URL = 'sqs://'
 BROKER_TRANSPORT_OPTIONS = {
     'region': 'eu-west-1',
-    'polling_interval': 30 * 1,
+    'polling_interval': 15 * 1,
     'queue_name_prefix': 'mma-dexter-',
     'visibility_timeout': 3600,
 }
@@ -24,8 +24,12 @@ CELERYBEAT_SCHEDULE = {
         'schedule': crontab(hour=3, minute=0),
         'task': 'dexter.tasks.fetch_yesterdays_feeds',
     },
+    'back-process-feeds': {
+        'schedule': crontab(hour=6, minute=0),
+        'task': 'dexter.tasks.back_process_feeds',
+    },
     'backfill-taxonomies': {
-        'schedule': crontab(hour=15, minute=0),
+        'schedule': crontab(hour=21, minute=0),
         'task': 'dexter.tasks.backfill_taxonomies',
     },
 }
