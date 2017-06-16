@@ -16,5 +16,5 @@ CalaisExtractor.API_KEY = app.config.get('CALAIS_API_KEY')
 
 
 # setup crawlers
-from .processing import DocumentProcessor
-DocumentProcessor.FEED_PASSWORD = app.config.get('NEWSTOOLS_FEED_PASSWORD')
+from .processing import DocumentProcessorNT
+DocumentProcessorNT.FEED_PASSWORD = app.config.get('NEWSTOOLS_FEED_PASSWORD')
