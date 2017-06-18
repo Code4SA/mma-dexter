@@ -19,8 +19,8 @@ log = logging.getLogger(__name__)
 @app.task
 def back_process_feeds():
     """ Enqueue a task to fetch yesterday's feeds. """
-    if date.today() == date(2017, 6, 17):
-        date_list = [date(2016, 10, 17) + timedelta(days=x) for x in range(0, 7)]
+    if date.today() == date(2017, 6, 19):
+        date_list = [date(2016, 10, 24) + timedelta(days=x) for x in range(0, 7)]
         for d in date_list:
             fetch_daily_feeds.delay(d.isoformat())
     else:
