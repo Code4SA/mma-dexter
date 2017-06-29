@@ -40,11 +40,7 @@ def back_process_feeds():
         for d in date_list:
             fetch_daily_feeds.delay(d.isoformat())
     elif date.today() == date(2017, 6, 30):
-        date_list = [date(2016, 12, 26) + timedelta(days=x) for x in range(0, 7)]
-        for d in date_list:
-            fetch_daily_feeds.delay(d.isoformat())
-    elif date.today() == date(2017, 7, 1):
-        date_list = [date(2017, 1, 2) + timedelta(days=x) for x in range(0, 7)]
+        date_list = [date(2017, 1, 9) + timedelta(days=x) for x in range(0, 10)]
         for d in date_list:
             fetch_daily_feeds.delay(d.isoformat())
     else:
