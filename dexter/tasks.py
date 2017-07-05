@@ -19,30 +19,32 @@ log = logging.getLogger(__name__)
 @app.task
 def back_process_feeds():
     """ Enqueue a task to fetch yesterday's feeds. """
-    if date.today() == date(2017, 6, 25):
-        date_list = [date(2016, 11, 21) + timedelta(days=x) for x in range(0, 7)]
+        # date_list = [date(2017, 1, 19) + timedelta(days=x) for x in range(0, 7)]
+        date_list = [date(2017, 1, 19), date(2017, 1, 24), date(2017, 1, 25), date(2017, 1, 26),
+                     date(2017, 2, 1), date(2017, 2, 2), date(2017, 2, 7), date(2017, 2, 8)]
         for d in date_list:
             fetch_daily_feeds.delay(d.isoformat())
-    elif date.today() == date(2017, 6, 26):
-        date_list = [date(2016, 11, 28) + timedelta(days=x) for x in range(0, 7)]
+
+        date_list = [date(2017, 2, 9), date(2017, 2, 10)]
         for d in date_list:
             fetch_daily_feeds.delay(d.isoformat())
-    elif date.today() == date(2017, 6, 27):
-        date_list = [date(2016, 12, 5) + timedelta(days=x) for x in range(0, 7)]
+
+        date_list = [date(2017, 2, 11), date(2017, 2, 13)]
         for d in date_list:
             fetch_daily_feeds.delay(d.isoformat())
-    elif date.today() == date(2017, 6, 28):
-        date_list = [date(2016, 12, 12) + timedelta(days=x) for x in range(0, 7)]
+
+        date_list = [date(2017, 2, 14), date(2017, 2, 15)]
         for d in date_list:
             fetch_daily_feeds.delay(d.isoformat())
-    elif date.today() == date(2017, 6, 29):
-        date_list = [date(2016, 12, 19) + timedelta(days=x) for x in range(0, 7)]
+
+        date_list = [date(2017, 2, 16), date(2017, 2, 17), date(2017, 2, 18), date(2017, 2, 19)]
         for d in date_list:
             fetch_daily_feeds.delay(d.isoformat())
-    elif date.today() == date(2017, 6, 30):
-        date_list = [date(2017, 1, 9) + timedelta(days=x) for x in range(0, 10)]
+
+        date_list = [date(2017, 2, 20) + timedelta(days=x) for x in range(0, 7)]
         for d in date_list:
             fetch_daily_feeds.delay(d.isoformat())
+
     else:
         print 'Already Done!'
 
