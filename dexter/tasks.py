@@ -19,28 +19,34 @@ log = logging.getLogger(__name__)
 @app.task
 def back_process_feeds():
     """ Enqueue a task to fetch yesterday's feeds. """
+    if date.today() == date(2017, 7, 6):
         # date_list = [date(2017, 1, 19) + timedelta(days=x) for x in range(0, 7)]
         date_list = [date(2017, 1, 19), date(2017, 1, 24), date(2017, 1, 25), date(2017, 1, 26),
                      date(2017, 2, 1), date(2017, 2, 2), date(2017, 2, 7), date(2017, 2, 8)]
         for d in date_list:
             fetch_daily_feeds.delay(d.isoformat())
 
+    elif date.today() == date(2017, 7, 7):
         date_list = [date(2017, 2, 9), date(2017, 2, 10)]
         for d in date_list:
             fetch_daily_feeds.delay(d.isoformat())
 
+    elif date.today() == date(2017, 7, 8):
         date_list = [date(2017, 2, 11), date(2017, 2, 13)]
         for d in date_list:
             fetch_daily_feeds.delay(d.isoformat())
 
+    elif date.today() == date(2017, 7, 9):
         date_list = [date(2017, 2, 14), date(2017, 2, 15)]
         for d in date_list:
             fetch_daily_feeds.delay(d.isoformat())
 
+    elif date.today() == date(2017, 7, 10):
         date_list = [date(2017, 2, 16), date(2017, 2, 17), date(2017, 2, 18), date(2017, 2, 19)]
         for d in date_list:
             fetch_daily_feeds.delay(d.isoformat())
 
+    elif date.today() == date(2017, 7, 11):
         date_list = [date(2017, 2, 20) + timedelta(days=x) for x in range(0, 7)]
         for d in date_list:
             fetch_daily_feeds.delay(d.isoformat())
