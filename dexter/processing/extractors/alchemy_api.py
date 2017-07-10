@@ -132,7 +132,7 @@ class AlchemyAPI:
     ENDPOINTS['taxonomy']['text'] = '/text/TextGetRankedTaxonomy'
 
     # The base URL for all endpoints
-    BASE_URL = 'http://access.alchemyapi.com/calls'
+    BASE_URL = 'https://access.alchemyapi.com/calls'
 
     s = requests.Session()
 
