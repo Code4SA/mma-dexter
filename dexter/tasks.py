@@ -20,35 +20,33 @@ log = logging.getLogger(__name__)
 def back_process_feeds():
     """ Enqueue a task to fetch yesterday's feeds. """
 
-    if date.today() == date(2017, 7, 12):
-
-        date_list = [date(2017, 1, 19), date(2017, 1, 24), date(2017, 1, 25), date(2017, 1, 26),
-                     date(2017, 2, 1), date(2017, 2, 2), date(2017, 2, 7), date(2017, 2, 8)]
+    if date.today() == date(2017, 7, 19):
+        date_list = [date(2017, 2, 27) + timedelta(days=x) for x in range(0, 7)]
         for d in date_list:
             fetch_daily_feeds.delay(d.isoformat())
 
-    elif date.today() == date(2017, 7, 13):
-        date_list = [date(2017, 2, 9), date(2017, 2, 10)]
+    elif date.today() == date(2017, 7, 20):
+        date_list = [date(2017, 3, 6) + timedelta(days=x) for x in range(0, 7)]
         for d in date_list:
             fetch_daily_feeds.delay(d.isoformat())
 
-    elif date.today() == date(2017, 7, 14):
-        date_list = [date(2017, 2, 11), date(2017, 2, 13)]
+    elif date.today() == date(2017, 7, 21):
+        date_list = [date(2017, 3, 13) + timedelta(days=x) for x in range(0, 7)]
         for d in date_list:
             fetch_daily_feeds.delay(d.isoformat())
 
-    elif date.today() == date(2017, 7, 15):
-        date_list = [date(2017, 2, 14), date(2017, 2, 15)]
+    elif date.today() == date(2017, 7, 22):
+        date_list = [date(2017, 3, 20) + timedelta(days=x) for x in range(0, 7)]
         for d in date_list:
             fetch_daily_feeds.delay(d.isoformat())
 
-    elif date.today() == date(2017, 7, 16):
-        date_list = [date(2017, 2, 16), date(2017, 2, 17), date(2017, 2, 18), date(2017, 2, 19)]
+    elif date.today() == date(2017, 7, 23):
+        date_list = [date(2017, 3, 27) + timedelta(days=x) for x in range(0, 7)]
         for d in date_list:
             fetch_daily_feeds.delay(d.isoformat())
 
-    elif date.today() == date(2017, 7, 17):
-        date_list = [date(2017, 2, 20) + timedelta(days=x) for x in range(0, 7)]
+    elif date.today() == date(2017, 7, 24):
+        date_list = [date(2017, 4, 3) + timedelta(days=x) for x in range(0, 7)]
         for d in date_list:
             fetch_daily_feeds.delay(d.isoformat())
 
