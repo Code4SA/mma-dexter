@@ -31,7 +31,10 @@ def show_article(id):
     if request.args.get('format') == 'places-json':
         return jsonify(DocumentPlace.summary_for_docs([document]))
 
-    URL = session[str(current_user.id)]['search']
+    try:
+        URL = session[str(current_user.id)]['search']
+    except:
+        URL = url_for('activity')
 
     if current_user.has_role('fdi'):
 
