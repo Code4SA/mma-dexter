@@ -247,7 +247,11 @@ def fdi_create(id):
 @roles_accepted('monitor', 'fdi')
 def edit_article_analysis(id):
     document = Document.query.get_or_404(id)
-    URL = session[str(current_user.id)]['search']
+
+    try:
+        URL = session[str(current_user.id)]['search']
+    except:
+        URL = url_for('activity')
 
     if current_user.has_role('fdi'):
 
