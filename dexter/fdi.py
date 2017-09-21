@@ -79,8 +79,11 @@ def fdi_home():
         .group_by(DocumentTag.tag) \
         .order_by(desc('count'), DocumentTag.tag) \
         .all()
-
-    session[str(current_user.id)]['search'] = request.url
+    try:
+        session[str(current_user.id)]['search'] = request.url
+    except:
+        session[str(current_user.id)] = {'search': []}
+        session[str(current_user.id)]['search'] = request.url
 
     return render_template('fdi/activity.haml',
                            form=form,

@@ -158,7 +158,11 @@ def activity():
         .order_by(desc('count'), DocumentTag.tag)\
         .all()
 
-    session[str(current_user.id)]['search'] = request.url
+    try:
+        session[str(current_user.id)]['search'] = request.url
+    except:
+        session[str(current_user.id)] = {'search': []}
+        session[str(current_user.id)]['search'] = request.url
 
     return render_template('dashboard/activity.haml',
                            form=form,
