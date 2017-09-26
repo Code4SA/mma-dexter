@@ -510,10 +510,8 @@ class DocumentProcessorNT:
         if self.FEED_PASSWORD is None:
             raise ValueError("%s.FEED_PASSWORD must be set." % self.__class__.__name__)
 
-        payload = {'PHP_AUTH_USER': self.FEED_USER, 'PHP_AUTH_PW': self.FEED_PASSWORD}
-
         r = requests.get(self.FEED_URL % day.strftime('%d-%m-%Y'),
-                         headers=payload,
+                         auth=(self.FEED_USER, self.FEED_PASSWORD),
                          verify=False,
                          timeout=60)
 
