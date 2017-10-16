@@ -94,6 +94,31 @@ def fdi_home():
                            )
 
 
+@app.route('/_parse_involvement', methods=['GET'])
+@login_required
+@roles_accepted('fdi')
+def parse_involvement():
+
+    tier1 = request.args.get('inv_id1')
+    tier2 = request.args.get('inv_id2')
+
+    t2_options = {1: range(1, 48) + [73], 2: range(48, 57) + [73], 3: range(57, 65) + [73], 4: range(65, 73) + [73],
+                  5: [73]}
+    t3_options = {9: [1], 33: [2], 48: [3], 49: [4], 50: [5, 6, 7], 51: [8, 9], 52: [10, 11], 53: [12], 54: [13],
+                  55: [14], 56: [15], 57: [16], 58: [17], 59: [18], 73: [19]}
+
+    t2_choices = [[str(c.id), c.name] for c in Involvements2.query.filter(Involvements2.id.in_(t2_options[int(tier1)])).all()
+                  ]
+    if int(tier2) in t3_options.keys():
+        t3_choices = [[str(c.id), c.name] for c in Involvements3.query.filter(Involvements3.id.in_(t3_options[int(tier2)]))]
+    else:
+        t3_choices = [["19", 'unspecified']]
+
+    data = {'t2': t2_choices, 't3': t3_choices}
+
+    return jsonify(data)
+
+
 class FDI(Form):
     cluster_id      = HiddenField('Cluster')
     analysis_nature_id = SelectField('Analysis', default=AnalysisNature.ANCHOR_ID)

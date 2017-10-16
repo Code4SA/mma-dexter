@@ -57,9 +57,19 @@
             =investment.perm_opps
       .row
         .form-group
-          %label.control-label.col-sm-6 Government involvement:
+          %label.control-label.col-sm-6 Government involvement (Tier 1):
           .col-sm-6
-            =involvement
+            =involvement1
+      .row
+        .form-group
+          %label.control-label.col-sm-6 Government involvement (Tier 2):
+          .col-sm-6
+            =involvement2
+      .row
+        .form-group
+          %label.control-label.col-sm-6 Government involvement (Tier 3):
+          .col-sm-6
+            =involvement3
       .row
         .form-group
           %label.control-label.col-sm-6 Company:
@@ -77,6 +87,11 @@
             =phase
       .row
         .form-group
+          %label.control-label.col-sm-6 Phase date:
+          .col-sm-6
+            =investment.phase_date
+      .row
+        .form-group
           %label.control-label.col-sm-6 Origin of investment (country):
           .col-sm-6
             =inv_origin
@@ -85,6 +100,11 @@
           %label.control-label.col-sm-6 Origin of investment (city):
           .col-sm-6
             =investment.invest_origin_city
+      .row
+        .form-group
+          %label.control-label.col-sm-6 Province of investment:
+          .col-sm-6
+            =province
       .row
         .form-group
           %label.control-label.col-sm-6 Sector:
@@ -97,9 +117,29 @@
             =industry
       .row
         .form-group
+          %label.control-label.col-sm-6 Target Market:
+          .col-sm-6
+            =investment.target_market
+      .row
+        .form-group
           %label.control-label.col-sm-6 Additional place:
           .col-sm-6
             =investment.additional_place
+      .row
+        .form-group
+          %label.control-label.col-sm-6 Government Programmes:
+          .col-sm-6
+            =investment.gov_programs
+      .row
+        .form-group
+          %label.control-label.col-sm-6 Social Benefit Programmes:
+          .col-sm-6
+            =investment.soc_programs
+      .row
+        .form-group
+          %label.control-label.col-sm-6 Motivation for Investment:
+          .col-sm-6
+            =investment.mot_investment
       .row
         .form-group
           %label.control-label.col-sm-6 Notes:

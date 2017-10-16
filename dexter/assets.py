@@ -96,6 +96,13 @@ assets.register('fdi',
         'js/fdi/*.js',
         output='js/dashboard.%(version)s.js'))
 
+assets.register('fdi_analysis',
+    Bundle(
+        maps,
+        charts,
+        'js/fdi/fdi_analysis.js',
+        output='js/fdi_analysis.%(version)s.js'))
+
 assets.register('documents',
     Bundle(
         maps,

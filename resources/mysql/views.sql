@@ -246,16 +246,20 @@ from
 --   aggregate scalar information for all investments
 create or replace view investments_view as select
   d.name as investment_name,
+  date_format(doc.published_at, '%Y/%m/%d') as `published_at`,
   date_format(d.investment_begin, '%Y/%m/%d') as `start_date`,
   date_format(d.investment_end, '%Y/%m/%d') as `end_date`,
   concat(d.value,' ',vu.name,' ',cu.name) as `value`,
   concat('R', d.value2, ' ', vu2.name) as value_rand,
   d.perm_opps,
   d.temp_opps,
-  inv.name,
+  inv1.name,
+  inv2.name,
+  inv3.name,
   d.company,
   type.name as type,
   p.name as phase,
+  date_format(d.phase_date, '%Y/%m/%d') as `phase_date`,
   o.name as origin_of_investment,
   d.invest_origin_city as investment_origin_city,
   s.name as sector_name,
@@ -265,7 +269,10 @@ create or replace view investments_view as select
   d.id as `investment_id`
 from
   investments d
-  left join involvements inv on d.involvement_id = inv.id
+  left join documents doc on d.doc_id = doc.id
+  left join involvements1 inv1 on d.involvement_id1 = inv1.id
+  left join involvements2 inv2 on d.involvement_id2 = inv2.id
+  left join involvements3 inv3 on d.involvement_id3 = inv3.id
   left join value_units vu on d.value_unit_id = vu.id
   left join value_units vu2 on d.value_unit_id2 = vu2.id
   left join currencies cu on d.currency_id = cu.id

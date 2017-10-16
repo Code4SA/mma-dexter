@@ -8,7 +8,8 @@ from wand.exceptions import WandError
 
 from .app import app
 from .models import db, Document, Issue, DocumentPlace, DocumentAttachment, DocumentTag, Investment, Phases, Sectors, \
-    InvestmentOrigins, InvestmentType, Currencies, Industries, Involvements, ValueUnits
+    InvestmentOrigins, InvestmentType, Currencies, Industries, Involvements1, Involvements2, Involvements3, \
+    ValueUnits, Provinces
 from .models.document import DocumentForm
 from .models.fairness import DocumentFairnessForm
 from .models.analysis_nature import AnalysisNature
@@ -46,8 +47,14 @@ def show_article(id):
 
         investment = Investment.query.filter_by(doc_id=id).first()
 
-        if Involvements.query.filter_by(id=investment.involvement_id).first() is None:
-            investment.involvement_id = 13
+        if Involvements1.query.filter_by(id=investment.involvement_id1).first() is None:
+            investment.involvement_id1 = 5
+            db.session.commit()
+        if Involvements2.query.filter_by(id=investment.involvement_id2).first() is None:
+            investment.involvement_id2 = 73
+            db.session.commit()
+        if Involvements3.query.filter_by(id=investment.involvement_id3).first() is None:
+            investment.involvement_id3 = 19
             db.session.commit()
 
         if Industries.query.filter_by(id=investment.industry_id).first() is None:
@@ -64,9 +71,12 @@ def show_article(id):
 
         phase = Phases.query.filter_by(id=investment.phase_id).first()
         sector = Sectors.query.filter_by(id=investment.sector_id).first()
-        involvement = Involvements.query.filter_by(id=investment.involvement_id).first()
+        involvement_tier1 = Involvements1.query.filter_by(id=investment.involvement_id1).first()
+        involvement_tier2 = Involvements2.query.filter_by(id=investment.involvement_id2).first()
+        involvement_tier3 = Involvements3.query.filter_by(id=investment.involvement_id3).first()
         industry = Industries.query.filter_by(id=investment.industry_id).first()
         inv_origin = InvestmentOrigins.query.filter_by(id=investment.invest_origin_id).first()
+        province = Provinces.query.filter_by(id=investment.province_id).first()
         inv_type = InvestmentType.query.filter_by(id=investment.invest_type_id).first()
         currency = Currencies.query.filter_by(id=investment.currency_id).first()
         value_unit = ValueUnits.query.filter_by(id=investment.value_unit_id).first()
@@ -74,8 +84,9 @@ def show_article(id):
 
         return render_template('fdi/show.haml', investment=investment, document=document, phase=phase.name,
                                sector=sector.name, inv_origin=inv_origin.name, inv_type=inv_type.name,
-                               currency=currency.name, involvement=involvement.name, industry=industry.name,
-                               value_unit=value_unit.name, value_unit2=value_unit2.name, URL=URL)
+                               currency=currency.name, involvement1=involvement_tier1.name, involvement2=involvement_tier2.name,
+                               involvement3=involvement_tier3.name, industry=industry.name, value_unit=value_unit.name,
+                               value_unit2=value_unit2.name, province=province.name, URL=URL)
 
     return render_template('articles/show.haml', document=document, URL=URL)
 
@@ -217,25 +228,32 @@ def fdi_create(id):
     exists = Investment.query.filter_by(doc_id=id).first() is not None
     if not exists:
         investment = Investment()
-        investment.name = 'unspecified'
+        investment.name = ''
         investment.value = 0
         investment.value2 = 0
         investment.temp_opps = 0
         investment.perm_opps = 0
-        investment.government = 'unspecified'
-        investment.company = 'unspecified'
-        investment.additional_place = 'unspecified'
+        investment.government = ''
+        investment.company = ''
+        investment.additional_place = ''
+        investment.gov_programs = ''
+        investment.soc_programs = ''
+        investment.mot_investment = ''
         investment.currency_id = 165
         investment.invest_type_id = 6
         investment.phase_id = 6
         investment.invest_origin_id = 194
-        investment.invest_origin_city = 'unspecified'
+        investment.invest_origin_city = ''
+        investment.province_id = 10
         investment.sector_id = 90
         investment.industry_id = 12
-        investment.involvement_id = 13
+        investment.involvement_id1 = 5
+        investment.involvement_id2 = 73
+        investment.involvement_id3 = 19
         investment.doc_id = id
         investment.value_unit_id = 3
         investment.value_unit_id2 = 3
+        investment.target_market_id = 4
         db.session.add(investment)
         db.session.commit()
 
@@ -285,6 +303,8 @@ def edit_article_analysis(id):
     if request.method == 'POST':
 
         if current_user.has_role('fdi'):
+
+            print fdi_form.data
 
             forms = [fdi_form]
             if all(f.validate() for f in forms):

@@ -7,6 +7,8 @@
 %%block(name='extra_javascript')
   - for url in webassets('documents'):
     %script(src=url)
+  - for url in webassets('fdi_analysis'):
+    %script(src=url)
 
 %%block(name='pre_content')
   - from dexter.helpers import country_flag
