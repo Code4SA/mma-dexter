@@ -35,7 +35,11 @@ class Investment(db.Model):
     company = Column(String(1024))
     additional_place = Column(String(1024))
     fdi_notes = Column(String(1024))
+    gov_programs = Column(String(1024))
+    soc_programs = Column(String(1024))
+    mot_investment = Column(String(1024))
     invest_origin_city = Column(String(50))
+    target_market = Column(String(50))
 
     investment_begin = Column(Date, index=True, unique=False)
     investment_end = Column(Date, index=True, unique=False)
@@ -44,20 +48,27 @@ class Investment(db.Model):
     value_unit_id2 = Column(Integer, ForeignKey('value_units.id'), index=True)
     currency_id = Column(Integer, ForeignKey('currencies.id'), index=True)
     phase_id = Column(Integer, ForeignKey('phases.id'), index=True)
+    phase_date = Column(Date, index=True, unique=False)
     invest_origin_id = Column(Integer, ForeignKey('investment_origins.id'), index=True)
     invest_loc_id = Column(Integer, ForeignKey('investment_locations.id'), index=True)
+    province_id = Column(Integer, ForeignKey('provinces.id'), index=True)
     invest_type_id = Column(Integer, ForeignKey('investment_types.id'), index=True)
     sector_id = Column(Integer, ForeignKey('sectors.id'), index=True)
-    involvement_id = Column(Integer, ForeignKey('involvements.id'), index=True)
+    involvement_id1 = Column(Integer, ForeignKey('involvements1.id'), index=True)
+    involvement_id2 = Column(Integer, ForeignKey('involvements2.id'), index=True)
+    involvement_id3 = Column(Integer, ForeignKey('involvements3.id'), index=True)
     industry_id = Column(Integer, ForeignKey('industries.id'), index=True)
 
     currency = relationship("Currencies")
     phase = relationship("Phases")
     sector = relationship("Sectors")
     industry = relationship("Industries")
-    involvement = relationship("Involvements")
+    involvement1 = relationship("Involvements1")
+    involvement2 = relationship("Involvements2")
+    involvement3 = relationship("Involvements3")
     investment_type = relationship("InvestmentType")
     investment_origin = relationship("InvestmentOrigins")
+    province = relationship("Provinces")
     value_unit = relationship("ValueUnits", foreign_keys=[value_unit_id])
     value_unit2 = relationship("ValueUnits", foreign_keys=[value_unit_id2])
 
@@ -722,39 +733,31 @@ class InvestmentLocations(db.Model):
         return "<Investment location='%s'>" % (self.name)
 
 
-class Involvements(db.Model):
+class Involvements1(db.Model):
     """
     The phase of the investment.
     """
-    __tablename__ = "involvements"
+    __tablename__ = "involvements1"
 
     id = Column(Integer, primary_key=True)
     name = Column(String(50), index=True, nullable=False, unique=True)
 
     def __repr__(self):
-        return "<Involvements='%s'>" % (self.name)
+        return "<Involvements1='%s'>" % (self.name)
 
     @classmethod
     def create_defaults(self):
         text = """
-        Department of Trade and Industry
-        Economic Development Department
-        Department of Small Business Development
-        National Treasury
-        Investment Promotion Agency
-        Provincial Government or Agency
-        Municipal Government or Agency
-        Special Economic Zone
+        National Government
+        Provincial Government
+        Municipalities
         State Owned Enterprises
-        Sectoral Regulator or Agency
-        Other
-        None
         unspecified
         """
 
         involvements = []
         for s in text.strip().split("\n"):
-            i = Involvements()
+            i = Involvements1()
             i.name = s.strip()
             involvements.append(i)
 
@@ -762,7 +765,159 @@ class Involvements(db.Model):
 
     @classmethod
     def all(cls):
-        return cls.query.order_by(Involvements.name).all()
+        return cls.query.order_by(Involvements1.name).all()
+
+
+class Involvements2(db.Model):
+    """
+    The phase of the investment.
+    """
+    __tablename__ = "involvements2"
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String(50), index=True, nullable=False, unique=True)
+
+    def __repr__(self):
+        return "<Involvements2='%s'>" % (self.name)
+
+    @classmethod
+    def create_defaults(self):
+        text = """
+        Agriculture, Forestry and Fisheries
+        Arts and Culture
+        Basic Education
+        Civilian Secretariat for Police
+        Communications
+        Cooperative Governance
+        Correctional Services
+        Defence
+        Economic Development
+        Energy
+        Environmental Affairs
+        Government Communication and Information System (GCIS)
+        Health
+        Higher Education and Training
+        Home Affairs
+        Human Settlements
+        Independent Police Investigative Directorate
+        International Relations and Cooperation
+        Justice and Constitutional Development
+        Labour
+        Military Veterans
+        Mineral Resources
+        National School of Government (previously Palama)
+        National Treasury
+        Office of the Chief Justice
+        Planning Monitoring and Evaluation
+        Public Enterprises
+        Public Service and Administration
+        Public Service Commission
+        Public Works
+        Rural Development and Land Reform
+        Science and Technology
+        Small Business Development
+        Social Development
+        SA Police Service
+        SA Revenue Service
+        State Security Agency
+        Sport and Recreation South Africa
+        Statistics South Africa
+        Telecommunications and Postal Services (previously Communications)
+        Tourism
+        Trade and Industry
+        Traditional Affairs
+        Transport
+        Water and Sanitation
+        Women
+        The Presidency
+        Eastern Cape
+        Northern Cape
+        Western Cape
+        North West
+        Gauteng
+        KwaZulu Natal
+        Mpumalanga
+        Limpopo
+        Free State
+        City of Johannesburg
+        City of Cape Town
+        eThekwini
+        Ekurhuleni
+        City of Tshwane
+        Nelson Mandela Bay
+        Buffalo City
+        Mangaung
+        Denel
+        Eskom
+        SAA
+        SABC
+        SA Post Offfice
+        Telkom
+        Transnet
+        DBSA
+        unspecified
+        """
+
+        involvements = []
+        for s in text.strip().split("\n"):
+            i = Involvements2()
+            i.name = s.strip()
+            involvements.append(i)
+
+        return involvements
+
+    @classmethod
+    def all(cls):
+        return cls.query.order_by(Involvements2.name).all()
+
+
+class Involvements3(db.Model):
+    """
+    The phase of the investment.
+    """
+    __tablename__ = "involvements3"
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String(50), index=True, nullable=False, unique=True)
+
+    def __repr__(self):
+        return "<Involvements3='%s'>" % (self.name)
+
+    @classmethod
+    def create_defaults(self):
+        text = """
+        Industrial Development Corporation
+        Small Enterprise Development Agency
+        Eastern Cape Development Corporation
+        Northern Cape Economic Development, Trade and Investment Promotion Agency
+        Western Cape Tourism, Trade and Investment Promotion Agency
+        Wesgro
+        Greencape
+        Invest North West
+        North West Development Corporation
+        Gauteng Enterprise Propeller
+        Gauteng Growth and Development Agency
+        Trade and Investment KwaZulu-Natal
+        Mpumalanga Economic Growth Agency
+        Limpopo Economic Development Agency
+        Free State Development Corporation
+        Johannesburg Development Agency
+        Western Cape Economic Development Partnership
+        Durban Investment Promotion Agency
+        unspecified
+        """
+
+        involvements = []
+        for s in text.strip().split("\n"):
+            i = Involvements3()
+            i.name = s.strip()
+            involvements.append(i)
+
+        return involvements
+
+    @classmethod
+    def all(cls):
+        return cls.query.order_by(Involvements3.name).all()
 
 
 class Industries(db.Model):
@@ -791,6 +946,7 @@ class Industries(db.Model):
         Community and social services
         Private households
         Other
+        Services
         unspecified
         """
 
@@ -805,6 +961,46 @@ class Industries(db.Model):
     @classmethod
     def all(cls):
         return cls.query.order_by(Industries.name).all()
+
+
+class Provinces(db.Model):
+    """
+    The phase of the investment.
+    """
+    __tablename__ = "provinces"
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String(50), index=True, nullable=False, unique=True)
+
+    def __repr__(self):
+        return "<Provinces='%s'>" % (self.name)
+
+    @classmethod
+    def create_defaults(self):
+        text = """
+        KwaZulu-Natal
+        Western Cape
+        Gauteng
+        Mpumalanga
+        Eastern Cape
+        Northern Cape
+        Limpopo
+        North West
+        Free State
+        unspecified
+        """
+
+        provinces = []
+        for s in text.strip().split("\n"):
+            i = Provinces()
+            i.name = s.strip()
+            provinces.append(i)
+
+        return provinces
+
+    @classmethod
+    def all(cls):
+        return cls.query.order_by(Provinces.name).all()
 
 
 class ValueUnits(db.Model):

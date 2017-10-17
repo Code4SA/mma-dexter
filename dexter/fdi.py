@@ -94,6 +94,39 @@ def fdi_home():
                            )
 
 
+@app.route('/_parse_involvement', methods=['GET'])
+@login_required
+@roles_accepted('fdi')
+def parse_involvement():
+
+    tier1 = request.args.get('inv_id1')
+    tier2 = request.args.get('inv_id2')
+    tier3 = request.args.get('inv_id3')
+
+    if int(request.args.get('tier1_change')) == 1:
+        tier2 = "73"
+        tier3 = "19"
+
+    if int(request.args.get('tier2_change')) == 1:
+        tier3 = "19"
+
+    t2_options = {1: [73] + range(1, 48), 2: [73] + range(48, 57), 3: [73] + range(57, 65), 4: [73] + range(65, 73),
+                  5: [73]}
+    t3_options = {9: [1, 19], 33: [2, 19], 48: [3, 19], 49: [4, 19], 50: [5, 6, 7, 19], 51: [8, 9, 19], 52: [10, 11, 19], 53: [12, 19], 54: [13, 19],
+                  55: [14, 19], 56: [15, 19], 57: [16, 19], 58: [17, 19], 59: [18, 19], 73: [19]}
+
+    t2_choices = [[str(c.id), c.name] for c in Involvements2.query.filter(Involvements2.id.in_(t2_options[int(tier1)])).all()
+                  ]
+    if int(tier2) in t3_options.keys():
+        t3_choices = [[str(c.id), c.name] for c in Involvements3.query.filter(Involvements3.id.in_(t3_options[int(tier2)]))]
+    else:
+        t3_choices = [["19", 'unspecified']]
+
+    data = {'t2': t2_choices, 't3': t3_choices, 'ti1': tier1, 'ti2': tier2, 'ti3': tier3}
+
+    return jsonify(data)
+
+
 class FDI(Form):
     cluster_id      = HiddenField('Cluster')
     analysis_nature_id = SelectField('Analysis', default=AnalysisNature.ANCHOR_ID)

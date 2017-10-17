@@ -5,7 +5,7 @@ from wtforms import SelectField as SelectFieldW
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
 from wtforms_alchemy import ModelFieldList
 
-from dexter.forms import ModelForm, FormField, MultiCheckboxField, IntegerField, SelectField, RadioField, YesNoField, FloatField
+from dexter.forms import ModelForm, FormField, MultiCheckboxField, IntegerField, SelectField, SelectMultipleField, RadioField, YesNoField, FloatField
 from dexter.models import *  # noqa
 
 
@@ -192,15 +192,23 @@ class FDIAnalysisForm(ModelForm):
                                                                                 message='Please enter an integer')])
     investment_begin = DateField('Investment start date', [validators.Optional()], format='%Y/%m/%d')
     investment_end = DateField('Investment end date', [validators.Optional()], format='%Y/%m/%d')
+    phase_date = DateField('Phase date', [validators.Optional()], format='%Y/%m/%d')
     currency_id = SelectField('Currency')
     phase_id = SelectField('Phase')
     sector_id = SelectField('Sector')
-    involvement_id = SelectField('Government involvement')
+    involvement_id1 = SelectField('Government involvement (Tier 1)')
+    involvement_id2 = SelectField('Government involvement (Tier 2)', default=73)
+    involvement_id3 = SelectField('Government involvement (Tier 3)', default=19)
     industry_id = SelectField('Industry')
+    target_market = StringField('Target Market')
     invest_origin_id = SelectField('Origin of investment (country)')
+    province_id = SelectField('Province')
     invest_origin_city = StringField('Origin of investment (city)')
     invest_type_id = SelectField('Type')
     company = StringField('Company')
+    gov_programs = StringField('Government Programmes')
+    soc_programs = StringField('Social Benefit Programmes')
+    mot_investment = StringField('Motivation for Investment')
     additional_place = StringField('Additional place')
     fdi_notes = TextAreaField('Notes')
     value_unit_id = SelectField('Unit')
@@ -216,8 +224,11 @@ class FDIAnalysisForm(ModelForm):
         self.invest_type_id.choices = [[str(c.id), c.name] for c in InvestmentType.all()]
         self.value_unit_id.choices = [[str(c.id), c.name] for c in ValueUnits.all()]
         self.value_unit_id2.choices = [[str(c.id), c.name] for c in ValueUnits.all()]
-        self.involvement_id.choices = [[str(c.id), c.name] for c in Involvements.all()]
+        self.involvement_id1.choices = [[str(c.id), c.name] for c in Involvements1.all()]
+        self.involvement_id2.choices = [[str(c.id), c.name] for c in Involvements2.all()]
+        self.involvement_id3.choices = [[str(c.id), c.name] for c in Involvements3.all()]
         self.industry_id.choices = [[str(c.id), c.name] for c in Industries.all()]
+        self.province_id.choices = [[str(c.id), c.name] for c in Provinces.all()]
 
     def validate(self):
         return super(FDIAnalysisForm, self).validate()

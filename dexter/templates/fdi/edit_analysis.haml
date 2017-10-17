@@ -125,10 +125,24 @@
             .row
               .col-sm-6
                 .form-group
-                  = fdi_form.involvement_id.label()
+                  = fdi_form.involvement_id1.label()
               .col-sm-6
                 .input-group
-                = field_input(fdi_form.involvement_id, class_='select2')
+                = field_input(fdi_form.involvement_id1, class_='select2')
+            .row
+              .col-sm-6
+                .form-group
+                  = fdi_form.involvement_id2.label()
+              .col-sm-6
+                .input-group
+                = field_input(fdi_form.involvement_id2, class_='select2')
+            .row
+              .col-sm-6
+                .form-group
+                  = fdi_form.involvement_id3.label()
+              .col-sm-6
+                .input-group
+                = field_input(fdi_form.involvement_id3, class_='select2')
             .row
               .col-sm-6
                 .form-group
@@ -159,6 +173,24 @@
                 .input-group
                 = field_input(fdi_form.phase_id, class_='select2')
             .row
+              .col-sm-6
+                .form-group
+                  = fdi_form.phase_date.label()
+              .col-sm-6
+                .input-group
+                  = fdi_form.phase_date(class_='form-control use-datepicker')
+                  %span.input-group-btn
+                    %button.btn.btn-default(dataClear='input-group')
+                      %i.fa.fa-times
+            .row
+              .col-sm-6
+                .form-group
+                  = fdi_form.target_market.label()
+                  [separate multiple with ";"]
+              .col-sm-6
+                .input-group
+                = field_input(fdi_form.target_market)
+            .row
               .col-sm-2
                 .form-group
                   = fdi_form.invest_origin_id.label()
@@ -175,6 +207,13 @@
             .row
               .col-sm-2
                 .form-group
+                  = fdi_form.province_id.label()
+              .col-sm-10
+                .input-group
+                = field_input(fdi_form.province_id, class_='select2')
+            .row
+              .col-sm-2
+                .form-group
                   = fdi_form.sector_id.label()
               .col-sm-10
                 .input-group
@@ -186,6 +225,27 @@
               .col-sm-10
                 .input-group
                 = field_input(fdi_form.industry_id, class_='select2')
+            .row
+              .col-sm-6
+                .form-group
+                  = fdi_form.gov_programs.label()
+              .col-sm-6
+                .input-group
+                = field_input(fdi_form.gov_programs)
+            .row
+              .col-sm-6
+                .form-group
+                  = fdi_form.soc_programs.label()
+              .col-sm-6
+                .input-group
+                = field_input(fdi_form.soc_programs)
+            .row
+              .col-sm-6
+                .form-group
+                  = fdi_form.mot_investment.label()
+              .col-sm-6
+                .input-group
+                = field_input(fdi_form.mot_investment)
             .row
               .col-sm-2
                 .form-group
