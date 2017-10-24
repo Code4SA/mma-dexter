@@ -56,6 +56,9 @@ def show_article(id):
         if Involvements3.query.filter_by(id=investment.involvement_id3).first() is None:
             investment.involvement_id3 = 19
             db.session.commit()
+        if Provinces.query.filter_by(id=investment.province_id).first() is None:
+            investment.province_id = 10
+            db.session.commit()
 
         if Industries.query.filter_by(id=investment.industry_id).first() is None:
             investment.industry_id = 12
