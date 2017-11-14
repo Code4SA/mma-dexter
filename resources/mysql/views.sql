@@ -264,6 +264,11 @@ create or replace view investments_view as select
   d.invest_origin_city as investment_origin_city,
   s.name as sector_name,
   loc.name as location,
+  ind.name as `industry`,
+  d.target_market as `target_market`,
+  d.gov_programs as `gov_programs`,
+  d.soc_programs as `soc_programs`,
+  d.mot_investment as `motivation`,
   d.fdi_notes as notes,
   d.doc_id as `document_id`,
   d.id as `investment_id`
@@ -281,4 +286,5 @@ from
   left join investment_origins o on d.invest_origin_id = o.id
   left join sectors s on d.sector_id = s.id
   left join locations loc on d.invest_loc_id = loc.id
+  left join industries ind on d.industry_id = ind.id
 ;
