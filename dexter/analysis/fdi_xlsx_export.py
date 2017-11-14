@@ -20,8 +20,7 @@ class FDIExportBuilder:
 
         # we use these to filter our queries, rather than trying to pull
         # complex filter logic into our view queries
-        query = db.session.query(Investment.doc_id).all()
-        self.doc_ids = [int(i[0]) for i in query]
+        self.doc_ids = form.document_ids()
 
     def build(self):
         """
