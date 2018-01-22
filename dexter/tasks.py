@@ -20,76 +20,40 @@ log = logging.getLogger(__name__)
 def back_process_feeds():
     """ Enqueue a task to fetch yesterday's feeds. """
 
-    if date.today() == date(2017, 7, 20):
-        date_list = [date(2017, 2, 27) + timedelta(days=x) for x in range(0, 7)]
+    if date.today() == date(2018, 1, 23):
+        date_list = [date(2018, 1, 17)]
         for d in date_list:
             fetch_daily_feeds.delay(d.isoformat())
 
-    elif date.today() == date(2017, 7, 21):
-        date_list = [date(2017, 3, 6) + timedelta(days=x) for x in range(0, 7)]
+    elif date.today() == date(2018, 1, 24):
+        date_list = [date(2018, 1, 18)]
         for d in date_list:
             fetch_daily_feeds.delay(d.isoformat())
 
-    elif date.today() == date(2017, 7, 22):
-        date_list = [date(2017, 3, 13) + timedelta(days=x) for x in range(0, 7)]
+    elif date.today() == date(2018, 1, 25):
+        date_list = [date(2018, 1, 19)]
         for d in date_list:
             fetch_daily_feeds.delay(d.isoformat())
 
-    elif date.today() == date(2017, 7, 23):
-        date_list = [date(2017, 3, 20) + timedelta(days=x) for x in range(0, 7)]
+    elif date.today() == date(2018, 1, 26):
+        date_list = [date(2018, 1, 20)]
         for d in date_list:
             fetch_daily_feeds.delay(d.isoformat())
 
-    elif date.today() == date(2017, 7, 24):
-        date_list = [date(2017, 3, 27) + timedelta(days=x) for x in range(0, 7)]
+    elif date.today() == date(2018, 1, 27):
+        date_list = [date(2018, 1, 21)]
         for d in date_list:
             fetch_daily_feeds.delay(d.isoformat())
 
-    elif date.today() == date(2017, 7, 25):
-        date_list = [date(2017, 4, 3) + timedelta(days=x) for x in range(0, 7)]
+    elif date.today() == date(2018, 1, 28):
+        date_list = [date(2018, 1, 12)]
         for d in date_list:
             fetch_daily_feeds.delay(d.isoformat())
 
-    elif date.today() == date(2017, 7, 26):
-        date_list = [date(2017, 4, 10) + timedelta(days=x) for x in range(0, 7)]
-        for d in date_list:
-            fetch_daily_feeds.delay(d.isoformat())
-
-    elif date.today() == date(2017, 7, 27):
-        date_list = [date(2017, 4, 17) + timedelta(days=x) for x in range(0, 7)]
-        for d in date_list:
-            fetch_daily_feeds.delay(d.isoformat())
-
-    elif date.today() == date(2017, 7, 28):
-        date_list = [date(2017, 4, 24) + timedelta(days=x) for x in range(0, 7)]
-        for d in date_list:
-            fetch_daily_feeds.delay(d.isoformat())
-
-    elif date.today() == date(2017, 7, 29):
-        date_list = [date(2017, 5, 1) + timedelta(days=x) for x in range(0, 7)]
-        for d in date_list:
-            fetch_daily_feeds.delay(d.isoformat())
-
-    elif date.today() == date(2017, 7, 30):
-        date_list = [date(2017, 5, 8) + timedelta(days=x) for x in range(0, 7)]
-        for d in date_list:
-            fetch_daily_feeds.delay(d.isoformat())
-
-    elif date.today() == date(2017, 7, 31):
-        date_list = [date(2017, 5, 15) + timedelta(days=x) for x in range(0, 7)]
-        for d in date_list:
-            fetch_daily_feeds.delay(d.isoformat())
-
-    elif date.today() == date(2017, 8, 1):
-        date_list = [date(2017, 5, 22) + timedelta(days=x) for x in range(0, 7)]
-        for d in date_list:
-            fetch_daily_feeds.delay(d.isoformat())
-
-    elif date.today() == date(2017, 8, 2):
-        date_list = [date(2017, 5, 29) + timedelta(days=x) for x in range(0, 7)]
-        for d in date_list:
-            fetch_daily_feeds.delay(d.isoformat())
-
+    # elif date.today() == date(2017, 8, 2):
+    #     date_list = [date(2017, 5, 29) + timedelta(days=x) for x in range(0, 7)]
+    #     for d in date_list:
+    #         fetch_daily_feeds.delay(d.isoformat())
     else:
         print 'Already Done!'
 
