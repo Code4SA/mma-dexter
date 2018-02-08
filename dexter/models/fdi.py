@@ -775,7 +775,7 @@ class Involvements2(db.Model):
     __tablename__ = "involvements2"
 
     id = Column(Integer, primary_key=True)
-    name = Column(String(50), index=True, nullable=False, unique=True)
+    name = Column(String(128), index=True, nullable=False, unique=True)
 
     def __repr__(self):
         return "<Involvements2='%s'>" % (self.name)
@@ -878,7 +878,7 @@ class Involvements3(db.Model):
     __tablename__ = "involvements3"
 
     id = Column(Integer, primary_key=True)
-    name = Column(String(50), index=True, nullable=False, unique=True)
+    name = Column(String(128), index=True, nullable=False, unique=True)
 
     def __repr__(self):
         return "<Involvements3='%s'>" % (self.name)

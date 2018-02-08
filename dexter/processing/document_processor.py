@@ -48,10 +48,11 @@ class DocumentProcessor:
             DWCrawler(),
             ChronicleZWCrawler(),
             BBCCrawler(),
+            HowWeMadeItInAfricaCrawler(),
             # must come last
             GenericCrawler()]
         self.extractors = [
-            AlchemyExtractor(),
+            # AlchemyExtractor(),
             CalaisExtractor(),
             SourcesExtractor(),
             PlacesExtractor()]
@@ -334,6 +335,7 @@ class DocumentProcessorNT:
             DWCrawler(),
             ChronicleZWCrawler(),
             BBCCrawler(),
+            HowWeMadeItInAfricaCrawler(),
             # must come last
             GenericCrawler()]
 
