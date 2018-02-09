@@ -40,7 +40,8 @@ class Medium(db.Model):
         """
         url_exceptions = [
             'thecitizen.co.tz',
-            'dailynews.co.tz'
+            'dailynews.co.tz',
+            'mathewnyaungwa.blogspot.co.za'
         ]
         for ex in url_exceptions: 
             # check if it exists in the url add buffer for [https://www.] characters at start
@@ -51,11 +52,16 @@ class Medium(db.Model):
 
     @classmethod
     def for_url(cls, url):
+        exception_list = [
+            'blogspot.co.za'
+        ]
         domain = get_tld(url, fail_silently=True)
         # fail silently
-        
-        if domain is None:
+        if domain is None or domain in exception_list:
             domain = cls.is_tld_exception(url)
+        print '==================================================='
+        print domain
+        print '==================================================='
         
         if domain is None:
             return None
@@ -177,6 +183,7 @@ Daily News (Tanzania)|online|dailynews.co.tz||tz
 Daily News (Zimbabwe)|online|dailynews.co.zw||tz
 SAVCA|online|savca.co.za||za
 How We Made It In Africa|online|howwemadeitinafrica.com||za
+Rhodes University (MathewYaungwaBlog)|online|mathewnyaungwa.blogspot.co.za||za
             """
 
         mediums = []

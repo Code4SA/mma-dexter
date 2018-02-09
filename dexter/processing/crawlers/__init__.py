@@ -21,3 +21,4 @@ from .chroniclezw import ChronicleZWCrawler
 from .bbc import BBCCrawler
 from .howwemadeitinafrica import HowWeMadeItInAfricaCrawler
 from .savca import SAVCACrawler
+from .rhodesunimathewblog import RhodesUniMathewBlogCrawler
