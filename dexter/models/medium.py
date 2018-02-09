@@ -175,6 +175,7 @@ The Star (Kenya)|online|the-star.co.ke||ke
 The East African|online|theeastafrican.co.ke||ke
 Daily News (Tanzania)|online|dailynews.co.tz||tz
 Daily News (Zimbabwe)|online|dailynews.co.zw||tz
+SAVCA|online|savca.co.za||za
 How We Made It In Africa|online|howwemadeitinafrica.com||za
             """
 

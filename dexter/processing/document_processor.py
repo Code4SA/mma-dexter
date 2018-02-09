@@ -49,6 +49,7 @@ class DocumentProcessor:
             ChronicleZWCrawler(),
             BBCCrawler(),
             HowWeMadeItInAfricaCrawler(),
+            SAVCACrawler(),
             # must come last
             GenericCrawler()]
         self.extractors = [
@@ -336,6 +337,7 @@ class DocumentProcessorNT:
             ChronicleZWCrawler(),
             BBCCrawler(),
             HowWeMadeItInAfricaCrawler(),
+            SAVCACrawler(),
             # must come last
             GenericCrawler()]
 
