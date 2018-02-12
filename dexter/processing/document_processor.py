@@ -54,6 +54,7 @@ class DocumentProcessor:
             WorldStageCrawler(),
             ClassicFMCrawler(),
             AFPCrawler(),
+            NaijaNewsCrawler(),
             # must come last
             GenericCrawler()]
         self.extractors = [
@@ -196,7 +197,7 @@ class DocumentProcessor:
                 raise ProcessingError("Error fetching document: %s" % (e,))
 
             # is it sane?
-            # TODO: this breaks for isolezwe and other non-english media
+            # TODO: this breaks for isolezwe and other non-english media'
             if not doc.text or 'the' not in doc.text:
                 self.log.info("Document %s doesn't have reasonable-looking text, ignoring: %s..." % (url, doc.text[0:100]))
                 db.session.rollback()
@@ -346,6 +347,7 @@ class DocumentProcessorNT:
             WorldStageCrawler(),
             ClassicFMCrawler(),
             AFPCrawler(),
+            NaijaNewsCrawler(),
             # must come last
             GenericCrawler()]
 

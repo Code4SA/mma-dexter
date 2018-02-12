@@ -184,6 +184,7 @@ Rhodes University (MathewYaungwaBlog)|online|mathewnyaungwa.blogspot.co.za||za
 World Stage|online|worldstagegroup.com||ng
 Classic FM|online|classic97.net||ng
 Agence France Presse|online|afp.com||fr
+Naija News Agency|online|naijanewsagency.com||ng
             """
 
         mediums = []

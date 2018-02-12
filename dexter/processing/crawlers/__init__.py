@@ -25,3 +25,4 @@ from .rhodesunimathewblog import RhodesUniMathewBlogCrawler
 from .worldstage import WorldStageCrawler
 from .classicfm import ClassicFMCrawler
 from .afp import AFPCrawler
+from .naijanews import NaijaNewsCrawler
