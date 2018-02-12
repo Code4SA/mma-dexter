@@ -49,9 +49,6 @@ class NaijaNewsCrawler(BaseCrawler):
         for node in nodes[0].children:
             if node.name in ['h2','h3','p']:
                 text_list = text_list + [node]
-        print '========================================================================='
-        print "All this crap %s" % (text_list)
-        print '========================================================================='
         doc.summary = "\n\n".join(p.text.strip() for p in text_list[:2])
         doc.text = "\n\n".join(p.text.strip() for p in text_list)
 
