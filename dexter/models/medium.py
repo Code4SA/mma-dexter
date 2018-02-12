@@ -59,9 +59,6 @@ class Medium(db.Model):
         # fail silently
         if domain is None or domain in exception_list:
             domain = cls.is_tld_exception(url)
-        print '==================================================='
-        print domain
-        print '==================================================='
         
         if domain is None:
             return None
@@ -184,6 +181,7 @@ Daily News (Zimbabwe)|online|dailynews.co.zw||tz
 SAVCA|online|savca.co.za||za
 How We Made It In Africa|online|howwemadeitinafrica.com||za
 Rhodes University (MathewYaungwaBlog)|online|mathewnyaungwa.blogspot.co.za||za
+World Stage|online|worldstagegroup.com||ng
             """
 
         mediums = []
