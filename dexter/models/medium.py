@@ -185,6 +185,7 @@ World Stage|online|worldstagegroup.com||ng
 Classic FM|online|classic97.net||ng
 Agence France Presse|online|afp.com||fr
 Naija News Agency|online|naijanewsagency.com||ng
+Daily Trust Newspaper|online|dailytrust.com.ng||ng
             """
 
         mediums = []

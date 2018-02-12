@@ -55,6 +55,7 @@ class DocumentProcessor:
             ClassicFMCrawler(),
             AFPCrawler(),
             NaijaNewsCrawler(),
+            DailyTrustNPCrawler(),
             # must come last
             GenericCrawler()]
         self.extractors = [
@@ -348,6 +349,7 @@ class DocumentProcessorNT:
             ClassicFMCrawler(),
             AFPCrawler(),
             NaijaNewsCrawler(),
+            DailyTrustNPCrawler(),
             # must come last
             GenericCrawler()]
 
