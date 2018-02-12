@@ -52,6 +52,8 @@ class DocumentProcessor:
             SAVCACrawler(),
             RhodesUniMathewBlogCrawler(),
             WorldStageCrawler(),
+            ClassicFMCrawler(),
+            AFPCrawler(),
             # must come last
             GenericCrawler()]
         self.extractors = [
@@ -342,6 +344,8 @@ class DocumentProcessorNT:
             SAVCACrawler(),
             RhodesUniMathewBlogCrawler(),
             WorldStageCrawler(),
+            ClassicFMCrawler(),
+            AFPCrawler(),
             # must come last
             GenericCrawler()]
 

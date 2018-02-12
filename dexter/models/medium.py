@@ -182,6 +182,8 @@ SAVCA|online|savca.co.za||za
 How We Made It In Africa|online|howwemadeitinafrica.com||za
 Rhodes University (MathewYaungwaBlog)|online|mathewnyaungwa.blogspot.co.za||za
 World Stage|online|worldstagegroup.com||ng
+Classic FM|online|classic97.net||ng
+Agence France Presse|online|afp.com||fr
             """
 
         mediums = []

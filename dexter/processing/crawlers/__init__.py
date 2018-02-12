@@ -23,3 +23,5 @@ from .howwemadeitinafrica import HowWeMadeItInAfricaCrawler
 from .savca import SAVCACrawler
 from .rhodesunimathewblog import RhodesUniMathewBlogCrawler
 from .worldstage import WorldStageCrawler
+from .classicfm import ClassicFMCrawler
+from .afp import AFPCrawler

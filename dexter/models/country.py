@@ -51,6 +51,7 @@ Germany|de
 United Kingdom (Great Britain)|gb
 Kenya|ke
 Nigeria|ng
+France|fr
             """
 
         countries = []
