@@ -41,7 +41,7 @@ class DailyTrustNPCrawler(BaseCrawler):
         author_date_str = self.extract_plaintext(soup.select('.container .story span.storydate'))
         
         #gather publish date
-        date = author_date_str[author_date_str.index(':') + 1:].strip()
+        date = author_date_str[author_date_str.index('Publish Date:') + 13:].strip()
         print "This date %s" % (date)
         doc.published_at = self.parse_timestamp(date)
 
@@ -52,10 +52,7 @@ class DailyTrustNPCrawler(BaseCrawler):
 
         # gather author
         if '-' not in author_date_str:
-            if ',' in author_date_str:
-                author = author_date_str[author_date_str.index('By') + 2 : author_date_str.index(',')].strip()
-            else:
-                author = author_date_str[author_date_str.index('By') + 2 : author_date_str.index('|')].strip()
+            author = author_date_str[author_date_str.index('By') + 2 : author_date_str.index('|')].strip()
             
             if author:
                 doc.author = Author.get_or_create(author.strip(), AuthorType.journalist())
