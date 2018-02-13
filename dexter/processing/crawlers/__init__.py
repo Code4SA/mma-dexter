@@ -31,3 +31,4 @@ from .newteleonline import NewTeleOnlineCrawler
 from .thepoint import ThePointCrawler
 from .dailytimes import DailyTimesCrawler
 from .thenation import TheNationCrawler
+from .mediamaxnet import MediaMaxNetCrawler

@@ -60,6 +60,7 @@ class DocumentProcessor:
             ThePointCrawler(),
             DailyTimesCrawler(),
             TheNationCrawler(),
+            MediaMaxNetCrawler(),
             # must come last
             GenericCrawler()]
         self.extractors = [
@@ -358,6 +359,7 @@ class DocumentProcessorNT:
             ThePointCrawler(),
             DailyTimesCrawler(),
             TheNationCrawler(),
+            MediaMaxNetCrawler(),
             # must come last
             GenericCrawler()]
 
