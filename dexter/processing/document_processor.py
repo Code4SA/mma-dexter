@@ -58,6 +58,7 @@ class DocumentProcessor:
             DailyTrustNPCrawler(),
             NewTeleOnlineCrawler(),
             ThePointCrawler(),
+            DailyTimesCrawler(),
             # must come last
             GenericCrawler()]
         self.extractors = [
@@ -354,6 +355,7 @@ class DocumentProcessorNT:
             DailyTrustNPCrawler(),
             NewTeleOnlineCrawler(),
             ThePointCrawler(),
+            DailyTimesCrawler(),
             # must come last
             GenericCrawler()]
 

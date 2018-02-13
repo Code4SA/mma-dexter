@@ -52,12 +52,12 @@ class Medium(db.Model):
 
     @classmethod
     def for_url(cls, url):
-        exception_list = [
+        sub_domain_exception_list = [
             'blogspot.co.za'
         ]
         domain = get_tld(url, fail_silently=True)
         # fail silently
-        if domain is None or domain in exception_list:
+        if domain is None or domain in sub_domain_exception_list:
             domain = cls.is_tld_exception(url)
         
         if domain is None:
@@ -188,6 +188,7 @@ Naija News Agency|online|naijanewsagency.com||ng
 Daily Trust Newspaper|online|dailytrust.com.ng||ng
 Daily Telegraph New Telegraph Online|online|newtelegraphonline.com||ng
 The Point|online|thepointng.com||ng
+The Daily Times|online|dailytimes.ng||ng
             """
 
         mediums = []
