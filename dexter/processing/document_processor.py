@@ -62,6 +62,7 @@ class DocumentProcessor:
             TheNationCrawler(),
             MediaMaxNetCrawler(),
             LeadershipCrawler(),
+            TheInterview(),
             # must come last
             GenericCrawler()]
         self.extractors = [
@@ -362,6 +363,7 @@ class DocumentProcessorNT:
             TheNationCrawler(),
             MediaMaxNetCrawler(),
             LeadershipCrawler(),
+            TheInterview(),
             # must come last
             GenericCrawler()]
 
