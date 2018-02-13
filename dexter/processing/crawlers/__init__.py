@@ -28,3 +28,4 @@ from .afp import AFPCrawler
 from .naijanews import NaijaNewsCrawler
 from .dailytrustnp import DailyTrustNPCrawler
 from .newteleonline import NewTeleOnlineCrawler
+from .thepoint import ThePointCrawler

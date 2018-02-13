@@ -187,6 +187,7 @@ Agence France Presse|online|afp.com||fr
 Naija News Agency|online|naijanewsagency.com||ng
 Daily Trust Newspaper|online|dailytrust.com.ng||ng
 Daily Telegraph New Telegraph Online|online|newtelegraphonline.com||ng
+The Point|online|thepointng.com||ng
             """
 
         mediums = []
