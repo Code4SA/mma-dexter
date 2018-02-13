@@ -191,6 +191,7 @@ The Point|online|thepointng.com||ng
 The Daily Times|online|dailytimes.ng||ng
 The Nation Online|online|thenationonlineng.net||ng
 Media Max Network|online|mediamaxnetwork.co.ke||ke
+Leadership|online|leadership.ng||ng
             """
 
         mediums = []
