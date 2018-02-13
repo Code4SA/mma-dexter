@@ -27,3 +27,4 @@ from .classicfm import ClassicFMCrawler
 from .afp import AFPCrawler
 from .naijanews import NaijaNewsCrawler
 from .dailytrustnp import DailyTrustNPCrawler
+from .newteleonline import NewTeleOnlineCrawler
