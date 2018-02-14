@@ -193,6 +193,7 @@ The Nation Online|online|thenationonlineng.net||ng
 Media Max Network|online|mediamaxnetwork.co.ke||ke
 Leadership|online|leadership.ng||ng
 The Interview|online|theinterview.com.ng||ng
+RSA Parliament|online|parliament.gov.za||za
             """
 
         mediums = []

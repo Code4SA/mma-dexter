@@ -34,3 +34,4 @@ from .thenation import TheNationCrawler
 from .mediamaxnet import MediaMaxNetCrawler
 from .leadership import LeadershipCrawler
 from .theinterview import TheInterview
+from .rsaparliament import RSAParliament
