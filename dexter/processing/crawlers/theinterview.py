@@ -7,7 +7,7 @@ import requests
 from .base import BaseCrawler
 from ...models import Entity, Author, AuthorType
 
-class TheInterview(BaseCrawler):
+class TheInterviewCrawler(BaseCrawler):
     TI_RE = re.compile('(www\.)?theinterview.com.ng')
 
     def offer(self, url):
@@ -33,7 +33,7 @@ class TheInterview(BaseCrawler):
 
     def extract(self, doc, raw_html):
         """ Extract text and other things from the raw_html for this document. """
-        super(TheInterview, self).extract(doc, raw_html)
+        super(TheInterviewCrawler, self).extract(doc, raw_html)
 
         soup = BeautifulSoup(raw_html)
 

@@ -33,5 +33,6 @@ from .dailytimes import DailyTimesCrawler
 from .thenation import TheNationCrawler
 from .mediamaxnet import MediaMaxNetCrawler
 from .leadership import LeadershipCrawler
-from .theinterview import TheInterview
-from .rsaparliament import RSAParliament
+from .theinterview import TheInterviewCrawler
+from .rsaparliament import RSAParliamentCrawler
+from .guardian import GuardianCrawler

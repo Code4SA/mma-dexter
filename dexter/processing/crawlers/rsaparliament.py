@@ -7,7 +7,7 @@ import requests
 from .base import BaseCrawler
 from ...models import Entity, Author, AuthorType
 
-class RSAParliament(BaseCrawler):
+class RSAParliamentCrawler(BaseCrawler):
     RSAP_RE = re.compile('(www\.)?parliament.gov.za')
 
     def offer(self, url):
@@ -31,7 +31,7 @@ class RSAParliament(BaseCrawler):
 
     def extract(self, doc, raw_html):
         """ Extract text and other things from the raw_html for this document. """
-        super(RSAParliament, self).extract(doc, raw_html)
+        super(RSAParliamentCrawler, self).extract(doc, raw_html)
 
         soup = BeautifulSoup(raw_html)
 
@@ -53,11 +53,8 @@ class RSAParliament(BaseCrawler):
             date = ''.join(nodes[-1].contents[-1])
             author = ''.join(nodes[-1].contents[0])
 
-        print "======================================================"
-        print "Date: %s" % (date)
-        print "Author: %s" % (author)
-        print "======================================================"
         doc.published_at = self.parse_timestamp(date)
+        
         if author:
             if 'By ' in author:
                 doc.author = Author.get_or_create(author[author.index('By ') + 3:].strip(), AuthorType.journalist())
@@ -65,16 +62,3 @@ class RSAParliament(BaseCrawler):
                 doc.author = Author.get_or_create(author.strip(), AuthorType.journalist())
         else:
             doc.author = Author.unknown()
-
-        print '========================================================================='
-        print 'Title %s' % (doc.title)
-        print '-------------------------------------------------------------------------'
-        print 'published_at %s' % (doc.published_at)
-        print '-------------------------------------------------------------------------'
-        print 'summary %s' % (doc.summary)
-        print '-------------------------------------------------------------------------'
-        print 'text %s' % (doc.text)
-        print '-------------------------------------------------------------------------'
-        print 'author %s' % (doc.author.name)
-        print '========================================================================='
-        print '========================================================================='
