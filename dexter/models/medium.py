@@ -195,6 +195,7 @@ Leadership|online|leadership.ng||ng
 The Interview|online|theinterview.com.ng||ng
 RSA Parliament|online|parliament.gov.za||za
 Guardian|online|guardian.ng||ng
+Naitional Daily Nigeria|online|nationaldailyng.com||ng
             """
 
         mediums = []

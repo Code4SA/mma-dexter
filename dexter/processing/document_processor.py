@@ -65,6 +65,7 @@ class DocumentProcessor:
             TheInterviewCrawler(),
             RSAParliamentCrawler(),
             GuardianCrawler(),
+            NationalDailyNgCrawler(),
             # must come last
             GenericCrawler()]
         self.extractors = [
@@ -368,6 +369,7 @@ class DocumentProcessorNT:
             TheInterviewCrawler(),
             RSAParliamentCrawler(),
             GuardianCrawler(),
+            NationalDailyNgCrawler(),
             # must come last
             GenericCrawler()]
 

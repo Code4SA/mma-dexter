@@ -36,3 +36,4 @@ from .leadership import LeadershipCrawler
 from .theinterview import TheInterviewCrawler
 from .rsaparliament import RSAParliamentCrawler
 from .guardian import GuardianCrawler
+from .nationaldailyng import NationalDailyNgCrawler
