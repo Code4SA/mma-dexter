@@ -42,3 +42,4 @@ from .acdivoca import ACDIVOCACrawler
 from .thisdaylive import ThisDayLiveCrawler
 from .channelafrica import ChannelAfricaCrawler
 from .nan import NANCrawler
+from .nigeriatoday import NigeriaTodayCrawler

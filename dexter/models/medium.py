@@ -201,6 +201,7 @@ ACDIVOCA|online|acdivoca.org||us
 This Day Live|online|thisdaylive.com||ng
 Channel Africa|online|channelafrica.co.za||za
 News Agency Of Nigeria|online|nan.ng||ng
+Nigeria Today|online|nigeriatoday.ng||ng
             """
 
         mediums = []
