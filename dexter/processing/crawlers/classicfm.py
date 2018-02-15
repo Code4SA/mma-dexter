@@ -22,20 +22,29 @@ class ClassicFMCrawler(BaseCrawler):
         soup = BeautifulSoup(raw_html)
 
         # gather title
-        doc.title = self.extract_plaintext(soup.select(''))
+        doc.title = self.extract_plaintext(soup.select('#maincontent #page-title'))
 
         #gather publish date
-        date = self.extract_plaintext(soup.select(''))
+        date = doc.url[-10:]
         doc.published_at = self.parse_timestamp(date)
 
         #gather text and summary
-        nodes = soup.select('')
+        nodes = soup.select('#maincontent .field-item p')
         doc.summary = "\n\n".join(p.text.strip() for p in nodes[:1])
         doc.text = "\n\n".join(p.text.strip() for p in nodes)
 
         # gather author 
-        author = self.extract_plaintext(soup.select(''))
-        if author:
-            doc.author = Author.get_or_create(author.strip(), AuthorType.journalist())
-        else:
-            doc.author = Author.unknown()
+        doc.author = Author.unknown()
+
+        print '========================================================================='
+        print 'Title %s' % (doc.title)
+        print '-------------------------------------------------------------------------'
+        print 'published_at %s' % (doc.published_at)
+        print '-------------------------------------------------------------------------'
+        print 'summary %s' % (doc.summary)
+        print '-------------------------------------------------------------------------'
+        print 'text %s' % (doc.text)
+        print '-------------------------------------------------------------------------'
+        print 'author %s' % (doc.author.name)
+        print '========================================================================='
+        print '========================================================================='
