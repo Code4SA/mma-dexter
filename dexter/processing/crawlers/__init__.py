@@ -40,3 +40,4 @@ from .nationaldailyng import NationalDailyNgCrawler
 from .nta import NTACrawler
 from .acdivoca import ACDIVOCACrawler
 from .thisdaylive import ThisDayLiveCrawler
+from .channelafrica import ChannelAfricaCrawler
