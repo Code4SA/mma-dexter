@@ -68,6 +68,7 @@ class DocumentProcessor:
             NationalDailyNgCrawler(),
             NTACrawler(),
             ACDIVOCACrawler(),
+            ThisDayLiveCrawler(),
             # must come last
             GenericCrawler()]
         self.extractors = [
@@ -374,6 +375,7 @@ class DocumentProcessorNT:
             NationalDailyNgCrawler(),
             NTACrawler(),
             ACDIVOCACrawler(),
+            ThisDayLiveCrawler(),
             # must come last
             GenericCrawler()]
 

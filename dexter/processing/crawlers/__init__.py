@@ -39,3 +39,4 @@ from .guardian import GuardianCrawler
 from .nationaldailyng import NationalDailyNgCrawler
 from .nta import NTACrawler
 from .acdivoca import ACDIVOCACrawler
+from .thisdaylive import ThisDayLiveCrawler
