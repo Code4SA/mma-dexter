@@ -197,6 +197,7 @@ RSA Parliament|online|parliament.gov.za||za
 Guardian|online|guardian.ng||ng
 Naitional Daily Nigeria|online|nationaldailyng.com||ng
 Nigerian Television Authority|online|nta.ng||ng
+ACDIVOCA|online|acdivoca.org||us
             """
 
         mediums = []

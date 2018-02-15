@@ -52,6 +52,7 @@ United Kingdom (Great Britain)|gb
 Kenya|ke
 Nigeria|ng
 France|fr
+United States of America|us
             """
 
         countries = []
