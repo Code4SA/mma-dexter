@@ -38,6 +38,7 @@ class DocumentProcessor:
             PostZambiaCrawler(),
             TimesZambiaCrawler(),
             NationKECrawler(),
+            StandardMediaKTNCrawler(),
             StandardMediaCrawler(),
             TheStarKECrawler(),
             TheEastAfricanKECrawler(),
@@ -204,7 +205,6 @@ class DocumentProcessor:
             if not self.newstools_crawler.offer(url):
                 self.log.info("No medium for URL, ignoring: %s" % url)
                 return
-
             # this sets up basic info
             doc = self.newstools_crawler.crawl(item)
             try:
@@ -349,6 +349,7 @@ class DocumentProcessorNT:
             PostZambiaCrawler(),
             TimesZambiaCrawler(),
             NationKECrawler(),
+            StandardMediaKTNCrawler(),
             StandardMediaCrawler(),
             TheStarKECrawler(),
             TheEastAfricanKECrawler(),

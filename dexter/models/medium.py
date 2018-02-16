@@ -203,6 +203,7 @@ Channel Africa|online|channelafrica.co.za||za
 News Agency Of Nigeria|online|nan.ng||ng
 Nigeria Today|online|nigeriatoday.ng||ng
 Business Day Online|online|businessdayonline.com||ng
+Standard Media KTN News|online|standardmedia.co.ke/ktnnews||ke
             """
 
         mediums = []

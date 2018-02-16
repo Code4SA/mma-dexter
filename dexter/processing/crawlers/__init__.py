@@ -44,3 +44,4 @@ from .channelafrica import ChannelAfricaCrawler
 from .nan import NANCrawler
 from .nigeriatoday import NigeriaTodayCrawler
 from .businessdayonline import BusinessDayOnlineCrawler
+from .standardmediaktnnews import StandardMediaKTNCrawler
