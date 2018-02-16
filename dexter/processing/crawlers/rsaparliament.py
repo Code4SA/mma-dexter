@@ -45,20 +45,18 @@ class RSAParliamentCrawler(BaseCrawler):
         doc.text = "\n\n".join(p.text.strip() for p in nodes[:-1])
 
         #gather publish date
-        #gather author 
-        if nodes[-1].find('strong') == -1:
-            date = ''.join(nodes[-1].find('br').next_siblings)
-            author = ''.join(nodes[-1].find('br').previous_siblings)
-        else:
-            date = ''.join(nodes[-1].contents[-1])
-            author = ''.join(nodes[-1].contents[0])
-
-        doc.published_at = self.parse_timestamp(date)
+        date_pattern = re.compile('(?:\s|\w){1}(\d{1,2} (?:January|February|March|April|May|June|July|August|September|October|November|December) \d{4})(?:[\s\w]|$)')
+        if re.search(date_pattern, nodes[0].text) != None:
+            date = re.search(date_pattern, nodes[0].text).group(0)
+        if re.search(date_pattern, nodes[-1].text) != None: 
+            date = re.search(date_pattern, nodes[-1].text).group(0)
+        doc.published_at = self.parse_timestamp(date.strip())    
         
-        if author:
-            if 'By ' in author:
-                doc.author = Author.get_or_create(author[author.index('By ') + 3:].strip(), AuthorType.journalist())
-            else:
-                doc.author = Author.get_or_create(author.strip(), AuthorType.journalist())
+        #gather author 
+        author_pattern = re.compile('(?:By )?([\w ]*)\s*(?:\d{1,2} (?:January|February|March|April|May|June|July|August|September|October|November|December) \d{4})(?:\s|$)|(?:Name: )([\w ]+)')
+        reg_result = re.search(author_pattern, nodes[-1].text)
+        if reg_result != None:
+            author = reg_result.group(1) if reg_result.group(1) else reg_result.group(2)
+            doc.author = Author.get_or_create(author.strip(), AuthorType.journalist())
         else:
             doc.author = Author.unknown()
