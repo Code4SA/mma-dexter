@@ -74,6 +74,7 @@ class DocumentProcessor:
             NANCrawler(),
             NigeriaTodayCrawler(),
             BusinessDayOnlineCrawler(),
+            GlobalTimesCN(),
             # must come last
             GenericCrawler()]
         self.extractors = [
@@ -385,6 +386,7 @@ class DocumentProcessorNT:
             NANCrawler(),
             NigeriaTodayCrawler(),
             BusinessDayOnlineCrawler(),
+            GlobalTimesCN(),
             # must come last
             GenericCrawler()]
 

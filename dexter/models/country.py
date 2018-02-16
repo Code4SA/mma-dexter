@@ -53,6 +53,7 @@ Kenya|ke
 Nigeria|ng
 France|fr
 United States of America|us
+China|cn
             """
 
         countries = []
