@@ -76,6 +76,7 @@ class DocumentProcessor:
             BusinessDayOnlineCrawler(),
             GlobalTimesCN(),
             NationalMirrorCrawler(),
+            MonitorKECrawler(),
             # must come last
             GenericCrawler()]
         self.extractors = [
@@ -389,6 +390,7 @@ class DocumentProcessorNT:
             BusinessDayOnlineCrawler(),
             GlobalTimesCN(),
             NationalMirrorCrawler(),
+            MonitorKECrawler(),
             # must come last
             GenericCrawler()]
 
