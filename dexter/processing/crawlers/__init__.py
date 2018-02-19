@@ -46,3 +46,4 @@ from .nigeriatoday import NigeriaTodayCrawler
 from .businessdayonline import BusinessDayOnlineCrawler
 from .standardmediaktnnews import StandardMediaKTNCrawler
 from .globaltimescn import GlobalTimesCN
+from .nationalmirror import NationalMirrorCrawler

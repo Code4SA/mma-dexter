@@ -205,6 +205,7 @@ Nigeria Today|online|nigeriatoday.ng||ng
 Business Day Online|online|businessdayonline.com||ng
 Standard Media KTN News|online|standardmedia.co.ke/ktnnews||ke
 Global Times China|online|globaltimes.cn||cn
+National Mirror|online|nationalmirroronline.net||ng
             """
 
         mediums = []
