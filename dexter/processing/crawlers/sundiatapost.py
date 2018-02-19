@@ -63,9 +63,6 @@ class SundiataPostCrawler(BaseCrawler):
         # gather author
         author = ''
         entry_author = nodes[0].text
-        print "=============================================="
-        print entry_author
-        print "=============================================="
         if 'By ' in entry_author:
             if '\n' in entry_author:
                 author = entry_author[entry_author.index('By ') + 3:entry_author.index('\n')].strip()
@@ -78,15 +75,3 @@ class SundiataPostCrawler(BaseCrawler):
         else:
             doc.author = Author.unknown()
 
-        print '========================================================================='
-        print 'Title %s' % (doc.title)
-        print '-------------------------------------------------------------------------'
-        print 'published_at %s' % (doc.published_at)
-        print '-------------------------------------------------------------------------'
-        print 'summary %s' % (doc.summary)
-        print '-------------------------------------------------------------------------'
-        print 'text %s' % (doc.text)
-        print '-------------------------------------------------------------------------'
-        print 'author %s' % (doc.author.name)
-        print '========================================================================='
-        print '========================================================================='
