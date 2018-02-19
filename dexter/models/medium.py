@@ -208,6 +208,7 @@ Global Times China|online|globaltimes.cn||cn
 National Mirror|online|nationalmirroronline.net||ng
 Monitor Kenya|online|monitor.co.ke||ke
 Newsverge|online|newsverge.com||ng
+Sundiata Post|online|sundiatapost.com||ng
             """
 
         mediums = []
