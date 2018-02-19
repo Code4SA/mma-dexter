@@ -50,3 +50,4 @@ from .nationalmirror import NationalMirrorCrawler
 from .monitorke import MonitorKECrawler
 from .newsverge import NewsvergeCrawler
 from .sundiatapost import SundiataPostCrawler
+from .agrilinks import AgrilinksCrawler

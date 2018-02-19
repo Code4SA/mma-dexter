@@ -79,6 +79,7 @@ class DocumentProcessor:
             MonitorKECrawler(),
             NewsvergeCrawler(),
             SundiataPostCrawler(),
+            AgrilinksCrawler(),
             # must come last
             GenericCrawler()]
         self.extractors = [
@@ -395,6 +396,7 @@ class DocumentProcessorNT:
             MonitorKECrawler(),
             NewsvergeCrawler(),
             SundiataPostCrawler(),
+            AgrilinksCrawler(),
             # must come last
             GenericCrawler()]
 
