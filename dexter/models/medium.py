@@ -207,6 +207,7 @@ Standard Media KTN News|online|standardmedia.co.ke/ktnnews||ke
 Global Times China|online|globaltimes.cn||cn
 National Mirror|online|nationalmirroronline.net||ng
 Monitor Kenya|online|monitor.co.ke||ke
+Newsverge|online|newsverge.com||ng
             """
 
         mediums = []
