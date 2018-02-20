@@ -86,6 +86,7 @@ class DocumentProcessor:
             IndependentNGCrawler(),
             TheNerveAfricaCrawler(),
             AmehNewsCrawler(),
+            SunNewsOnlineCrawler(),
             # must come last
             GenericCrawler()]
         self.extractors = [
@@ -408,6 +409,7 @@ class DocumentProcessorNT:
             IndependentNGCrawler(),
             TheNerveAfricaCrawler(),
             AmehNewsCrawler(),
+            SunNewsOnlineCrawler(),
             # must come last
             GenericCrawler()]
 

@@ -57,3 +57,4 @@ from .theguardianuk import TheGuardianUKCrawler
 from .independentng import IndependentNGCrawler
 from .thenerveafrica import TheNerveAfricaCrawler
 from .amehnews import AmehNewsCrawler
+from .sunnewsonline import SunNewsOnlineCrawler
