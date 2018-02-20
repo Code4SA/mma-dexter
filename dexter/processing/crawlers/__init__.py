@@ -61,3 +61,4 @@ from .sunnewsonline import SunNewsOnlineCrawler
 from .seedmagazine import SeedMagazineCrawler
 from .hallmarknews import HallmarkNewsCrawler
 from .destinyconnect import DestinyConnectCrawler
+from .economist import EconomistCrawler

@@ -220,6 +220,7 @@ Sun News Online|online|sunnewsonline.com||ng
 Seed Magazine|online|seedmagazine.co.ke||ke
 Business Hallmark News|online|hallmarknews.com||ng
 Destiny Connect|online|destinyconnect.com||za
+The Economist|online|economist.com||us
             """
 
         mediums = []
