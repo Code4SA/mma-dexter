@@ -92,6 +92,7 @@ class DocumentProcessor:
             DestinyConnectCrawler(),
             EconomistCrawler(),
             WashingtonPostCrawler(),
+            AmaBhunganeCrawler(),
             # must come last
             GenericCrawler()]
         self.extractors = [
@@ -420,6 +421,7 @@ class DocumentProcessorNT:
             DestinyConnectCrawler(),
             EconomistCrawler(),
             WashingtonPostCrawler(),
+            AmaBhunganeCrawler(),
             # must come last
             GenericCrawler()]
 

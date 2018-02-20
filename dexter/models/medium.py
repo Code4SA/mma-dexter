@@ -222,6 +222,7 @@ Business Hallmark News|online|hallmarknews.com||ng
 Destiny Connect|online|destinyconnect.com||za
 The Economist|online|economist.com||us
 Washington Post|online|washingtonpost.com||us
+Ama Bhungane|online|amabhungane.co.za||za
             """
 
         mediums = []

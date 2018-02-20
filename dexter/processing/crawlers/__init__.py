@@ -63,3 +63,4 @@ from .hallmarknews import HallmarkNewsCrawler
 from .destinyconnect import DestinyConnectCrawler
 from .economist import EconomistCrawler
 from .washingtonpost import WashingtonPostCrawler
+from .amabhungane import AmaBhunganeCrawler
