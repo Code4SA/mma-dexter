@@ -88,6 +88,7 @@ class DocumentProcessor:
             AmehNewsCrawler(),
             SunNewsOnlineCrawler(),
             SeedMagazineCrawler(),
+            HallmarkNewsCrawler(),
             # must come last
             GenericCrawler()]
         self.extractors = [
@@ -412,6 +413,7 @@ class DocumentProcessorNT:
             AmehNewsCrawler(),
             SunNewsOnlineCrawler(),
             SeedMagazineCrawler(),
+            HallmarkNewsCrawler(),
             # must come last
             GenericCrawler()]
 

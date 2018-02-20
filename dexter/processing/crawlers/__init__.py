@@ -59,3 +59,4 @@ from .thenerveafrica import TheNerveAfricaCrawler
 from .amehnews import AmehNewsCrawler
 from .sunnewsonline import SunNewsOnlineCrawler
 from .seedmagazine import SeedMagazineCrawler
+from .hallmarknews import HallmarkNewsCrawler
