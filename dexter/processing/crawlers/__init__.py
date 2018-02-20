@@ -54,3 +54,4 @@ from .agrilinks import AgrilinksCrawler
 from .businessdailyafrica import BusinessDailyAfricaCrawler
 from .thebusinesspost import TheBusinessPostCrawler
 from .theguardianuk import TheGuardianUKCrawler
+from .independentng import IndependentNGCrawler
