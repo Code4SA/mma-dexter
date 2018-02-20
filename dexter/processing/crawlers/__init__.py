@@ -52,3 +52,4 @@ from .newsverge import NewsvergeCrawler
 from .sundiatapost import SundiataPostCrawler
 from .agrilinks import AgrilinksCrawler
 from .businessdailyafrica import BusinessDailyAfricaCrawler
+from .thebusinesspost import TheBusinessPostCrawler

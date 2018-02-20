@@ -81,6 +81,7 @@ class DocumentProcessor:
             SundiataPostCrawler(),
             AgrilinksCrawler(),
             BusinessDailyAfricaCrawler(),
+            TheBusinessPostCrawler(),
             # must come last
             GenericCrawler()]
         self.extractors = [
@@ -399,6 +400,7 @@ class DocumentProcessorNT:
             SundiataPostCrawler(),
             AgrilinksCrawler(),
             BusinessDailyAfricaCrawler(),
+            TheBusinessPostCrawler(),
             # must come last
             GenericCrawler()]
 

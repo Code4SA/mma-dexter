@@ -7,13 +7,13 @@ import requests
 from .base import BaseCrawler
 from ...models import Entity, Author, AuthorType
 
-class BusinessDailyAfricaCrawler(BaseCrawler):
-    BDA_RE = re.compile('(www\.)?businessdailyafrica.com')
+class TheBusinessPostCrawler(BaseCrawler):
+    TBP_RE = re.compile('(www\.)?thebusinesspost.ng')
 
     def offer(self, url):
         """ Can this crawler process this URL? """
         parts = urlparse(url)
-        return bool(self.BDA_RE.match(parts.netloc))
+        return bool(self.TBP_RE.match(parts.netloc))
 
     def canonicalise_url(self, url):
         """ Strip anchors, etc."""
@@ -31,30 +31,30 @@ class BusinessDailyAfricaCrawler(BaseCrawler):
 
     def extract(self, doc, raw_html):
         """ Extract text and other things from the raw_html for this document. """
-        super(BusinessDailyAfricaCrawler, self).extract(doc, raw_html)
+        super(TheBusinessPostCrawler, self).extract(doc, raw_html)
 
         soup = BeautifulSoup(raw_html)
 
         # gather title
-        doc.title = self.extract_plaintext(soup.select('article.article-story .page-box-inner header .article-title'))
+        doc.title = self.extract_plaintext(soup.select('.article-container article.story .media-heading'))
 
-        #gather publish date
-        date = self.extract_plaintext(soup.select('article.article-story .page-box-inner header .byline'))
-        doc.published_at = self.parse_timestamp(date)
+        nodes = soup.select('.article-container article.story p')
+        
 
         #gather text and summary
-        nodes = soup.select('article.article-story .page-box-inner p')
-        doc.summary = "\n\n".join(p.text.strip() for p in nodes[:2])
-        doc.text = "\n\n".join(p.text.strip() for p in nodes)
+        doc.summary = "\n\n".join(p.text.strip() for p in nodes[3:4])
+        doc.text = "\n\n".join(p.text.strip() for p in nodes[3:])
 
+        byline = nodes[2].text
+        
         # gather author
-        author = ''
-        byline = self.extract_plaintext(soup.select('article.article-story .page-box-inner header .mobileShow .byline'))
-        if 'BY ' in byline:
-            author = byline[byline.index('BY ') + 3:]
-        else:
-            author = byline
+        author = byline[:byline.index(' | ')]
         if author:
             doc.author = Author.get_or_create(author.strip(), AuthorType.journalist())
         else:
             doc.author = Author.unknown()
+
+        #gather publish date
+        sub_byline = byline[byline.index(' | ') + 2:]
+        date = sub_byline[:sub_byline.index(' | ')].strip()
+        doc.published_at = self.parse_timestamp(date)

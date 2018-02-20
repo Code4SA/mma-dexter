@@ -211,6 +211,7 @@ Newsverge|online|newsverge.com||ng
 Sundiata Post|online|sundiatapost.com||ng
 Agrilinks|online|agrilinks.org||us
 Business Daily Africa|online|businessdailyafrica.com||ke
+The Business Post|online|thebusinesspost.ng||ng
             """
 
         mediums = []
