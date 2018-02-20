@@ -62,3 +62,4 @@ from .seedmagazine import SeedMagazineCrawler
 from .hallmarknews import HallmarkNewsCrawler
 from .destinyconnect import DestinyConnectCrawler
 from .economist import EconomistCrawler
+from .washingtonpost import WashingtonPostCrawler
