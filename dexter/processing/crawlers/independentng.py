@@ -53,16 +53,3 @@ class IndependentNGCrawler(BaseCrawler):
             doc.author = Author.get_or_create(author.strip(), AuthorType.journalist())
         else:
             doc.author = Author.unknown()
-
-        print '========================================================================='
-        print 'Title %s' % (doc.title)
-        print '-------------------------------------------------------------------------'
-        print 'published_at %s' % (doc.published_at)
-        print '-------------------------------------------------------------------------'
-        print 'summary %s' % (doc.summary)
-        print '-------------------------------------------------------------------------'
-        print 'text %s' % (doc.text)
-        print '-------------------------------------------------------------------------'
-        print 'author %s' % (doc.author.name)
-        print '========================================================================='
-        print '========================================================================='
