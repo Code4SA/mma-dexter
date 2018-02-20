@@ -214,6 +214,7 @@ Business Daily Africa|online|businessdailyafrica.com||ke
 The Business Post|online|thebusinesspost.ng||ng
 The Guardian UK|online|theguardian.com||gb
 Independent NG|online|independent.ng||ng
+The Nerve Africa|online|thenerveafrica.com||ng
             """
 
         mediums = []
