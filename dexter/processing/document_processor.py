@@ -82,6 +82,7 @@ class DocumentProcessor:
             AgrilinksCrawler(),
             BusinessDailyAfricaCrawler(),
             TheBusinessPostCrawler(),
+            TheGuardianUKCrawler(),
             # must come last
             GenericCrawler()]
         self.extractors = [
@@ -204,7 +205,6 @@ class DocumentProcessor:
             if not url:
                 self.log.info("URL could not be parsed, ignoring: %s" % url)
                 return None
-
             existing = Document.query.filter(Document.url == url).first()
             if existing:
                 self.log.info("URL has already been processed, ignoring: %s" % url)
@@ -401,6 +401,7 @@ class DocumentProcessorNT:
             AgrilinksCrawler(),
             BusinessDailyAfricaCrawler(),
             TheBusinessPostCrawler(),
+            TheGuardianUKCrawler(),
             # must come last
             GenericCrawler()]
 
