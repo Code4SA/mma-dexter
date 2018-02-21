@@ -65,3 +65,4 @@ from .economist import EconomistCrawler
 from .washingtonpost import WashingtonPostCrawler
 from .amabhungane import AmaBhunganeCrawler
 from .africainvestor import AfricaInvestorCrawler
+from .outrepreneurs import OutrepreneursCrawler

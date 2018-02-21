@@ -224,6 +224,7 @@ The Economist|online|economist.com||us
 Washington Post|online|washingtonpost.com||us
 Ama Bhungane|online|amabhungane.co.za||za
 Africa Investor|online|africainvestor.com||za
+Outrepreneurs|online|outrepreneurs.com||ng
             """
 
         mediums = []
