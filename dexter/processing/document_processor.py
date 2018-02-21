@@ -96,6 +96,7 @@ class DocumentProcessor:
             AfricaInvestorCrawler(),
             OutrepreneursCrawler(),
             CNBCAfricaCrawler(),
+            PlanIntlCrawler(),
             # must come last
             GenericCrawler()]
         self.extractors = [
@@ -428,6 +429,7 @@ class DocumentProcessorNT:
             AfricaInvestorCrawler(),
             OutrepreneursCrawler(),
             CNBCAfricaCrawler(),
+            PlanIntlCrawler(),
             # must come last
             GenericCrawler()]
 

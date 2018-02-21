@@ -67,3 +67,4 @@ from .amabhungane import AmaBhunganeCrawler
 from .africainvestor import AfricaInvestorCrawler
 from .outrepreneurs import OutrepreneursCrawler
 from .cnbcafrica import CNBCAfricaCrawler
+from .planintl import PlanIntlCrawler

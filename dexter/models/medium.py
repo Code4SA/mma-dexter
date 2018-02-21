@@ -226,6 +226,7 @@ Ama Bhungane|online|amabhungane.co.za||za
 Africa Investor|online|africainvestor.com||za
 Outrepreneurs|online|outrepreneurs.com||ng
 CNBC Africa|online|cnbcafrica.com||za
+Plan International|online|plan-international.org||gb
             """
 
         mediums = []
