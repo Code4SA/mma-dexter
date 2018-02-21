@@ -223,6 +223,7 @@ Destiny Connect|online|destinyconnect.com||za
 The Economist|online|economist.com||us
 Washington Post|online|washingtonpost.com||us
 Ama Bhungane|online|amabhungane.co.za||za
+Africa Investor|online|africainvestor.com||za
             """
 
         mediums = []
