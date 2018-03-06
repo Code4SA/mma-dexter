@@ -9,7 +9,7 @@ from ..models import Document, db, DocumentType, DocumentFairness, Fairness, Ana
 from ..processing import ProcessingError
 
 from .crawlers import *  # noqa
-from .extractors import AlchemyExtractor, CalaisExtractor, SourcesExtractor, PlacesExtractor
+from .extractors import WatsonExtractor, CalaisExtractor, SourcesExtractor, PlacesExtractor
 
 
 class DocumentProcessor:
@@ -51,7 +51,7 @@ class DocumentProcessor:
             # must come last
             GenericCrawler()]
         self.extractors = [
-            AlchemyExtractor(),
+            WatsonExtractor(),
             CalaisExtractor(),
             SourcesExtractor(),
             PlacesExtractor()]
@@ -338,7 +338,7 @@ class DocumentProcessorNT:
             GenericCrawler()]
 
         self.extractors = [
-            AlchemyExtractor(),
+            WatsonExtractor(),
             CalaisExtractor(),
             SourcesExtractor(),
             PlacesExtractor()]

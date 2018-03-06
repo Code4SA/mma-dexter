@@ -11,8 +11,12 @@ import dexter.routes
 # setup extraction
 from .processing.extractors.alchemy import AlchemyExtractor
 from .processing.extractors.calais import CalaisExtractor
+from .processing.extractors.watson import WatsonExtractor
+
 AlchemyExtractor.API_KEY = app.config.get('ALCHEMY_API_KEY')
 CalaisExtractor.API_KEY = app.config.get('CALAIS_API_KEY')
+WatsonExtractor.WATSON_PASSWORD = app.config.get('WATSON_PASSWORD')
+WatsonExtractor.WATSON_USERNAME = app.config.get('WATSON_USERNAME')
 
 
 # setup crawlers
