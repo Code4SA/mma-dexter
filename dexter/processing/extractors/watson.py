@@ -12,8 +12,9 @@ class WatsonExtractor(BaseExtractor):
     """ Use the Alchemy API to extract entities and other
     useful goodies from a document.
     """
-    WATSON_USERNAME = 'a8a3368f-f80c-400a-9b03-407de1f7cf6e'
-    WATSON_PASSWORD = 'RJfBhl37RZ26'
+
+    WATSON_USERNAME = None
+    WATSON_PASSWORD = None
 
     def __init__(self):
         # NOTE: set the ENV variables WATSON before running the process
