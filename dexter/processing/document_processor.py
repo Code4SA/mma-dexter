@@ -302,7 +302,8 @@ class DocumentProcessor:
 class DocumentProcessorNT:
     log = logging.getLogger(__name__)
 
-    FEED_URL = 'http://newstools.co.za/dexter/articles/%s?%s'
+    FEED_URL = 'http://newstools.co.za/dexter/articles/%s'
+    FEED_FILTER_URL = 'http://newstools.co.za/dexter/articles/%s?%s'
     FEED_USER = 'dexter'
     FEED_PASSWORD = None
 
@@ -539,7 +540,7 @@ class DocumentProcessorNT:
         if self.FEED_PASSWORD is None:
             raise ValueError("%s.FEED_PASSWORD must be set." % self.__class__.__name__)
 
-        r = requests.get(self.FEED_URL % (day.strftime('%d-%m-%Y'), filter_parm),
+        r = requests.get(self.FEED_FILTER_URL % (day.strftime('%d-%m-%Y'), filter_parm),
                          auth=(self.FEED_USER, self.FEED_PASSWORD),
                          verify=False,
                          timeout=60)
