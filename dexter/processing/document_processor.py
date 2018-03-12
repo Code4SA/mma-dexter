@@ -302,7 +302,7 @@ class DocumentProcessor:
 class DocumentProcessorNT:
     log = logging.getLogger(__name__)
 
-    FEED_URL = 'http://newstools.co.za/dexter/articles/%s'
+    FEED_URL = 'http://newstools.co.za/dexter/articles/%s?%s'
     FEED_USER = 'dexter'
     FEED_PASSWORD = None
 
@@ -436,6 +436,35 @@ class DocumentProcessorNT:
             }
             yield item
 
+    def fetch_filtered_daily_feed_items(self, day, filter_parm):
+        """ Fetch the feed for +day+ and yields the items. """
+        tree = self.fetch_filtered_daily_feeds(day, filter_parm)
+
+        items = tree.findall('channel/item')
+        self.log.info("Got %d items from feeds for %s" % (len(items), day))
+
+        for item in items:
+            # <item>
+            #    <url>http://citizen.co.za/afp_feed_article/yankees-pay-tribute-to-retiring-captain-jeter</url>
+            #    <publisher>Citizen</publisher>
+            #    <contenttype>news</contenttype>
+            #    <contenttypeverified>false</contenttypeverified>
+            #    <publishdate>2014-09-07 23:51:00</publishdate>
+            #    <crawldate>2014-09-08 00:03:47</crawldate>
+            #    <title>Yankees pay tribute to retiring captain Jeter</title>
+            #    <author>Unknown</author>
+            #    <text>https://www.newstools.co.za/data/texts/SFM-7IVZ63RG1MZ2XZF4OTTC.txt</text>
+            # </item>
+
+            item = {
+                'url': item.find('url').text,
+                'publishdate': item.find('publishdate').text,
+                'title': item.find('title').text,
+                'author': item.find('author').text,
+                'text_url': item.find('text').text,
+            }
+            yield item
+
     def process_feed_item(self, item):
         """ Process an item pulled from an RSS feed.
 
@@ -499,6 +528,30 @@ class DocumentProcessorNT:
         except:
             db.session.rollback()
             raise
+
+    def fetch_filtered_daily_feeds(self, day, filter_parm):
+        """ Fetch the feed for +day+ and returns an ElementTree instance. """
+        # import xml.etree.ElementTree as ET
+
+        from xml.etree import ElementTree
+        from htmlentitydefs import name2codepoint
+
+        if self.FEED_PASSWORD is None:
+            raise ValueError("%s.FEED_PASSWORD must be set." % self.__class__.__name__)
+
+        r = requests.get(self.FEED_URL % (day.strftime('%d-%m-%Y'), filter_parm),
+                         auth=(self.FEED_USER, self.FEED_PASSWORD),
+                         verify=False,
+                         timeout=60)
+
+        r.raise_for_status()
+
+        parser = ElementTree.XMLParser()
+        parser.parser.UseForeignDTD(True)
+        parser.entity.update((x, unichr(i)) for x, i in name2codepoint.iteritems())
+        etree = ElementTree
+
+        return etree.fromstring(r.text.encode('utf-8'), parser=parser)
 
     def fetch_daily_feeds(self, day):
         """ Fetch the feed for +day+ and returns an ElementTree instance. """
