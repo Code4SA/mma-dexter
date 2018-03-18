@@ -22,11 +22,11 @@ def back_process_feeds():
 
     filter_parm = 'publishdate-gt=2018-3-1,publishdate-lt=2018-3-9'
 
-    if date.today() == date(2018, 3, 18):
+    if date.today() == date(2018, 3, 19):
         date_list = [date(2018, 3, 1), date(2018, 3, 2), date(2018, 3, 4), date(2018, 3, 5)]
         for d in date_list:
             fetch_filtered_daily_feeds.delay(d.isoformat(), filter_parm)
-    elif date.today() == date(2018, 3, 19):
+    elif date.today() == date(2018, 3, 20):
         date_list = [date(2018, 3, 6), date(2018, 3, 7), date(2018, 3, 8), date(2018, 3, 9)]
         for d in date_list:
             fetch_filtered_daily_feeds.delay(d.isoformat(), filter_parm)
@@ -51,7 +51,7 @@ def fetch_filtered_daily_feeds(self, day, filter_parm):
 
         dp = DocumentProcessorNT()
         count = 0
-        for item in dp.fetch_filtered_daily_feed_items(day):
+        for item in dp.fetch_filtered_daily_feed_items(day, filter_parm):
             get_feed_item.delay(item)
             count += 1
     except Exception as e:
