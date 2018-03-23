@@ -51,7 +51,7 @@ class DocumentProcessor:
             # must come last
             GenericCrawler()]
         self.extractors = [
-            WatsonExtractor(),
+            # WatsonExtractor(),
             CalaisExtractor(),
             SourcesExtractor(),
             PlacesExtractor()]
@@ -339,7 +339,7 @@ class DocumentProcessorNT:
             GenericCrawler()]
 
         self.extractors = [
-            WatsonExtractor(),
+            # WatsonExtractor(),
             CalaisExtractor(),
             SourcesExtractor(),
             PlacesExtractor()]
