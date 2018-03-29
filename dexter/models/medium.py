@@ -40,7 +40,14 @@ class Medium(db.Model):
         """
         url_exceptions = [
             'thecitizen.co.tz',
-            'dailynews.co.tz'
+            'dailynews.co.tz',
+            'nigeriatoday.ng',
+            'nta.ng',
+            'nan.ng',
+            'leadership.ng',
+            'independent.ng',
+            'guardian.ng',
+
         ]
         for ex in url_exceptions: 
             # check if it exists in the url add buffer for [https://www.] characters at start
