@@ -22,8 +22,8 @@ def back_process_feeds():
 
     filter_parm = 'publishdate-gt=2018-3-1,publishdate-lt=2018-3-9'
 
-    if date.today() == date(2018, 5, 8):
-        date_list = [date(2018, 5, 1), date(2018, 5, 2)]
+    if date.today() == date(2018, 15, 8):
+        date_list = [date(2018, 5, 1), date(2018, 5, 10)]
         for d in date_list:
             fetch_daily_feeds.delay(d.isoformat())
     else:
