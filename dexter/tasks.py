@@ -20,12 +20,15 @@ log = logging.getLogger(__name__)
 def back_process_feeds():
     """ Enqueue a task to fetch yesterday's feeds. """
 
-    filter_parm = 'publishdate-gt=2018-3-1,publishdate-lt=2018-3-9'
+    if date.today() == date(2018, 6, 14):
+        d1 = date(2017, 1, 1)
+        d2 = date(2018, 6, 12)
+        days = [d1 + timedelta(days=x) for x in range((d2 - d1).days + 1)]
 
-    if date.today() == date(2018, 15, 8):
-        date_list = [date(2018, 5, 1), date(2018, 5, 10)]
-        for d in date_list:
-            fetch_daily_feeds.delay(d.isoformat())
+        filter_parm = 'media=news24-citypress'
+
+        for d in days:
+            fetch_filtered_daily_feeds.delay(d.isoformat(), filter_parm)
     else:
         print 'Already Done!'
 
