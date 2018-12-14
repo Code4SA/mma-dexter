@@ -30,7 +30,7 @@ def back_process_feeds():
         for d in days:
             fetch_filtered_daily_feeds.delay(d.isoformat(), filter_parm)
 
-    elif date.today() == date(2018, 12, 13):
+    elif date.today() == date(2018, 12, 15):
         d1 = date(2018, 12, 10)
         d2 = date(2018, 12, 11)
         days = [d1 + timedelta(days=x) for x in range((d2 - d1).days + 1)]
