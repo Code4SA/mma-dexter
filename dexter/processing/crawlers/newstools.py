@@ -100,7 +100,6 @@ class NewstoolsCrawlerNT(BaseCrawler):
         if m is None:
             return False
 
-
         parts = urlparse(url.lower())
 
         if any(parts.path.startswith(p) for p in self.ignore_paths):
