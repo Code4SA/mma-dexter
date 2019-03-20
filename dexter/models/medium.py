@@ -47,6 +47,8 @@ class Medium(db.Model):
             'leadership.ng',
             'independent.ng',
             'guardian.ng',
+            'dailytimes.ng',
+            'theinterview.ng'
 
         ]
         for ex in url_exceptions: 
