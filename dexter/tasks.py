@@ -21,8 +21,8 @@ def back_process_feeds():
     """ Enqueue a task to fetch yesterday's feeds. """
 
     if date.today() == date(2019, 3, 23):
-        d1 = date(2019, 1, 1)
-        d2 = date(2019, 1, 19)
+        d1 = date(2019, 1, 20)
+        d2 = date(2019, 3, 19)
         days = [d1 + timedelta(days=x) for x in range((d2 - d1).days + 1)]
 
         filter_parm = 'media=sundayindependent'
