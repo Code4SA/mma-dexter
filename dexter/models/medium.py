@@ -74,10 +74,15 @@ class Medium(db.Model):
         # iol.co.za/isolezwe
         domain = domain + parts.path
 
+        # explicitly look for city-press, subdomain does not play nice with current Dexter code
+        if 'city-press.news24.com' in url:
+            medium = Medium.query.get(5)
+
+        else:
         # find the medium with the longest matching domain
-        for medium in sorted(Medium.query.all(), key=lambda m: len(m.domain or ''), reverse=True):
-            if medium.domain and domain.startswith(medium.domain):
-                return medium
+            for medium in sorted(Medium.query.all(), key=lambda m: len(m.domain or ''), reverse=True):
+                if medium.domain and domain.startswith(medium.domain):
+                    return medium
 
         return None
 
