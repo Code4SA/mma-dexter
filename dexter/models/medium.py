@@ -77,6 +77,7 @@ class Medium(db.Model):
         # explicitly look for city-press, subdomain does not play nice with current Dexter code
         if 'city-press.news24.com' in url:
             medium = Medium.query.get(5)
+            return medium
 
         else:
         # find the medium with the longest matching domain
