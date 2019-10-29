@@ -20,8 +20,8 @@ log = logging.getLogger(__name__)
 def back_process_feeds():
     """ Enqueue a task to fetch yesterday's feeds. """
 
-    if date.today() == date(2019, 10, 17):
-        d1 = date(2019, 10, 13)
+    if date.today() == date(2019, 10, 30):
+        d1 = date(2019, 10, 27)
         d2 = date(2019, 4, 21)
         # days = [d1 + timedelta(days=x) for x in range((d2 - d1).days + 1)]
         days = [d1]
@@ -31,8 +31,8 @@ def back_process_feeds():
         for d in days:
             fetch_filtered_daily_feeds.delay(d.isoformat(), filter_parm)
 
-    elif date.today() == date(2019, 6, 7):
-        d1 = date(2019, 6, 4)
+    elif date.today() == date(2019, 10, 31):
+        d1 = date(2019, 10, 24)
         d2 = date(2019, 4, 21)
         # days = [d1 + timedelta(days=x) for x in range((d2 - d1).days + 1)]
         days = [d1]
