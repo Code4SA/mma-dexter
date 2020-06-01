@@ -20,9 +20,9 @@ log = logging.getLogger(__name__)
 def back_process_feeds():
     """ Enqueue a task to fetch yesterday's feeds. """
 
-    if date.today() == date(2020, 2, 18):
-        d1 = date(2020, 2, 11)
-        d2 = date(2020, 4, 21)
+    if date.today() == date(2020, 6, 2):
+        d1 = date(2020, 5, 30)
+        # d2 = date(2020, 4, 21)
         # days = [d1 + timedelta(days=x) for x in range((d2 - d1).days + 1)]
         days = [d1]
 
@@ -31,9 +31,9 @@ def back_process_feeds():
         for d in days:
             fetch_filtered_daily_feeds.delay(d.isoformat(), filter_parm)
 
-    elif date.today() == date(2020, 2, 20):
-        d1 = date(2020, 2, 12)
-        d2 = date(2020, 4, 21)
+    elif date.today() == date(2020, 6, 3):
+        d1 = date(2020, 5, 31)
+        # d2 = date(2020, 4, 21)
         # days = [d1 + timedelta(days=x) for x in range((d2 - d1).days + 1)]
         days = [d1]
 
@@ -65,7 +65,7 @@ def fetch_yesterdays_feeds():
 
 
 # retry after 30 minutes, retry for up to 7 days
-@app.task(bind=True, default_retry_delay=30*60, max_retries=7*24*2)
+@app.task(bind=True, default_retry_delay=60, max_retries=7*24)
 def fetch_filtered_daily_feeds(self, day, filter_parm):
     """ Fetch feed of URLs to crawl and queue up a task to grab and process
     each url. """
