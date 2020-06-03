@@ -101,7 +101,7 @@ class CalaisExtractor(BaseExtractor):
                     'x-ag-access-token': self.API_KEY,
                     'Content-Type': 'text/raw',
                     'outputFormat': 'application/json',
-                })
+                }, verify=False)
             if res.status_code != 200:
                 log.error(res.text)
                 res.raise_for_status()
