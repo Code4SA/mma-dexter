@@ -95,13 +95,13 @@ class CalaisExtractor(BaseExtractor):
                 raise ValueError('%s.%s.API_KEY must be defined.' % (self.__module__, self.__class__.__name__))
 
             res = requests.post(
-                'https://api.thomsonreuters.com/permid/calais',
+                'https://api-eit.refinitiv.com/permid/calais',
                 doc.text.encode('utf-8'),
                 headers={
                     'x-ag-access-token': self.API_KEY,
                     'Content-Type': 'text/raw',
                     'outputFormat': 'application/json',
-                }, verify=False)
+                }, verify=True)
             if res.status_code != 200:
                 log.error(res.text)
                 res.raise_for_status()
