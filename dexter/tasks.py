@@ -66,8 +66,8 @@ def fetch_yesterdays_feeds():
     fetch_daily_feeds.delay(yesterday.isoformat())
 
 
-# retry after 30 minutes, retry for up to 7 days
-@app.task(bind=True, default_retry_delay=60, max_retries=7*24)
+# retry after 60 minutes, retry for up to 7 days
+@app.task(bind=True, default_retry_delay=6*60*60, max_retries=7*4)
 def fetch_filtered_daily_feeds(self, day, filter_parm):
     """ Fetch feed of URLs to crawl and queue up a task to grab and process
     each url. """
@@ -88,8 +88,8 @@ def fetch_filtered_daily_feeds(self, day, filter_parm):
         self.retry()
 
 
-# retry after 30 minutes, retry for up to 7 days
-@app.task(bind=True, default_retry_delay=30*60, max_retries=7*24*2)
+# retry after 60 minutes, retry for up to 7 days
+@app.task(bind=True, default_retry_delay=6*60*60, max_retries=7*4)
 def fetch_daily_feeds(self, day):
     """ Fetch feed of URLs to crawl and queue up a task to grab and process
     each url. """
