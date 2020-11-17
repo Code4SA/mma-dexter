@@ -36,7 +36,7 @@ request_started.connect(log_attach_user_id, app)
 
 
 # setup templates and haml
-from flask.ext.mako import MakoTemplates, _lookup, render_template
+from flask_mako import MakoTemplates, _lookup, render_template
 import haml
 MakoTemplates(app)
 app.config['MAKO_PREPROCESSOR'] = haml.preprocessor
@@ -48,7 +48,7 @@ from flask_wtf.csrf import CsrfProtect
 CsrfProtect(app)
 
 # Database
-from flask.ext.sqlalchemy import SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy(app)
 
 
