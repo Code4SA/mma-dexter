@@ -22,3 +22,6 @@ WatsonExtractor.WATSON_USERNAME = app.config.get('WATSON_USERNAME')
 # setup crawlers
 from .processing import DocumentProcessorNT
 DocumentProcessorNT.FEED_PASSWORD = app.config.get('NEWSTOOLS_FEED_PASSWORD')
+
+from .processing import NewstoolsCrawlerNT
+NewstoolsCrawlerNT.GITHUB_PASSWORD = app.config.get('GITHUB_PASSWORD')

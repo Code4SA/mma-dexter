@@ -76,7 +76,7 @@ class NewstoolsCrawler(BaseCrawler):
 class NewstoolsCrawlerNT(BaseCrawler):
     # New crawler to shift daily feed responsibilities to Newstools (NT)
     # Media-specific crawlers will only be leveraged for manual URL additions
-
+    GITHUB_PASSWORD = None
     # ignore URLs that start with these paths
     ignore_paths = [
         # ignore citizen AFP articles
@@ -140,8 +140,10 @@ class NewstoolsCrawlerNT(BaseCrawler):
         # medium and country
         self.extract(doc, None)
 
+        payload = {"Authorization": "token %s" % self.GITHUB_PASSWORD}
+
         text_url = item['text_url']
-        r_s = requests.get(text_url)
+        r_s = requests.get(text_url, headers=payload)
         s = str(unidecode.unidecode(HTMLParser.HTMLParser().unescape(r_s.text)))
         doc.text = re.sub(' +', ' ', s)
 
