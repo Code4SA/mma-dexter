@@ -48,7 +48,7 @@ celery==3.1.13
 certifi==14.05.14
 cssselect==0.9.1
 decorator==4.0.2
-ecdsa==0.11
+ecdsa==0.13.3
 extras==0.0.3
 fixture==1.5
 flower==0.7.2
