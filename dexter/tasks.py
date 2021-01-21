@@ -20,32 +20,33 @@ log = logging.getLogger(__name__)
 def back_process_feeds():
     """ Enqueue a task to fetch yesterday's feeds. """
 
-    if date.today() == date(2020, 11, 25):
-        d1 = date(2020, 11, 23)
-        days = [d1]
-
-        filter_parm = ''
-
-        for d in days:
-            fetch_filtered_daily_feeds.delay(d.isoformat(), filter_parm)
-
-    elif date.today() == date(2020, 11, 26):
-        d1 = date(2020, 11, 10)
-        days = [d1]
-
-        filter_parm = ''
+    if date.today() == date(2021, 1, 22):
+        d1 = date(2020, 12, 8)
+        d2 = date(2020, 12, 15)
+        days = [d1 + timedelta(days=x) for x in range((d2 - d1).days + 1)]
 
         for d in days:
-            fetch_filtered_daily_feeds.delay(d.isoformat(), filter_parm)
+            for newsroom in ['bhekisisa', 'nigeriahealthwatch', 'premiumtimes', 'newhumanitarian']:
+                filter_parm = 'media=%s' % newsroom
+                fetch_filtered_daily_feeds.delay(d.isoformat(), filter_parm)
 
-    elif date.today() == date(2020, 11, 27):
-        d1 = date(2020, 11, 11)
-        days = [d1]
-
-        filter_parm = ''
+    elif date.today() == date(2021, 1, 23):
+        d1 = date(2019, 8, 13)
+        d2 = date(2020, 12, 15)
+        days = [d1 + timedelta(days=x) for x in range((d2 - d1).days + 1)]
 
         for d in days:
+            filter_parm = 'media=punchng'
             fetch_filtered_daily_feeds.delay(d.isoformat(), filter_parm)
+
+    # elif date.today() == date(2020, 11, 27):
+    #     d1 = date(2020, 11, 11)
+    #     days = [d1]
+    #
+    #     filter_parm = ''
+    #
+    #     for d in days:
+    #         fetch_filtered_daily_feeds.delay(d.isoformat(), filter_parm)
 
     # elif date.today() == date(2020, 6, 6):
     #     d1 = date(2020, 5, 30)
