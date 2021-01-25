@@ -30,7 +30,7 @@ def back_process_feeds():
                 filter_parm = 'media=%s' % newsroom
                 fetch_filtered_daily_feeds.delay(d.isoformat(), filter_parm)
 
-    elif date.today() == date(2021, 1, 23):
+    elif date.today() == date(2021, 1, 26):
         d1 = date(2019, 8, 13)
         d2 = date(2020, 12, 15)
         days = [d1 + timedelta(days=x) for x in range((d2 - d1).days + 1)]
