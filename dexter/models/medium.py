@@ -36,7 +36,7 @@ class Medium(db.Model):
     def is_tld_exception(cls, url):
         """ Test if the url falls within one of the exceptions, 
         this is intended to handle instances where get_tld() 
-        calls fail to recognise urls (eg: .co.tz fials...)
+        calls fail to recognise urls (eg: .co.tz fails...)
         """
         url_exceptions = [
             'thecitizen.co.tz',
@@ -50,6 +50,7 @@ class Medium(db.Model):
             'dailytimes.ng',
             'theinterview.ng',
             'city-press.news24.com'
+            'nation.africa'
         ]
         for ex in url_exceptions: 
             # check if it exists in the url add buffer for [https://www.] characters at start

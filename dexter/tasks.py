@@ -39,14 +39,50 @@ def back_process_feeds():
             filter_parm = 'media=punchng'
             fetch_filtered_daily_feeds.delay(d.isoformat(), filter_parm)
 
-    # elif date.today() == date(2020, 11, 27):
-    #     d1 = date(2020, 11, 11)
-    #     days = [d1]
-    #
-    #     filter_parm = ''
-    #
-    #     for d in days:
-    #         fetch_filtered_daily_feeds.delay(d.isoformat(), filter_parm)
+    elif date.today() == date(2021, 2, 2):
+        d1 = date(2021, 1, 21)
+        days = [d1]
+
+        filter_parm = ''
+
+        for d in days:
+            fetch_filtered_daily_feeds.delay(d.isoformat(), filter_parm)
+
+    elif date.today() == date(2021, 2, 3):
+        d1 = date(2021, 1, 22)
+        days = [d1]
+
+        filter_parm = ''
+
+        for d in days:
+            fetch_filtered_daily_feeds.delay(d.isoformat(), filter_parm)
+
+    elif date.today() == date(2021, 2, 4):
+        d1 = date(2021, 1, 23)
+        days = [d1]
+
+        filter_parm = ''
+
+        for d in days:
+            fetch_filtered_daily_feeds.delay(d.isoformat(), filter_parm)
+
+    elif date.today() == date(2021, 2, 5):
+        d1 = date(2021, 1, 26)
+        days = [d1]
+
+        filter_parm = ''
+
+        for d in days:
+            fetch_filtered_daily_feeds.delay(d.isoformat(), filter_parm)
+
+    elif date.today() == date(2021, 2, 6):
+        d1 = date(2021, 1, 27)
+        days = [d1]
+
+        filter_parm = ''
+
+        for d in days:
+            fetch_filtered_daily_feeds.delay(d.isoformat(), filter_parm)
 
     # elif date.today() == date(2020, 6, 6):
     #     d1 = date(2020, 5, 30)
