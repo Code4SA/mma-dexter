@@ -49,8 +49,9 @@ class Medium(db.Model):
             'guardian.ng',
             'dailytimes.ng',
             'theinterview.ng',
-            'city-press.news24.com'
-            'nation.africa'
+            'city-press.news24.com',
+            'nation.africa',
+            'nation.co.ke'
         ]
         for ex in url_exceptions: 
             # check if it exists in the url add buffer for [https://www.] characters at start
