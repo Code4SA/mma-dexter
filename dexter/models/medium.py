@@ -81,6 +81,10 @@ class Medium(db.Model):
             medium = Medium.query.get(5)
             return medium
 
+        elif 'nation.africa' in url:
+            medium = Medium.query.get(319)
+            return medium
+
         else:
         # find the medium with the longest matching domain
             for medium in sorted(Medium.query.all(), key=lambda m: len(m.domain or ''), reverse=True):
