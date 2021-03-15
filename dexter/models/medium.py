@@ -42,6 +42,7 @@ class Medium(db.Model):
             'thecitizen.co.tz',
             'dailynews.co.tz',
             'nigeriatoday.ng',
+            'zumi.ng'
             'nta.ng',
             'nan.ng',
             'leadership.ng',
