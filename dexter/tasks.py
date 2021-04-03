@@ -20,8 +20,8 @@ log = logging.getLogger(__name__)
 def back_process_feeds():
     """ Enqueue a task to fetch yesterday's feeds. """
 
-    if date.today() == date(2021, 4, 1):
-        d1 = date(2021, 3, 30)
+    if date.today() == date(2021, 4, 4):
+        d1 = date(2021, 4, 2)
         # d2 = date(2020, 12, 31)
         days = [d1]
 
@@ -76,8 +76,8 @@ def fetch_filtered_daily_feeds(self, day, filter_parm):
         self.retry(exc=e)
 
 
-# retry after 60 minutes, retry for up to 7 days
-@app.task(bind=True, default_retry_delay=6*60*60, max_retries=7*4)
+# retry twice daily, retry for up to 1 day
+@app.task(bind=True, default_retry_delay=12*60*60, max_retries=2)
 def fetch_daily_feeds(self, day):
     """ Fetch feed of URLs to crawl and queue up a task to grab and process
     each url. """
