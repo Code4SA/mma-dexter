@@ -39,8 +39,8 @@ def back_process_feeds():
     #         fetch_filtered_daily_feeds.delay(d.isoformat(), filter_parm)
 
     if date.today() == date(2021, 4, 6):
-        d1 = date(2021, 2, 1)
-        d2 = date(2021, 3, 20)
+        d1 = date(2021, 3, 20)
+        d2 = date(2021, 4, 5)
         days = [d1 + timedelta(days=x) for x in range((d2 - d1).days + 1)]
 
         for d in days:
