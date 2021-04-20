@@ -20,23 +20,15 @@ log = logging.getLogger(__name__)
 def back_process_feeds():
     """ Enqueue a task to fetch yesterday's feeds. """
 
-    if date.today() == date(2021, 4, 16):
-        d1 = date(2021, 4, 14)
-        # d2 = date(2020, 12, 31)
-        days = [d1]
+    if date.today() == date(2021, 4, 21):
+        d1 = date(2021, 4, 10)
+        filter_parm = ''
+        fetch_filtered_daily_feeds.delay(d1.isoformat(), filter_parm)
 
-        for d in days:
-            filter_parm = ''
-            fetch_filtered_daily_feeds.delay(d.isoformat(), filter_parm)
-
-    # if date.today() == date(2021, 2, 17):
-    #     d1 = date(2021, 2, 13)
-    #     # d2 = date(2020, 12, 31)
-    #     days = [d1]
-    #
-    #     for d in days:
-    #         filter_parm = ''
-    #         fetch_filtered_daily_feeds.delay(d.isoformat(), filter_parm)
+    if date.today() == date(2021, 4, 22):
+        d1 = date(2021, 4, 16)
+        filter_parm = ''
+        fetch_filtered_daily_feeds.delay(d1.isoformat(), filter_parm)
 
     # if date.today() == date(2021, 4, 6):
     #     d1 = date(2021, 3, 20)
