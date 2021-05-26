@@ -20,22 +20,22 @@ log = logging.getLogger(__name__)
 def back_process_feeds():
     """ Enqueue a task to fetch yesterday's feeds. """
 
-    if date.today() == date(2021, 5, 24):
+    if date.today() == date(2021, 5, 26):
         d1 = date(2021, 5, 20)
         filter_parm = ''
         fetch_filtered_daily_feeds.delay(d1.isoformat(), filter_parm)
 
-    if date.today() == date(2021, 5, 25):
+    elif date.today() == date(2021, 5, 27):
         d1 = date(2021, 5, 21)
         filter_parm = ''
         fetch_filtered_daily_feeds.delay(d1.isoformat(), filter_parm)
 
-    if date.today() == date(2021, 5, 26):
+    elif date.today() == date(2021, 5, 28):
         d1 = date(2021, 5, 22)
         filter_parm = ''
         fetch_filtered_daily_feeds.delay(d1.isoformat(), filter_parm)
 
-    if date.today() == date(2021, 5, 27):
+    elif date.today() == date(2021, 5, 29):
         d1 = date(2021, 5, 23)
         filter_parm = ''
         fetch_filtered_daily_feeds.delay(d1.isoformat(), filter_parm)
@@ -78,13 +78,12 @@ def fetch_filtered_daily_feeds(self, day, filter_parm):
 
 
 # retry twice daily, retry for up to 1 day
-@app.task(bind=True)
+@app.task(bind=True, default_retry_delay=12*60*60, max_retries=2)
 def fetch_daily_feeds(self, day):
     """ Fetch feed of URLs to crawl and queue up a task to grab and process
     each url. """
     try:
         day = parse(day)
-
         dp = DocumentProcessorNT()
         count = 0
         for item in dp.fetch_daily_feed_items(day):
@@ -92,6 +91,11 @@ def fetch_daily_feeds(self, day):
             count += 1
     except Exception as e:
         log.error("Error processing daily feeds for %s" % day, exc_info=e)
+        self.retry(exc=e)
+
+    if count == 0:
+        # nothing to do, retry later
+        self.retry()
 
 
 # retry every minute, for up to 24 hours.
