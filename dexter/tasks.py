@@ -61,7 +61,7 @@ def fetch_yesterdays_feeds():
 
 
 # retry after 60 minutes, retry for up to 7 days
-@app.task(bind=True)
+@app.task(bind=True, default_retry_delay=60*60, max_retries=6)
 def fetch_filtered_daily_feeds(self, day, filter_parm):
     """ Fetch feed of URLs to crawl and queue up a task to grab and process
     each url. """
@@ -75,6 +75,7 @@ def fetch_filtered_daily_feeds(self, day, filter_parm):
             count += 1
     except Exception as e:
         log.error("Error processing daily feeds for %s" % day, exc_info=e)
+        self.retry(exc=e)
 
 
 # retry twice daily, retry for up to 1 day
