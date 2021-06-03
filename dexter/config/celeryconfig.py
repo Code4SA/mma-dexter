@@ -7,7 +7,7 @@ BROKER_TRANSPORT_OPTIONS = {
     'region': 'eu-west-1',
     'polling_interval': 15 * 1,
     'queue_name_prefix': 'mma-dexter-',
-    'visibility_timeout': 3600*24*7,
+    'visibility_timeout': 3600,
 }
 
 
