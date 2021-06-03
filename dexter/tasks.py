@@ -20,23 +20,43 @@ log = logging.getLogger(__name__)
 def back_process_feeds():
     """ Enqueue a task to fetch yesterday's feeds. """
 
-    if date.today() == date(2021, 5, 26):
+    if date.today() == date(2021, 6, 3):
+        d1 = date(2021, 6, 2)
+        filter_parm = ''
+        fetch_filtered_daily_feeds.delay(d1.isoformat(), filter_parm)
+
+    elif date.today() == date(2021, 6, 4):
         d1 = date(2021, 5, 20)
         filter_parm = ''
         fetch_filtered_daily_feeds.delay(d1.isoformat(), filter_parm)
 
-    elif date.today() == date(2021, 5, 27):
-        d1 = date(2021, 5, 21)
-        filter_parm = ''
-        fetch_filtered_daily_feeds.delay(d1.isoformat(), filter_parm)
-
-    elif date.today() == date(2021, 5, 28):
+    elif date.today() == date(2021, 6, 5):
         d1 = date(2021, 5, 22)
         filter_parm = ''
         fetch_filtered_daily_feeds.delay(d1.isoformat(), filter_parm)
 
-    elif date.today() == date(2021, 5, 29):
+    elif date.today() == date(2021, 6, 6):
         d1 = date(2021, 5, 23)
+        filter_parm = ''
+        fetch_filtered_daily_feeds.delay(d1.isoformat(), filter_parm)
+
+    elif date.today() == date(2021, 6, 7):
+        d1 = date(2021, 5, 25)
+        filter_parm = ''
+        fetch_filtered_daily_feeds.delay(d1.isoformat(), filter_parm)
+
+    elif date.today() == date(2021, 6, 8):
+        d1 = date(2021, 5, 28)
+        filter_parm = ''
+        fetch_filtered_daily_feeds.delay(d1.isoformat(), filter_parm)
+
+    elif date.today() == date(2021, 6, 9):
+        d1 = date(2021, 5, 29)
+        filter_parm = ''
+        fetch_filtered_daily_feeds.delay(d1.isoformat(), filter_parm)
+
+    elif date.today() == date(2021, 6, 10):
+        d1 = date(2021, 5, 30)
         filter_parm = ''
         fetch_filtered_daily_feeds.delay(d1.isoformat(), filter_parm)
 
