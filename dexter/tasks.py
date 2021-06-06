@@ -98,8 +98,8 @@ def fetch_filtered_daily_feeds(self, day, filter_parm):
         self.retry(exc=e)
 
 
-# retry twice daily, retry for up to 1 day
-@app.task(bind=True, default_retry_delay=12*60*60, max_retries=2)
+# retry hourly daily, retry for up to 6 hours
+@app.task(bind=True, default_retry_delay=60*60, max_retries=6)
 def fetch_daily_feeds(self, day):
     """ Fetch feed of URLs to crawl and queue up a task to grab and process
     each url. """
