@@ -372,9 +372,17 @@ class DocumentProcessorNT:
 
         return url
 
-    def process_document(self, doc):
+    def process_document(self, doc, idx):
+        from dexter.app import app
         """ Process an existing document. """
         self.normalise(doc)
+        if idx == 0:
+            pass
+        elif idx == 1:
+            cx = CalaisExtractor()
+            cx.API_KEY = app.config['CALAIS_API_KEY2']
+            self.extractors = [cx, SourcesExtractor(), PlacesExtractor()]
+
         self.extract(doc)
 
     def normalise(self, doc):
@@ -466,7 +474,7 @@ class DocumentProcessorNT:
             }
             yield item
 
-    def process_feed_item(self, item):
+    def process_feed_item(self, item, idx):
         """ Process an item pulled from an RSS feed.
 
         This checks to see if the document's URL already exists in the database.
@@ -513,7 +521,7 @@ class DocumentProcessorNT:
                 return None
 
             doc.analysis_nature = AnalysisNature.lookup(AnalysisNature.ANCHOR)
-            self.process_document(doc)
+            self.process_document(doc, idx)
 
             # only add a document if it has sources or utterances
             if doc.sources or doc.utterances:

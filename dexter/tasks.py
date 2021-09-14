@@ -108,7 +108,10 @@ def fetch_daily_feeds(self, day):
         dp = DocumentProcessorNT()
         count = 0
         for item in dp.fetch_daily_feed_items(day):
-            get_feed_item.delay(item)
+            if count <= 499:
+                get_feed_item.delay(item, 0)
+            else:
+                get_feed_item.delay(item, 1)
             count += 1
     except Exception as e:
         log.error("Error processing daily feeds for %s" % day, exc_info=e)
@@ -121,11 +124,11 @@ def fetch_daily_feeds(self, day):
 
 # retry every minute, for up to 24 hours.
 @app.task(bind=True, rate_limit="10/m", default_retry_delay=30, max_retries=2)
-def get_feed_item(self, item):
+def get_feed_item(self, item, idx):
     """ Fetch and process a document feed item. """
     try:
         dp = DocumentProcessorNT()
-        dp.process_feed_item(item)
+        dp.process_feed_item(item, idx)
     except Exception as e:
         log.error("Error processing feed item: %s" % item, exc_info=e)
         self.retry()
