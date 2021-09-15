@@ -110,8 +110,19 @@ def fetch_daily_feeds(self, day):
         for item in dp.fetch_daily_feed_items(day):
             if count <= 499:
                 get_feed_item.delay(item, 0)
-            else:
+            elif count <= 999:
                 get_feed_item.delay(item, 1)
+            elif count <= 1499:
+                get_feed_item.delay(item, 2)
+            elif count <= 1999:
+                get_feed_item.delay(item, 3)
+            elif count <= 2499:
+                get_feed_item.delay(item, 4)
+            elif count <= 2999:
+                get_feed_item.delay(item, 5)
+            else:
+                get_feed_item.delay(item, 0)
+
             count += 1
     except Exception as e:
         log.error("Error processing daily feeds for %s" % day, exc_info=e)
