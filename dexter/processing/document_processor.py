@@ -382,6 +382,24 @@ class DocumentProcessorNT:
             cx = CalaisExtractor()
             cx.API_KEY = app.config['CALAIS_API_KEY2']
             self.extractors = [cx, SourcesExtractor(), PlacesExtractor()]
+        elif idx == 2:
+            cx = CalaisExtractor()
+            cx.API_KEY = app.config['CALAIS_API_KEY3']
+            self.extractors = [cx, SourcesExtractor(), PlacesExtractor()]
+        elif idx == 3:
+            cx = CalaisExtractor()
+            cx.API_KEY = app.config['CALAIS_API_KEY4']
+            self.extractors = [cx, SourcesExtractor(), PlacesExtractor()]
+        elif idx == 4:
+            cx = CalaisExtractor()
+            cx.API_KEY = app.config['CALAIS_API_KEY5']
+            self.extractors = [cx, SourcesExtractor(), PlacesExtractor()]
+        elif idx == 5:
+            cx = CalaisExtractor()
+            cx.API_KEY = app.config['CALAIS_API_KEY6']
+            self.extractors = [cx, SourcesExtractor(), PlacesExtractor()]
+        else:
+            pass
 
         self.extract(doc)
 
