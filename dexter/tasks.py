@@ -20,10 +20,23 @@ log = logging.getLogger(__name__)
 def back_process_feeds():
     """ Enqueue a task to fetch yesterday's feeds. """
 
-    if date.today() == date(2021, 9, 11):
-        d1 = date(2021, 9, 9)
-        filter_parm = ''
-        fetch_filtered_daily_feeds.delay(d1.isoformat(), filter_parm)
+    if date.today() == date(2022, 1, 23):
+        d1 = date(2021, 10, 14)
+        d2 = date(2021, 12, 1)
+        days = [d1 + timedelta(days=x) for x in range((d2 - d1).days + 1)]
+
+        for d in days:
+            filter_parm='media=citizentv'
+            fetch_filtered_daily_feeds.delay(d.isoformat(), filter_parm)
+
+    elif date.today() == date(2022, 1, 24):
+        d1 = date(2021, 12, 2)
+        d2 = date(2022, 1, 18)
+        days = [d1 + timedelta(days=x) for x in range((d2 - d1).days + 1)]
+
+        for d in days:
+            filter_parm='media=citizentv'
+            fetch_filtered_daily_feeds.delay(d.isoformat(), filter_parm)
 
     # elif date.today() == date(2021, 6, 25):
     #     d1 = date(2021, 6, 19)
@@ -91,7 +104,12 @@ def fetch_filtered_daily_feeds(self, day, filter_parm):
         dp = DocumentProcessorNT()
         count = 0
         for item in dp.fetch_filtered_daily_feed_items(day, filter_parm):
-            get_feed_item.delay(item)
+            if count <= 499:
+                get_feed_item.delay(item, 5)
+            elif count <= 999:
+                get_feed_item.delay(item, 6)
+            else:
+                get_feed_item.delay(item, 5)
             count += 1
     except Exception as e:
         log.error("Error processing daily feeds for %s" % day, exc_info=e)
@@ -120,6 +138,8 @@ def fetch_daily_feeds(self, day):
                 get_feed_item.delay(item, 4)
             elif count <= 2999:
                 get_feed_item.delay(item, 5)
+            elif count <= 3499:
+                get_feed_item.delay(item, 6)
             else:
                 get_feed_item.delay(item, 0)
 

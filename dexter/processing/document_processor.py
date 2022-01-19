@@ -398,6 +398,10 @@ class DocumentProcessorNT:
             cx = CalaisExtractor()
             cx.API_KEY = app.config['CALAIS_API_KEY6']
             self.extractors = [cx, SourcesExtractor(), PlacesExtractor()]
+        elif idx == 6:
+            cx = CalaisExtractor()
+            cx.API_KEY = app.config['CALAIS_API_KEY7']
+            self.extractors = [cx, SourcesExtractor(), PlacesExtractor()]
         else:
             pass
 
