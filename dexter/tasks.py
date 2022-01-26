@@ -93,6 +93,15 @@ def fetch_yesterdays_feeds():
     fetch_daily_feeds.delay(yesterday.isoformat())
 
 
+@app.task
+def fetch_yesterdays_feeds_rerun():
+    """ Enqueue a task to fetch yesterday's feeds. """
+    if date.today() == date(2022, 1, 26):
+        yesterday = date.today() - timedelta(days=1)
+        fetch_daily_feeds.delay(yesterday.isoformat())
+    else: print 'Already Done!'
+
+
 # retry after 60 minutes, retry for up to 7 days
 @app.task(bind=True, default_retry_delay=60*60, max_retries=6)
 def fetch_filtered_daily_feeds(self, day, filter_parm):
@@ -152,6 +161,40 @@ def fetch_daily_feeds(self, day):
         # nothing to do, retry later
         self.retry()
 
+@app.task(bind=True, default_retry_delay=60*60, max_retries=6)
+def fetch_daily_feeds(self, day):
+    """ Fetch feed of URLs to crawl and queue up a task to grab and process
+    each url. """
+    try:
+        day = parse(day)
+        dp = DocumentProcessorNT()
+        count = 0
+        for item in dp.fetch_daily_feed_items(day):
+            if count <= 499:
+                get_feed_item.delay(item, 0)
+            elif count <= 999:
+                get_feed_item.delay(item, 1)
+            elif count <= 1499:
+                get_feed_item.delay(item, 2)
+            elif count <= 1999:
+                get_feed_item.delay(item, 3)
+            elif count <= 2499:
+                get_feed_item.delay(item, 4)
+            elif count <= 2999:
+                get_feed_item.delay(item, 5)
+            elif count <= 3499:
+                get_feed_item.delay(item, 6)
+            else:
+                get_feed_item.delay(item, 0)
+
+            count += 1
+    except Exception as e:
+        log.error("Error processing daily feeds for %s" % day, exc_info=e)
+        self.retry(exc=e)
+
+    if count == 0:
+        # nothing to do, retry later
+        self.retry()
 
 # retry every minute, for up to 24 hours.
 @app.task(bind=True, rate_limit="10/m", default_retry_delay=30, max_retries=2)

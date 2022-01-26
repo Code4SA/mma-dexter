@@ -655,7 +655,7 @@ class DocumentProcessorNT:
         self.log.info("Backfilling taxonomies for %s" % doc)
 
         cx = CalaisExtractor()
-        cx.API_KEY = app.config['CALAIS_API_KEY2']
+        cx.API_KEY = app.config['CALAIS_API_KEY7']
         calais = cx.fetch_data(doc)
         cx.extract_topics(doc, calais)
 
