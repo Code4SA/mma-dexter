@@ -29,7 +29,7 @@ CELERYBEAT_SCHEDULE = {
         'task': 'dexter.tasks.back_process_feeds',
     },
     'fetch_yesterdays_feeds_rerun': {
-        'schedule': crontab(hour=15, minute=0),
+        'schedule': crontab(hour=14, minute=30),
         'task': 'dexter.tasks.back_process_feeds',
     },
     # 'backfill-taxonomies': {
