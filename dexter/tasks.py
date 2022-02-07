@@ -26,7 +26,7 @@ def back_process_feeds():
         days = [d1 + timedelta(days=x) for x in range((d2 - d1).days + 1)]
 
         for d in days:
-            filter_parm='media=citizentv'
+            filter_parm=''
             fetch_filtered_daily_feeds.delay(d.isoformat(), filter_parm)
 
     elif date.today() == date(2022, 1, 24):
