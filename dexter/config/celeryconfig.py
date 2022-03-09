@@ -21,7 +21,7 @@ CELERY_ENABLE_UTC = True
 
 CELERYBEAT_SCHEDULE = {
     'fetch-yesterdays-feeds': {
-        'schedule': crontab(hour=15, minute=30),
+        'schedule': crontab(hour=9, minute=0),
         'task': 'dexter.tasks.fetch_yesterdays_feeds',
     },
     # 'back-process-feeds': {
