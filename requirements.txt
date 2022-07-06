@@ -60,7 +60,7 @@ intervals==0.3.1
 itsdangerous==0.24
 kombu==3.0.22
 lda==0.3.2
-lxml==3.3.0
+lxml==4.9.1
 mock==1.0.1
 newrelic==2.18.1.15
 newspaper==0.0.6
