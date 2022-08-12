@@ -162,7 +162,7 @@ def fetch_daily_feeds(self, day):
         self.retry()
 
 # retry every minute, for up to 24 hours.
-@app.task(bind=True, rate_limit="10/m", default_retry_delay=60*60, max_retries=2)
+@app.task(bind=True, rate_limit="10/m", default_retry_delay=60*60, max_retries=12)
 def get_feed_item(self, item, idx):
     """ Fetch and process a document feed item. """
     try:
