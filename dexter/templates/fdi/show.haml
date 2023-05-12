@@ -7,6 +7,14 @@
     %a.btn.btn-default(href=url_for('edit_article', id=document.id))
       %i.fa.fa-pencil
       Edit article
+  - if investment:
+    %a.btn.btn-default(href=url_for('edit_article_analysis', id=document.id, fdi_id=investment.id))
+      %i.fa.fa-tasks
+      Edit analysis
+    %a.btn.btn-default(href=url_for('show_article', id=document.id))
+      %i.fa.fa-pencil
+      Back to article
+  - else:
     %a.btn.btn-default(href=url_for('edit_article_analysis', id=document.id))
       %i.fa.fa-tasks
       Edit analysis

@@ -25,9 +25,10 @@ log = logging.getLogger(__name__)
 
 
 @app.route('/articles/<id>')
+@app.route('/articles/<id>/<fdi_id>')
 @login_required
 @roles_accepted('monitor', 'fdi')
-def show_article(id):
+def show_article(id, fdi_id=None):
     document = Document.query.get_or_404(id)
     if request.args.get('format') == 'places-json':
         return jsonify(DocumentPlace.summary_for_docs([document]))
@@ -44,52 +45,65 @@ def show_article(id):
         if not exists:
             return render_template('fdi/edit_analysis.haml', create=0, document=document, natures=AnalysisNature.all(),
                                    URL=URL)
+        elif exists and fdi_id:
+            investment = Investment.query.filter_by(id=fdi_id).first()
 
-        investment = Investment.query.filter_by(doc_id=id).first()
+            if Involvements1.query.filter_by(id=investment.involvement_id1).first() is None:
+                investment.involvement_id1 = 5
+                db.session.commit()
+            if Involvements2.query.filter_by(id=investment.involvement_id2).first() is None:
+                investment.involvement_id2 = 73
+                db.session.commit()
+            if Involvements3.query.filter_by(id=investment.involvement_id3).first() is None:
+                investment.involvement_id3 = 19
+                db.session.commit()
+            if Provinces.query.filter_by(id=investment.province_id).first() is None:
+                investment.province_id = 10
+                db.session.commit()
+            if Industries.query.filter_by(id=investment.industry_id).first() is None:
+                investment.industry_id = 12
+                db.session.commit()
 
-        if Involvements1.query.filter_by(id=investment.involvement_id1).first() is None:
-            investment.involvement_id1 = 5
-            db.session.commit()
-        if Involvements2.query.filter_by(id=investment.involvement_id2).first() is None:
-            investment.involvement_id2 = 73
-            db.session.commit()
-        if Involvements3.query.filter_by(id=investment.involvement_id3).first() is None:
-            investment.involvement_id3 = 19
-            db.session.commit()
-        if Provinces.query.filter_by(id=investment.province_id).first() is None:
-            investment.province_id = 10
-            db.session.commit()
+            if ValueUnits.query.filter_by(id=investment.value_unit_id).first() is None:
+                investment.value_unit_id = 3
+                db.session.commit()
 
-        if Industries.query.filter_by(id=investment.industry_id).first() is None:
-            investment.industry_id = 12
-            db.session.commit()
+            if ValueUnits.query.filter_by(id=investment.value_unit_id2).first() is None:
+                investment.value_unit_id2 = 3
+                db.session.commit()
 
-        if ValueUnits.query.filter_by(id=investment.value_unit_id).first() is None:
-            investment.value_unit_id = 3
-            db.session.commit()
+            phase = Phases.query.filter_by(id=investment.phase_id).first()
+            sector = ' | '.join([Sectors.query.filter_by(id=ind).first().name for ind in
+                                 investment.sector_id.split(';')])
+            involvement_tier1 = ' | '.join([Involvements1.query.filter_by(id=inv1_id).first().name for inv1_id in
+                                            investment.involvement_id1.split(';')])
+            involvement_tier2 = ' | '.join([Involvements2.query.filter_by(id=inv2_id).first().name for inv2_id in
+                                            investment.involvement_id2.split(';')])
+            involvement_tier3 = ' | '.join([Involvements3.query.filter_by(id=inv3_id).first().name for inv3_id in
+                                            investment.involvement_id3.split(';')])
+            industry = ' | '.join([Industries.query.filter_by(id=ind).first().name for ind in
+                                   investment.industry_id.split(';')])
+            inv_origin = ' | '.join([InvestmentOrigins.query.filter_by(id=ind).first().name for ind in
+                                     investment.invest_origin_id.split(';')])
+            province = ' | '.join([Provinces.query.filter_by(id=ind).first().name for ind in
+                                   investment.province_id.split(';')])
+            target_market = ' | '.join([c for c in investment.target_market.split(';')])
+            inv_type = InvestmentType.query.filter_by(id=investment.invest_type_id).first()
+            currency = Currencies.query.filter_by(id=investment.currency_id).first()
+            value_unit = ValueUnits.query.filter_by(id=investment.value_unit_id).first()
+            value_unit2 = ValueUnits.query.filter_by(id=investment.value_unit_id2).first()
 
-        if ValueUnits.query.filter_by(id=investment.value_unit_id2).first() is None:
-            investment.value_unit_id2 = 3
-            db.session.commit()
-
-        phase = Phases.query.filter_by(id=investment.phase_id).first()
-        sector = Sectors.query.filter_by(id=investment.sector_id).first()
-        involvement_tier1 = Involvements1.query.filter_by(id=investment.involvement_id1).first()
-        involvement_tier2 = Involvements2.query.filter_by(id=investment.involvement_id2).first()
-        involvement_tier3 = Involvements3.query.filter_by(id=investment.involvement_id3).first()
-        industry = Industries.query.filter_by(id=investment.industry_id).first()
-        inv_origin = InvestmentOrigins.query.filter_by(id=investment.invest_origin_id).first()
-        province = Provinces.query.filter_by(id=investment.province_id).first()
-        inv_type = InvestmentType.query.filter_by(id=investment.invest_type_id).first()
-        currency = Currencies.query.filter_by(id=investment.currency_id).first()
-        value_unit = ValueUnits.query.filter_by(id=investment.value_unit_id).first()
-        value_unit2 = ValueUnits.query.filter_by(id=investment.value_unit_id2).first()
-
-        return render_template('fdi/show.haml', investment=investment, document=document, phase=phase.name,
-                               sector=sector.name, inv_origin=inv_origin.name, inv_type=inv_type.name,
-                               currency=currency.name, involvement1=involvement_tier1.name, involvement2=involvement_tier2.name,
-                               involvement3=involvement_tier3.name, industry=industry.name, value_unit=value_unit.name,
-                               value_unit2=value_unit2.name, province=province.name, URL=URL)
+            return render_template('fdi/show.haml', investment=investment, document=document, phase=phase.name,
+                                   sector=sector, inv_origin=inv_origin, inv_type=inv_type.name,
+                                   currency=currency.name, involvement1=involvement_tier1,
+                                   involvement2=involvement_tier2,
+                                   involvement3=involvement_tier3, industry=industry,
+                                   value_unit=value_unit.name, target_market=target_market,
+                                   value_unit2=value_unit2.name, province=province, URL=URL)
+        else:
+            investments = Investment.query.filter_by(doc_id=id)
+            return render_template('fdi/edit_analysis.haml', create=1, document=document, investments=investments,
+                                   natures=AnalysisNature.all(), URL=URL)
 
     return render_template('articles/show.haml', document=document, URL=URL)
 
@@ -228,45 +242,44 @@ def edit_article(id):
 @login_required
 @roles_accepted('monitor', 'fdi')
 def fdi_create(id):
-    exists = Investment.query.filter_by(doc_id=id).first() is not None
-    if not exists:
-        investment = Investment()
-        investment.name = ''
-        investment.value = 0
-        investment.value2 = 0
-        investment.temp_opps = 0
-        investment.perm_opps = 0
-        investment.government = ''
-        investment.company = ''
-        investment.additional_place = ''
-        investment.gov_programs = ''
-        investment.soc_programs = ''
-        investment.mot_investment = ''
-        investment.currency_id = 165
-        investment.invest_type_id = 6
-        investment.phase_id = 6
-        investment.invest_origin_id = 194
-        investment.invest_origin_city = ''
-        investment.province_id = 10
-        investment.sector_id = 90
-        investment.industry_id = 12
-        investment.involvement_id1 = 5
-        investment.involvement_id2 = 73
-        investment.involvement_id3 = 19
-        investment.doc_id = id
-        investment.value_unit_id = 3
-        investment.value_unit_id2 = 3
-        investment.target_market_id = 4
-        db.session.add(investment)
-        db.session.commit()
+    investment = Investment()
+    investment.name = ''
+    investment.value = 0
+    investment.value2 = 0
+    investment.temp_opps = 0
+    investment.perm_opps = 0
+    investment.government = ''
+    investment.company = ''
+    investment.additional_place = ''
+    investment.gov_programs = ''
+    investment.soc_programs = ''
+    investment.mot_investment = ''
+    investment.currency_id = 165
+    investment.invest_type_id = 6
+    investment.phase_id = 6
+    investment.invest_origin_id = 194
+    investment.invest_origin_city = ''
+    investment.province_id = 10
+    investment.sector_id = 90
+    investment.industry_id = 12
+    investment.involvement_id1 = 5
+    investment.involvement_id2 = 73
+    investment.involvement_id3 = 19
+    investment.doc_id = id
+    investment.value_unit_id = 3
+    investment.value_unit_id2 = 3
+    investment.target_market_id = 4
+    db.session.add(investment)
+    db.session.commit()
 
-    return redirect(url_for('edit_article_analysis', id=id))
+    return redirect(url_for('edit_article_analysis', id=id, fdi_id=investment.id))
 
 
 @app.route('/articles/<id>/analysis', methods=['GET', 'POST'])
+@app.route('/articles/<id>/<fdi_id>/analysis', methods=['GET', 'POST'])
 @login_required
 @roles_accepted('monitor', 'fdi')
-def edit_article_analysis(id):
+def edit_article_analysis(id, fdi_id=None):
     document = Document.query.get_or_404(id)
 
     try:
@@ -275,15 +288,14 @@ def edit_article_analysis(id):
         URL = url_for('activity')
 
     if current_user.has_role('fdi'):
-
-        investment = Investment.query.filter_by(doc_id=id).first()
+        investment = Investment.query.filter_by(id=fdi_id).first()
 
         fdi_form = FDIAnalysisForm(prefix='fdi-new', csrf_enabled=True, obj=investment)
 
     # can this user do this?
     if not document.can_user_edit(current_user):
         flash("You're not allowed to edit this article.", 'error')
-        return redirect(url_for('show_article', id=id))
+        return redirect(url_for('show_article', id=id, fdi_id=fdi_id))
 
     if request.args.get('format') == 'places-json':
         return jsonify(DocumentPlace.summary_for_docs([document]))
@@ -309,6 +321,16 @@ def edit_article_analysis(id):
 
             forms = [fdi_form]
             if all(f.validate() for f in forms):
+                if len(fdi_form.name.data) == 0 and len(fdi_form.name_existing.data) != 0:
+                    fdi_form.name.data = fdi_form.name_existing.data
+                fdi_form.involvement_id1.data = ';'.join(fdi_form.involvement_id1.data)
+                fdi_form.involvement_id2.data = ';'.join(fdi_form.involvement_id2.data)
+                fdi_form.involvement_id3.data = ';'.join(fdi_form.involvement_id3.data)
+                fdi_form.sector_id.data = ';'.join(fdi_form.sector_id.data)
+                fdi_form.industry_id.data = ';'.join(fdi_form.industry_id.data)
+                fdi_form.province_id.data = ';'.join(fdi_form.province_id.data)
+                fdi_form.invest_origin_id.data = ';'.join(fdi_form.invest_origin_id.data)
+                fdi_form.target_market.data = ';'.join(fdi_form.target_market.data)
 
                 with db.session.no_autoflush:
                     fdi_form.populate_obj(investment)
@@ -322,7 +344,7 @@ def edit_article_analysis(id):
                 flash('Analysis updated.')
 
                 if not request.is_xhr:
-                    return redirect(url_for('edit_article_analysis', id=id))
+                    return redirect(url_for('edit_article_analysis', id=id, fdi_id=fdi_id))
 
                 status = 200
             else:
@@ -378,7 +400,7 @@ def edit_article_analysis(id):
 
                 # if it's an ajax request, we're just going to return a 200
                 if not request.is_xhr:
-                    return redirect(url_for('edit_article_analysis', id=id))
+                    return redirect(url_for('edit_article_analysis', id=id, fdi_id=fdi_id))
 
                 status = 200
             else:
@@ -395,23 +417,24 @@ def edit_article_analysis(id):
                           52: [10, 11, 19], 53: [12, 19], 54: [13, 19],
                           55: [14, 19], 56: [15, 19], 57: [16, 19], 58: [17, 19], 59: [18, 19], 73: [19]}
 
-            if fdi_form.involvement_id1.data is not None:
-                if int(fdi_form.involvement_id1.data) in t2_options.keys():
-                    fdi_form.involvement_id2.choices = [[str(c.id), c.name] for c in Involvements2.query.filter(Involvements2.id.in_(t2_options[int(fdi_form.involvement_id1.data)])).all()]
-                else:
-                    fdi_form.involvement_id2.choices = [["73", "unspecified"]]
-            else:
-                fdi_form.involvement_id2.choices = [["73", "unspecified"]]
-
-            if fdi_form.involvement_id2.data is not None:
-                if int(fdi_form.involvement_id2.data) in t3_options.keys():
-                    fdi_form.involvement_id3.choices = [[str(c.id), c.name] for c in Involvements3.query.filter(Involvements3.id.in_(t3_options[int(fdi_form.involvement_id2.data)])).all()]
-                else:
-                    fdi_form.involvement_id3.choices = [["19", "unspecified"]]
-            else:
-                fdi_form.involvement_id3.choices = [["19", "unspecified"]]
+            # if fdi_form.involvement_id1.data is not None:
+            #     if int(fdi_form.involvement_id1.data) in t2_options.keys():
+            #         fdi_form.involvement_id2.choices = [[str(c.id), c.name] for c in Involvements2.query.filter(Involvements2.id.in_(t2_options[int(fdi_form.involvement_id1.data)])).all()]
+            #     else:
+            #         fdi_form.involvement_id2.choices = [["73", "unspecified"]]
+            # else:
+            #     fdi_form.involvement_id2.choices = [["73", "unspecified"]]
+            #
+            # if fdi_form.involvement_id2.data is not None:
+            #     if int(fdi_form.involvement_id2.data) in t3_options.keys():
+            #         fdi_form.involvement_id3.choices = [[str(c.id), c.name] for c in Involvements3.query.filter(Involvements3.id.in_(t3_options[int(fdi_form.involvement_id2.data)])).all()]
+            #     else:
+            #         fdi_form.involvement_id3.choices = [["19", "unspecified"]]
+            # else:
+            #     fdi_form.involvement_id3.choices = [["19", "unspecified"]]
 
         # wtforms turns None values into None, which sucks
+
         if form.topic_id.data == 'None':
             form.topic_id.data = ''
         if form.origin_location_id.data == 'None':
@@ -425,6 +448,7 @@ def edit_article_analysis(id):
             resp = make_response(
                 render_template('fdi/edit_analysis.haml',
                                 fdi_form=fdi_form,
+                                fdi_id=fdi_id,
                                 document=document,
                                 investment=investment,
                                 natures=AnalysisNature.all(),

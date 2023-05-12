@@ -11,9 +11,13 @@
   %a.btn.btn-default(href=url_for('edit_article', id=document.id))
     %i.fa.fa-pencil
     Edit article
-  %button.btn.btn-success.submit(type='button', dataDisableWith='Saving...')
-    %i.fa.fa-tasks
-    Save analysis
+  - if fdi_id:
+    %button.btn.btn-success.submit(type='button', dataDisableWith='Saving...')
+      %i.fa.fa-tasks
+      Save analysis
+    %a.btn.btn-default(href=url_for('show_article', id=document.id))
+      %i.fa.fa-pencil
+      Back to article
   %a.btn.btn-default(href=URL)
     %i.fa.fa-pencil
     Back to search
@@ -27,7 +31,7 @@
   .col-sm-7
 
     - if create == 0:
-      .row(style="text-align: center" )
+      .row(style="text-align: center")
         .col-sm-12
           %br
           %p No FDI analysis exists for this article. Would you like to create one?
@@ -36,11 +40,29 @@
             %i.fa.fa-pencil
             Create FDI
 
-    - else:
+    - if create == 1:
+      .row(style="text-align: left" )
+        .col-sm-12
+          %p %b Please select which analysis you wish to edit:
+          %table.table
+            - for investment in investments:
+              %tr
+                %td =investment.name
+                %td &nbsp
+                %td %a.btn.btn-default(href=url_for('show_article', id=document.id, fdi_id=investment.id))Go to analysis
+      %br
+      %br
+      .row(style="text-align: left" )
+        .col-sm-12
+          %p %b Would you like to add another analysis?
+          %a.btn.btn-default(href=url_for('fdi_create', id=document.id))
+            %i.fa.fa-pencil
+            Add FDI
 
-      %form.safedirty.edit-analysis(action=url_for('edit_article_analysis', id=document.id), method='POST', dataRemote='true')
+    - else:
+      %form.safedirty.edit-analysis(action=url_for('edit_article_analysis', id=document.id, fdi_id=fdi_id), method='POST', dataRemote='true')
         = fdi_form.csrf_token
-        -#= form.csrf_token
+        -# = form.csrf_token
 
         .panel.panel-default.analysis
           .panel-heading
@@ -63,6 +85,13 @@
             .row
               .col-sm-6
                 .form-group
+                  = fdi_form.name_existing.label()
+              .col-sm-6
+                .input-group
+                = field_input(fdi_form.name_existing, class_='select2')
+            .row
+              .col-sm-6
+                .form-group
                   = fdi_form.investment_begin.label()
               .col-sm-6
                 .input-group
@@ -81,9 +110,12 @@
                     %button.btn.btn-default(dataClear='input-group')
                       %i.fa.fa-times
             .row
-              .col-sm-6
+              .col-sm-4
                 .form-group
                   = fdi_form.value2.label()
+              .col-sm-2
+                .input-group
+                = field_input(fdi_form.value_partial)
               .col-sm-3
                 .input-group
                 = field_input(fdi_form.value2)
@@ -91,9 +123,12 @@
                 .input-group
                 = field_input(fdi_form.value_unit_id2, class_='select2')
             .row
-              .col-sm-6
+              .col-sm-4
                 .form-group
                   = fdi_form.value.label()
+              .col-sm-2
+                .input-group
+                = field_input(fdi_form.value2_partial)
               .col-sm-3
                 .input-group
                 = field_input(fdi_form.value)
@@ -109,16 +144,22 @@
                 = field_input(fdi_form.currency_id, class_='select2')
 
             .row
-              .col-sm-6
+              .col-sm-4
                 .form-group
                   = fdi_form.temp_opps.label()
+              .col-sm-2
+                .form-group
+                  = field_input(fdi_form.temp_opps_partial)
               .col-sm-6
                 .input-group
                 = field_input(fdi_form.temp_opps)
             .row
-              .col-sm-6
+              .col-sm-4
                 .form-group
                   = fdi_form.perm_opps.label()
+              .col-sm-2
+                .form-group
+                  = field_input(fdi_form.perm_opps_partial)
               .col-sm-6
                 .input-group
                 = field_input(fdi_form.perm_opps)
@@ -155,6 +196,7 @@
               .col-sm-6
                 .form-group
                   = fdi_form.additional_place.label()
+                  [separate multiple with ";"]
               .col-sm-6
                 .input-group
                 = field_input(fdi_form.additional_place)
@@ -186,10 +228,9 @@
               .col-sm-6
                 .form-group
                   = fdi_form.target_market.label()
-                  [separate multiple with ";"]
               .col-sm-6
                 .input-group
-                = field_input(fdi_form.target_market)
+                = field_input(fdi_form.target_market, class_='select2')
             .row
               .col-sm-2
                 .form-group
@@ -204,6 +245,7 @@
               .col-sm-10
                 .input-group
                 = field_input(fdi_form.invest_origin_city)
+                [separate multiple with ";"]
             .row
               .col-sm-2
                 .form-group
@@ -232,6 +274,7 @@
               .col-sm-6
                 .input-group
                 = field_input(fdi_form.gov_programs)
+                [separate multiple with ";"]
             .row
               .col-sm-6
                 .form-group
@@ -239,6 +282,7 @@
               .col-sm-6
                 .input-group
                 = field_input(fdi_form.soc_programs)
+                [separate multiple with ";"]
             .row
               .col-sm-6
                 .form-group

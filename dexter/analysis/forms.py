@@ -183,26 +183,31 @@ class FDIAnalysisForm(ModelForm):
     FDI (Manual) analysis of a document
     """
 
-    name = StringField('Project name', [validators.Length(max=200)])
+    name = StringField('Project name (new)', [validators.Length(max=200)])
+    name_existing = SelectField('Project name (existing)')
     value = FloatField('Investment value (Forex)', [validators.NumberRange(min=0, max=10000)])
+    value_partial = BooleanField('Partial')
     value2 = FloatField('Investment value (Rands)', [validators.NumberRange(min=0, max=10000)])
+    value2_partial = BooleanField('Partial')
     temp_opps = IntegerField('Temporary opportunities', [validators.NumberRange(min=0, max=1000000,
                                                                                 message='Please enter an integer')])
-    perm_opps = IntegerField('Job opportunities', [validators.NumberRange(min=0, max=1000000,
+    temp_opps_partial = BooleanField('Partial')
+    perm_opps = IntegerField('Permanent opportunities', [validators.NumberRange(min=0, max=1000000,
                                                                                 message='Please enter an integer')])
+    perm_opps_partial = BooleanField('Partial')
     investment_begin = DateField('Investment start date', [validators.Optional()], format='%Y/%m/%d')
     investment_end = DateField('Investment end date', [validators.Optional()], format='%Y/%m/%d')
     phase_date = DateField('Phase date', [validators.Optional()], format='%Y/%m/%d')
     currency_id = SelectField('Currency')
     phase_id = SelectField('Phase')
-    sector_id = SelectField('Sector')
-    involvement_id1 = SelectField('Government involvement (Tier 1)')
-    involvement_id2 = SelectField('Government involvement (Tier 2)', default=73)
-    involvement_id3 = SelectField('Government involvement (Tier 3)', default=19)
-    industry_id = SelectField('Industry')
-    target_market = StringField('Target Market')
-    invest_origin_id = SelectField('Origin of investment (country)')
-    province_id = SelectField('Province')
+    sector_id = SelectMultipleField('Sector')
+    involvement_id1 = SelectMultipleField('Government involvement (Tier 1)')
+    involvement_id2 = SelectMultipleField('Government involvement (Tier 2)')
+    involvement_id3 = SelectMultipleField('Government involvement (Tier 3)')
+    industry_id = SelectMultipleField('Industry')
+    target_market = SelectMultipleField('Target Market')
+    invest_origin_id = SelectMultipleField('Origin of investment (country)')
+    province_id = SelectMultipleField('Province')
     invest_origin_city = StringField('Origin of investment (city)')
     invest_type_id = SelectField('Type')
     company = StringField('Company')
@@ -217,6 +222,8 @@ class FDIAnalysisForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super(FDIAnalysisForm, self).__init__(*args, **kwargs)
 
+        self.name_existing.choices = [['', '']] + [[c.name, c.name] for c in Investment.all() if len(c.name) > 4]
+        self.target_market.choices = [['', '']] + [[c, c] for c in ['Domestic', 'Regional', 'International']]
         self.currency_id.choices = [[str(c.id), c.name] for c in Currencies.all()]
         self.invest_origin_id.choices = [[str(c.id), c.name] for c in InvestmentOrigins.all()]
         self.phase_id.choices = [[str(c.id), c.name] for c in Phases.all()]

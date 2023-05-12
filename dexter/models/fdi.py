@@ -8,6 +8,7 @@ from sqlalchemy import (
     String,
     Float,
     Index,
+    Boolean
 )
 from sqlalchemy.orm import relationship, backref
 from .with_offsets import WithOffsets
@@ -30,8 +31,12 @@ class Investment(db.Model):
     name = Column(String(200), index=True, nullable=True)
     value = Column(Float)
     value2 = Column(Float)
+    value_partial = Column(Boolean)
+    value2_partial = Column(Boolean)
     temp_opps = Column(Integer)
     perm_opps = Column(Integer)
+    temp_opps_partial = Column(Boolean)
+    perm_opps_partial = Column(Boolean)
     company = Column(String(1024))
     additional_place = Column(String(1024))
     fdi_notes = Column(String(1024))
@@ -49,28 +54,25 @@ class Investment(db.Model):
     currency_id = Column(Integer, ForeignKey('currencies.id'), index=True)
     phase_id = Column(Integer, ForeignKey('phases.id'), index=True)
     phase_date = Column(Date, index=True, unique=False)
-    invest_origin_id = Column(Integer, ForeignKey('investment_origins.id'), index=True)
+    invest_origin_id = Column(String(50))
     invest_loc_id = Column(Integer, ForeignKey('investment_locations.id'), index=True)
-    province_id = Column(Integer, ForeignKey('provinces.id'), index=True)
+    province_id = Column(String(50))
     invest_type_id = Column(Integer, ForeignKey('investment_types.id'), index=True)
-    sector_id = Column(Integer, ForeignKey('sectors.id'), index=True)
-    involvement_id1 = Column(Integer, ForeignKey('involvements1.id'), index=True)
-    involvement_id2 = Column(Integer, ForeignKey('involvements2.id'), index=True)
-    involvement_id3 = Column(Integer, ForeignKey('involvements3.id'), index=True)
-    industry_id = Column(Integer, ForeignKey('industries.id'), index=True)
+    sector_id = Column(String(50))
+    involvement_id1 = Column(String(50))
+    involvement_id2 = Column(String(50))
+    involvement_id3 = Column(String(50))
+    industry_id = Column(String(50))
 
     currency = relationship("Currencies")
     phase = relationship("Phases")
-    sector = relationship("Sectors")
-    industry = relationship("Industries")
-    involvement1 = relationship("Involvements1")
-    involvement2 = relationship("Involvements2")
-    involvement3 = relationship("Involvements3")
     investment_type = relationship("InvestmentType")
-    investment_origin = relationship("InvestmentOrigins")
-    province = relationship("Provinces")
     value_unit = relationship("ValueUnits", foreign_keys=[value_unit_id])
     value_unit2 = relationship("ValueUnits", foreign_keys=[value_unit_id2])
+
+    @classmethod
+    def all(cls):
+        return cls.query.order_by(Investment.name).all()
 
     def add_gov(self, government):
         """ Add a new government involvement, but only if it's not already there. """
