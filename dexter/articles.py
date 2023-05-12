@@ -48,21 +48,21 @@ def show_article(id, fdi_id=None):
         elif exists and fdi_id:
             investment = Investment.query.filter_by(id=fdi_id).first()
 
-            if Involvements1.query.filter_by(id=investment.involvement_id1).first() is None:
-                investment.involvement_id1 = 5
-                db.session.commit()
-            if Involvements2.query.filter_by(id=investment.involvement_id2).first() is None:
-                investment.involvement_id2 = 73
-                db.session.commit()
-            if Involvements3.query.filter_by(id=investment.involvement_id3).first() is None:
-                investment.involvement_id3 = 19
-                db.session.commit()
-            if Provinces.query.filter_by(id=investment.province_id).first() is None:
-                investment.province_id = 10
-                db.session.commit()
-            if Industries.query.filter_by(id=investment.industry_id).first() is None:
-                investment.industry_id = 12
-                db.session.commit()
+            # if Involvements1.query.filter_by(id=investment.involvement_id1).first() is None:
+            #     investment.involvement_id1 = 5
+            #     db.session.commit()
+            # if Involvements2.query.filter_by(id=investment.involvement_id2).first() is None:
+            #     investment.involvement_id2 = 73
+            #     db.session.commit()
+            # if Involvements3.query.filter_by(id=investment.involvement_id3).first() is None:
+            #     investment.involvement_id3 = 19
+            #     db.session.commit()
+            # if Provinces.query.filter_by(id=investment.province_id).first() is None:
+            #     investment.province_id = 10
+            #     db.session.commit()
+            # if Industries.query.filter_by(id=investment.industry_id).first() is None:
+            #     investment.industry_id = 12
+            #     db.session.commit()
 
             if ValueUnits.query.filter_by(id=investment.value_unit_id).first() is None:
                 investment.value_unit_id = 3
@@ -74,20 +74,20 @@ def show_article(id, fdi_id=None):
 
             phase = Phases.query.filter_by(id=investment.phase_id).first()
             sector = ' | '.join([Sectors.query.filter_by(id=ind).first().name for ind in
-                                 investment.sector_id.split(';')])
+                                 investment.sector_id.split(';') if ind])
             involvement_tier1 = ' | '.join([Involvements1.query.filter_by(id=inv1_id).first().name for inv1_id in
-                                            investment.involvement_id1.split(';')])
+                                            investment.involvement_id1.split(';') if inv1_id])
             involvement_tier2 = ' | '.join([Involvements2.query.filter_by(id=inv2_id).first().name for inv2_id in
-                                            investment.involvement_id2.split(';')])
+                                            investment.involvement_id2.split(';') if inv2_id])
             involvement_tier3 = ' | '.join([Involvements3.query.filter_by(id=inv3_id).first().name for inv3_id in
-                                            investment.involvement_id3.split(';')])
+                                            investment.involvement_id3.split(';') if inv3_id])
             industry = ' | '.join([Industries.query.filter_by(id=ind).first().name for ind in
-                                   investment.industry_id.split(';')])
+                                   investment.industry_id.split(';') if ind])
             inv_origin = ' | '.join([InvestmentOrigins.query.filter_by(id=ind).first().name for ind in
-                                     investment.invest_origin_id.split(';')])
+                                     investment.invest_origin_id.split(';') if ind])
             province = ' | '.join([Provinces.query.filter_by(id=ind).first().name for ind in
-                                   investment.province_id.split(';')])
-            target_market = ' | '.join([c for c in investment.target_market.split(';')])
+                                   investment.province_id.split(';') if ind])
+            target_market = ' | '.join([c for c in investment.target_market.split(';') if ind])
             inv_type = InvestmentType.query.filter_by(id=investment.invest_type_id).first()
             currency = Currencies.query.filter_by(id=investment.currency_id).first()
             value_unit = ValueUnits.query.filter_by(id=investment.value_unit_id).first()
@@ -244,6 +244,7 @@ def edit_article(id):
 def fdi_create(id):
     investment = Investment()
     investment.name = ''
+    investment.target_market = ''
     investment.value = 0
     investment.value2 = 0
     investment.temp_opps = 0
@@ -257,18 +258,17 @@ def fdi_create(id):
     investment.currency_id = 165
     investment.invest_type_id = 6
     investment.phase_id = 6
-    investment.invest_origin_id = 194
+    investment.invest_origin_id = ''
     investment.invest_origin_city = ''
-    investment.province_id = 10
-    investment.sector_id = 90
-    investment.industry_id = 12
-    investment.involvement_id1 = 5
-    investment.involvement_id2 = 73
-    investment.involvement_id3 = 19
+    investment.province_id = ''
+    investment.sector_id = ''
+    investment.industry_id = ''
+    investment.involvement_id1 = ''
+    investment.involvement_id2 = ''
+    investment.involvement_id3 = ''
     investment.doc_id = id
     investment.value_unit_id = 3
     investment.value_unit_id2 = 3
-    investment.target_market_id = 4
     db.session.add(investment)
     db.session.commit()
 

@@ -221,8 +221,8 @@ class FDIAnalysisForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(FDIAnalysisForm, self).__init__(*args, **kwargs)
-
-        self.name_existing.choices = [['', '']] + [[c.name, c.name] for c in Investment.all() if len(c.name) > 4]
+        existing_names = sorted([c.name for c in Investment.all()])
+        self.name_existing.choices = [['', '']] + [[c, c] for c in set(existing_names) if len(c) > 4]
         self.target_market.choices = [['', '']] + [[c, c] for c in ['Domestic', 'Regional', 'International']]
         self.currency_id.choices = [[str(c.id), c.name] for c in Currencies.all()]
         self.invest_origin_id.choices = [[str(c.id), c.name] for c in InvestmentOrigins.all()]
