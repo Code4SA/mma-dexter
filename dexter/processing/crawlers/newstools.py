@@ -140,9 +140,9 @@ class NewstoolsCrawlerNT(BaseCrawler):
         # medium and country
         self.extract(doc, None)
 
-        payload = {"Authorization": "token %s" % self.GITHUB_PASSWORD}
+        payload = {"PRIVATE-TOKEN": "%s" % self.GITHUB_PASSWORD}
 
-        text_url = item['text_url']
+        text_url = item['text_url'] + '/raw'
         r_s = requests.get(text_url, headers=payload)
         s = str(unidecode.unidecode(HTMLParser.HTMLParser().unescape(r_s.text)))
         doc.text = re.sub(' +', ' ', s)
