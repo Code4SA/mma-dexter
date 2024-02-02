@@ -136,17 +136,17 @@ def fetch_daily_feeds(self, day):
         count = 0
         for item in dp.fetch_daily_feed_items(day):
             if count <= 499:
-                get_feed_item.delay(item, 0)
-            elif count <= 999:
                 get_feed_item.delay(item, 2)
-            elif count <= 1499:
+            elif count <= 999:
                 get_feed_item.delay(item, 3)
-            elif count <= 1999:
+            elif count <= 1499:
                 get_feed_item.delay(item, 4)
-            elif count <= 2499:
+            elif count <= 1999:
                 get_feed_item.delay(item, 5)
-            elif count <= 2999:
+            elif count <= 2499:
                 get_feed_item.delay(item, 6)
+            # elif count <= 2999:
+            #     get_feed_item.delay(item, 6)
             # elif count <= 3499:
             #     get_feed_item.delay(item, 6)
             else:
