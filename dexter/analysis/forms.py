@@ -215,6 +215,9 @@ class FDIAnalysisForm(ModelForm):
     soc_programs = StringField('Social Benefit Programmes')
     mot_investment = StringField('Motivation for Investment')
     additional_place = StringField('Additional place')
+    credibility_grading = SelectField('Credibility grading')
+    constraints_barriers = StringField('Constraints and Barriers')
+    grading_notes = TextAreaField('Grading Notes')
     fdi_notes = TextAreaField('Notes')
     value_unit_id = SelectField('Unit')
     value_unit_id2 = SelectField('Unit 2', [validators.Optional()])
@@ -224,6 +227,8 @@ class FDIAnalysisForm(ModelForm):
         existing_names = sorted([c.name for c in Investment.all()])
         self.name_existing.choices = [['', '']] + [[c, c] for c in set(existing_names) if len(c) > 4]
         self.target_market.choices = [['', '']] + [[c, c] for c in ['Domestic', 'Regional', 'International']]
+        self.credibility_grading.choices = [['', '']] + [[c, c] for c in ['Commitment', 'Potential', 'Likely',
+                                                                          'Construction/implementation', 'Cancelled']]
         self.currency_id.choices = [[str(c.id), c.name] for c in Currencies.all()]
         self.invest_origin_id.choices = [[str(c.id), c.name] for c in InvestmentOrigins.all()]
         self.phase_id.choices = [[str(c.id), c.name] for c in Phases.all()]

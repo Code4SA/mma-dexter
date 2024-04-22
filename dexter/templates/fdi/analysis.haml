@@ -17,23 +17,6 @@
           %label.control-label.col-sm-6 Project name:
           .col-sm-6
             =investment.name
-
-      .row
-        .form-group
-          %label.control-label.col-sm-6 Investment start date:
-          .col-sm-6
-            =investment.investment_begin
-      .row
-        .form-group
-          %label.control-label.col-sm-6 Investment end date:
-          .col-sm-6
-            =investment.investment_end
-      .row
-        .form-group
-          %label.control-label.col-sm-6 Investment value (Rands):
-          .col-sm-6
-            =investment.value2
-            =value_unit2
       .row
         .form-group
           %label.control-label.col-sm-6 Investment value (Forex):
@@ -47,34 +30,46 @@
             =currency
       .row
         .form-group
-          %label.control-label.col-sm-6 Temporary opportunities:
+          %label.control-label.col-sm-6 Investment value (Rands):
           .col-sm-6
-            =investment.temp_opps
+            =investment.value2
+            =value_unit2
       .row
         .form-group
-          %label.control-label.col-sm-6 Permanent opportunities:
+          %label.control-label.col-sm-6 Investment start date:
           .col-sm-6
-            =investment.perm_opps
+            =investment.investment_begin
       .row
         .form-group
-          %label.control-label.col-sm-6 Government involvement (Tier 1):
+          %label.control-label.col-sm-6 Investment end date:
           .col-sm-6
-            =involvement1
+            =investment.investment_end
       .row
         .form-group
-          %label.control-label.col-sm-6 Government involvement (Tier 2):
+          %label.control-label.col-sm-6 Project location (Province):
           .col-sm-6
-            =involvement2
+            =province
       .row
         .form-group
-          %label.control-label.col-sm-6 Government involvement (Tier 3):
+          %label.control-label.col-sm-6 Project location (City / Town):
           .col-sm-6
+            =investment.additional_place
       .row
         .form-group
             =involvement3
-          %label.control-label.col-sm-6 Company:
+          %label.control-label.col-sm-6 Investor company(ies):
           .col-sm-6
             =investment.company
+      .row
+        .form-group
+          %label.control-label.col-sm-6 Origin of investment (country):
+          .col-sm-6
+            =inv_origin
+      .row
+        .form-group
+          %label.control-label.col-sm-6 Origin of investment (city):
+          .col-sm-6
+            =investment.invest_origin_city
       .row
         .form-group
           %label.control-label.col-sm-6 Type:
@@ -92,19 +87,9 @@
             =investment.phase_date
       .row
         .form-group
-          %label.control-label.col-sm-6 Origin of investment (country):
+          %label.control-label.col-sm-6 Industry:
           .col-sm-6
-            =inv_origin
-      .row
-        .form-group
-          %label.control-label.col-sm-6 Origin of investment (city):
-          .col-sm-6
-            =investment.invest_origin_city
-      .row
-        .form-group
-          %label.control-label.col-sm-6 Province of investment:
-          .col-sm-6
-            =province
+            =industry
       .row
         .form-group
           %label.control-label.col-sm-6 Sector:
@@ -112,24 +97,38 @@
             =sector
       .row
         .form-group
-          %label.control-label.col-sm-6 Industry:
+          %label.control-label.col-sm-6 Permanent opportunities:
           .col-sm-6
-            =industry
+            =investment.perm_opps
       .row
         .form-group
-          %label.control-label.col-sm-6 Target Market:
+          %label.control-label.col-sm-6 Temporary opportunities:
           .col-sm-6
-            =target_market
+            =investment.temp_opps
       .row
         .form-group
-          %label.control-label.col-sm-6 Additional place:
+          %label.control-label.col-sm-6 Government involvement (Tier 1):
           .col-sm-6
-            =investment.additional_place
+            =involvement1
+      .row
+        .form-group
+          %label.control-label.col-sm-6 Government involvement (Tier 2):
+          .col-sm-6
+            =involvement2
+      .row
+        .form-group
+          %label.control-label.col-sm-6 Government involvement (Tier 3):
+          .col-sm-6
       .row
         .form-group
           %label.control-label.col-sm-6 Government Programmes:
           .col-sm-6
             =investment.gov_programs
+      .row
+        .form-group
+          %label.control-label.col-sm-6 Target Market:
+          .col-sm-6
+            =target_market
       .row
         .form-group
           %label.control-label.col-sm-6 Social Benefit Programmes:
@@ -140,6 +139,21 @@
           %label.control-label.col-sm-6 Motivation for Investment:
           .col-sm-6
             =investment.mot_investment
+      .row
+        .form-group
+          %label.control-label.col-sm-6 Constraints and Barriers:
+          .col-sm-6
+            =investment.constraints_barriers
+      .row
+        .form-group
+          %label.control-label.col-sm-6 Credibility grading:
+          .col-sm-6
+            =investment.credibility_grading
+      .row
+        .form-group
+          %label.control-label.col-sm-6 Grading notes:
+          .col-sm-6.row-fluid
+            =investment.grading_notes
       .row
         .form-group
           %label.control-label.col-sm-6 Notes:

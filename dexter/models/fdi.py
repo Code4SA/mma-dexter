@@ -46,6 +46,10 @@ class Investment(db.Model):
     invest_origin_city = Column(String(50))
     target_market = Column(String(50))
 
+    credibility_grading = Column(String(1024))
+    constraints_barriers = Column(String(1024))
+    grading_notes = Column(String(1024))
+
     investment_begin = Column(Date, index=True, unique=False)
     investment_end = Column(Date, index=True, unique=False)
 

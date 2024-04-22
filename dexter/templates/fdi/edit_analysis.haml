@@ -90,6 +90,39 @@
                   .input-group
                   = field_input(fdi_form.name_existing, class_='select2')
               .row
+                .col-sm-4
+                  .form-group
+                    = fdi_form.value.label()
+                .col-sm-2
+                  .input-group
+                  = field_input(fdi_form.value2_partial)
+                .col-sm-3
+                  .input-group
+                  = field_input(fdi_form.value)
+                .col-sm-3
+                  .input-group
+                  = field_input(fdi_form.value_unit_id, class_='select2')
+              .row
+                .col-sm-6
+                  .form-group
+                    = fdi_form.currency_id.label()
+                .col-sm-6
+                  .input-group
+                  = field_input(fdi_form.currency_id, class_='select2')
+              .row
+                .col-sm-4
+                  .form-group
+                    = fdi_form.value2.label()
+                .col-sm-2
+                  .input-group
+                  = field_input(fdi_form.value_partial)
+                .col-sm-3
+                  .input-group
+                  = field_input(fdi_form.value2)
+                .col-sm-3
+                  .input-group
+                  = field_input(fdi_form.value_unit_id2, class_='select2')
+              .row
                 .col-sm-6
                   .form-group
                     = fdi_form.investment_begin.label()
@@ -110,80 +143,20 @@
                       %button.btn.btn-default(dataClear='input-group')
                         %i.fa.fa-times
               .row
-                .col-sm-4
-                  .form-group
-                    = fdi_form.value2.label()
-                .col-sm-2
-                  .input-group
-                  = field_input(fdi_form.value_partial)
-                .col-sm-3
-                  .input-group
-                  = field_input(fdi_form.value2)
-                .col-sm-3
-                  .input-group
-                  = field_input(fdi_form.value_unit_id2, class_='select2')
-              .row
-                .col-sm-4
-                  .form-group
-                    = fdi_form.value.label()
-                .col-sm-2
-                  .input-group
-                  = field_input(fdi_form.value2_partial)
-                .col-sm-3
-                  .input-group
-                  = field_input(fdi_form.value)
-                .col-sm-3
-                  .input-group
-                  = field_input(fdi_form.value_unit_id, class_='select2')
-              .row
-                .col-sm-6
-                  .form-group
-                    = fdi_form.currency_id.label()
-                .col-sm-6
-                  .input-group
-                  = field_input(fdi_form.currency_id, class_='select2')
-
-              .row
-                .col-sm-4
-                  .form-group
-                    = fdi_form.temp_opps.label()
                 .col-sm-2
                   .form-group
-                    = field_input(fdi_form.temp_opps_partial)
-                .col-sm-6
+                    = fdi_form.province_id.label()
+                .col-sm-10
                   .input-group
-                  = field_input(fdi_form.temp_opps)
-              .row
-                .col-sm-4
-                  .form-group
-                    = fdi_form.perm_opps.label()
-                .col-sm-2
-                  .form-group
-                    = field_input(fdi_form.perm_opps_partial)
-                .col-sm-6
-                  .input-group
-                  = field_input(fdi_form.perm_opps)
+                  = field_input(fdi_form.province_id, class_='select2')
               .row
                 .col-sm-6
                   .form-group
-                    = fdi_form.involvement_id1.label()
+                    = fdi_form.additional_place.label()
+                    [separate multiple with ";"]
                 .col-sm-6
                   .input-group
-                  = field_input(fdi_form.involvement_id1, class_='select2')
-              .row
-                .col-sm-6
-                  .form-group
-                    = fdi_form.involvement_id2.label()
-                .col-sm-6
-                  .input-group
-                  = field_input(fdi_form.involvement_id2, class_='select2')
-              .row
-                .col-sm-6
-                  .form-group
-                    = fdi_form.involvement_id3.label()
-                .col-sm-6
-                  .input-group
-                  = field_input(fdi_form.involvement_id3, class_='select2')
+                  = field_input(fdi_form.additional_place)
               .row
                 .col-sm-6
                   .form-group
@@ -193,13 +166,20 @@
                   .input-group
                   = field_input(fdi_form.company)
               .row
-                .col-sm-6
+                .col-sm-2
                   .form-group
-                    = fdi_form.additional_place.label()
-                    [separate multiple with ";"]
-                .col-sm-6
+                    = fdi_form.invest_origin_id.label()
+                .col-sm-10
                   .input-group
-                  = field_input(fdi_form.additional_place)
+                  = field_input(fdi_form.invest_origin_id, class_='select2')
+              .row
+                .col-sm-2
+                  .form-group
+                    = fdi_form.invest_origin_city.label()
+                .col-sm-10
+                  .input-group
+                  = field_input(fdi_form.invest_origin_city)
+                  [separate multiple with ";"]
               .row
                 .col-sm-6
                   .form-group
@@ -225,34 +205,12 @@
                       %button.btn.btn-default(dataClear='input-group')
                         %i.fa.fa-times
               .row
-                .col-sm-6
-                  .form-group
-                    = fdi_form.target_market.label()
-                .col-sm-6
-                  .input-group
-                  = field_input(fdi_form.target_market, class_='select2')
-              .row
                 .col-sm-2
                   .form-group
-                    = fdi_form.invest_origin_id.label()
+                    = fdi_form.industry_id.label()
                 .col-sm-10
                   .input-group
-                  = field_input(fdi_form.invest_origin_id, class_='select2')
-              .row
-                .col-sm-2
-                  .form-group
-                    = fdi_form.invest_origin_city.label()
-                .col-sm-10
-                  .input-group
-                  = field_input(fdi_form.invest_origin_city)
-                  [separate multiple with ";"]
-              .row
-                .col-sm-2
-                  .form-group
-                    = fdi_form.province_id.label()
-                .col-sm-10
-                  .input-group
-                  = field_input(fdi_form.province_id, class_='select2')
+                  = field_input(fdi_form.industry_id, class_='select2')
               .row
                 .col-sm-2
                   .form-group
@@ -261,12 +219,46 @@
                   .input-group
                   = field_input(fdi_form.sector_id, class_='select2')
               .row
+                .col-sm-4
+                  .form-group
+                    = fdi_form.perm_opps.label()
                 .col-sm-2
                   .form-group
-                    = fdi_form.industry_id.label()
-                .col-sm-10
+                    = field_input(fdi_form.perm_opps_partial)
+                .col-sm-6
                   .input-group
-                  = field_input(fdi_form.industry_id, class_='select2')
+                  = field_input(fdi_form.perm_opps)
+              .row
+                .col-sm-4
+                  .form-group
+                    = fdi_form.temp_opps.label()
+                .col-sm-2
+                  .form-group
+                    = field_input(fdi_form.temp_opps_partial)
+                .col-sm-6
+                  .input-group
+                  = field_input(fdi_form.temp_opps)
+              .row
+                .col-sm-6
+                  .form-group
+                    = fdi_form.involvement_id1.label()
+                .col-sm-6
+                  .input-group
+                  = field_input(fdi_form.involvement_id1, class_='select2')
+              .row
+                .col-sm-6
+                  .form-group
+                    = fdi_form.involvement_id2.label()
+                .col-sm-6
+                  .input-group
+                  = field_input(fdi_form.involvement_id2, class_='select2')
+              .row
+                .col-sm-6
+                  .form-group
+                    = fdi_form.involvement_id3.label()
+                .col-sm-6
+                  .input-group
+                  = field_input(fdi_form.involvement_id3, class_='select2')
               .row
                 .col-sm-6
                   .form-group
@@ -275,6 +267,13 @@
                   .input-group
                   = field_input(fdi_form.gov_programs)
                   [separate multiple with ";"]
+              .row
+                .col-sm-6
+                  .form-group
+                    = fdi_form.target_market.label()
+                .col-sm-6
+                  .input-group
+                  = field_input(fdi_form.target_market, class_='select2')
               .row
                 .col-sm-6
                   .form-group
@@ -290,6 +289,27 @@
                 .col-sm-6
                   .input-group
                   = field_input(fdi_form.mot_investment)
+              .row
+                .col-sm-6
+                  .form-group
+                    = fdi_form.constraints_barriers.label()
+                .col-sm-6
+                  .input-group
+                  = field_input(fdi_form.constraints_barriers)
+              .row
+                .col-sm-6
+                  .form-group
+                    = fdi_form.credibility_grading.label()
+                .col-sm-6
+                  .input-group
+                  = field_input(fdi_form.credibility_grading)
+              .row
+                .col-sm-2
+                  .form-group
+                    = fdi_form.grading_notes.label()
+                .col-sm-10
+                  .input-group
+                  = area_input(fdi_form.grading_notes)
               .row
                 .col-sm-2
                   .form-group
