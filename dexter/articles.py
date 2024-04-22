@@ -269,6 +269,9 @@ def fdi_create(id):
     investment.doc_id = id
     investment.value_unit_id = 3
     investment.value_unit_id2 = 3
+    investment.constraints_barriers = ''
+    investment.credibility_grading = ''
+    investment.grading_notes = ''
     db.session.add(investment)
     db.session.commit()
 
